@@ -1,0 +1,17 @@
+g++ -std=c++14 -Wall -Wextra -DSIM_TEST \
+	sim.cpp \
+	../util/interface.cpp \
+	../util/driver_station_interface.cpp \
+	../util/countdown_timer.cpp \
+	../util/util.cpp \
+	../util/pwm.cpp \
+	../control/toplevel.cpp \
+	../control/drivebase.cpp \
+	../control/pump.cpp \
+	../control/winch.cpp \
+	grabber.cpp \
+	arm.cpp \
+	gun.cpp \
+	../control/motor_check.cpp \
+	../control/nop.cpp \
+	-o sim 2>&1 && ./sim

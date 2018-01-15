@@ -1,0 +1,15 @@
+digraph "Interop Utility Functions"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir=LR;
+  Node4 [label="Entry Value Setters",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$group__ValueSetters.html"];
+  Node0 [label="Interop Utility Functions",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 [label="Memory Allocators",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$group__MemoryAllocators.html"];
+  Node2 [label="Typed Getters",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$group__TypedGetters.html"];
+  Node3 [label="Set Default Values",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$group__SetDefault.html"];
+  Node0->Node1 [shape=plaintext, dir="back", style="solid"];
+  Node0->Node2 [shape=plaintext, dir="back", style="solid"];
+  Node0->Node3 [shape=plaintext, dir="back", style="solid"];
+  Node0->Node4 [shape=plaintext, dir="back", style="solid"];
+}

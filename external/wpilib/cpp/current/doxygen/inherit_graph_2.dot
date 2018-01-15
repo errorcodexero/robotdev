@@ -1,0 +1,7 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="cs::default_init_allocator\l\< T, A \>::rebind\< U \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structcs_1_1default__init__allocator_1_1rebind.html"];
+}

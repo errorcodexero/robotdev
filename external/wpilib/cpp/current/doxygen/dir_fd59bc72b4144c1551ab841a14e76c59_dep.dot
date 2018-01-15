@@ -1,0 +1,11 @@
+digraph "build/cppSource/wpilibc/sources/interfaces" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_1c34e0a22f7cd8c8700a01ee60c4e6a6 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="sources" fontname="Helvetica", fontsize="10", URL="dir_1c34e0a22f7cd8c8700a01ee60c4e6a6.html"]
+  dir_fd59bc72b4144c1551ab841a14e76c59 [shape=box, label="interfaces", style="filled", fillcolor="#eeeeff", pencolor="black", URL="dir_fd59bc72b4144c1551ab841a14e76c59.html"];
+  }
+  dir_433758bdcf33847806038f24c9d0e68b [shape=box label="headers" fillcolor="white" style="filled" color="red" URL="dir_433758bdcf33847806038f24c9d0e68b.html"];
+  dir_fd59bc72b4144c1551ab841a14e76c59->dir_433758bdcf33847806038f24c9d0e68b [headlabel="1", labeldistance=1.5 headhref="dir_000030_000008.html"];
+}

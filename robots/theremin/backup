@@ -1,0 +1,55 @@
+#!/bin/bash
+
+team=1425
+restore=0
+
+while getopts ":t:r:" opt; do
+	case $opt in
+		t)
+			team=$OPTARG
+			;;
+		r)
+			restore=$OPTARG
+			;;
+		\?)
+			echo "Invalid option: -$OPTARG" >&2
+			exit 1
+			;;
+		:)
+			echo "Option -$OPTARG requires an argument." >&2
+			exit 1
+			;;
+	esac
+done
+
+if [ ! -d "backups" ]; then
+	mkdir backups
+fi
+
+backup_n=$(find backups -type f -name FRCUserProgram_\* | wc -l)
+if [ $restore -lt 0 ]; then
+	echo "Backup number must be greater than 0." >&2
+	exit 1
+elif [ $restore -gt $backup_n ]; then
+	echo "Backup ${restore} chosen, but only ${backup_n} backups present." >&2
+	exit 1
+elif [ $restore -eq 0 ]; then
+	scp admin@roboRIO-$team-FRC.local:/home/lvuser/FRCUserProgram ./backups/FRCUserProgram_$(($backup_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
+	if [ $? -eq 0 ]; then
+		echo "Saved as backup $(($backup_n+1))."
+	fi
+else
+	backup=$(find backups -type f -name FRCUserProgram_$restore\_\*)
+	backup_n2=$(wc -w <<<$backup)
+	if [ $backup_n2 -eq 0 ]; then
+		echo "No backup with the number ${restore} found." >&2
+		exit 1
+	elif [ $backup_n2 -gt 1 ]; then
+		echo "Multiple backups with the number ${restore} found." >&2
+		echo $backup
+		exit 1
+	else
+		echo "Deploying backup ${restore}..."
+		bash deploy -f $backup -t $team
+	fi
+fi

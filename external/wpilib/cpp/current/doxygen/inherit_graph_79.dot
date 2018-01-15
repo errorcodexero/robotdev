@@ -1,0 +1,17 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="integral_constant",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="llvm::detail::ConstantLog2\< N \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structllvm_1_1detail_1_1ConstantLog2.html",tooltip="A tiny meta function to compute the log2 of a compile time constant. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="llvm::detail::ConstantLog2\< 1 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structllvm_1_1detail_1_1ConstantLog2_3_011_01_4.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="llvm::hashing::detail\l::is_hashable_data\< T \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structllvm_1_1hashing_1_1detail_1_1is__hashable__data.html",tooltip="Trait to indicate whether a type&#39;s bits can be hashed directly. "];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="llvm::hashing::detail\l::is_hashable_data\< std\l::pair\< T, U \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structllvm_1_1hashing_1_1detail_1_1is__hashable__data_3_01std_1_1pair_3_01T_00_01U_01_4_01_4.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="wpi::detail::negation\< B \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structwpi_1_1detail_1_1negation.html"];
+}

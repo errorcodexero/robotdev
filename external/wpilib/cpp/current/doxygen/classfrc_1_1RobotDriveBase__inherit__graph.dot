@@ -1,0 +1,16 @@
+digraph "frc::RobotDriveBase"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="frc::RobotDriveBase",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="frc::MotorSafety",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1MotorSafety.html"];
+  Node3 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="frc::ErrorBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1ErrorBase.html",tooltip="Base class for most objects. "];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="frc::DifferentialDrive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1DifferentialDrive.html",tooltip="A class for driving differential drive/skid-steer drive platforms such as the Kit of Parts drive base..."];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="frc::KilloughDrive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1KilloughDrive.html",tooltip="A class for driving Killough drive platforms. "];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="frc::MecanumDrive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1MecanumDrive.html",tooltip="A class for driving Mecanum drive platforms. "];
+}

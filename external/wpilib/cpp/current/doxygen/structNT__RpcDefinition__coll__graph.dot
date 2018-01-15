@@ -1,0 +1,17 @@
+digraph "NT_RpcDefinition"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="NT_RpcDefinition",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" results" ,fontname="Helvetica"];
+  Node2 [label="NT_RpcResultDef",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structNT__RpcResultDef.html",tooltip="NetworkTables RPC Version 1 Definition Result. "];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" name" ,fontname="Helvetica"];
+  Node3 [label="NT_String",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structNT__String.html",tooltip="A NetworkTables string. "];
+  Node4 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" params" ,fontname="Helvetica"];
+  Node4 [label="NT_RpcParamDef",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structNT__RpcParamDef.html",tooltip="NetworkTables RPC Version 1 Definition Parameter. "];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" def_value" ,fontname="Helvetica"];
+  Node5 [label="NT_Value",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structNT__Value.html",tooltip="NetworkTables Entry Value. "];
+  Node3 -> Node5 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" v_raw\nv_string\narr" ,fontname="Helvetica"];
+  Node3 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" name" ,fontname="Helvetica"];
+  Node3 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" name" ,fontname="Helvetica"];
+}

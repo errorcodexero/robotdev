@@ -1,0 +1,21 @@
+digraph "frc::PIDController"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="frc::PIDController",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="frc::LiveWindowSendable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1LiveWindowSendable.html",tooltip="Live Window Sendable is a special type of object sendable to the live window. "];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="frc::Sendable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Sendable.html"];
+  Node4 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="frc::PIDInterface",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PIDInterface.html"];
+  Node5 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="frc::Controller",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Controller.html",tooltip="Interface for Controllers. "];
+  Node6 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pEntry\nm_setpointEntry\nm_enabledEntry\nm_iEntry\nm_fEntry\nm_dEntry" ,fontname="Helvetica"];
+  Node6 [label="nt::NetworkTableEntry",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classnt_1_1NetworkTableEntry.html",tooltip="NetworkTables Entry. "];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pidOutput" ,fontname="Helvetica"];
+  Node7 [label="frc::PIDOutput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PIDOutput.html",tooltip="PIDOutput interface is a generic output for the PID class. "];
+  Node8 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pidInput" ,fontname="Helvetica"];
+  Node8 [label="frc::PIDSource",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PIDSource.html",tooltip="PIDSource interface is a generic sensor source for the PID class. "];
+}

@@ -1,0 +1,15 @@
+digraph "build/cppSource/wpilibc" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_7afc8335c0148d5475daafbc69b8f061 {
+    graph [ bgcolor="#ddddee", pencolor="black", label="cppSource" fontname="Helvetica", fontsize="10", URL="dir_7afc8335c0148d5475daafbc69b8f061.html"]
+  subgraph clusterdir_4ec02dbfd467815f4030437dbcf0d76d {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_4ec02dbfd467815f4030437dbcf0d76d.html"];
+    dir_4ec02dbfd467815f4030437dbcf0d76d [shape=plaintext label="wpilibc"];
+    dir_433758bdcf33847806038f24c9d0e68b [shape=box label="headers" color="red" fillcolor="white" style="filled" URL="dir_433758bdcf33847806038f24c9d0e68b.html"];
+    dir_1c34e0a22f7cd8c8700a01ee60c4e6a6 [shape=box label="sources" color="red" fillcolor="white" style="filled" URL="dir_1c34e0a22f7cd8c8700a01ee60c4e6a6.html"];
+  }
+  }
+  dir_1c34e0a22f7cd8c8700a01ee60c4e6a6->dir_433758bdcf33847806038f24c9d0e68b [headlabel="13", labeldistance=1.5 headhref="dir_000007_000008.html"];
+}

@@ -1,0 +1,37 @@
+digraph "frc::MotorSafety"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="frc::MotorSafety",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="frc::Relay",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Relay.html",tooltip="Class for Spike style relay outputs. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="frc::RobotDriveBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1RobotDriveBase.html",tooltip="Common base class for drive platforms. "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="frc::DifferentialDrive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1DifferentialDrive.html",tooltip="A class for driving differential drive/skid-steer drive platforms such as the Kit of Parts drive base..."];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="frc::KilloughDrive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1KilloughDrive.html",tooltip="A class for driving Killough drive platforms. "];
+  Node3 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="frc::MecanumDrive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1MecanumDrive.html",tooltip="A class for driving Mecanum drive platforms. "];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="frc::SafePWM",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1SafePWM.html",tooltip="A safe version of the PWM class. "];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="frc::PWMSpeedController",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PWMSpeedController.html",tooltip="Common base class for all PWM Speed Controllers. "];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="frc::Jaguar",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Jaguar.html",tooltip="Luminary Micro / Vex Robotics Jaguar Speed Controller with PWM control. "];
+  Node8 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="frc::PWMTalonSRX",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PWMTalonSRX.html",tooltip="Cross the Road Electronics (CTRE) Talon SRX Speed Controller with PWM control. "];
+  Node8 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="frc::SD540",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1SD540.html",tooltip="Mindsensors SD540 Speed Controller. "];
+  Node8 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="frc::Spark",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Spark.html",tooltip="REV Robotics Speed Controller. "];
+  Node8 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="frc::Talon",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Talon.html",tooltip="Cross the Road Electronics (CTRE) Talon and Talon SR Speed Controller. "];
+  Node8 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="frc::Victor",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Victor.html",tooltip="Vex Robotics Victor 888 Speed Controller. "];
+  Node8 -> Node15 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node15 [label="frc::VictorSP",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1VictorSP.html",tooltip="Vex Robotics Victor SP Speed Controller. "];
+  Node7 -> Node16 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node16 [label="frc::Servo",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Servo.html",tooltip="Standard hobby style servo. "];
+}

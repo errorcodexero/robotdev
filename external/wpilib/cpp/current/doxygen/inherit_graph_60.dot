@@ -1,0 +1,29 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="llvm::DebugEpochBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DebugEpochBase.html",tooltip="A base class for data structure classes wishing to make iterators (\"handles\") pointing into themselve..."];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="llvm::DenseMapBase\l\< DenseMap\< CS_Source,\l std::shared_ptr\< nt::\lNetworkTable \>, DenseMapInfo\l\< CS_Source \>, detail::DenseMapPair\l\< CS_Source, std::shared_ptr\< nt\l::NetworkTable \> \> \>, CS_Source,\l std::shared_ptr\< nt::NetworkTable\l \>, DenseMapInfo\< CS_Source \>, detail\l::DenseMapPair\< CS_Source, std::shared\l_ptr\< nt::NetworkTable \> \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMapBase.html"];
+  Node2 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="llvm::DenseMap\< CS\l_Source, std::shared\l_ptr\< nt::NetworkTable \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMap.html"];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="llvm::DenseMapBase\l\< DenseMap\< KeyT, ValueT,\l KeyInfoT, BucketT \>, KeyT,\l ValueT, KeyInfoT, BucketT \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMapBase.html"];
+  Node4 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="llvm::DenseMap\< KeyT,\l ValueT, KeyInfoT, BucketT \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMap.html"];
+  Node1 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="llvm::DenseMapBase\l\< DenseMap\< RpcIdPair,\l nt::IRpcServer::SendResponse\lFunc, DenseMapInfo\< RpcIdPair\l \>, detail::DenseMapPair\< RpcIdPair,\l nt::IRpcServer::SendResponseFunc\l \> \>, RpcIdPair, nt::IRpcServer::SendResponse\lFunc, DenseMapInfo\< RpcIdPair \>, detail\l::DenseMapPair\< RpcIdPair, nt::IRpcServer\l::SendResponseFunc \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMapBase.html"];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="llvm::DenseMap\< RpcIdPair,\l nt::IRpcServer::SendResponseFunc \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMap.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="llvm::DenseMapBase\l\< DenseMap\< RpcIdPair,\l std::string, DenseMapInfo\l\< RpcIdPair \>, detail::DenseMapPair\l\< RpcIdPair, std::string \> \>, RpcIdPair,\l std::string, DenseMapInfo\< RpcIdPair\l \>, detail::DenseMapPair\< RpcIdPair, std::string \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMapBase.html"];
+  Node8 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="llvm::DenseMap\< RpcIdPair,\l std::string \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMap.html"];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="llvm::DenseMapBase\l\< SmallDenseMap\< KeyT,\l ValueT, InlineBuckets,\l KeyInfoT, BucketT \>, KeyT,\l ValueT, KeyInfoT, BucketT \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMapBase.html"];
+  Node10 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="llvm::SmallDenseMap\l\< KeyT, ValueT, InlineBuckets,\l KeyInfoT, BucketT \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1SmallDenseMap.html"];
+  Node1 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="llvm::DenseMapBase\l\< DerivedT, KeyT, ValueT,\l KeyInfoT, BucketT \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMapBase.html"];
+}

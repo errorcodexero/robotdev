@@ -1,0 +1,27 @@
+var group__LoggerFunctions =
+[
+    [ "LogFunc", "group__LoggerFunctions.html#ga27f3e25c8176d23374f340616f6160a6", null ],
+    [ "NT_LogFunc", "group__LoggerFunctions.html#ga0a9c5c32c23466b02558b2dd5aae593b", null ],
+    [ "AddLogger", "group__LoggerFunctions.html#gab9fa7791669d7042b1400d3a69c65a33", null ],
+    [ "AddLogger", "group__LoggerFunctions.html#ga8171c7719887be8c60df6fbbf8408399", null ],
+    [ "AddPolledLogger", "group__LoggerFunctions.html#ga875a42e5559a9fb660855de570fa9445", null ],
+    [ "CancelPollLogger", "group__LoggerFunctions.html#ga94afbd1ea3e48f43afef327cb5edc1e6", null ],
+    [ "CreateLoggerPoller", "group__LoggerFunctions.html#ga0941bdeffbe679fa463f30c674e4a203", null ],
+    [ "DestroyLoggerPoller", "group__LoggerFunctions.html#gad04ce32957edaaadfa0c89986f9746f2", null ],
+    [ "NT_AddLogger", "group__LoggerFunctions.html#ga28678881c133ffe87f91f621b5558cee", null ],
+    [ "NT_AddPolledLogger", "group__LoggerFunctions.html#gaed63e3bae15ba09927e1866a0f07e83c", null ],
+    [ "NT_CancelPollLogger", "group__LoggerFunctions.html#gab43666f384d6e2a149f93e18e3402cbb", null ],
+    [ "NT_CreateLoggerPoller", "group__LoggerFunctions.html#gab73de0e404687276b238f4a028606a49", null ],
+    [ "NT_DestroyLoggerPoller", "group__LoggerFunctions.html#ga52f5816a793c4327333f6aebfbf541ba", null ],
+    [ "NT_PollLogger", "group__LoggerFunctions.html#ga01ae637d780a30b7e491fe0f1ab367de", null ],
+    [ "NT_PollLoggerTimeout", "group__LoggerFunctions.html#ga0d59625cf5b269e5690dcc2ff7197ac7", null ],
+    [ "NT_RemoveLogger", "group__LoggerFunctions.html#gaaaf0d1c5efd341c80fb2ced526b53adf", null ],
+    [ "NT_WaitForLoggerQueue", "group__LoggerFunctions.html#gabe1855920ae23107016f7c8b9917a6c0", null ],
+    [ "PollLogger", "group__LoggerFunctions.html#ga819f35e5e2864fefe1b676d1326f48f3", null ],
+    [ "PollLogger", "group__LoggerFunctions.html#ga19be84b6634ca50e6d317fc3fae728c3", null ],
+    [ "RemoveLogger", "group__LoggerFunctions.html#ga3e67285e9e103e77c27c4486d4856927", null ],
+    [ "RemoveLogger", "group__LoggerFunctions.html#gaba7ed9ad02b89a75bc918f292126a9bf", null ],
+    [ "SetLogger", "group__LoggerFunctions.html#ga03fdd165c8996cd5f0f7e39a9ade192d", null ],
+    [ "WaitForLoggerQueue", "group__LoggerFunctions.html#ga7289d0e9b5d0ff28b7b33bc257670880", null ],
+    [ "WaitForLoggerQueue", "group__LoggerFunctions.html#ga4fae112bec6981b6636e7999aa40ed92", null ]
+];

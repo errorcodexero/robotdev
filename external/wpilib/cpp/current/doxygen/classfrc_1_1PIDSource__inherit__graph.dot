@@ -1,0 +1,33 @@
+digraph "frc::PIDSource"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="frc::PIDSource",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="frc::AnalogAccelerometer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1AnalogAccelerometer.html",tooltip="Handle operation of an analog accelerometer. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="frc::AnalogInput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1AnalogInput.html",tooltip="Analog input class. "];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="frc::Encoder",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Encoder.html",tooltip="Class to read quad encoders. "];
+  Node1 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="frc::Filter",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Filter.html",tooltip="Interface for filters. "];
+  Node5 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="frc::LinearDigitalFilter",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1LinearDigitalFilter.html",tooltip="This class implements a linear, digital filter. "];
+  Node1 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="frc::GyroBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1GyroBase.html",tooltip="GyroBase is the common base class for Gyro implementations such as AnalogGyro. "];
+  Node7 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="frc::ADXRS450_Gyro",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1ADXRS450__Gyro.html",tooltip="Use a rate gyro to return the robots heading relative to a starting position. "];
+  Node7 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="frc::AnalogGyro",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1AnalogGyro.html",tooltip="Use a rate gyro to return the robots heading relative to a starting position. "];
+  Node1 -> Node10 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node10 [label="frc::PIDCommand",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PIDCommand.html"];
+  Node1 -> Node11 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node11 [label="frc::PIDSubsystem",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PIDSubsystem.html",tooltip="This class is designed to handle the case where there is a Subsystem which uses a single PIDControlle..."];
+  Node1 -> Node12 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node12 [label="frc::Potentiometer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Potentiometer.html",tooltip="Interface for potentiometers. "];
+  Node12 -> Node13 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node13 [label="frc::AnalogPotentiometer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1AnalogPotentiometer.html",tooltip="Class for reading analog potentiometers. "];
+  Node1 -> Node14 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node14 [label="frc::Ultrasonic",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Ultrasonic.html",tooltip="Ultrasonic rangefinder class. "];
+}

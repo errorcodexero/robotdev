@@ -1,0 +1,9 @@
+digraph "llvm::hashing::detail::is_hashable_data&lt; std::pair&lt; T, U &gt; &gt;"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="llvm::hashing::detail\l::is_hashable_data\< std\l::pair\< T, U \> \>",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="std::integral_constant\l\< bool,(is_hashable_data\l\< T \>::value &&is_hashable\l_data\< U \>::value &&(sizeof\l(T)+sizeof(U))==sizeof(std::\lpair\< T, U \>))\>",height=0.2,width=0.4,color="grey75", fillcolor="white", style="filled"];
+}

@@ -1,0 +1,23 @@
+digraph "build/cppSource/wpilibc/sources" {
+  compound=true
+  node [ fontsize="10", fontname="Helvetica"];
+  edge [ labelfontsize="10", labelfontname="Helvetica"];
+  subgraph clusterdir_4ec02dbfd467815f4030437dbcf0d76d {
+    graph [ bgcolor="#ddddee", pencolor="black", label="wpilibc" fontname="Helvetica", fontsize="10", URL="dir_4ec02dbfd467815f4030437dbcf0d76d.html"]
+  subgraph clusterdir_1c34e0a22f7cd8c8700a01ee60c4e6a6 {
+    graph [ bgcolor="#eeeeff", pencolor="black", label="" URL="dir_1c34e0a22f7cd8c8700a01ee60c4e6a6.html"];
+    dir_1c34e0a22f7cd8c8700a01ee60c4e6a6 [shape=plaintext label="sources"];
+    dir_00676be0c425f4e8cf6f659345bece32 [shape=box label="Buttons" color="black" fillcolor="white" style="filled" URL="dir_00676be0c425f4e8cf6f659345bece32.html"];
+    dir_ef5ba70cb4b54a7b51a7e8e0d2ae1f1c [shape=box label="Commands" color="black" fillcolor="white" style="filled" URL="dir_ef5ba70cb4b54a7b51a7e8e0d2ae1f1c.html"];
+    dir_867aca158dca0c6ce086dabad10d3ccf [shape=box label="Drive" color="black" fillcolor="white" style="filled" URL="dir_867aca158dca0c6ce086dabad10d3ccf.html"];
+    dir_cb6aec99a1c8871dc0c29721bd9c8db4 [shape=box label="Filters" color="black" fillcolor="white" style="filled" URL="dir_cb6aec99a1c8871dc0c29721bd9c8db4.html"];
+    dir_fd59bc72b4144c1551ab841a14e76c59 [shape=box label="interfaces" color="black" fillcolor="white" style="filled" URL="dir_fd59bc72b4144c1551ab841a14e76c59.html"];
+    dir_0fe4538a9a5df457be8bb7bd500b490c [shape=box label="Internal" color="black" fillcolor="white" style="filled" URL="dir_0fe4538a9a5df457be8bb7bd500b490c.html"];
+    dir_ed8ae448a602cec201928724fd264678 [shape=box label="LiveWindow" color="black" fillcolor="white" style="filled" URL="dir_ed8ae448a602cec201928724fd264678.html"];
+    dir_32e4542cee7dffdb9ba8ec89e8fa5c54 [shape=box label="SmartDashboard" color="black" fillcolor="white" style="filled" URL="dir_32e4542cee7dffdb9ba8ec89e8fa5c54.html"];
+    dir_2124188562266a682e03ac3b0ee3d872 [shape=box label="vision" color="black" fillcolor="white" style="filled" URL="dir_2124188562266a682e03ac3b0ee3d872.html"];
+  }
+  }
+  dir_433758bdcf33847806038f24c9d0e68b [shape=box label="headers" fillcolor="white" style="filled" color="red" URL="dir_433758bdcf33847806038f24c9d0e68b.html"];
+  dir_fd59bc72b4144c1551ab841a14e76c59->dir_433758bdcf33847806038f24c9d0e68b [headlabel="1", labeldistance=1.5 headhref="dir_000030_000008.html"];
+}

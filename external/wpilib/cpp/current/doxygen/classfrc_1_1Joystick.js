@@ -1,0 +1,46 @@
+var classfrc_1_1Joystick =
+[
+    [ "AxisType", "classfrc_1_1Joystick.html#abd7d1284c86e3cc2098e9749acc8fd0e", [
+      [ "kXAxis", "classfrc_1_1Joystick.html#abd7d1284c86e3cc2098e9749acc8fd0eac010f9bc0a9522e1086e59e1321a99b9", null ],
+      [ "kYAxis", "classfrc_1_1Joystick.html#abd7d1284c86e3cc2098e9749acc8fd0eacb2930b39e6be338c6b24ac1547e493b", null ],
+      [ "kZAxis", "classfrc_1_1Joystick.html#abd7d1284c86e3cc2098e9749acc8fd0ead19cc9cca265476803d746009df7bb03", null ],
+      [ "kTwistAxis", "classfrc_1_1Joystick.html#abd7d1284c86e3cc2098e9749acc8fd0ea1a1f97d1d153ddb4b7d9e31e6efd6b96", null ],
+      [ "kThrottleAxis", "classfrc_1_1Joystick.html#abd7d1284c86e3cc2098e9749acc8fd0ea04700231aa1b893d075901700ddec18a", null ]
+    ] ],
+    [ "ButtonType", "classfrc_1_1Joystick.html#a224a7aa1be877d08b5a819a4dc2b5602", [
+      [ "kTriggerButton", "classfrc_1_1Joystick.html#a224a7aa1be877d08b5a819a4dc2b5602af9df13633ad9109ebd11d1b8c5ffa7a7", null ],
+      [ "kTopButton", "classfrc_1_1Joystick.html#a224a7aa1be877d08b5a819a4dc2b5602aef2ab7f1b2f8456ba4c32c98fa985a72", null ]
+    ] ],
+    [ "Joystick", "classfrc_1_1Joystick.html#a788f132a67280eafa6247e74d9697f6f", null ],
+    [ "~Joystick", "classfrc_1_1Joystick.html#a362ec022a023df31f4a9bcbe70e95106", null ],
+    [ "Joystick", "classfrc_1_1Joystick.html#af2b5cfca1e0c4bdd04e0fd04590c75ec", null ],
+    [ "GetAxis", "classfrc_1_1Joystick.html#ab632f27c5e9ad02fc23e9ca2f9d0b7ce", null ],
+    [ "GetAxisChannel", "classfrc_1_1Joystick.html#aed1dc969d50c8f2d8f48b22a3e16872c", null ],
+    [ "GetButton", "classfrc_1_1Joystick.html#af72a0c974fd9a515e08c6b66faf31a40", null ],
+    [ "GetDirectionDegrees", "classfrc_1_1Joystick.html#a74655c64f1699a0bce9616e7dd9c13a2", null ],
+    [ "GetDirectionRadians", "classfrc_1_1Joystick.html#a313ed690a081a46ea0c8861dc361f8a3", null ],
+    [ "GetMagnitude", "classfrc_1_1Joystick.html#aefda97e71a7cac544ef01d5509f522ad", null ],
+    [ "GetThrottle", "classfrc_1_1Joystick.html#af31b02d8e3d29a0e0646fc46f3b5d400", null ],
+    [ "GetThrottleChannel", "classfrc_1_1Joystick.html#a0a50caf93c970ae229fc8f2754cf17bd", null ],
+    [ "GetTop", "classfrc_1_1Joystick.html#a3e2d254278900e2f24a914a2d9072644", null ],
+    [ "GetTopPressed", "classfrc_1_1Joystick.html#a27e80f10e81cc3a96de97e6e9ca025ef", null ],
+    [ "GetTopReleased", "classfrc_1_1Joystick.html#a8508e51a18c9245eff7ec67aa023debe", null ],
+    [ "GetTrigger", "classfrc_1_1Joystick.html#ae5899663858ead04bb75ae9b04fbf51c", null ],
+    [ "GetTriggerPressed", "classfrc_1_1Joystick.html#a4e4261539165170a1147857262c2d2f4", null ],
+    [ "GetTriggerReleased", "classfrc_1_1Joystick.html#a4bcbfb81b62761d718a970bbb21384d3", null ],
+    [ "GetTwist", "classfrc_1_1Joystick.html#a85bf32aeaa42e85c2c844ed0448f5e5f", null ],
+    [ "GetTwistChannel", "classfrc_1_1Joystick.html#aa4bf673a9a06f95d9263d0508fa4a6ca", null ],
+    [ "GetX", "classfrc_1_1Joystick.html#a08fb3b11633df3b837e654c8b5fdad65", null ],
+    [ "GetXChannel", "classfrc_1_1Joystick.html#a75df68e2bd2c4257d8a99c652a2fcd06", null ],
+    [ "GetY", "classfrc_1_1Joystick.html#a03e975f656ce7ca77f80aa73d6ed1a5c", null ],
+    [ "GetYChannel", "classfrc_1_1Joystick.html#afb0672701a17f5da66643e08e58a7075", null ],
+    [ "GetZ", "classfrc_1_1Joystick.html#acc9b61b2cdca1bffa8fe88e380d14efd", null ],
+    [ "GetZChannel", "classfrc_1_1Joystick.html#a442dfb43aba07c7e2f0e7fbf8f20865c", null ],
+    [ "operator=", "classfrc_1_1Joystick.html#a8d495180717249d03d960bbb941568db", null ],
+    [ "SetAxisChannel", "classfrc_1_1Joystick.html#a0c94bb2bfe04ce112c225cbf46fa0450", null ],
+    [ "SetThrottleChannel", "classfrc_1_1Joystick.html#a0ef765efcb102db5f9bd19bc3b26079a", null ],
+    [ "SetTwistChannel", "classfrc_1_1Joystick.html#a9633103b0573bd03d65ae0bf7bf70470", null ],
+    [ "SetXChannel", "classfrc_1_1Joystick.html#a1f68894109731bc6f3e9e326559a61b2", null ],
+    [ "SetYChannel", "classfrc_1_1Joystick.html#ac40c6b38fcb5a54997761af7ae7e26e2", null ],
+    [ "SetZChannel", "classfrc_1_1Joystick.html#a57bb032f15eb2d3a95b67ebe6bd6b8f9", null ]
+];

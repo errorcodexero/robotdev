@@ -1,0 +1,7 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="wpi::detail::is_compatible\l_integer_type_impl\< true,\l RealIntegerType, CompatibleNumber\lIntegerType \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structwpi_1_1detail_1_1is__compatible__integer__type__impl_3_01true_00_01RealIntegerType_00_01CompatibleNumberIntegerType_01_4.html"];
+}

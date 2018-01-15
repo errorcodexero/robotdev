@@ -1,0 +1,5 @@
+var structwpi_1_1detail_1_1is__compatible__integer__type__impl_3_01true_00_01RealIntegerType_00_01CompatibleNumberIntegerType_01_4 =
+[
+    [ "CompatibleLimits", "structwpi_1_1detail_1_1is__compatible__integer__type__impl_3_01true_00_01RealIntegerType_00_01CompatibleNumberIntegerType_01_4.html#af717aa5d563d191d3faebb3308b9002e", null ],
+    [ "RealLimits", "structwpi_1_1detail_1_1is__compatible__integer__type__impl_3_01true_00_01RealIntegerType_00_01CompatibleNumberIntegerType_01_4.html#a5a66d173796f602eba4acb4fb22e6305", null ]
+];

@@ -1,0 +1,25 @@
+g++ -Wall -Werror -std=c++14 -DTOPLEVEL_TEST \
+	nop.cpp \
+	gun.cpp \
+	toplevel.cpp \
+	../util/fixVictor.cpp \
+	../util/posedge_trigger.cpp \
+	../util/negedge_trigger.cpp \
+	../util/countup_timer.cpp \
+	pump.cpp \
+	arm.cpp \
+	winch.cpp \
+	grabber.cpp \
+	../util/point.cpp \
+	drivebase.cpp \
+	../util/interface.cpp \
+	../util/jag_interface.cpp \
+	../util/driver_station_interface.cpp \
+	../util/util.cpp \
+	../util/countdown_timer.cpp\
+	motor_check.cpp\
+	../util/input.cpp\
+	../util/output.cpp\
+	tote_sensors.cpp\
+	../util/pwm.cpp\
+	-o toplevel 2>&1 && ./toplevel 2>&1

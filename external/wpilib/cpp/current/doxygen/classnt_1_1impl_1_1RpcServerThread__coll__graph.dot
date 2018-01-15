@@ -1,0 +1,23 @@
+digraph "nt::impl::RpcServerThread"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="nt::impl::RpcServerThread",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="nt::impl::CallbackThread\l\< RpcServerThread, RpcAnswer,\l RpcListenerData, RpcNotifierData \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classnt_1_1impl_1_1CallbackThread.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="wpi::SafeThread",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classwpi_1_1SafeThread.html"];
+  Node4 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_pollers" ,fontname="Helvetica"];
+  Node4 [label="wpi::UidVector\< std\l::shared_ptr\< nt::impl\l::CallbackThread::Poller\l \>, 64 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classwpi_1_1UidVector.html"];
+  Node5 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_listeners" ,fontname="Helvetica"];
+  Node5 [label="wpi::UidVector\< Listener\lData, 64 \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classwpi_1_1UidVector.html"];
+  Node6 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_logger" ,fontname="Helvetica"];
+  Node6 [label="wpi::Logger",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classwpi_1_1Logger.html"];
+  Node7 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_response_map" ,fontname="Helvetica"];
+  Node7 [label="llvm::DenseMap\< RpcIdPair,\l nt::IRpcServer::SendResponseFunc \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMap.html"];
+  Node8 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="llvm::DenseMapBase\l\< DenseMap\< RpcIdPair,\l nt::IRpcServer::SendResponse\lFunc, DenseMapInfo\< RpcIdPair\l \>, detail::DenseMapPair\< RpcIdPair,\l nt::IRpcServer::SendResponseFunc\l \> \>, RpcIdPair, nt::IRpcServer::SendResponse\lFunc, DenseMapInfo\< RpcIdPair \>, detail\l::DenseMapPair\< RpcIdPair, nt::IRpcServer\l::SendResponseFunc \> \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DenseMapBase.html"];
+  Node9 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="llvm::DebugEpochBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1DebugEpochBase.html",tooltip="A base class for data structure classes wishing to make iterators (\"handles\") pointing into themselve..."];
+}

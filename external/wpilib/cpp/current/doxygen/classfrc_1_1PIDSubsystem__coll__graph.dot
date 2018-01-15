@@ -1,0 +1,22 @@
+digraph "frc::PIDSubsystem"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="frc::PIDSubsystem",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="frc::Subsystem",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Subsystem.html"];
+  Node3 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="frc::ErrorBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1ErrorBase.html",tooltip="Base class for most objects. "];
+  Node4 -> Node3 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" _globalError\nm_error" ,fontname="Helvetica"];
+  Node4 [label="frc::Error",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Error.html",tooltip="Error object represents a library error. "];
+  Node5 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="frc::NamedSendable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1NamedSendable.html",tooltip="The interface for sendable objects that gives the sendable a default name in the Smart Dashboard..."];
+  Node6 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="frc::Sendable",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1Sendable.html"];
+  Node7 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_hasDefaultEntry\nm_commandEntry\nm_defaultEntry\nm_hasCommandEntry" ,fontname="Helvetica"];
+  Node7 [label="nt::NetworkTableEntry",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classnt_1_1NetworkTableEntry.html",tooltip="NetworkTables Entry. "];
+  Node8 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="frc::PIDOutput",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PIDOutput.html",tooltip="PIDOutput interface is a generic output for the PID class. "];
+  Node9 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="frc::PIDSource",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classfrc_1_1PIDSource.html",tooltip="PIDSource interface is a generic sensor source for the PID class. "];
+}

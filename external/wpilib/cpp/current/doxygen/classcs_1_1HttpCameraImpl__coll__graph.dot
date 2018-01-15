@@ -1,0 +1,18 @@
+digraph "cs::HttpCameraImpl"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="cs::HttpCameraImpl",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black"];
+  Node2 -> Node1 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="cs::SourceImpl",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classcs_1_1SourceImpl.html"];
+  Node3 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_properties" ,fontname="Helvetica"];
+  Node3 [label="llvm::StringMap\< int \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1StringMap.html"];
+  Node4 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="llvm::StringMapImpl",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1StringMapImpl.html",tooltip="StringMapImpl - This is the base class of StringMap that is shared among all of its instantiations..."];
+  Node5 -> Node4 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" TheTable" ,fontname="Helvetica"];
+  Node5 [label="llvm::StringMapEntryBase",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1StringMapEntryBase.html",tooltip="StringMapEntryBase - Shared base class of StringMapEntry instances. "];
+  Node6 -> Node2 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" m_mode" ,fontname="Helvetica"];
+  Node6 [label="cs::VideoMode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structcs_1_1VideoMode.html",tooltip="Video mode. "];
+  Node7 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="CS_VideoMode",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structCS__VideoMode.html"];
+}

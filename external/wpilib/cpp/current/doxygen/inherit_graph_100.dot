@@ -1,0 +1,7 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="llvm::is_integral_or\l_enum\< T \>",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1is__integral__or__enum.html",tooltip="Metafunction that determines whether the given type is either an integral type or an enumeration type..."];
+}

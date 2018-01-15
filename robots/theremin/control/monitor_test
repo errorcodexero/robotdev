@@ -1,0 +1,36 @@
+g++ -Wall -Werror -std=c++14 -DMONITOR_TEST \
+	../util/type.cpp\
+	../executive/executive.cpp\
+	../executive/teleop.cpp \
+	tilt_presets.cpp \
+	shooter_constants.cpp \
+	monitor.cpp \
+	nop.cpp \
+	../util/fixVictor.cpp \
+	../util/interface.cpp \
+	../util/jag_interface.cpp \
+	pump.cpp \
+	../util/posedge_toggle.cpp \
+	force_interface.cpp \
+	drivebase.cpp \
+	../util/driver_station_interface.cpp \
+	../util/util.cpp \
+	../util/countup_timer.cpp \
+	force.cpp \
+	../util/posedge_trigger.cpp \
+	../util/point.cpp \
+	../util/negedge_trigger.cpp \
+	../util/countdown_timer.cpp\
+	motor_check.cpp\
+	main.cpp\
+	../util/perf_tracker.cpp\
+	../input/util.cpp\
+	../input/panel.cpp\
+	../util/nav.cpp\
+	../util/nav2.cpp\
+	log.cpp\
+	../util/motion_profile.cpp \
+	toplevel.cpp \
+	../util/debounce.cpp\
+	../util/posedge_trigger_debounce.cpp\
+	-o monitor 2>&1 && ./monitor

@@ -1,0 +1,23 @@
+digraph "Graphical Class Hierarchy"
+{
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="LR";
+  Node1 [label="llvm::raw_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1raw__ostream.html",tooltip="This class implements an extremely fast bulk output stream that can only output to a stream..."];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="llvm::raw_os_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1raw__os__ostream.html",tooltip="raw_os_ostream - A raw_ostream that writes to an std::ostream. "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="llvm::raw_pwrite_stream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1raw__pwrite__stream.html",tooltip="An abstract base class for streams implementations that also support a pwrite operation. "];
+  Node3 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="llvm::raw_fd_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1raw__fd__ostream.html",tooltip="A raw_ostream that writes to a file descriptor. "];
+  Node3 -> Node5 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node5 [label="llvm::raw_null_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1raw__null__ostream.html",tooltip="A raw_ostream that discards all output. "];
+  Node3 -> Node6 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node6 [label="llvm::raw_svector_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1raw__svector__ostream.html",tooltip="A raw_ostream that writes to an SmallVector or SmallString. "];
+  Node6 -> Node7 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node7 [label="llvm::buffer_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1buffer__ostream.html"];
+  Node1 -> Node8 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node8 [label="llvm::raw_string_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classllvm_1_1raw__string__ostream.html",tooltip="A raw_ostream that writes to an std::string. "];
+  Node1 -> Node9 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node9 [label="wpi::raw_socket_ostream",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$classwpi_1_1raw__socket__ostream.html"];
+}
