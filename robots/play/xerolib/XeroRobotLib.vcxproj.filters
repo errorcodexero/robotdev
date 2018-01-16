@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="AutoDelay.cpp" />
+    <ClCompile Include="AutoDriveBaseChar.cpp" />
+    <ClCompile Include="AutoDriveDistance.cpp" />
+    <ClCompile Include="AutonomousControllerBase.cpp" />
+    <ClCompile Include="AutonomousStepBase.cpp" />
+    <ClCompile Include="AutoSetMotorVoltage.cpp" />
+    <ClCompile Include="DataFileDestination.cpp" />
+    <ClCompile Include="DataLogger.cpp" />
+    <ClCompile Include="DataUdpDestination.cpp" />
+    <ClCompile Include="DriveBase.cpp" />
+    <ClCompile Include="EncoderAngleMeasurementDevice.cpp" />
+    <ClCompile Include="MessageLogger.cpp" />
+    <ClCompile Include="MessageStreamDestination.cpp" />
+    <ClCompile Include="NavXAngleMeasurementDevice.cpp" />
+    <ClCompile Include="ParamFileReader.cpp" />
+    <ClCompile Include="PIDCtrl.cpp" />
+    <ClCompile Include="RobotControllerBase.cpp" />
+    <ClCompile Include="SubsystemBase.cpp" />
+    <ClCompile Include="TrapezoidSpeedProfile.cpp" />
+    <ClCompile Include="XeroRobotBase.cpp" />
+    <ClCompile Include="DataTcpDestination.cpp" />
+    <ClCompile Include="TcpClientSocket.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AgedTrapezoidSpeedProfile.h" />
+    <ClInclude Include="AngleMeasurementDevice.h" />
+    <ClInclude Include="AutoDelay.h" />
+    <ClInclude Include="AutoDriveBaseChar.h" />
+    <ClInclude Include="AutoDriveDistance.h" />
+    <ClInclude Include="AutonomousControllerBase.h" />
+    <ClInclude Include="AutonomousStepBase.h" />
+    <ClInclude Include="AutoSetMotorVoltage.h" />
+    <ClInclude Include="DataDestination.h" />
+    <ClInclude Include="DataFileDestination.h" />
+    <ClInclude Include="DataLogger.h" />
+    <ClInclude Include="DataUdpDestination.h" />
+    <ClInclude Include="DriveBase.h" />
+    <ClInclude Include="EncoderAngleMeasurementDevice.h" />
+    <ClInclude Include="MessageDestination.h" />
+    <ClInclude Include="MessageLogger.h" />
+    <ClInclude Include="MessageStreamDestination.h" />
+    <ClInclude Include="NavXAngleMeasurementDevice.h" />
+    <ClInclude Include="ParamFileReader.h" />
+    <ClInclude Include="PIDCtrl.h" />
+    <ClInclude Include="RobotControllerBase.h" />
+    <ClInclude Include="Speedometer.h" />
+    <ClInclude Include="SubsystemBase.h" />
+    <ClInclude Include="TrapezoidSpeedProfile.h" />
+    <ClInclude Include="UdpBroadcastReceiver.h" />
+    <ClInclude Include="UdpBroadcastSender.h" />
+    <ClInclude Include="UdpSocket.h" />
+    <ClInclude Include="XeroRobotBase.h" />
+    <ClInclude Include="DataTcpDestination.h" />
+    <ClInclude Include="TcpClientSocket.h" />
+  </ItemGroup>
+</Project>
