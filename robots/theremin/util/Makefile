@@ -38,6 +38,7 @@ SRC = \
 	string_utils.cpp\
 	type.cpp\
 	util.cpp\
+	paramsParser.cpp\
 	visitable.cpp
 
 $(info $(SRC))
