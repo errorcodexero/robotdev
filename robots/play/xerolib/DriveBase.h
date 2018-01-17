@@ -102,8 +102,6 @@ namespace xerolib
 
 		void setPhysicalChar(int32_t ticks, double diam)
 		{
-			MessageLogger &logger = getRobot().getMessageLogger();
-			DataLogger &data = getRobot().getDataLogger();
 
 			m_ticks_per_rev = ticks;
 			m_wheel_diameter = diam;

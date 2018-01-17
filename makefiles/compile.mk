@@ -110,3 +110,7 @@ CXXFLAGS += -I$(EXTERNALSW)/boost/include
 ADDLIBS += $(EXTERNALSW)/boost/lib/libboost_system.a
 endif
 endif
+
+ifdef ADDCXXFLAGS
+CXXFLAGS += $(ADDCXXFLAGS)
+endif

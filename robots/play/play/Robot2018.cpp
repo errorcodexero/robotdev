@@ -3,9 +3,8 @@
 #include "NavXAngleMeasurementDevice.h"
 #include "EncoderAngleMeasurementDevice.h"
 #include "MessageLogger.h"
-#include <WPI_TalonSRX.h>
+#include <ctre/phoenix/MotorControl/CAN/WPI_TalonSRX.h>
 #include <Encoder.h>
-#include "ServoSubsystem.h"
 #include "AHRS.h"
 #include "ParamFileReader.h"
 #include <chrono>
