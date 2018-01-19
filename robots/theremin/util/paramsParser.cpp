@@ -1,62 +1,87 @@
-#include "stdafx.h"
 #include "paramsParser.h"
 
-
-paramsInput::paramsInput() {
+paramsInput::paramsInput()
+{
 }
 
-bool paramsInput::readFile(const std::string &filename) {
-	this->filename = filename;
-	f.open(filename);
-	if (!f.is_open()) { return false; }
-	else {
-		std::string buffer;
-		std::pair<std::string, double> bufferPair;
-		while (!f.eof()) {
-			std::getline(f, buffer);
-			unsigned int commentStart = buffer.find('#');
-			if (commentStart != buffer.npos) {
-				buffer = buffer.substr(0, commentStart);
-			}
-			if (buffer.length() > 0) {
-				unsigned int i = 0;
-				std::string Key, valueString;
-				double value;
-				while (i < buffer.length() && (!isspace(buffer[i])))
-					Key += buffer[i++];
+bool paramsInput::readFile(const std::string &filename)
+{
+    bool ret = false ;
+    this->mFilename = filename;
 
-				while (i < buffer.length() && (isspace(buffer[i])))
-					i++;
+    std::fstream f(filename) ;
+    if (f.is_open())
+    {
+	std::string buffer;
+	
+	while (!f.eof())
+	{
+	    std::getline(f, buffer);
+	    unsigned int commentStart = buffer.find('#');
+      
+	    if (commentStart != buffer.npos)
+	    {
+		buffer = buffer.substr(0, commentStart);
+	    }
+      
+	    if (buffer.length() > 0)
+	    {
+		unsigned int i = 0;
+		std::string Key, valueString;
+		double value;
+		while (i < buffer.length() && (!isspace(buffer[i])))
+		    Key += buffer[i++];
 
-				while (i < buffer.length() && (!isspace(buffer[i])))
-					valueString += buffer[i++];
+		while (i < buffer.length() && (isspace(buffer[i])))
+		    i++;
 
-				value = std::stod(valueString);
-				paramsMap.insert(std::pair<std::string, double>(Key, value));
-			}
-		}
-		return true;
+		while (i < buffer.length() && (!isspace(buffer[i])))
+		    valueString += buffer[i++];
+
+		value = std::stod(valueString);
+		mParamsMap.insert(std::pair<std::string, double>(Key, value));
+	    }
 	}
+	ret = true ;
+    }
+
+    return ret ;
 }
 
-bool paramsInput::printMap(const std::string &filename) {
-	std::ofstream fo;
-	fo.open(filename);
-	if (!fo.is_open()) return false;
-	else {
-		std::map<std::string, double>::iterator it = paramsMap.begin();
-		for (; it != paramsMap.end(); it++) {
-			fo << it->first << ' ' << it->second << std::endl;
-		}
+bool paramsInput::printMap(const std::string &filename)
+{
+    bool ret = false ;
+    std::ofstream fo;
+    fo.open(filename);
+    if (fo.is_open())
+    {
+	ret = true ;
+	std::map<std::string, double>::iterator it = mParamsMap.begin();
+	for (; it != mParamsMap.end(); it++)
+	{
+	    fo << it->first << ' ' << it->second << std::endl;
 	}
 	fo.close();
+	ret = true ;
+    }
+
+    return ret ;
 }
-bool paramsInput::hasParam(const std::string &paramName) {
-	bool found = false;
-	if (paramsMap.find(paramName) != paramsMap.end()) found = true;
-	return found;
+
+bool paramsInput::hasParam(const std::string &paramName)
+{
+    bool found = false;
+    if (mParamsMap.find(paramName) != mParamsMap.end())
+	found = true;
+    
+    return found;
 }
-double paramsInput::getValue(const std::string &paramName, double defaultValue) {
-	std::map<std::string, double>::iterator pos = paramsMap.find(paramName);
-	if (paramsMap.find(paramName) != paramsMap.end()) return pos->second;
+
+double paramsInput::getValue(const std::string &paramName, double defaultValue)
+{
+    auto it = mParamsMap.find(paramName) ;
+    if (it == mParamsMap.end())
+	return defaultValue ;
+    
+    return it->second ;
 }
