@@ -70,6 +70,17 @@ OBJDIR=$(TARGETDIR)/obj/$(TARGETNAME)
 OBJS=$(addprefix $(OBJDIR)/,$(patsubst %.cpp,%.o,$(SRC)))
 
 #
+# Include the common directories
+#
+ifdef COMMON
+COMMONHDRSFULL=$(addprefix -I../../common/,$(COMMON))
+CXXFLAGS += $(COMMONHDRSFULL)
+COMMONLIBSFULL=$(addprefix ../../common/builddir/$(CONFIG)/,$(addsuffix .a,$(COMMON)))
+ADDLIBS += $(COMMONLIBSFULL)
+endif
+
+
+#
 # Check to see if we need the NAVX libraries
 #
 ifdef NAVX

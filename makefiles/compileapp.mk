@@ -16,7 +16,17 @@ TARGETAPPLIBS=$(addprefix $(TARGETDIR)/,$(APPLIBS))
 #
 # The top level make target, makes the directory an library
 #
-all: mkdirs $(REALTARGET)
+all: mkdirs shared $(REALTARGET)
+
+include ../../../makefiles/test.mk
+
+ifdef COMMON
+shared:
+	(cd ../../common ; make CONFIG=$(CONFIG))
+else
+shared:
+	echo No shared libraries required
+endif
 
 #
 # The clean target

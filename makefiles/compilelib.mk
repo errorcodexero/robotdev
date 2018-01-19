@@ -14,6 +14,8 @@ REALTARGET=$(TARGETDIR)/$(TARGET)
 #
 all: mkdirs $(REALTARGET)
 
+include ../../../makefiles/test.mk
+
 #
 # The clean target
 #

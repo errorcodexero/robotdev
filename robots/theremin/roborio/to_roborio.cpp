@@ -5,12 +5,15 @@
 #include "talon_srx_control.h"
 #include "pump_control.h"
 #include "navx_control.h"
+#include "paramsParser.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
 
 using namespace std;
+
+paramsInput inputParams ;
 
 Joystick_data read_joystick(frc::DriverStation& ds,int port){
 	//I don't know what the DriverStation does when port is out of range.

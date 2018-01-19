@@ -1,5 +1,6 @@
 #include "paramsParser.h"
 #include <ostream>
+#include <string>
 
 paramsInput::paramsInput()
 {
@@ -49,11 +50,11 @@ bool paramsInput::readFile(const std::string &filename)
     return ret ;
 }
 
-bool paramsInput::printMap(const std::ostream &fo)
+bool paramsInput::printMap(std::ostream &fo)
 {
     for (auto it = mParamsMap.begin() ; it != mParamsMap.end(); it++)
     {
-	fo << it->first << ' ' << it.second << std::endl;
+	fo << it->first << ' ' << it->second << std::endl;
     }
     
     return true ;

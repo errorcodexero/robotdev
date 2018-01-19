@@ -28,7 +28,7 @@ public:
 
     /// \brief print the parameter values to the output stream given
     /// \param out the output stream to write the parameters to
-    bool printMap(const std::ostream &out);
+    bool printMap(std::ostream &out);
     
 private:
     // the map that stores the parameter values
