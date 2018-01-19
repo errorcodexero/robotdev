@@ -3,8 +3,6 @@
 #include <AutoDriveDistance.h>
 #include <AutoDelay.h>
 #include <AutoDriveBaseChar.h>
-#include "AutoSetServoPosition.h"
-#include "ServoSubsystem.h"
 #include <DriveBase.h>
 #include <XeroRobotBase.h>
 

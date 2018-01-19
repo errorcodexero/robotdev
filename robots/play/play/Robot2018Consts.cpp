@@ -1,7 +1,7 @@
 #include "Robot2018Consts.h"
 #include <cstdint>
 
-namespace Robot2018
+namespace Robot2018Consts
 {
 	/////////////////////////////////////////////////////////////
 	//

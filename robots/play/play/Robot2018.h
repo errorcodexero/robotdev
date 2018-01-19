@@ -99,10 +99,4 @@ private:
 	// The drive base for this robot
 	//
 	std::shared_ptr<xerolib::DriveBase> m_drivebase_p;
-
-	//
-	// The eyes for this robot
-	//
-	std::shared_ptr<ServoSubsystem> m_eyes_p;
-
 };

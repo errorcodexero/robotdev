@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace Robot2018
+namespace Robot2018Consts
 {
 	//
 	// The number of pulses the encoder ticks per revolution of

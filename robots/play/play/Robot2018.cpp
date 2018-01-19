@@ -3,10 +3,10 @@
 #include "NavXAngleMeasurementDevice.h"
 #include "EncoderAngleMeasurementDevice.h"
 #include "MessageLogger.h"
-#include <ctre/phoenix/MotorControl/CAN/WPI_TalonSRX.h>
-#include <Encoder.h>
-#include "AHRS.h"
 #include "ParamFileReader.h"
+#include <WPILib.h>
+#include <ctre/phoenix/MotorControl/CAN/WPI_TalonSRX.h>
+#include "AHRS.h"
 #include <chrono>
 #include <iostream>
 #include <iomanip>
@@ -194,9 +194,8 @@ void Robot2018::dumpParams()
 
 void Robot2018::RobotInit()
 {
-	MessageLogger &logger = getMessageLogger();
-	std::list<frc::PWMSpeedControllers> left_motors ;
-	std::list<frc::PWMSpeedControllers> right_motors ;
+	std::list<std::shared_ptr<frc::SpeedController>> left_motors ;
+	std::list<std::shared_ptr<frc::SpeedController>> right_motors ;
 
 	std::list<int> left_can_addrs = { 0, 1, 2} ;
 	std::list<int> right_can_addrs = { 3, 4, 5} ;
@@ -213,13 +212,13 @@ void Robot2018::RobotInit()
 
 	for(int addr: left_can_addrs)
 	{
-	  std::shared_ptr<frc::PWMSpeedControllers> motor_p = std::make_shared<frc::WPI_TalonSRX>(addr) ;
+	  std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
 	  left_motors.push_back(motor_p) ;
 	}
 
 	for(int addr: right_can_addrs)
 	{
-	  std::shared_ptr<frc::PWMSpeedControllers> motor_p = std::make_shared<frc::WPI_TalonSRX>(addr) ;
+	  std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
 	  right_motors.push_back(motor_p) ;
 	}
 
@@ -254,11 +253,6 @@ void Robot2018::RobotInit()
 
 	addSubsystem(m_drivebase_p);
 
-	m_eyes_p = std::make_shared<ServoSubsystem>(*this);
-	std::shared_ptr<frc::Servo> servo_p = std::make_shared<frc::Servo>(0);
-	m_eyes_p->setServo(servo_p);
-
-	addSubsystem(m_eyes_p);
 }
 
 

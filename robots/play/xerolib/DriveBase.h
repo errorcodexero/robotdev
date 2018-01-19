@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SubsystemBase.h"
-#include "PWMSpeedController.h"
+#include "SpeedController.h"
 #include "Encoder.h"
 #include "XeroRobotBase.h"
 #include "Speedometer.h"
@@ -47,13 +47,13 @@ namespace xerolib
 		//
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		void setMotors(std::shared_ptr<frc::PWMSpeedController> left_p, std::shared_ptr<frc::PWMSpeedController> right_p)
+		void setMotors(std::shared_ptr<frc::SpeedController> left_p, std::shared_ptr<frc::SpeedController> right_p)
 		{
 			m_left_motors.push_back(left_p);
 			m_right_motors.push_back(right_p);
 		}
 
-		void setMotors(std::list<std::shared_ptr<frc::PWMSpeedController>> left, std::list<std::shared_ptr<frc::PWMSpeedController>> right)
+		void setMotors(std::list<std::shared_ptr<frc::SpeedController>> left, std::list<std::shared_ptr<frc::SpeedController>> right)
 		{
 			m_left_motors = left;
 			m_right_motors = right;
@@ -346,10 +346,10 @@ namespace xerolib
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// The list of motors on the left side of the robot
-		std::list<std::shared_ptr<frc::PWMSpeedController>> m_left_motors;
+		std::list<std::shared_ptr<frc::SpeedController>> m_left_motors;
 
 		// The list of motors on the right side of the robot
-		std::list<std::shared_ptr<frc::PWMSpeedController>> m_right_motors;
+		std::list<std::shared_ptr<frc::SpeedController>> m_right_motors;
 
 		// The encoders on the left side of the robot
 		std::shared_ptr<frc::Encoder> m_left_encoder_p;
