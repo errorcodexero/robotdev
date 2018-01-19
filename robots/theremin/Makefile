@@ -3,7 +3,6 @@
 #
 
 include ../../makefiles/valid.mk
-include ../../makefiles/doxygen.mk
 
 SUBDIRS = \
 	control\
