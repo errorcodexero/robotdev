@@ -52,7 +52,7 @@ $(TESTTARGETNAMES):
 	@$(CXX) $(CXXFLAGS) -o $@ $(basename $(notdir $@)).cpp -D $(shell echo $(basename $(notdir $@)) | tr a-z A-Z)_TEST
 	@echo done
 
-$(TESTTARGETDIR)/%.exe:
+$(TESTTARGETDIR)/%$(EXEEXT):
 	@echo -n Building test $(basename $(notdir $@)) " ... "
 	@$(CXX) $(CXXFLAGS) -o $@ $? -D $(shell echo $(basename $(notdir $@)) | tr a-z A-Z)_TEST
 	@echo done
