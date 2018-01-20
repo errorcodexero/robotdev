@@ -1,0 +1,59 @@
+This is the new make file build structure for robot development.
+
+This structure ...
+
+- depends only on gnu make and bash beyond the FIRST tools.  It
+  should work on a variety of platforms and should be easy to
+  bring up on new platforms.
+
+- is cross platform.  It runs on cygwin on windows, linux, and
+  mac os.  (I have not tried it on mac os but it should run
+  there.)
+
+- runs the existing test code for the existing robot, including
+  running with valgrind when running on linux
+
+- adds the ability to have a robot directory named common
+  to share code common to multiple robots
+
+- expects the FRC compilers to be installed on linux and mac os
+  but uses a copy in the repository for cygwin
+
+- stores the necessary external software (CTRE,  NavX, WPIlib)
+  required to build the robot software as part of the repository
+  so it is easy to get builds up and running.  No more searching
+  for just the right version of some external software
+  
+
+The layout of this repository is
+
+robotdev
+- makefiles			makefiles used to build robot code
+- external
+  - CTRE_FRCLibs		CTRE libraries for 2018
+  - CTRE_FRCLibs2017		CTRE libraries from 2017
+  - frc				FRC compiler from 2018
+  - frc2017			FRC compiler from 2017
+  - navx			NavX libraries for 2018
+  - navx2017			NavX libraries for 2017
+  - wpilib			First WPILibs for 2018
+  - wpilib2017			First WPILibs for 2017
+- robots			repository for all robot code
+  - common			code common to multiple robots
+  - theremin			code specific to the theremin robot
+
+
+At the top level of a robot (e.g. robots/theremin)
+
+make CONFIG=cfg
+- builds and runs the test code locally
+- builds the robot code
+
+make CONFIG=cfg tests
+- builds and runs the test code locally
+
+make CONFIG=cfg robotsw
+- builds the robot software
+
+cfg is the desired configuration and can be debug or release
+
