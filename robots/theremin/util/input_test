@@ -1,1 +1,0 @@
-g++ -std=c++14 -Wall -DINPUT_TEST -Werror input.cpp -o input 2>&1 && ./input 2>&1

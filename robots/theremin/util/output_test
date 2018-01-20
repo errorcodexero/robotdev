@@ -1,1 +1,0 @@
-g++ -Wall -Werror -std=c++14 -DOUTPUT_TEST output.cpp -o output 2>&1 && ./output 2>&1
