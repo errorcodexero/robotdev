@@ -27,9 +27,11 @@ EXTERNALSW = ../../../external
 ifeq ($(OS),Windows_NT)
 CROSSCXX = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-g++
 AR = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-ar
+EXEEXT=.exe
 else
 CROSSCXX = arm-frc-linux-gnueabi-g++
 AR = arm-frc-linux-gnueabi-ar
+EXEEXT=
 endif
 
 CXX=g++

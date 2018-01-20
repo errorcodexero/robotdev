@@ -36,52 +36,52 @@ COMPLEXTESTS = \
 include ../../../makefiles/compilelib.mk
 
 
-$(TESTTARGETDIR)/autonomous.exe: autonomous.cpp teleop.cpp step.cpp executive.cpp chain.cpp test.cpp
-$(TESTTARGETDIR)/autonomous.exe: ../control/drivebase.cpp ../control/toplevel.cpp ../control/lights.cpp
-$(TESTTARGETDIR)/autonomous.exe: ../control/pump.cpp ../control/nop.cpp ../control/motor_check.cpp
-$(TESTTARGETDIR)/autonomous.exe: ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/interface.cpp
-$(TESTTARGETDIR)/autonomous.exe: ../util/driver_station_interface.cpp ../util/motion_profile.cpp ../util/posedge_trigger.cpp
-$(TESTTARGETDIR)/autonomous.exe: ../util/type.cpp ../util/util.cpp
-$(TESTTARGETDIR)/autonomous.exe: ../input/util.cpp ../input/panel.cpp
+$(TESTTARGETDIR)/autonomous$(EXEEXT): autonomous.cpp teleop.cpp step.cpp executive.cpp chain.cpp test.cpp
+$(TESTTARGETDIR)/autonomous$(EXEEXT): ../control/drivebase.cpp ../control/toplevel.cpp ../control/lights.cpp
+$(TESTTARGETDIR)/autonomous$(EXEEXT): ../control/pump.cpp ../control/nop.cpp ../control/motor_check.cpp
+$(TESTTARGETDIR)/autonomous$(EXEEXT): ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/interface.cpp
+$(TESTTARGETDIR)/autonomous$(EXEEXT): ../util/driver_station_interface.cpp ../util/motion_profile.cpp ../util/posedge_trigger.cpp
+$(TESTTARGETDIR)/autonomous$(EXEEXT): ../util/type.cpp ../util/util.cpp
+$(TESTTARGETDIR)/autonomous$(EXEEXT): ../input/util.cpp ../input/panel.cpp
 
-$(TESTTARGETDIR)/chain.exe: chain.cpp executive.cpp teleop.cpp step.cpp autonomous.cpp
-$(TESTTARGETDIR)/chain.exe: ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
-$(TESTTARGETDIR)/chain.exe: ../util/stall_monitor.cpp ../util/type.cpp
-$(TESTTARGETDIR)/chain.exe: ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
-$(TESTTARGETDIR)/chain.exe: ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
-$(TESTTARGETDIR)/chain.exe: ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
-$(TESTTARGETDIR)/chain.exe: ../input/panel.cpp ../input/util.cpp
+$(TESTTARGETDIR)/chain$(EXEEXT): chain.cpp executive.cpp teleop.cpp step.cpp autonomous.cpp
+$(TESTTARGETDIR)/chain$(EXEEXT): ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
+$(TESTTARGETDIR)/chain$(EXEEXT): ../util/stall_monitor.cpp ../util/type.cpp
+$(TESTTARGETDIR)/chain$(EXEEXT): ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
+$(TESTTARGETDIR)/chain$(EXEEXT): ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
+$(TESTTARGETDIR)/chain$(EXEEXT): ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
+$(TESTTARGETDIR)/chain$(EXEEXT): ../input/panel.cpp ../input/util.cpp
 
-$(TESTTARGETDIR)/executive.exe: executive.cpp
-$(TESTTARGETDIR)/executive.exe: ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
-$(TESTTARGETDIR)/executive.exe: ../util/stall_monitor.cpp ../util/type.cpp
-$(TESTTARGETDIR)/executive.exe: ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
-$(TESTTARGETDIR)/executive.exe: ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
-$(TESTTARGETDIR)/executive.exe: ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
-$(TESTTARGETDIR)/executive.exe: ../input/panel.cpp ../input/util.cpp
+$(TESTTARGETDIR)/executive$(EXEEXT): executive.cpp
+$(TESTTARGETDIR)/executive$(EXEEXT): ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
+$(TESTTARGETDIR)/executive$(EXEEXT): ../util/stall_monitor.cpp ../util/type.cpp
+$(TESTTARGETDIR)/executive$(EXEEXT): ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
+$(TESTTARGETDIR)/executive$(EXEEXT): ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
+$(TESTTARGETDIR)/executive$(EXEEXT): ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
+$(TESTTARGETDIR)/executive$(EXEEXT): ../input/panel.cpp ../input/util.cpp
 
-$(TESTTARGETDIR)/step.exe: step.cpp
-$(TESTTARGETDIR)/step.exe: ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
-$(TESTTARGETDIR)/step.exe: ../util/stall_monitor.cpp ../util/type.cpp
-$(TESTTARGETDIR)/step.exe: ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
-$(TESTTARGETDIR)/step.exe: ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
-$(TESTTARGETDIR)/step.exe: ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
-$(TESTTARGETDIR)/step.exe: ../input/panel.cpp ../input/util.cpp
+$(TESTTARGETDIR)/step$(EXEEXT): step.cpp
+$(TESTTARGETDIR)/step$(EXEEXT): ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
+$(TESTTARGETDIR)/step$(EXEEXT): ../util/stall_monitor.cpp ../util/type.cpp
+$(TESTTARGETDIR)/step$(EXEEXT): ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
+$(TESTTARGETDIR)/step$(EXEEXT): ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
+$(TESTTARGETDIR)/step$(EXEEXT): ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
+$(TESTTARGETDIR)/step$(EXEEXT): ../input/panel.cpp ../input/util.cpp
 
 
-$(TESTTARGETDIR)/teleop.exe: teleop.cpp executive.cpp test.cpp autonomous.cpp step.cpp chain.cpp
-$(TESTTARGETDIR)/teleop.exe: ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
-$(TESTTARGETDIR)/teleop.exe: ../util/stall_monitor.cpp ../util/type.cpp
-$(TESTTARGETDIR)/teleop.exe: ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
-$(TESTTARGETDIR)/teleop.exe: ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
-$(TESTTARGETDIR)/teleop.exe: ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
-$(TESTTARGETDIR)/teleop.exe: ../input/panel.cpp ../input/util.cpp
+$(TESTTARGETDIR)/teleop$(EXEEXT): teleop.cpp executive.cpp test.cpp autonomous.cpp step.cpp chain.cpp
+$(TESTTARGETDIR)/teleop$(EXEEXT): ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
+$(TESTTARGETDIR)/teleop$(EXEEXT): ../util/stall_monitor.cpp ../util/type.cpp
+$(TESTTARGETDIR)/teleop$(EXEEXT): ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
+$(TESTTARGETDIR)/teleop$(EXEEXT): ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
+$(TESTTARGETDIR)/teleop$(EXEEXT): ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
+$(TESTTARGETDIR)/teleop$(EXEEXT): ../input/panel.cpp ../input/util.cpp
 
-$(TESTTARGETDIR)/test.exe: test.cpp executive.cpp teleop.cpp autonomous.cpp step.cpp chain.cpp
-$(TESTTARGETDIR)/test.exe: ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
-$(TESTTARGETDIR)/test.exe: ../util/stall_monitor.cpp ../util/type.cpp
-$(TESTTARGETDIR)/test.exe: ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
-$(TESTTARGETDIR)/test.exe: ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
-$(TESTTARGETDIR)/test.exe: ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
-$(TESTTARGETDIR)/test.exe: ../input/panel.cpp ../input/util.cpp
+$(TESTTARGETDIR)/test$(EXEEXT): test.cpp executive.cpp teleop.cpp autonomous.cpp step.cpp chain.cpp
+$(TESTTARGETDIR)/test$(EXEEXT): ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
+$(TESTTARGETDIR)/test$(EXEEXT): ../util/stall_monitor.cpp ../util/type.cpp
+$(TESTTARGETDIR)/test$(EXEEXT): ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
+$(TESTTARGETDIR)/test$(EXEEXT): ../control/toplevel.cpp ../control/lights.cpp ../control/pump.cpp
+$(TESTTARGETDIR)/test$(EXEEXT): ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
+$(TESTTARGETDIR)/test$(EXEEXT): ../input/panel.cpp ../input/util.cpp
 
