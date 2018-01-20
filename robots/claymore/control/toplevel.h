@@ -4,12 +4,14 @@
 #include <vector>
 #include "pump.h"
 #include "drivebase.h"
+#include "intake.h"
 #include "nop.h"
 #include "lights.h"
 
 #define TOPLEVEL_ITEMS \
 	X(Pump,pump,Pump::Goal::AUTO)\
 	X(Drivebase,drive,)\
+	X(Intake,intake,Intake::Goal::OFF)\
 	X(Lights,lights,)
 	
 class Toplevel{

@@ -99,6 +99,7 @@ ostream& operator<<(ostream& o,Toplevel::Output_applicator const&){
 Toplevel::Output::Output():
 	pump(Pump::Output::AUTO),
 	drive(0.0,0.0),
+	intake(Intake::Output::OFF),
 	lights()
 {}
 
@@ -150,6 +151,7 @@ ostream& operator<<(ostream& o,Toplevel::Goal g){
 Toplevel::Status::Status():
 	pump(Pump::Status::NOT_FULL),
 	drive(*examples((Drivebase::Status*)nullptr).begin()),
+	intake(*examples((Intake::Status*)nullptr).begin()),
 	lights(*examples((Lights::Status*)nullptr).begin())
 {}
 bool operator==(Toplevel::Status a,Toplevel::Status b){
