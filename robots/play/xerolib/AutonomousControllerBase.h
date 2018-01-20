@@ -13,7 +13,7 @@ namespace xerolib
 	{
 	public:
 		AutonomousControllerBase(XeroRobotBase &robot);
-		~AutonomousControllerBase();
+		virtual ~AutonomousControllerBase();
 
 		virtual void executeOneLoop();
 
@@ -34,9 +34,9 @@ namespace xerolib
 	private:
 		enum class State
 		{
-			Beginning,
-			Running,
-			End
+			Beginning = 1,
+			Running = 2,
+			End = 3
 		};
 
 	private:

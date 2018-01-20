@@ -2,15 +2,11 @@
 # include the validation stuff
 #
 
-include ../../makefiles/valid.mk
+LIBSUBDIRS = \
+	xerolib
 
-SUBDIRS = \
-	xerolib\
+TOPDIR=\
 	play
 
-all:: $(SUBDIRS)
+include ../../makefiles/toplevel.mk
 
-$(SUBDIRS)::
-	(cd $@ ; $(MAKE) CONFIG=$(CONFIG))
-
-.PHONY: all $(SUBDIRS)

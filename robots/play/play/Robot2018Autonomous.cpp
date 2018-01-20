@@ -5,6 +5,7 @@
 #include <AutoDriveBaseChar.h>
 #include <DriveBase.h>
 #include <XeroRobotBase.h>
+#include <iostream>
 
 using namespace xerolib;
 
@@ -13,6 +14,7 @@ Robot2018Autonomous::Robot2018Autonomous(xerolib::XeroRobotBase &robot)
 	: xerolib::AutonomousControllerBase(robot)
 {
 	// createMotorCharProgram();
+	std::cout << "Building drive straight program" << std::endl ;
 	createDriveStraight();
 }
 

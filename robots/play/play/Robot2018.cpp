@@ -197,12 +197,13 @@ void Robot2018::RobotInit()
 	std::list<std::shared_ptr<frc::SpeedController>> left_motors ;
 	std::list<std::shared_ptr<frc::SpeedController>> right_motors ;
 
-	std::list<int> left_can_addrs = { 0, 1, 2} ;
-	std::list<int> right_can_addrs = { 3, 4, 5} ;
+	std::list<int> left_can_addrs = { 1, 2} ;
+	std::list<int> right_can_addrs = { 3, 4 } ;
 
 	setupLoggers("robot.log", "robot.csv");
 	setupConsoleLogger();
-	setupTcpLogger("192.168.1.85", 8888);
+	// setupTcpLogger("10.14.25.25", 8888);
+	setupUdpLogger(8888) ;
 
 	readParams();
 	extractParams();

@@ -5,6 +5,7 @@
 #include "Robot2018Autonomous.h"
 #include <map>
 #include <string>
+#include <iostream>
 
 class Robot2018 : public xerolib::XeroRobotBase
 {
