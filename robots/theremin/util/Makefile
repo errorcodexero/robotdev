@@ -59,9 +59,7 @@ TESTS = \
 	type.cpp\
 	util.cpp
 
-COMPLEXTESTS = 
-
-ACOMPLEXTESTS = \
+COMPLEXTESTS = \
 	debounce\
 	visitable\
 	speed_tracker\
