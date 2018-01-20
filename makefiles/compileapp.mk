@@ -53,3 +53,8 @@ mkdirs::
 $(OBJDIR)/%.o : %.cpp
 	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
+deploy:
+	ssh admin@roboRIO-$team-FRC.local rm /home/lvuser/FRCUserProgram
+	scp $(REALTARGET) admin@roboRIO-$team-FRC.local:/home/lvuser/FRCUserProgram
+	ssh admin@roboRIO-$team-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
+
