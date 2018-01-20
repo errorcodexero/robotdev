@@ -1,21 +1,29 @@
 #
-# makefile for the misc library
+# makefile for the control library
 #
 
 #
 # define our target library
 #
-TARGET=util.a
+TARGET=input.a
 
 #
 # define the source code files
 #
 SRC = \
-	params_parser.cpp
+	panel.cpp\
+	util.cpp
 
 TESTS = \
-	params_parser.cpp
+	util.cpp
+
+COMPLEXTESTS = \
+	panel
+
+
 #
 # include a central make file that defines our compilation recipe
 #
 include ../../../makefiles/compilelib.mk
+
+$(TESTTARGETDIR)/panel$(EXEEXT): panel.cpp util.cpp
