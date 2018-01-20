@@ -28,4 +28,12 @@ robotsw::
 	done
 
 
+clean::
+	for program in $(SUBDIRS) ; do \
+		cd $$program ; \
+		make CONFIG=$(CONFIG) clean ; \
+		cd .. ; \
+	done
+
+
 .PHONY: all $(SUBDIRS)
