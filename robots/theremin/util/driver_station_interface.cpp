@@ -18,7 +18,7 @@ Maybe<Driver_station_input> Driver_station_input::parse(string const& s){
 	if(vs.size()!=9) return Maybe<Driver_station_input>();
 	Driver_station_input r;
 	for(unsigned i=0;i<ANALOG_INPUTS;i++){
-		r.analog[i]=atof(vs[i]);
+	  r.analog[i]=std::stod(vs[i]) ;
 	}
 	vector<string> t=split(vs.at(vs.size()-1),':');
 	if(t.size()!=2){

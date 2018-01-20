@@ -16,7 +16,17 @@ TARGETAPPLIBS=$(addprefix $(TARGETDIR)/,$(APPLIBS))
 #
 # The top level make target, makes the directory an library
 #
-all: mkdirs $(REALTARGET)
+all: mkdirs shared $(REALTARGET)
+
+include ../../../makefiles/test.mk
+
+ifdef COMMON
+shared:
+	(cd ../../common ; make CONFIG=$(CONFIG))
+else
+shared:
+	echo No shared libraries required
+endif
 
 #
 # The clean target
@@ -28,7 +38,7 @@ clean::
 # Make the application
 #
 $(REALTARGET): $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS)
+	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS)
 
 #
 # Create the directories needed
@@ -41,5 +51,5 @@ mkdirs::
 # Rule to make object files
 #
 $(OBJDIR)/%.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
