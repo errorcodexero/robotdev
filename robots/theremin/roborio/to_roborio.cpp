@@ -122,12 +122,14 @@ class To_roborio
 	Pump_control pump_control;
 	//frc::Compressor *compressor;
 	frc::DriverStation& driver_station;
+#ifdef NEED_PIXY_CAM
 	Pixy::PixyUART uart;
 	Pixy::PixyCam camera;
 	bool cam_data_recieved;
+#endif
 	std::ofstream null_stream;
 public:
-	To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_station(frc::DriverStation::GetInstance()),uart("/dev/ttyS1"),camera(uart),cam_data_recieved(false),null_stream("/dev/null")//,gyro(NULL)
+  To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
 		power = new frc::PowerDistributionPanel();
 
@@ -217,6 +219,7 @@ public:
 		return navx_control.get();
 	}
 
+#ifdef NEED_PIXY_CAM
 	Camera read_camera(Robot_inputs /*r*/){
 		Camera c;
 		camera.enable();
@@ -227,7 +230,8 @@ public:
 		c.enabled=cam_data_recieved;
 		return c;
 	}
-
+#endif
+  
 	pair<Robot_inputs,int> read(Robot_mode robot_mode){
 		int error_code=0;
 		Robot_inputs r;
@@ -238,7 +242,6 @@ public:
 		error_code|=read_analog(r);
 		//error_code|=read_driver_station(r.driver_station);
 		r.current=read_currents();
-		r.camera=read_camera(r);
 		r.navx=read_navx();
 		return make_pair(r,error_code);
 	}

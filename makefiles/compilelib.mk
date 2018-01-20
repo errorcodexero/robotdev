@@ -42,5 +42,5 @@ endif
 # Rule to make object files
 #
 $(OBJDIR)/%.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 

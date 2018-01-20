@@ -38,7 +38,7 @@ clean::
 # Make the application
 #
 $(REALTARGET): $(OBJS)
-	$(CXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS)
+	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS)
 
 #
 # Create the directories needed
@@ -51,5 +51,5 @@ mkdirs::
 # Rule to make object files
 #
 $(OBJDIR)/%.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 

@@ -25,12 +25,14 @@ EXTERNALSW = ../../../external
 # The compiler to use to build the robot code
 #
 ifeq ($(OS),Windows_NT)
-CXX = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-g++
+CROSSCXX = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-g++
 AR = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-ar
 else
-CXX = arm-frc-linux-gnueabi-g++
+CROSSCXX = arm-frc-linux-gnueabi-g++
 AR = arm-frc-linux-gnueabi-ar
 endif
+
+CXX=g++
 
 
 
