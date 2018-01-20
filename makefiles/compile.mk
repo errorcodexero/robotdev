@@ -25,19 +25,23 @@ EXTERNALSW = ../../../external
 # The compiler to use to build the robot code
 #
 ifeq ($(OS),Windows_NT)
-CXX = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-g++
+CROSSCXX = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-g++
 AR = $(EXTERNALSW)/frc/bin/arm-frc-linux-gnueabi-ar
+EXEEXT=.exe
 else
-CXX = arm-frc-linux-gnueabi-g++
+CROSSCXX = arm-frc-linux-gnueabi-g++
 AR = arm-frc-linux-gnueabi-ar
+EXEEXT=
 endif
+
+CXX=g++
 
 
 
 #
 # The flags to apply to the C++ compilation
 #
-CXXFLAGS = -std=c++14 -Wall
+CXXFLAGS += -std=c++14 -Wall
 
 #
 # The preprocessor flags to apply
@@ -68,6 +72,16 @@ OBJDIR=$(TARGETDIR)/obj/$(TARGETNAME)
 # Generate the list of object files desired
 #
 OBJS=$(addprefix $(OBJDIR)/,$(patsubst %.cpp,%.o,$(SRC)))
+
+#
+# Include the common directories
+#
+ifdef COMMON
+COMMONHDRSFULL=$(addprefix -I../../common/,$(COMMON))
+CXXFLAGS += $(COMMONHDRSFULL)
+COMMONLIBSFULL=$(addprefix ../../common/builddir/$(CONFIG)/,$(addsuffix .a,$(COMMON)))
+endif
+
 
 #
 # Check to see if we need the NAVX libraries

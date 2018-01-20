@@ -48,7 +48,7 @@ Auto_distances read_auto_distances(){
 	ifstream f(AUTO_DISTANCES_FILE);
 	string s;
 	//note: if file is incomplete/corrupted will just get as much data as it can.
-	#define X(TYPE,NAME) if(f.good()){ getline(f,s); r.NAME=atof(s.c_str()); }
+	#define X(TYPE,NAME) if(f.good()){ getline(f,s); r.NAME=std::stod(s); }
 	AUTO_DISTANCES_ITEMS(X)
 	#undef X
 	return r;

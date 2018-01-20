@@ -14,6 +14,8 @@ REALTARGET=$(TARGETDIR)/$(TARGET)
 #
 all: mkdirs $(REALTARGET)
 
+include ../../../makefiles/test.mk
+
 #
 # The clean target
 #
@@ -40,5 +42,5 @@ endif
 # Rule to make object files
 #
 $(OBJDIR)/%.o : %.cpp
-	$(CXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 

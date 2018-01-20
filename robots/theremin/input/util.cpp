@@ -93,7 +93,7 @@ unsigned interpret_20_turn_pot(Volt v){
 	return 19;
 }
 
-#ifdef INPUT_UTIL_TEST
+#ifdef UTIL_TEST
 void joystick_section_test(){
 	assert(joystick_section(0,0)==Joystick_section::CENTER);
 	assert(joystick_section(-1,0)==Joystick_section::LEFT);

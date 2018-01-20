@@ -142,8 +142,6 @@ vector<string> split(string const& s1){
 	return r;
 }
 
-double atof(string const& s){ return ::atof(s.c_str()); }
-
 //could add some way to report error.
 string inside_parens(string const& s){
 	unsigned i;

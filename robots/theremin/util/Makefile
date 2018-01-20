@@ -1,4 +1,4 @@
-#
+
 # makefile for the misc library
 #
 
@@ -40,10 +40,57 @@ SRC = \
 	util.cpp\
 	visitable.cpp
 
-$(info $(SRC))
+TESTS = \
+	auto_distances.cpp\
+	bound_tracker.cpp\
+	countdown_timer.cpp\
+	countup_timer.cpp\
+	fixVictor.cpp\
+	input.cpp\
+	motion_profile.cpp\
+	negedge_trigger.cpp\
+	network.cpp\
+	output.cpp\
+	perf_tracker.cpp\
+	settable_constant.cpp\
+	speed_profile.cpp\
+	stall_monitor.cpp\
+	string_utils.cpp\
+	type.cpp\
+	util.cpp
+
+COMPLEXTESTS = \
+	debounce\
+	visitable\
+	speed_tracker\
+	settable_toggle\
+	posedge_trigger\
+	posedge_trigger_debounce\
+	point\
+	persistent_tracker\
+	driver_station_interface\
+	interface\
+	meta
 
 
 #
 # include a central make file that defines our compilation recipe
 #
 include ../../../makefiles/compilelib.mk
+
+#
+# Complex tests
+#
+$(TESTTARGETDIR)/debounce$(EXEEXT): debounce.cpp countdown_timer.cpp
+$(TESTTARGETDIR)/visitable$(EXEEXT): visitable.cpp type.cpp
+$(TESTTARGETDIR)/speed_tracker$(EXEEXT): speed_tracker.cpp countdown_timer.cpp
+$(TESTTARGETDIR)/settable_toggle$(EXEEXT): settable_toggle.cpp posedge_trigger.cpp
+$(TESTTARGETDIR)/posedge_trigger$(EXEEXT): posedge_trigger.cpp
+$(TESTTARGETDIR)/posedge_trigger_debounce$(EXEEXT): posedge_trigger_debounce.cpp countdown_timer.cpp posedge_trigger.cpp
+$(TESTTARGETDIR)/point$(EXEEXT): point.cpp util.cpp
+$(TESTTARGETDIR)/persistent_tracker$(EXEEXT): persistent_tracker.cpp util.cpp
+$(TESTTARGETDIR)/driver_station_interface$(EXEEXT): driver_station_interface.cpp util.cpp
+$(TESTTARGETDIR)/interface$(EXEEXT): interface.cpp driver_station_interface.cpp util.cpp
+$(TESTTARGETDIR)/meta$(EXEEXT): meta.cpp interface.cpp driver_station_interface.cpp util.cpp
+
+

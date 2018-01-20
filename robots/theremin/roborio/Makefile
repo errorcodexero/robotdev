@@ -8,6 +8,11 @@
 TARGET=FRCUserProgram
 
 #
+# Tell the make system we want the shared code (COMMON)
+#
+COMMON=util
+
+#
 # Tell the make system we need to the WPI libraries
 #
 WPILIB=true

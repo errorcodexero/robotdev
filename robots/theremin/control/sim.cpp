@@ -4,7 +4,6 @@
 #include "nop.h"
 #include "../executive/step.h"
 #include "../executive/chain.h"
-#include "../executive/align.h"
 #include "../executive/teleop.h"
 #include <math.h>
 #include "main.h"
@@ -326,7 +325,9 @@ int main(){
 			robot_inputs = m.toplevel.input_reader(robot_inputs,sim.get());
 			robot_inputs.robot_mode.autonomous = true;//override this for now
 			robot_inputs.robot_mode.enabled = true;
+#ifdef NEED_PIXY_CAM		       
 			robot_inputs.camera.blocks = {{0,155,0,100,100}};//for align
+#endif
 		}
 	}
 
@@ -336,7 +337,6 @@ int main(){
 		Dedup2 mode,outp,inp,statusp,panel,drive_sim;
 		Toplevel_sim sim;
 		Main m{Executive{Chain{
-			Step{Align()},
 			Executive{Teleop()}
 		}}};
 
@@ -372,6 +372,7 @@ int main(){
 			{
 				//set up the initial location of the blocks
 				static const int MISALIGNED = 10;// px
+#ifdef NEED_PIXY_CAM
 				robot_inputs.camera.blocks = {
 					{0,Block_pr::LEFT + MISALIGNED,0,40,40}, //left tape
 					{0,Block_pr::RIGHT + MISALIGNED,0,30,30}, //right tape
@@ -385,6 +386,7 @@ int main(){
 				for(Pixy::Block& a: robot_inputs.camera.blocks){
 					a.x = max((int)a.x - rotate, 0); //- becase image shifts left if robot turns clockwise
 				}
+#endif
 				
 			}
 			

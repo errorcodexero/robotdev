@@ -11,9 +11,32 @@ SUBDIRS = \
 	util\
 	roborio
 
-all:: $(SUBDIRS)
+all:: tests robotsw
 
-$(SUBDIRS)::
-	(cd $@ ; $(MAKE) CONFIG=$(CONFIG))
+tests::
+	for program in $(SUBDIRS) ; do \
+		cd $$program ; \
+		make CONFIG=$(CONFIG) tests ; \
+		cd .. ; \
+	done
+
+robotsw::
+	for program in $(SUBDIRS) ; do \
+		cd $$program ; \
+		make CONFIG=$(CONFIG)  ; \
+		cd .. ; \
+	done
+
+
+clean::
+	for program in $(SUBDIRS) ; do \
+		cd $$program ; \
+		make CONFIG=$(CONFIG) clean ; \
+		cd .. ; \
+	done
+
+deploy::
+	(cd roborio ; make CONFIG=$(CONFIG) deploy)
+
 
 .PHONY: all $(SUBDIRS)

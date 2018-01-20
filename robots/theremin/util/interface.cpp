@@ -503,13 +503,6 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	return o<<")";
 }
 
-Joystick_data::Joystick_data(){
-	for(unsigned i=0;i<JOY_AXES;i++){
-		axis[i]=0;
-	}
-	pov=-1;//Set to center by default
-}
-
 //int atoi(string s){ return ::atoi(s.c_str()); }
 
 Maybe<Joystick_data> Joystick_data::parse(string const& s){
@@ -537,7 +530,7 @@ Maybe<Joystick_data> Joystick_data::parse(string const& s){
 		vector<string> ax=split(v[1]);
 		for(unsigned i=0;i<JOY_AXES;i++){
 			if(i>ax.size()) return Maybe<Joystick_data>();
-			r.axis[i]=atof(ax[i]);
+			r.axis[i]=std::stod(ax[i]);
 		}
 	}
 	return Maybe<Joystick_data>(r);
@@ -733,6 +726,7 @@ bool operator!=(DS_info const& a,DS_info const& b){
 	return !(a==b);
 }
 
+#ifdef NEED_PIXY_CAM
 Camera::Camera():enabled(0){}
 
 const double Camera::FOV = 60.0;//degrees
@@ -758,6 +752,8 @@ bool operator==(Camera const& a,Camera const& b){
 }
 
 bool operator!=(Camera const& a,Camera const& b){ return !(a==b); }
+
+#endif
 
 Robot_inputs::Robot_inputs():
 	now(0),orientation(0),pump()
@@ -807,7 +803,9 @@ bool operator==(Robot_inputs a,Robot_inputs b){
 		}
 	}
 	if(a.driver_station!=b.driver_station) return 0;
+#ifdef NEED_PIXY_CAM
 	if(a.camera!=b.camera) return 0;
+#endif
 	return a.orientation==b.orientation;
 }
 
@@ -830,7 +828,9 @@ bool operator<(Robot_inputs a,Robot_inputs b){
 	X(orientation)
 	X(current)
 	X(pump)
+#ifdef NEED_PIXY_CAM
 	X(camera)
+#endif
 	#undef X
 	return 0;
 }
@@ -860,7 +860,9 @@ ostream& operator<<(ostream& o,Robot_inputs a){
 	o<<" pump:"<<a.pump;
 	o<<" currents:"<<a.current;	
 	o<<" driver_station_inputs:"<<a.driver_station;
+#ifdef NEED_PIXY_CAM
 	o<<" camera:"<<a.camera;
+#endif
 	o<<" orientation:"<<a.orientation;
 	return o<<")";
 }

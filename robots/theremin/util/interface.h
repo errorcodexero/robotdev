@@ -6,7 +6,11 @@
 #include "driver_station_interface.h"
 #include "maybe_inline.h"
 #include "checked_array.h"
+
+#ifdef NEED_PIXY_CAM
 #include "../input/pixycam/PixyUART.h"
+#endif
+
 #include "quick.h"
 
 typedef double Time;//Seconds
@@ -272,13 +276,19 @@ std::ostream& operator<<(std::ostream& o,Robot_outputs);
 #define JOY_BUTTONS 13
 
 struct Joystick_data{
-	Checked_array<double,JOY_AXES> axis;
-	std::bitset<JOY_BUTTONS> button;
-	int pov;
-	
-	Joystick_data();
+  Joystick_data()
+  {
+    for(unsigned i = 0 ; i < JOY_AXES ; i++)
+      axis[i] = 0 ;
 
-	static Maybe<Joystick_data> parse(std::string const&);
+    pov = -1 ;
+  }
+  
+  Checked_array<double,JOY_AXES> axis;
+  std::bitset<JOY_BUTTONS> button;
+  int pov;
+  
+  static Maybe<Joystick_data> parse(std::string const&);
 };
 bool operator<(Joystick_data,Joystick_data);
 bool operator==(Joystick_data,Joystick_data);
@@ -336,6 +346,7 @@ bool operator==(Digital_inputs const&,Digital_inputs const&);
 bool operator!=(Digital_inputs const&,Digital_inputs const&);
 std::ostream& operator<<(std::ostream&,Digital_inputs const&);
 
+#ifdef NEED_PIXY_CAM
 struct Camera{
 	static const double FOV; //degrees
 	bool enabled;
@@ -347,6 +358,7 @@ bool operator<(Camera const&,Camera const&);
 bool operator==(Camera const&,Camera const&);
 bool operator!=(Camera const&,Camera const&);
 std::ostream& operator<<(std::ostream&,Camera const&);
+#endif
 
 typedef float Volt;
 typedef double Rad; //radians, clockwise
@@ -377,7 +389,9 @@ struct Robot_inputs{
 	Checked_array<double,CURRENT> current;
 	Pump_input pump;
 
+#ifdef NEED_PIXY_CAM
 	Camera camera;
+#endif
 
 	Robot_inputs();
 };
