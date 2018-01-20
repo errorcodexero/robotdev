@@ -12,11 +12,7 @@ TARGET=input.a
 #
 SRC = \
 	panel.cpp\
-	util.cpp\
-	pixycam/PixyBlock.cpp\
-	pixycam/PixyImpl.cpp\
-	pixycam/PixyTCP.cpp\
-	pixycam/PixyUART.cpp
+	util.cpp
 
 TESTS = \
 	util.cpp
@@ -24,7 +20,6 @@ TESTS = \
 COMPLEXTESTS = \
 	panel
 
-MKDIRS = pixycam
 
 #
 # include a central make file that defines our compilation recipe
