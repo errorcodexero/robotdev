@@ -43,43 +43,43 @@ COMPLEXTESTS = \
 #
 include ../../../makefiles/compilelib.mk
 
-$(TESTTARGETDIR)/drivebase.exe: drivebase.cpp motor_check.cpp 
-$(TESTTARGETDIR)/drivebase.exe: ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/interface.cpp 
-$(TESTTARGETDIR)/drivebase.exe: ../util/util.cpp ../util/point.cpp ../util/driver_station_interface.cpp
+$(TESTTARGETDIR)/drivebase$(EXEEXT): drivebase.cpp motor_check.cpp 
+$(TESTTARGETDIR)/drivebase$(EXEEXT): ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/interface.cpp 
+$(TESTTARGETDIR)/drivebase$(EXEEXT): ../util/util.cpp ../util/point.cpp ../util/driver_station_interface.cpp
 
-$(TESTTARGETDIR)/force_interface.exe: force_interface.cpp force.cpp
-$(TESTTARGETDIR)/force_interface.exe: ../util/interface.cpp ../util/driver_station_interface.cpp
-$(TESTTARGETDIR)/force_interface.exe: ../util/posedge_trigger.cpp ../util/util.cpp
+$(TESTTARGETDIR)/force_interface$(EXEEXT): force_interface.cpp force.cpp
+$(TESTTARGETDIR)/force_interface$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp
+$(TESTTARGETDIR)/force_interface$(EXEEXT): ../util/posedge_trigger.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/lights.exe: lights.cpp nop.cpp
-$(TESTTARGETDIR)/lights.exe: ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+$(TESTTARGETDIR)/lights$(EXEEXT): lights.cpp nop.cpp
+$(TESTTARGETDIR)/lights$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/log.exe: log.cpp nop.cpp toplevel.cpp drivebase.cpp pump.cpp lights.cpp motor_check.cpp
-$(TESTTARGETDIR)/log.exe: ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
-$(TESTTARGETDIR)/log.exe: ../util/stall_monitor.cpp ../util/countdown_timer.cpp
+$(TESTTARGETDIR)/log$(EXEEXT): log.cpp nop.cpp toplevel.cpp drivebase.cpp pump.cpp lights.cpp motor_check.cpp
+$(TESTTARGETDIR)/log$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+$(TESTTARGETDIR)/log$(EXEEXT): ../util/stall_monitor.cpp ../util/countdown_timer.cpp
 
-$(TESTTARGETDIR)/main.exe: main.cpp toplevel.cpp nop.cpp pump.cpp drivebase.cpp nop.cpp lights.cpp
-$(TESTTARGETDIR)/main.exe: motor_check.cpp force_interface.cpp force.cpp log.cpp
-$(TESTTARGETDIR)/main.exe: ../util/countup_timer.cpp ../util/countdown_timer.cpp ../util/stall_monitor.cpp
-$(TESTTARGETDIR)/main.exe: ../util/interface.cpp ../util/posedge_trigger.cpp ../util/driver_station_interface.cpp
-$(TESTTARGETDIR)/main.exe: ../util/perf_tracker.cpp ../util/util.cpp ../util/type.cpp
-$(TESTTARGETDIR)/main.exe: ../util/motion_profile.cpp
-$(TESTTARGETDIR)/main.exe: ../executive/executive.cpp ../executive/teleop.cpp ../executive/autonomous.cpp
-$(TESTTARGETDIR)/main.exe: ../executive/chain.cpp ../executive/step.cpp
-$(TESTTARGETDIR)/main.exe: ../input/panel.cpp ../input/util.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): main.cpp toplevel.cpp nop.cpp pump.cpp drivebase.cpp nop.cpp lights.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): motor_check.cpp force_interface.cpp force.cpp log.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): ../util/countup_timer.cpp ../util/countdown_timer.cpp ../util/stall_monitor.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): ../util/interface.cpp ../util/posedge_trigger.cpp ../util/driver_station_interface.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): ../util/perf_tracker.cpp ../util/util.cpp ../util/type.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): ../util/motion_profile.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): ../executive/executive.cpp ../executive/teleop.cpp ../executive/autonomous.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): ../executive/chain.cpp ../executive/step.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): ../input/panel.cpp ../input/util.cpp
 
-$(TESTTARGETDIR)/nop.exe: nop.cpp
-$(TESTTARGETDIR)/nop.exe: ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+$(TESTTARGETDIR)/nop$(EXEEXT): nop.cpp
+$(TESTTARGETDIR)/nop$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/monitor.exe: monitor.cpp force_interface.cpp toplevel.cpp force.cpp
-$(TESTTARGETDIR)/monitor.exe: pump.cpp drivebase.cpp lights.cpp nop.cpp motor_check.cpp
-$(TESTTARGETDIR)/monitor.exe: ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
-$(TESTTARGETDIR)/monitor.exe: ../util/posedge_trigger.cpp ../util/stall_monitor.cpp ../util/countdown_timer.cpp
+$(TESTTARGETDIR)/monitor$(EXEEXT): monitor.cpp force_interface.cpp toplevel.cpp force.cpp
+$(TESTTARGETDIR)/monitor$(EXEEXT): pump.cpp drivebase.cpp lights.cpp nop.cpp motor_check.cpp
+$(TESTTARGETDIR)/monitor$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+$(TESTTARGETDIR)/monitor$(EXEEXT): ../util/posedge_trigger.cpp ../util/stall_monitor.cpp ../util/countdown_timer.cpp
 
-$(TESTTARGETDIR)/pump.exe: pump.cpp
-$(TESTTARGETDIR)/pump.exe: ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+$(TESTTARGETDIR)/pump$(EXEEXT): pump.cpp
+$(TESTTARGETDIR)/pump$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/toplevel.exe: toplevel.cpp drivebase.cpp lights.cpp pump.cpp motor_check.cpp nop.cpp
-$(TESTTARGETDIR)/toplevel.exe: ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
-$(TESTTARGETDIR)/toplevel.exe: ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/input.cpp
-$(TESTTARGETDIR)/toplevel.exe: ../util/output.cpp
+$(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp lights.cpp pump.cpp motor_check.cpp nop.cpp
+$(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+$(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/input.cpp
+$(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/output.cpp

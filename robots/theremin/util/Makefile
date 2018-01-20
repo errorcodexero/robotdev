@@ -1,4 +1,4 @@
-#
+
 # makefile for the misc library
 #
 
@@ -83,16 +83,16 @@ include ../../../makefiles/compilelib.mk
 #
 # Complex tests
 #
-$(TESTTARGETDIR)/debounce.exe: debounce.cpp countdown_timer.cpp
-$(TESTTARGETDIR)/visitable.exe: visitable.cpp type.cpp
-$(TESTTARGETDIR)/speed_tracker.exe: speed_tracker.cpp countdown_timer.cpp
-$(TESTTARGETDIR)/settable_toggle.exe: settable_toggle.cpp posedge_trigger.cpp
-$(TESTTARGETDIR)/posedge_trigger.exe: posedge_trigger.cpp
-$(TESTTARGETDIR)/posedge_trigger_debounce.exe: posedge_trigger_debounce.cpp countdown_timer.cpp posedge_trigger.cpp
-$(TESTTARGETDIR)/point.exe: point.cpp util.cpp
-$(TESTTARGETDIR)/persistent_tracker.exe: persistent_tracker.cpp util.cpp
-$(TESTTARGETDIR)/driver_station_interface.exe: driver_station_interface.cpp util.cpp
-$(TESTTARGETDIR)/interface.exe: interface.cpp driver_station_interface.cpp util.cpp
-$(TESTTARGETDIR)/meta.exe: meta.cpp interface.cpp driver_station_interface.cpp util.cpp
+$(TESTTARGETDIR)/debounce$(EXEEXT): debounce.cpp countdown_timer.cpp
+$(TESTTARGETDIR)/visitable$(EXEEXT): visitable.cpp type.cpp
+$(TESTTARGETDIR)/speed_tracker$(EXEEXT): speed_tracker.cpp countdown_timer.cpp
+$(TESTTARGETDIR)/settable_toggle$(EXEEXT): settable_toggle.cpp posedge_trigger.cpp
+$(TESTTARGETDIR)/posedge_trigger$(EXEEXT): posedge_trigger.cpp
+$(TESTTARGETDIR)/posedge_trigger_debounce$(EXEEXT): posedge_trigger_debounce.cpp countdown_timer.cpp posedge_trigger.cpp
+$(TESTTARGETDIR)/point$(EXEEXT): point.cpp util.cpp
+$(TESTTARGETDIR)/persistent_tracker$(EXEEXT): persistent_tracker.cpp util.cpp
+$(TESTTARGETDIR)/driver_station_interface$(EXEEXT): driver_station_interface.cpp util.cpp
+$(TESTTARGETDIR)/interface$(EXEEXT): interface.cpp driver_station_interface.cpp util.cpp
+$(TESTTARGETDIR)/meta$(EXEEXT): meta.cpp interface.cpp driver_station_interface.cpp util.cpp
 
 

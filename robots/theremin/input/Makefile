@@ -31,4 +31,4 @@ MKDIRS = pixycam
 #
 include ../../../makefiles/compilelib.mk
 
-$(TESTTARGETDIR)/panel.exe: panel.cpp util.cpp
+$(TESTTARGETDIR)/panel$(EXEEXT): panel.cpp util.cpp
