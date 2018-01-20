@@ -37,8 +37,8 @@ clean::
 #
 # Make the application
 #
-$(REALTARGET): $(OBJS)
-	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS)
+$(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
+	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS) $(COMMONLIBSFULL)
 
 #
 # Create the directories needed

@@ -80,7 +80,6 @@ ifdef COMMON
 COMMONHDRSFULL=$(addprefix -I../../common/,$(COMMON))
 CXXFLAGS += $(COMMONHDRSFULL)
 COMMONLIBSFULL=$(addprefix ../../common/builddir/$(CONFIG)/,$(addsuffix .a,$(COMMON)))
-ADDLIBS += $(COMMONLIBSFULL)
 endif
 
 
