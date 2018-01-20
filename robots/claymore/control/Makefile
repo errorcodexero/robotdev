@@ -14,6 +14,7 @@ SRC = \
 	drivebase.cpp\
 	force.cpp\
 	force_interface.cpp\
+	intake.cpp\
 	lights.cpp\
 	log.cpp\
 	main.cpp\
@@ -31,6 +32,7 @@ TESTS = \
 COMPLEXTESTS = \
 	drivebase\
 	force_interface\
+	intake\
 	lights\
 	log\
 	main\
@@ -50,6 +52,9 @@ $(TESTTARGETDIR)/drivebase$(EXEEXT): ../util/util.cpp ../util/point.cpp ../util/
 $(TESTTARGETDIR)/force_interface$(EXEEXT): force_interface.cpp force.cpp
 $(TESTTARGETDIR)/force_interface$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp
 $(TESTTARGETDIR)/force_interface$(EXEEXT): ../util/posedge_trigger.cpp ../util/util.cpp
+
+$(TESTTARGETDIR)/intake$(EXEEXT): intake.cpp nop.cpp
+$(TESTTARGETDIR)/intake$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
 $(TESTTARGETDIR)/lights$(EXEEXT): lights.cpp nop.cpp
 $(TESTTARGETDIR)/lights$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
