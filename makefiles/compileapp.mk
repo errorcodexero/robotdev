@@ -53,8 +53,17 @@ mkdirs::
 $(OBJDIR)/%.o : %.cpp
 	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
-deploy:
-	ssh admin@roboRIO-$team-FRC.local rm /home/lvuser/FRCUserProgram
-	scp $(REALTARGET) admin@roboRIO-$team-FRC.local:/home/lvuser/FRCUserProgram
-	ssh admin@roboRIO-$team-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
+#
+# Deploy the software to the robot
+#
+
+ifndef TEAM_NUMBER
+TEAM_NUMBER=1425
+endif
+
+deploy:: $(REALTARGET)
+	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
+	scp $(REALTARGET) admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser/FRCUserProgram
+	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
+
 
