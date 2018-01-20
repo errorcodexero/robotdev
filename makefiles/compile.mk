@@ -41,7 +41,7 @@ CXX=g++
 #
 # The flags to apply to the C++ compilation
 #
-CXXFLAGS = -std=c++14 -Wall
+CXXFLAGS += -std=c++14 -Wall
 
 #
 # The preprocessor flags to apply

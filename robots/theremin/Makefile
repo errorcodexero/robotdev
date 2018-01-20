@@ -35,5 +35,8 @@ clean::
 		cd .. ; \
 	done
 
+deploy::
+	(cd roborio ; make CONFIG=$(CONFIG) deploy)
+
 
 .PHONY: all $(SUBDIRS)

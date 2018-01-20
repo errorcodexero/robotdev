@@ -11,9 +11,10 @@ TARGET=util.a
 # define the source code files
 #
 SRC = \
-	paramsParser.cpp
+	params_parser.cpp
 
-
+TESTS = \
+	params_parser.cpp
 #
 # include a central make file that defines our compilation recipe
 #
