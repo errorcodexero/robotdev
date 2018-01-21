@@ -5,10 +5,10 @@ ifndef CONFIG
 $(error missing the CONFIG variable on the make command line, e.g. make CONFIG=debug)
 else
 ifeq ($(CONFIG), debug)
-CXXFLAGS += -g
+CXXFLAGS += -g -D_DEBUG
 else
 ifeq ($(CONFIG), release)
-CXXFLAGS += -O3
+CXXFLAGS += -O3 -DRELEASE
 else
 $(error CONFIG must be set to either 'debug' or 'release')
 endif
@@ -123,4 +123,8 @@ ifeq ($(BOOST), true)
 CXXFLAGS += -I$(EXTERNALSW)/boost/include
 ADDLIBS += $(EXTERNALSW)/boost/lib/libboost_system.a
 endif
+endif
+
+ifdef ADDCXXFLAGS
+CXXFLAGS += $(ADDCXXFLAGS)
 endif
