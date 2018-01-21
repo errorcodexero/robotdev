@@ -1,10 +1,10 @@
 
 
 LIBSUBDIRS = \
+	util\
 	control\
 	input\
-	executive\
-	util
+	executive
 
 TOPDIR = \
 	roborio
