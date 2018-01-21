@@ -12,7 +12,7 @@ tests::
 		make CONFIG=$(CONFIG) tests ; \
 		if [ $$? -ne 0 ]; then \
 			break ; \
-		fi \
+		fi ; \
 		cd .. ; \
 	done
 
