@@ -54,6 +54,7 @@ namespace xerolib
 
 		while (std::getline(infile, line))
 		{
+			std::cout << "line: " << line << std::endl ;
 			size_t index = line.find('#');
 			if (index != std::string::npos)
 				line = line.substr(0, index);

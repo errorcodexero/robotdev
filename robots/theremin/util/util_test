@@ -1,1 +1,0 @@
-g++ -Wall -Werror -std=c++14 -DUTIL_TEST util.cpp point.cpp -o util 2>&1 && ./util

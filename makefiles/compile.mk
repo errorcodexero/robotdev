@@ -5,10 +5,10 @@ ifndef CONFIG
 $(error missing the CONFIG variable on the make command line, e.g. make CONFIG=debug)
 else
 ifeq ($(CONFIG), debug)
-CXXFLAGS += -g
+CXXFLAGS += -g -D_DEBUG
 else
 ifeq ($(CONFIG), release)
-CXXFLAGS += -O3
+CXXFLAGS += -O3 -DRELEASE
 else
 $(error CONFIG must be set to either 'debug' or 'release')
 endif
@@ -41,7 +41,7 @@ CXX=g++
 #
 # The flags to apply to the C++ compilation
 #
-CXXFLAGS = -std=c++14 -Wall
+CXXFLAGS += -std=c++14 -Wall
 
 #
 # The preprocessor flags to apply
@@ -80,7 +80,6 @@ ifdef COMMON
 COMMONHDRSFULL=$(addprefix -I../../common/,$(COMMON))
 CXXFLAGS += $(COMMONHDRSFULL)
 COMMONLIBSFULL=$(addprefix ../../common/builddir/$(CONFIG)/,$(addsuffix .a,$(COMMON)))
-ADDLIBS += $(COMMONLIBSFULL)
 endif
 
 

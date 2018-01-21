@@ -1,3 +1,0 @@
-set -e
-g++ -DPOSEDGE_TRIGGER_TEST posedge_trigger.cpp -o posedge_trigger
-./posedge_trigger
