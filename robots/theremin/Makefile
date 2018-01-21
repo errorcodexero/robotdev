@@ -1,42 +1,12 @@
-#
-# include the validation stuff
-#
 
-include ../../makefiles/valid.mk
 
-SUBDIRS = \
+LIBSUBDIRS = \
 	control\
 	input\
 	executive\
-	util\
+	util
+
+TOPDIR = \
 	roborio
 
-all:: tests robotsw
-
-tests::
-	for program in $(SUBDIRS) ; do \
-		cd $$program ; \
-		make CONFIG=$(CONFIG) tests ; \
-		cd .. ; \
-	done
-
-robotsw::
-	for program in $(SUBDIRS) ; do \
-		cd $$program ; \
-		make CONFIG=$(CONFIG)  ; \
-		cd .. ; \
-	done
-
-
-clean::
-	for program in $(SUBDIRS) ; do \
-		cd $$program ; \
-		make CONFIG=$(CONFIG) clean ; \
-		cd .. ; \
-	done
-
-deploy::
-	(cd roborio ; make CONFIG=$(CONFIG) deploy)
-
-
-.PHONY: all $(SUBDIRS)
+include ../../makefiles/toplevel.mk
