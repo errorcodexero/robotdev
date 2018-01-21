@@ -10,7 +10,7 @@ TARGET=FRCUserProgram
 #
 # Add flags to get to the xerolib header file
 #
-ADDCXXFLAGS=-I../xerolib
+COMMON=xerolib
 
 #
 # Tell the make system we need to the WPI libraries
@@ -30,8 +30,8 @@ CTRE=true
 #
 # define the app lib
 #
-APPLIBS=\
-	xerolib.a
+APPLIBS=
+
 
 #
 # define the source code

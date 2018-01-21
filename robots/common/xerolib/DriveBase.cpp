@@ -14,12 +14,16 @@ namespace xerolib
 		m_left_voltage = 0.0;
 		m_right_voltage = 0.0;
 
+		m_drive_straight_mode = StraightDrivingStrategy::Encoders;
+
 		DataLogger &data = robot.getDataLogger();
 
 		//
 		// Create the speedometers
 		//
 		m_linear_speedometer_p = std::make_shared<Speedometer>(4);
+		m_left_linear_speedometer_p = std::make_shared<Speedometer>(4);
+		m_right_linear_speedometer_p = std::make_shared<Speedometer>(4);
 		m_rotational_speedometer_p = std::make_shared<Speedometer>(4);
 
 		//
@@ -34,8 +38,12 @@ namespace xerolib
 		//
 		m_straight_target_speed_col = data.createColumn(getName() + "-st-tar-spd");
 		m_straight_current_speed_col = data.createColumn(getName() + "-st-cur-spd");
+		m_straight_current_left_speed_col = data.createColumn(getName() + "-st-cur-l-spd");
+		m_straight_current_right_speed_col = data.createColumn(getName() + "-st-cur-r-spd");
 		m_straight_target_dist_col = data.createColumn(getName() + "-st-tar-dst");
 		m_straight_current_dist_col = data.createColumn(getName() + "-st-cur-dst");
+		m_straight_current_left_dist_col = data.createColumn(getName() + "-st-cur-l-dst");
+		m_straight_current_right_dist_col = data.createColumn(getName() + "-st-cur-r-dst");
 		m_straight_current_target_dist_col = data.createColumn(getName() + "-st-cur-tar-dst");
 
 		//
@@ -54,6 +62,7 @@ namespace xerolib
 		m_pid_derror_col = data.createColumn(getName() + "-derr");
 		m_pid_sumi_col = data.createColumn(getName() + "-sumi");
 		m_dist_error_col = data.createColumn(getName() + "-dist-err");
+		m_drift_error_col = data.createColumn(getName() + "-drift-err");
 	}
 
 	DriveBase::~DriveBase()
@@ -67,6 +76,20 @@ namespace xerolib
 		int32_t avg = (left + right) / 2;
 		double rev = (double)avg / (double)m_ticks_per_rev;
 		return rev * m_wheel_diameter * PI ;
+	}
+
+	double DriveBase::getLeftDistance()
+	{
+		int32_t left = m_left_encoder_p->Get();
+		double rev = (double)left / (double)m_ticks_per_rev;
+		return rev * m_wheel_diameter * PI;
+	}
+
+	double DriveBase::getRightDistance()
+	{
+		int32_t right = m_right_encoder_p->Get();
+		double rev = (double)right / (double)m_ticks_per_rev;
+		return rev * m_wheel_diameter * PI;
 	}
 
 	double DriveBase::getAngle()
@@ -85,6 +108,16 @@ namespace xerolib
 		data.logData(m_straight_current_dist_col, m_linear_speedometer_p->getLastSample());
 		if (m_linear_speedometer_p->isValid())
 			data.logData(m_straight_current_speed_col, m_linear_speedometer_p->getSpeed());
+
+		m_left_linear_speedometer_p->addSample(now, getLeftDistance());
+		data.logData(m_straight_current_left_dist_col, m_left_linear_speedometer_p->getLastSample());
+		if (m_left_linear_speedometer_p->isValid())
+			data.logData(m_straight_current_left_speed_col, m_left_linear_speedometer_p->getSpeed());
+
+		m_right_linear_speedometer_p->addSample(now, getRightDistance());
+		data.logData(m_straight_current_right_dist_col, m_right_linear_speedometer_p->getLastSample());
+		if (m_right_linear_speedometer_p->isValid())
+			data.logData(m_straight_current_right_speed_col, m_right_linear_speedometer_p->getSpeed());
 
 		m_rotational_speedometer_p->addSample(now, getAngle());
 		data.logData(m_angle_current_dist_col, m_rotational_speedometer_p->getLastSample());
@@ -105,7 +138,7 @@ namespace xerolib
 				logger << MessageLogger::Token::EndOfMessage;
 				m_mode = Mode::Idle;
 			}
-			else if (remaining < m_distance_switch_threshold || m_velocity_profile.isDone(now))
+			else if ((remaining < m_distance_switch_threshold || m_velocity_profile.isDone(now)) && m_mode == Mode::Straight)
 			{
 				m_mode = Mode::Distance;
 				m_main_pid.setConstants(m_distance_pid.p, m_distance_pid.i, m_distance_pid.d, m_distance_pid.f);
@@ -134,7 +167,7 @@ namespace xerolib
 				logger << MessageLogger::Token::EndOfMessage;
 				m_mode = Mode::Idle;
 			}
-			else if (remaining < m_angle_switch_threshold)
+			else if ((remaining < m_angle_switch_threshold || m_velocity_profile.isDone(now)) && m_mode == Mode::Rotate)
 			{
 				m_mode = Mode::Distance;
 				m_main_pid.setConstants(m_angle_pid.p, m_angle_pid.i, m_angle_pid.d, m_angle_pid.f);
@@ -256,7 +289,9 @@ namespace xerolib
 
 				if (m_mode == Mode::Straight)
 				{
-					offset = m_ang_corr_pid.calcOutput(deltat, 0.0, getAngle());
+					double drift = getDrift();
+					data.logData(m_drift_error_col, drift);
+					offset = m_ang_corr_pid.calcOutput(deltat, 0.0, drift);
 					right_direction = 1.0;
 				}
 
@@ -271,16 +306,25 @@ namespace xerolib
 		{
 			double dist = getDistance();
 			double motor = m_main_pid.calcOutput(deltat, m_target, dist);
-			double offset = m_ang_corr_pid.calcOutput(deltat, 0.0, getAngle());
 
-			m_left_voltage = motor + offset;
-			m_right_voltage = motor - offset;
+			double drift = getDrift();
+			data.logData(m_drift_error_col, drift);
+			double mult = m_ang_corr_pid.calcOutput(deltat, 0.0, drift);
+
+			motor = (1.0 + mult);
+
+			m_left_voltage = DriveBase::clamp(motor * (1.0 + mult), -1.0, 1.0);
+			m_right_voltage = DriveBase::clamp(motor * (1.0 - mult), -1.0, 1.0);
+
+			data.logData(m_straight_target_dist_col, m_target);
 		}
 		else if (m_mode == Mode::Angle)
 		{
 			double motor = m_main_pid.calcOutput(deltat, m_target, getAngle());
 			m_left_voltage = motor;
 			m_right_voltage = -motor;
+
+			data.logData(m_angle_target_dist_col, m_target);
 		}
 
 		data.logData(m_left_motor_col, m_left_voltage);
@@ -298,6 +342,21 @@ namespace xerolib
 
 		for (auto motor_p : m_right_motors)
 			motor_p->Set(m_right_voltage);
+	}
+
+	double DriveBase::getDrift()
+	{
+		double ret = 0.0;
+
+		if (m_drive_straight_mode == StraightDrivingStrategy::AngleMeasurement)
+			ret = getAngle();
+		else
+		{
+			if (m_left_linear_speedometer_p->isValid() && m_right_linear_speedometer_p->isValid())
+				ret = m_left_linear_speedometer_p->getSpeed() - m_right_linear_speedometer_p->getSpeed();
+		}
+
+		return ret;
 	}
 
 	void DriveBase::driveStraight(double distance)

@@ -16,13 +16,31 @@ TARGETAPPLIBS=$(addprefix $(TARGETDIR)/,$(APPLIBS))
 #
 # The top level make target, makes the directory an library
 #
-all: mkdirs shared $(REALTARGET)
+all: mkdirs shared startmsg $(REALTARGET) endmsg
+
+startmsg:
+	@echo
+	@echo Building application $(notdir $(REALTARGET))
+	@echo "======================================================="
+
+endmsg:
+	@echo "======================================================="
+	@echo
+	@echo
+
 
 include ../../../makefiles/test.mk
 
 ifdef COMMON
 shared:
-	(cd ../../common ; make CONFIG=$(CONFIG))
+	@for lib in $(COMMONDIRS) ; do \
+		pushd $$lib ; \
+		make CONFIG=$(CONFIG) ; \
+		if [ $$? -ne 0 ]; then \
+			break ; \
+		fi ; \
+		popd ; \
+	done
 else
 shared:
 	echo No shared libraries required
@@ -37,8 +55,15 @@ clean::
 #
 # Make the application
 #
+ifeq ($(VERBOSE),1)
 $(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
-	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS) $(COMMONLIBSFULL)
+	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS)
+else
+$(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
+	@echo -n Linking application $@ " ... "
+	@$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS)
+	@echo complete
+endif
 
 #
 # Create the directories needed
@@ -46,12 +71,6 @@ $(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
 mkdirs::
 	-mkdir -p $(TARGETDIR)
 	-mkdir -p $(OBJDIR)
-
-#
-# Rule to make object files
-#
-$(OBJDIR)/%.o : %.cpp
-	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 
 #
 # Deploy the software to the robot

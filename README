@@ -57,3 +57,7 @@ make CONFIG=cfg robotsw
 
 cfg is the desired configuration and can be debug or release
 
+Note, adding VERBOSE=1 to any make command line will display details of
+build and link command lines
+
+
