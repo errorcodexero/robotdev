@@ -16,6 +16,11 @@ endif
 endif
 
 #
+# We rely on the bash shell for pushd/popd
+#
+SHELL=bash
+
+#
 # The directory for external libraries
 #
 EXTERNALSW = ../../../external
