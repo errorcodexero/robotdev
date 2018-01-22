@@ -2,8 +2,7 @@
 # include the validation stuff
 #
 
-LIBSUBDIRS = \
-	xerolib
+LIBSUBDIRS =
 
 TOPDIR=\
 	play

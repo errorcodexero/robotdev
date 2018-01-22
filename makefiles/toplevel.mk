@@ -4,7 +4,9 @@
 
 include ../../makefiles/valid.mk
 
-all:: tests robotsw
+all:: robotsw
+
+full:: tests robotsw
 
 tests::
 	@for program in $(LIBSUBDIRS) $(TOPDIR) ; do \

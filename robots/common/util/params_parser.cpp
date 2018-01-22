@@ -2,9 +2,8 @@
 #include <ostream>
 #include <string>
 
-paramsInput::paramsInput(const std::string &filename = "")
+paramsInput::paramsInput()
 {
-	mFilename = filename;
 }
 
 bool paramsInput::readFile(const std::string &filename)
@@ -79,7 +78,7 @@ double paramsInput::getValue(const std::string &paramName, double defaultValue)
     return it->second ;
 }
 
-#ifdef  PARAMSPARSER_TEST
+#ifdef  PARAMS_PARSER_TEST
 static const char *paramsFile = "paramsTest.txt";
 
 

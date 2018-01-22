@@ -9,7 +9,7 @@ class paramsInput {
 	
 public:
     /// \brief create a new params parsing object
-    paramsInput(const std::string &filename);
+    paramsInput();
 
     /// \brief read the input file containing parameters
     /// \param filename the name of the file to read

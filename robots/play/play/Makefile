@@ -8,6 +8,11 @@
 TARGET=FRCUserProgram
 
 #
+# Additional files to deploy with the target
+#
+DEPLOYADD = params
+
+#
 # Add flags to get to the xerolib header file
 #
 COMMON=xerolib
