@@ -57,12 +57,12 @@ clean::
 #
 ifeq ($(VERBOSE),1)
 $(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
-	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS)
+	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
 else
 $(info $(COMMONLIBSFULL))
 $(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
 	@echo -n Linking application $@ " ... "
-	@$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS)
+	@$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
 	@echo complete
 endif
 
@@ -81,7 +81,7 @@ ifndef TEAM_NUMBER
 TEAM_NUMBER=1425
 endif
 
-deploy:: $(REALTARGET)
+deploy:: all
 	@ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
 	@for file in $(REALTARGET) ; do \
 		scp $$file admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser ; \
@@ -89,7 +89,7 @@ deploy:: $(REALTARGET)
 	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
 
 
-deployall:: $(REALTARGET)
+deployall:: all
 	@ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
 	@for file in $(REALTARGET) $(DEPLOYADD) ; do \
 		scp $$file admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser ; \

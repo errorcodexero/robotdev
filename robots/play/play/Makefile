@@ -37,6 +37,11 @@ CTRE=true
 #
 APPLIBS=
 
+#
+# Add the libs we want to add
+#
+USERLIBS = -lstdc++fs
+
 
 #
 # define the source code

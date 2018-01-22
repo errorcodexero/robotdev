@@ -52,14 +52,10 @@ namespace xerolib
     {
 	std::string filename;
 
-	filename = getenv("HOME");
-	filename += "/";
-	filename += msgname_p;
+	filename = m_filemgr.makeFileName(msgname_p) ;
 	m_logger.addDestination(filename);
 
-	filename = getenv("HOME");
-	filename += "/";
-	filename += dataname_p;
+	filename = m_filemgr.makeFileName(dataname_p) ;
 	m_data.addDestination(filename);
 
 	m_time_col = m_data.createColumn("time");

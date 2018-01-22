@@ -2,6 +2,7 @@
 
 #include "MessageLogger.h"
 #include "DataLogger.h"
+#include "FileManager.h"
 #include <Timer.h>
 #include <SampleRobot.h>
 #include <memory>
@@ -144,6 +145,11 @@ namespace xerolib
 	DataLogger m_data;
 
 	//
+	// The file manager for finding a location for the data and message files
+	//
+	FileManager m_filemgr ;
+
+	//
 	// The index for the time variable
 	//
 	size_t m_time_col;
@@ -159,6 +165,4 @@ namespace xerolib
 	std::map<std::string, double> m_parameters;
     };
 }
-
-
 
