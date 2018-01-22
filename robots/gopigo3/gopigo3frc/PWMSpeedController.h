@@ -1,10 +1,11 @@
 #pragma once
 
+#include "SpeedController.h"
 #include <cstdint>
 
 namespace frc
 {
-	class PWMSpeedController
+	class PWMSpeedController : public SpeedController
 	{
 	public:
 		PWMSpeedController()
@@ -15,10 +16,6 @@ namespace frc
 		{
 		}
 
-		virtual void Set(double value, uint8_t syncgroup = 0) = 0;
-		virtual double Get() = 0;
-		virtual void Disable() = 0;
-		virtual void StopMotor() = 0;
 	};
 }
 

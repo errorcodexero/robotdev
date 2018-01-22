@@ -10,7 +10,8 @@ namespace frc
 			Port_0 = 0,
 			Port_1 = 1,
 			kMXP,
-			kOnboard
+			kOnboard,
+			kUSB
 		};
 
 	public:

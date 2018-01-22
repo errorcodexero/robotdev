@@ -1,6 +1,6 @@
 #include "DriveBase.h"
 #include "XeroRobotBase.h"
-#include <wpilib.h>
+#include <WPILib.h>
 #include <cassert>
 #include <iostream>
 #include <cmath>

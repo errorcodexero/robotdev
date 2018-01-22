@@ -17,6 +17,10 @@ namespace frc
 		{
 		}
 
+		static void PutNumber(const std::string &name, double number)
+		{
+		}
+
 		static void PutString(const char *label_p, const char *string_p)
 		{
 		}

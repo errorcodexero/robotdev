@@ -21,6 +21,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xerolib", "..\common\xeroli
 		{6E9D9CA5-BDC0-467E-BFDC-E5CF12131C25} = {6E9D9CA5-BDC0-467E-BFDC-E5CF12131C25}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3robot", "gopigo3robot.vcxproj", "{736F5F78-16E3-45A0-A2E9-F484F5F0E105}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -67,6 +69,14 @@ Global
 		{D209EB32-4734-4437-BC69-30F2B01616BA}.Release|x64.Build.0 = Release|x64
 		{D209EB32-4734-4437-BC69-30F2B01616BA}.Release|x86.ActiveCfg = Release|x86
 		{D209EB32-4734-4437-BC69-30F2B01616BA}.Release|x86.Build.0 = Release|x86
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Debug|ARM.ActiveCfg = Debug|ARM
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Debug|ARM.Build.0 = Debug|ARM
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Debug|x64.ActiveCfg = Debug|ARM
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Debug|x86.ActiveCfg = Debug|ARM
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Release|ARM.ActiveCfg = Release|ARM
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Release|ARM.Build.0 = Release|ARM
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Release|x64.ActiveCfg = Release|ARM
+		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Release|x86.ActiveCfg = Release|ARM
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
