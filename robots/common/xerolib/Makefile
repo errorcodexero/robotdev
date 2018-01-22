@@ -24,10 +24,11 @@ SRC = \
 	AutonomousControllerBase.cpp\
 	AutonomousStepBase.cpp\
 	AutoSetMotorVoltage.cpp\
-	DataFileDestination.cpp\
 	DataLogger.cpp\
+	DataFileDestination.cpp\
 	DataTcpDestination.cpp\
 	DataUDPDestination.cpp\
+	DataDashboardDestination.cpp\
 	DriveBase.cpp\
 	EncoderAngleMeasurementDevice.cpp\
 	MessageLogger.cpp\

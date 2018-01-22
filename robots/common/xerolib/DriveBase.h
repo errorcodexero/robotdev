@@ -242,17 +242,19 @@ namespace xerolib
 	enum class Mode
 	{
 	    Idle,			// The drivebase is idle
-		Manual,			// Under manual control, motor voltages can be set
-		Straight,		// Drive straight a linear distance under velocity control
-		Distance,		// Drive straight a linear distance under distance control
-		Rotate,			// Rotate a given angle under rotational velocity control
-		Angle,			// Rotate a given angle under rotational angle control
-		};
+	    Manual,			// Under manual control, motor voltages can be set
+	    Straight,			// Drive straight a linear distance under velocity control
+	    Distance,			// Drive straight a linear distance under distance control
+	    Rotate,			// Rotate a given angle under rotational velocity control
+	    Angle,			// Rotate a given angle under rotational angle control
+	};
 
 	static double clamp(double v, double vmin, double vmax)
 	{
 	    return std::max(vmin, std::min(v, vmax));
 	}
+
+	void putModeInDashboard() ;
 
 	double getDrift();
 

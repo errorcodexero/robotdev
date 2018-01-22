@@ -210,8 +210,9 @@ void Robot2018::RobotInit()
     
     setupLoggers("robot.log", "robot.csv");
     setupConsoleLogger();
+    setupSmartDashboardLogger() ;
     // setupTcpLogger("10.14.25.25", 8888);
-    setupUdpLogger(8888) ;
+    //setupUdpLogger(8888) ;
     
     readParams();
     extractParams();
