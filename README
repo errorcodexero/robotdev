@@ -40,14 +40,23 @@ robotdev
   - wpilib2017			First WPILibs for 2017
 - robots			repository for all robot code
   - common			code common to multiple robots
-  - theremin			code specific to the theremin robot
+    - util			common code for theremin/claymore
+    - xerolib			common code for playing with new arch
+  - gopigo3
+    - gopigo3hw			hardware library for the gopigo3 robot
+    - gopigo3frc		frc compatilbe robot lib for the gopigo3 robot
+    - gopigo3navx		navx code for the gopigo3 robot
+  - theremin			code specific to the software robot
+  - claymore			code for the 2018 power up
+  - play			code playing with a new robot sw
+    				architecture
+  - sabre			code for the 2016 stronghold robot
 
-
+---------------------------------------------------------------
 At the top level of a robot (e.g. robots/theremin)
 
 make CONFIG=cfg
-- builds and runs the test code locally
-- builds the robot code
+- builds the robot code, same as the robotsw target
 
 make CONFIG=cfg tests
 - builds and runs the test code locally
@@ -55,9 +64,27 @@ make CONFIG=cfg tests
 make CONFIG=cfg robotsw
 - builds the robot software
 
-cfg is the desired configuration and can be debug or release
+---------------------------------------------------------------
+Within a subdirectory of a robot,
 
-Note, adding VERBOSE=1 to any make command line will display details of
-build and link command lines
+make CONFIG=cfg
+- build the robot code, either the library or the application
 
+make CONFIG=cfg tests
+- builds and runs the test code locally
+
+make CONFIG=cfg deploy
+- deploys the robot code to the robot (only works for apps)
+  the team is assumed to be 1425, but can be overridden with
+  the TEAM environment varaible
+
+
+
+Notes:
+For all make targets, the CONFIG option must be specified.  The
+config option can be 'debug' or 'release' with no quotes.
+
+By default a short message indicating build steps is displayed. If
+VERBOSE=1 is set on the make invocation then the full build command
+line is displayed.
 
