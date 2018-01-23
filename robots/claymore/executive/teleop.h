@@ -13,14 +13,14 @@ struct Teleop : Executive_impl<Teleop> {
 		Posedge_trigger trigger;
 		Countdown_timer timer;
 	};
-
-	#define GEAR_COLLECTOR_MODES X(STOW) X(STOW_CLOSED) X(COLLECT) X(PREP_SCORE) X(SCORE)
-	enum class Gear_collector_mode{
+	/*
+	#define INTAKE_MODES X()
+	enum class Intake_mode{
 		#define X(NAME) NAME,
-		GEAR_COLLECTOR_MODES
+		INTAKE_MODES
 		#undef X
 	};
-
+	*/
 	#define TELEOP_ITEMS(X)\
 		X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges) \
 		X(int,print_number)
@@ -36,7 +36,7 @@ struct Teleop : Executive_impl<Teleop> {
 };
 
 std::ostream& operator<<(std::ostream&,Teleop::Nudge const&);
-std::ostream& operator<<(std::ostream&,Teleop::Gear_collector_mode const&);
+//std::ostream& operator<<(std::ostream&,Teleop::Intake_mode const&);
 
 bool operator<(Teleop::Nudge const&,Teleop::Nudge const&);
 bool operator==(Teleop::Nudge const&,Teleop::Nudge const&);

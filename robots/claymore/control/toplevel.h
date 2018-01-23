@@ -5,6 +5,7 @@
 #include "pump.h"
 #include "drivebase.h"
 #include "intake.h"
+#include "intake_actuator.h"
 #include "nop.h"
 #include "lights.h"
 
@@ -12,6 +13,7 @@
 	X(Pump,pump,Pump::Goal::AUTO)\
 	X(Drivebase,drive,)\
 	X(Intake,intake,Intake::Goal::OFF)\
+	X(Intake_actuator,intake_actuator,Intake_actuator::Goal::OPEN)\
 	X(Lights,lights,)
 	
 class Toplevel{

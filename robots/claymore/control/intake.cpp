@@ -6,7 +6,7 @@ using namespace std;
 
 #define INTAKE_ADDRESS_R 2
 #define INTAKE_ADDRESS_L 3
-#define INTAKE_POWER .40 //TODO tune this
+#define INTAKE_POWER 1.0 //TODO tune this
 
 ostream& operator<<(ostream& o, Intake::Goal a){
 	#define X(name) if(a==Intake::Goal::name)return o<<"Intake::Goal("#name")";
@@ -38,7 +38,7 @@ Robot_outputs Intake::Output_applicator::operator()(Robot_outputs r, Intake::Out
 			assert(0);
 	}
 	r.pwm[INTAKE_ADDRESS_R] = out_power;
-	r.pwm[INTAKE_ADDRESS_L] = out_power;
+	r.pwm[INTAKE_ADDRESS_L] = -out_power;
 	return r;
 }
 

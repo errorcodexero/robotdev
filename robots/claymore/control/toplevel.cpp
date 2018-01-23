@@ -100,6 +100,7 @@ Toplevel::Output::Output():
 	pump(Pump::Output::AUTO),
 	drive(0.0,0.0),
 	intake(Intake::Output::OFF),
+	intake_actuator(Intake_actuator::Output::OPEN),
 	lights()
 {}
 
@@ -152,6 +153,7 @@ Toplevel::Status::Status():
 	pump(Pump::Status::NOT_FULL),
 	drive(*examples((Drivebase::Status*)nullptr).begin()),
 	intake(*examples((Intake::Status*)nullptr).begin()),
+	intake_actuator(*examples((Intake_actuator::Status*)nullptr).begin()),
 	lights(*examples((Lights::Status*)nullptr).begin())
 {}
 bool operator==(Toplevel::Status a,Toplevel::Status b){

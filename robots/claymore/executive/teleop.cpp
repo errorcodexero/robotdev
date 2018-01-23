@@ -87,8 +87,11 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 
 	if(info.driver_joystick.button[Gamepad_button::A]) goals.intake = Intake::Goal::IN;
-	if(info.driver_joystick.button[Gamepad_button::B]) goals.intake = Intake::Goal::OUT;
-
+	if(info.driver_joystick.button[Gamepad_button::Y]) goals.intake = Intake::Goal::OUT;
+	
+	if(info.driver_joystick.button[Gamepad_button::X]) goals.intake_actuator = Intake_actuator::Goal::CLOSE;
+	if(info.driver_joystick.button[Gamepad_button::B]) goals.intake_actuator = Intake_actuator::Goal::OPEN;
+	
 	#ifdef PRINT_OUTS
 	if(info.in.ds_info.connected && (print_number%10)==0){
 		cout<<"\nencoders:"<<info.status.drive<<"\n";
