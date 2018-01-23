@@ -2,7 +2,6 @@
 #include<iostream>
 #include<cassert>
 #include<fstream>
-#include "nav.h"
 
 using namespace std;
 

@@ -20,7 +20,7 @@ WPILIB=true
 #
 # Tell the make system we need the NAVX libraries
 #
-NAVX=true
+NAVX=false
 
 #
 # Tell the make system we need the CTRE libraries
@@ -41,8 +41,6 @@ APPLIBS=\
 #
 SRC = \
 	dio_control.cpp\
-	navx_control.cpp\
-	pump_control.cpp\
 	talon_srx_control.cpp\
 	to_roborio.cpp
 

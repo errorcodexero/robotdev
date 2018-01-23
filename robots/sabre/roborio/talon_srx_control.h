@@ -1,14 +1,13 @@
 #ifndef TALON_SRX_CONTROL_H
 #define TALON_SRX_CONTROL_H
 
+#include "ctre/phoenix/MotorControl/CAN/WPI_TalonSRX.h"
 #include "../util/interface.h"
 #include "../util/checked_array.h"
 
-class CANTalon;
-
 class Talon_srx_control{
 	private:
-	CANTalon *talon;
+	ctre::phoenix::motorcontrol::can::WPI_TalonSRX *talon;
 	
 	Talon_srx_output out;
 	//Talon_srx_output last_out;

@@ -21,6 +21,8 @@ SRC = \
 	interface.cpp\
 	meta.cpp\
 	motion_profile.cpp\
+	nav.cpp\
+	nav2.cpp\
 	negedge_trigger.cpp\
 	network.cpp\
 	output.cpp\
@@ -42,6 +44,7 @@ TESTS = \
 	fixVictor.cpp\
 	input.cpp\
 	motion_profile.cpp\
+	nav\
 	negedge_trigger.cpp\
 	network.cpp\
 	output.cpp\
@@ -51,6 +54,7 @@ TESTS = \
 
 COMPLEXTESTS = \
 	debounce\
+	nav2\
 	visitable\
 	settable_toggle\
 	posedge_trigger\
@@ -71,6 +75,7 @@ include ../../../makefiles/compilelib.mk
 # Complex tests
 #
 $(TESTTARGETDIR)/debounce$(EXEEXT): debounce.cpp countdown_timer.cpp
+$(TESTTARGETDIR)/nav2$(EXEEXT): nav2.cpp nav.cpp
 $(TESTTARGETDIR)/visitable$(EXEEXT): visitable.cpp type.cpp
 $(TESTTARGETDIR)/settable_toggle$(EXEEXT): settable_toggle.cpp posedge_trigger.cpp
 $(TESTTARGETDIR)/posedge_trigger$(EXEEXT): posedge_trigger.cpp

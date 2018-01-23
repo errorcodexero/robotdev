@@ -1,5 +1,5 @@
 #include "talon_srx_control.h"
-#include "CANTalon.h"
+#include "ctre/phoenix/MotorControl/SensorCollection.h"
 #include "../util/util.h"
 #include <cmath>
 #include <cassert>
@@ -19,7 +19,7 @@ Talon_srx_control::~Talon_srx_control(){
 void Talon_srx_control::init(int CANBusAddress){
 	assert(!talon);
 	assert(mode==Mode::INIT);
-	talon = new CANTalon(CANBusAddress);
+	talon = new ctre::phoenix::motorcontrol::can::WPI_TalonSRX(CANBusAddress); 
 	assert(talon);
 	talon->SetSafetyEnabled(false);
 	mode = Mode::VOLTAGE;
@@ -61,11 +61,9 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 	if(a.mode==Talon_srx_output::Mode::VOLTAGE){
 		assert(a.power_level==clip(a.power_level));
 		if(mode!=Talon_srx_control::Mode::VOLTAGE){
-			talon->SetControlMode(frc::CANSpeedController::kPercentVbus);
-			talon->EnableControl();
+			talon->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, a.power_level);
 			talon->SetExpiration(EXPIRATION);
 			talon->SetSafetyEnabled(true);
-			talon->Set(a.power_level);
 			out=a;
 			mode=Talon_srx_control::Mode::VOLTAGE;
 		} else if((a.power_level!=out.power_level || since_query==1) /*&& out!=last_out*/){
@@ -74,14 +72,14 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 		}	
 	} else if(a.mode==Talon_srx_output::Mode::SPEED){
 		if(mode!=Talon_srx_control::Mode::SPEED || !pid_approx(out.pid,a.pid)){
-			talon->SetControlMode(frc::CANSpeedController::kSpeed);
-			talon->SetPID(a.pid.p,a.pid.i,a.pid.d,a.pid.f);	
-			talon->EnableControl();
-			talon->SetFeedbackDevice(CANTalon::QuadEncoder);
-			talon->ConfigEncoderCodesPerRev(200);
+			talon->Config_kP(0, a.pid.p, 0);
+			talon->Config_kI(0, a.pid.i, 0);
+			talon->Config_kD(0, a.pid.d, 0);
+			talon->Config_kF(0, a.pid.f, 0);
+			talon->ConfigSelectedFeedbackSensor(ctre::phoenix::motorcontrol::FeedbackDevice::QuadEncoder, 0, 0);    	
 			talon->SetExpiration(EXPIRATION);
 			talon->SetSafetyEnabled(true);
-			talon->Set(a.speed);
+			talon->Set(ctre::phoenix::motorcontrol::ControlMode::Velocity, a.speed);
 			out=a;
 			mode=Talon_srx_control::Mode::SPEED;
 		} else if((a.speed!=out.speed || since_query==1) /*&& out!=last_out*/){ 
@@ -94,14 +92,17 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 
 Talon_srx_input Talon_srx_control::get(){
 	if(since_query>0){
-		in.current=talon->GetBusVoltage();
-		in.velocity=talon->GetSpeed();
-		in.a=talon->GetPinStateQuadA();
-		in.b=talon->GetPinStateQuadB();
-		in.fwd_limit_switch=talon->IsFwdLimitSwitchClosed();
-		in.rev_limit_switch=talon->IsRevLimitSwitchClosed();
-		in.encoder_position=talon->GetEncPosition();
-		since_query=0;
+                in.current=talon->GetBusVoltage(); 
+                in.velocity=talon->GetSelectedSensorVelocity(0);
+                ctre::phoenix::motorcontrol::SensorCollection collection = talon->GetSensorCollection();
+                in.a=collection.GetPinStateQuadA();
+                in.b=collection.GetPinStateQuadB();
+                in.encoder_position=collection.GetQuadraturePosition();
+                ctre::phoenix::motorcontrol::Faults faults;
+                talon->GetFaults(faults);
+                in.fwd_limit_switch=faults.ForwardLimitSwitch;
+                in.rev_limit_switch=faults.ReverseLimitSwitch;
+                since_query=0;
 	}
 	since_query++;
 	return in;

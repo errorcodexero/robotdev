@@ -27,11 +27,14 @@ SRC = \
 	motor_check.cpp\
 	nop.cpp\
 	pump.cpp\
+	shooter_constants.cpp\
 	sim.cpp\
+	tilt_presets.cpp\
 	toplevel.cpp
 
 TESTS = \
 	motor_check.cpp\
+	tilt_presets\
 	
 COMPLEXTESTS = \
 	drivebase\
@@ -47,6 +50,7 @@ COMPLEXTESTS = \
 	monitor\
 	nop\
 	pump\
+	shooter_constants\
 	toplevel
 #
 # include a central make file that defines our compilation recipe
@@ -112,6 +116,9 @@ $(TESTTARGETDIR)/monitor$(EXEEXT): ../util/posedge_trigger.cpp ../util/countdown
 
 $(TESTTARGETDIR)/pump$(EXEEXT): pump.cpp
 $(TESTTARGETDIR)/pump$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+
+$(TESTTARGETDIR)/shooter_constants$(EXEEXT): shooter_constants.cpp
+$(TESTTARGETDIR)/shooter_constants$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
 $(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp collector.cpp front.cpp sides.cpp tilt.cpp winch.cpp shooter.cpp climb_release.cpp pump.cpp motor_check.cpp nop.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp

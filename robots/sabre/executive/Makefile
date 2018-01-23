@@ -19,6 +19,7 @@ SRC = \
 	auto_test.cpp\
 	barrelracer.cpp\
 	cheval.cpp\
+	delay.cpp\
 	executive.cpp\
 	low_bar_low_score.cpp\
 	low_bar_wall_high_score.cpp\
@@ -41,6 +42,7 @@ COMPLEXTESTS = \
 	auto_test\
 	barrelracer\
 	cheval\
+	delay\
 	executive\
 	low_bar_low_score\
 	low_bar_wall_high_score\
@@ -53,6 +55,19 @@ COMPLEXTESTS = \
 # include a central make file that defines our compilation recipe
 #
 include ../../../makefiles/compilelib.mk
+
+$(TESTTARGETDIR)/delay$(EXEEXT): delay.cpp executive.cpp teleop.cpp test.cpp 
+$(TESTTARGETDIR)/delay$(EXEEXT): auto_null.cpp auto_reach.cpp auto_static.cpp auto_statictwo.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): auto_stop.cpp auto_test.cpp barrelracer.cpp cheval.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): low_bar_low_score.cpp low_bar_wall_high_score.cpp low_bar_wall_low_score.cpp portcullis.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): ../util/interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): ../util/type.cpp ../util/posedge_trigger.cpp ../util/posedge_trigger_debounce.cpp ../util/debounce.cpp ../util/posedge_toggle.cpp 
+$(TESTTARGETDIR)/delay$(EXEEXT): ../control/tilt_presets.cpp ../control/shooter_constants.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): ../util/driver_station_interface.cpp ../util/posedge_trigger.cpp ../util/motion_profile.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): ../control/toplevel.cpp ../control/pump.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): ../control/drivebase.cpp ../control/nop.cpp ../control/motor_check.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): ../control/winch.cpp ../control/climb_release.cpp ../control/shooter.cpp ../control/front.cpp ../control/sides.cpp ../control/tilt.cpp ../control/collector.cpp
+$(TESTTARGETDIR)/delay$(EXEEXT): ../input/panel.cpp ../input/util.cpp
 
 $(TESTTARGETDIR)/auto_null$(EXEEXT): auto_null.cpp executive.cpp teleop.cpp test.cpp delay.cpp  
 $(TESTTARGETDIR)/auto_null$(EXEEXT): auto_reach.cpp auto_static.cpp auto_statictwo.cpp
