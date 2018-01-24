@@ -5,7 +5,7 @@
 #include "talon_srx_control.h"
 #include "pump_control.h"
 #include "navx_control.h"
-#include "paramsParser.h"
+#include "params_parser.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>

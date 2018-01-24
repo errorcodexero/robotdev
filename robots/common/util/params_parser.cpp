@@ -2,9 +2,8 @@
 #include <ostream>
 #include <string>
 
-paramsInput::paramsInput(const std::string &filename = "")
+paramsInput::paramsInput()
 {
-	mFilename = filename;
 }
 
 bool paramsInput::readFile(const std::string &filename)
