@@ -72,6 +72,7 @@ endif
 mkdirs::
 	-mkdir -p $(TARGETDIR)
 	-mkdir -p $(OBJDIR)
+	-mkdir -p $(DEPDIR)
 
 #
 # Deploy the software to the robot
@@ -97,3 +98,8 @@ deployall:: all
 	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r &"
 
 
+$(DEPDIR)/%.d: ;
+
+.PRECIOUS: $(DEPDIR)/%.d
+
+-include $(addsuffix .Td,$(addprefix $(DEPDIR),$(basename $(SRC))))

@@ -64,12 +64,16 @@ endif
 #
 CXX=g++
 
+#
+# Flags for generating dependencies
+#
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 
 
 #
 # The flags to apply to the C++ compilation
 #
-CXXFLAGS += -std=c++14 -Wall
+CXXFLAGS += -std=c++14 -Wall $(DEPFLAGS)
 
 #
 # The preprocessor flags to apply
@@ -82,11 +86,6 @@ CPPFLAGS =
 TARGETDIR=../builddir/$(CONFIG)
 
 #
-# The set of directories to make in the target
-#
-TARGETMKDIRS=$(addprefix $(OBJDIR)/,$(MKDIRS))
-
-#
 # Target name
 #
 TARGETNAME=$(basename $(TARGET))
@@ -95,6 +94,16 @@ TARGETNAME=$(basename $(TARGET))
 # The directory for the object files
 #
 OBJDIR=$(TARGETDIR)/obj/$(TARGETNAME)
+
+#
+# The directory for storing dependencies
+#
+DEPDIR=$(TARGETDIR)/dep/$(TARGETNAME)/
+
+#
+# The set of directories to make in the target
+#
+TARGETMKDIRS=$(addprefix $(OBJDIR)/,$(MKDIRS))
 
 #
 # Generate the list of object files desired

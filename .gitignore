@@ -3,3 +3,4 @@
 **/.vs
 **/*.vcxproj.user
 **/*~
+**/builddir

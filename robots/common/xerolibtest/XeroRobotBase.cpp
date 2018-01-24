@@ -1,6 +1,5 @@
 #include "XeroRobotBase.h"
 #include "RobotControllerBase.h"
-#include "SubsystemBase.h"
 #include "Timer.h"
 #include "DataUdpDestination.h"
 #include "DataTcpDestination.h"
@@ -137,14 +136,8 @@ namespace xerolib
 	m_data.logData(m_time_col, start);
 	m_data.logData(m_mode_col, mode);
 
-	for (auto sub_p : m_subsystems)
-	    sub_p->readInputs();
-
 	if (m_controller_p != nullptr)
 	    m_controller_p->executeOneLoop();
-
-	for (auto sub_p : m_subsystems)
-	    sub_p->setOutputs();
 
 	double elapsed = getTime() - start;
 
@@ -160,16 +153,5 @@ namespace xerolib
 	}
 
 	m_data.endRow();
-    }
-
-    std::shared_ptr<SubsystemBase> XeroRobotBase::getSubsystem(const char *name_p)
-    {
-	for (auto sub_p : m_subsystems)
-	{
-	    if (sub_p->getName() == name_p)
-		return sub_p;
-	}
-
-	return nullptr;
     }
 }

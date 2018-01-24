@@ -81,6 +81,14 @@ Robot2018::~Robot2018()
 {
 }
 
+void Robot2018::doOneLoop(RobotModeType type)
+{
+    MessageLogger &logger = getMessageLogger();
+    logger << MessageLogger::MessageType::Info;
+    logger << "doOneLoop" ;
+    logger << MessageLogger::Token::EndOfMessage ;
+}
+
 void Robot2018::extractParams()
 {
     TicksPerRev = static_cast<int32_t>(std::round(getParam(ParamPulsesPerRev, 200)));
@@ -207,6 +215,8 @@ void Robot2018::RobotInit()
     
     std::list<int> left_can_addrs = { 1, 2} ;
     std::list<int> right_can_addrs = { 3, 4 } ;
+
+    frc::Wait(2.0) ;
     
     setupLoggers("robot.log", "robot.csv");
     setupConsoleLogger();

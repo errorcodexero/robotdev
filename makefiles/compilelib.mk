@@ -52,7 +52,13 @@ endif
 mkdirs::
 	-mkdir -p $(TARGETDIR)
 	-mkdir -p $(OBJDIR)
+	-mkdir -p $(DEPDIR)
 ifneq "$(TARGETMKDIRS)" ""
 	-mkdir -p $(TARGETMKDIRS)
 endif
 
+$(DEPDIR)/%.d: ;
+
+.PRECIOUS: $(DEPDIR)/%.d
+
+-include $(addsuffix .Td,$(addprefix $(DEPDIR),$(basename $(SRC))))

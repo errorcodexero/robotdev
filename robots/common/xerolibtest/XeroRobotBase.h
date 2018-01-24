@@ -12,7 +12,6 @@
 namespace xerolib
 {
     class RobotControllerBase;
-    class SubsystemBase;
 
     class XeroRobotBase : public frc::SampleRobot
     {
@@ -52,18 +51,8 @@ namespace xerolib
 	    return m_data;
 	}
 
-	/// @brief return the subsystem with the given name
-	/// @param name the name of the subsystem to find
-	/// @returns the subsystme with the given name, or nullptr if no subsystem with the name exists
-	std::shared_ptr<SubsystemBase> getSubsystem(const char *name_p);
-
     protected:
-	/// @brief add a new subsystem to the roboto
-	/// @param subsystem_p the subsystem to add to the robot
-	void addSubsystem(std::shared_ptr<SubsystemBase> subsystem_p)
-	{
-	    m_subsystems.push_back(subsystem_p);
-	}
+
 
 	/// @brief this method is implemented by a derived class and creates the autonomous controller
 	virtual std::shared_ptr<RobotControllerBase> createAutonomousController() = 0;
@@ -124,11 +113,6 @@ namespace xerolib
 	// The controller controlling the robot
 	//
 	std::shared_ptr<RobotControllerBase> m_controller_p;
-
-	//
-	// The list of subsystems
-	//
-	std::list<std::shared_ptr<SubsystemBase>> m_subsystems;
 
 	//
 	// The time for a single robot loop
