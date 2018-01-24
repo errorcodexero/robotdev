@@ -86,6 +86,12 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.drive = Drivebase::Goal::absolute(left,right);
 	}
 
+	goals.gear_shifter=[&]{
+		if(info.driver_joystick.button[Gamepad_button::RB]) return Gear_shifter::Goal::LOW;
+		if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER]>.8) return Gear_shifter::Goal::HIGH;
+		return Gear_shifter::Goal::AUTO;
+	}();
+
 	if(info.driver_joystick.button[Gamepad_button::A]) goals.intake = Intake::Goal::IN;
 	if(info.driver_joystick.button[Gamepad_button::Y]) goals.intake = Intake::Goal::OUT;
 	

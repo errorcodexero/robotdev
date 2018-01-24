@@ -99,6 +99,7 @@ ostream& operator<<(ostream& o,Toplevel::Output_applicator const&){
 Toplevel::Output::Output():
 	pump(Pump::Output::AUTO),
 	drive(0.0,0.0),
+	gear_shifter(Gear_shifter::Output::LOW),
 	intake(Intake::Output::OFF),
 	intake_actuator(Intake_actuator::Output::OPEN),
 	lights()
@@ -152,6 +153,7 @@ ostream& operator<<(ostream& o,Toplevel::Goal g){
 Toplevel::Status::Status():
 	pump(Pump::Status::NOT_FULL),
 	drive(*examples((Drivebase::Status*)nullptr).begin()),
+	gear_shifter(*examples((Gear_shifter::Status*)nullptr).begin()),
 	intake(*examples((Intake::Status*)nullptr).begin()),
 	intake_actuator(*examples((Intake_actuator::Status*)nullptr).begin()),
 	lights(*examples((Lights::Status*)nullptr).begin())
@@ -329,6 +331,7 @@ set<Toplevel::Status_detail> examples(Toplevel::Status_detail*){
 	return {Toplevel::Status_detail{
 		Pump::Status_detail{Pump::Status::FULL},
 		*examples((Drivebase::Status_detail*)0).begin(),
+		*examples((Gear_shifter::Status_detail*)0).begin(),
 		*examples((Lights::Status_detail*)0).begin()
 	}};
 }
@@ -345,6 +348,7 @@ set<Toplevel::Input> examples(Toplevel::Input*){
 	Toplevel::Input a{
 		Pump::Input{},
 		*examples((Drivebase::Input*)0).begin(),
+		*examples((Gear_shifter::Input*)0).begin(),
 		*examples((Lights::Input*)0).begin(),
 	};
 	return {a};

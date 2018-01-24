@@ -4,6 +4,7 @@
 #include <vector>
 #include "pump.h"
 #include "drivebase.h"
+#include "gear_shifter.h"
 #include "intake.h"
 #include "intake_actuator.h"
 #include "nop.h"
@@ -12,6 +13,7 @@
 #define TOPLEVEL_ITEMS \
 	X(Pump,pump,Pump::Goal::AUTO)\
 	X(Drivebase,drive,)\
+	X(Gear_shifter,gear_shifter,Gear_shifter::Goal::LOW)\
 	X(Intake,intake,Intake::Goal::OFF)\
 	X(Intake_actuator,intake_actuator,Intake_actuator::Goal::OPEN)\
 	X(Lights,lights,)

@@ -304,6 +304,12 @@ void visit(Func f,Drivebase::Status const& r){
 }
 
 template<typename Func>
+void visit(Func f,Gear_shifter::Output const& a){
+	f.terminal(a);
+}
+
+
+template<typename Func>
 void visit(Func f,Intake_actuator::Status_detail const& a){
 	f.terminal(a);
 }
