@@ -92,6 +92,18 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		return Gear_shifter::Goal::AUTO;
 	}();
 
+	goals.intake = [&]{
+		if(info.panel.intake) return Intake::Goal::IN;
+		if(info.panel.eject) return Intake::Goal::OUT;
+		return Intake::Goal::OFF;
+	}();
+	
+	goals.intake_actuator = [&]{
+		if(info.panel.open) return Intake_actuator::Goal::OPEN;
+		if(info.panel.close) return Intake_actuator::Goal::CLOSE;
+		return Intake_actuator::Goal::X;
+	}();
+
 	if(info.driver_joystick.button[Gamepad_button::A]) goals.intake = Intake::Goal::IN;
 	if(info.driver_joystick.button[Gamepad_button::Y]) goals.intake = Intake::Goal::OUT;
 	
