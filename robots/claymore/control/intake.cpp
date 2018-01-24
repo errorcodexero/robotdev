@@ -6,7 +6,8 @@ using namespace std;
 
 #define INTAKE_ADDRESS_R 2
 #define INTAKE_ADDRESS_L 3
-#define INTAKE_POWER 1.0 //TODO tune this
+#define L_INTAKE_POWER 4.0 //TODO tune this
+#define R_INTAKE_POWER 6.0 //TODO tune this
 
 ostream& operator<<(ostream& o, Intake::Goal a){
 	#define X(name) if(a==Intake::Goal::name)return o<<"Intake::Goal("#name")";
@@ -23,22 +24,25 @@ bool operator==(Intake a, Intake b){ return (a.input_reader==b.input_reader && a
 bool operator!=(Intake a, Intake b){ return !(a==b);}
 
 Robot_outputs Intake::Output_applicator::operator()(Robot_outputs r, Intake::Output out)const{
-	double out_power;
+	double l_out_power, r_out_power;
 	switch(out) {
 		case Intake::Output::OUT:
-			out_power = -INTAKE_POWER;
+			l_out_power = -L_INTAKE_POWER;
+			r_out_power = -R_INTAKE_POWER;
 			break;
 		case Intake::Output::OFF:
-			out_power = 0.0;	
+			l_out_power = 0.0;
+			r_out_power = 0.0;	
 			break;
 		case Intake::Output::IN:
-			out_power = INTAKE_POWER;
+			l_out_power = L_INTAKE_POWER;
+			r_out_power = R_INTAKE_POWER;
 			break;
 		default:
 			assert(0);
 	}
-	r.pwm[INTAKE_ADDRESS_R] = out_power;
-	r.pwm[INTAKE_ADDRESS_L] = -out_power;
+	r.pwm[INTAKE_ADDRESS_R] = r_out_power;
+	r.pwm[INTAKE_ADDRESS_L] = -l_out_power;
 	return r;
 }
 
