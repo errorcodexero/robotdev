@@ -1,0 +1,72 @@
+Driver:
+ A          - 
+ B          - 
+ X          - 
+ Y          - 
+ Start      - 
+ Back       - 
+ RB         - Low gear
+ LB         - Slow
+ RT         - High gear
+ LT         - Turbo
+ L_Joy:
+  X Axis    - 
+  Y Axis    - Forward/backward
+  Pushed in - 
+ R_Joy:
+  X Axis    - Turning
+  Y Axis    - 
+  Pushed in - 
+POV:
+  Center     - 
+  Up         - Nudge forward
+  Up_left    - 
+  Left       - Nudge counterclockwise
+  Down_left  - 
+  Down       - Nudge backward
+  Down_right - 
+  Right      - Nudge clockwise
+  Up_right   - 
+
+Gunner:
+ A          - 
+              AO: 
+ B          - 
+              AO: 
+ X          - 
+              AO: 
+ Y          - 
+              AO: 
+ Start      - 
+ Back       -
+ RB         - 
+ LB         - Alternative Operation (AO) - changes what other buttons do if held
+ RT         - 
+	      AO:
+ LT         - 
+ L_Joy:
+  Up        - 
+  Down      - 
+  Left      - 
+  Right     - 
+  Pushed in - 
+ R_Joy:
+  Up        - 
+	      AO: 
+  Down      - 
+	      AO: 
+  Left      - 
+  Right     - 
+  Pushed in - 
+ POV:        
+  Center     - 
+  Up         -
+  Up_left    - 
+  Left       - 
+               AO:
+  Down_left  - 
+  Down       - 
+  Down_right - 
+  Right      - 
+               AO: 
+  Up_right   - 

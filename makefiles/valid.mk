@@ -1,6 +1,10 @@
 #
 # validate the build environment
 #
+# This sensure the CONFIG variable is something legal.  It is not checked
+# in other places for validity and this name will be used as a directory for
+# the build.
+#
 
 ifndef CONFIG
 $(error missing the CONFIG variable on the make command line, e.g. make CONFIG=debug)

@@ -1,0 +1,24 @@
+HIGH PRIORITY:
+
+NOT AS HIGH PRIORITY:
+	- Logging
+	- Laptop configuration
+		-ssh config:
+			-Fix the "rm ~/.ssh/known_hosts" problem
+			-add "StrictHostKeyChecking no/UserKnownHostsFile=/dev/null" for robot
+
+
+NICE THINGS TO HAVE:
+	- Expand testing of the different robot modes
+	- Log Analysis
+	- Fix talon srx initialization: separate address for CANs and accessing index for them in the talon_srx_controls array
+	- Clean-up stuff:
+		- Use enum class more places
+		- Use std::array in place of C arrays in several places
+	- Meta IO information
+		- Add a function that will discover which IOs different parts use (and make a nice list)
+		- Make a data type to talk about different inputs
+	
+
+Eric's random thoughts:
+	-Sim stuff could benefit from using Monitor

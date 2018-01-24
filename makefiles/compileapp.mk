@@ -16,13 +16,31 @@ TARGETAPPLIBS=$(addprefix $(TARGETDIR)/,$(APPLIBS))
 #
 # The top level make target, makes the directory an library
 #
-all: mkdirs shared $(REALTARGET)
+all: mkdirs shared startmsg $(REALTARGET) endmsg
+
+startmsg:
+	@echo
+	@echo Building application $(notdir $(REALTARGET))
+	@echo "======================================================="
+
+endmsg:
+	@echo "======================================================="
+	@echo
+	@echo
+
 
 include ../../../makefiles/test.mk
 
 ifdef COMMON
 shared:
-	(cd ../../common ; make CONFIG=$(CONFIG))
+	@for lib in $(COMMONDIRS) ; do \
+		pushd $$lib ; \
+		make CONFIG=$(CONFIG) ; \
+		if [ $$? -ne 0 ]; then \
+			break ; \
+		fi ; \
+		popd ; \
+	done
 else
 shared:
 	echo No shared libraries required
@@ -37,8 +55,16 @@ clean::
 #
 # Make the application
 #
+ifeq ($(VERBOSE),1)
 $(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
-	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(ADDLIBS) $(COMMONLIBSFULL)
+	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
+else
+$(info $(COMMONLIBSFULL))
+$(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
+	@echo -n Linking application $@ " ... "
+	@$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
+	@echo complete
+endif
 
 #
 # Create the directories needed
@@ -46,12 +72,7 @@ $(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
 mkdirs::
 	-mkdir -p $(TARGETDIR)
 	-mkdir -p $(OBJDIR)
-
-#
-# Rule to make object files
-#
-$(OBJDIR)/%.o : %.cpp
-	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	-mkdir -p $(DEPDIR)
 
 #
 # Deploy the software to the robot
@@ -61,9 +82,24 @@ ifndef TEAM_NUMBER
 TEAM_NUMBER=1425
 endif
 
-deploy:: $(REALTARGET)
-	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
-	scp $(REALTARGET) admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser/FRCUserProgram
+deploy:: all
+	@ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
+	@for file in $(REALTARGET) ; do \
+		scp $$file admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser ; \
+	done
 	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
 
 
+deployall:: all
+	@ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
+	@for file in $(REALTARGET) $(DEPLOYADD) ; do \
+		scp $$file admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser ; \
+	done
+	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r &"
+
+
+$(DEPDIR)/%.d: ;
+
+.PRECIOUS: $(DEPDIR)/%.d
+
+-include $(addsuffix .Td,$(addprefix $(DEPDIR),$(basename $(SRC))))

@@ -47,12 +47,22 @@ runtests:
 		fi ; \
 	done
 
+ifeq ($(VERBOSE),1)
+$(TESTTARGETNAMES):
+	$(CXX) $(CXXFLAGS) -o $@ $(basename $(notdir $@)).cpp -D $(shell echo $(basename $(notdir $@)) | tr a-z A-Z)_TEST
+else
 $(TESTTARGETNAMES):
 	@echo -n Building test $(basename $(notdir $@)) " ... "
 	@$(CXX) $(CXXFLAGS) -o $@ $(basename $(notdir $@)).cpp -D $(shell echo $(basename $(notdir $@)) | tr a-z A-Z)_TEST
 	@echo done
+endif
 
+ifeq ($(VERBOSE),1)
+$(TESTTARGETDIR)/%$(EXEEXT):
+	$(CXX) $(CXXFLAGS) -o $@ $? -D $(shell echo $(basename $(notdir $@)) | tr a-z A-Z)_TEST
+else
 $(TESTTARGETDIR)/%$(EXEEXT):
 	@echo -n Building test $(basename $(notdir $@)) " ... "
 	@$(CXX) $(CXXFLAGS) -o $@ $? -D $(shell echo $(basename $(notdir $@)) | tr a-z A-Z)_TEST
 	@echo done
+endif
