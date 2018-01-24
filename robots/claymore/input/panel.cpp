@@ -10,6 +10,10 @@ static const unsigned int ROLLER_CONTROL_AXIS=0, ROLLER_AXIS=1, ROLLER_ARM_AXIS=
 static const unsigned int CAMERA_LIGHT_LOC=1, SHOOT_LOC=2, PREP_COLLECT_GEAR_LOC=3, PREP_SCORE_GEAR_LOC=4, COLLECT_GEAR_LOC=5, SCORE_GEAR_LOC=6, CLIMB_LOC=7, LEARN_LOC=8, GEAR_SENSING_FULL_AUTO_LOC=9, GEAR_SENSING_NO_AUTO_LOC=10;//TODO: rename constants 
 
 #define BUTTONS \
+	X(intake) \
+	X(eject) \
+	X(close) \
+	X(open) 
 
 #define THREE_POS_SWITCHES \
 
@@ -137,6 +141,10 @@ Panel interpret_gamepad(Joystick_data d){
 	
 	//TODO: Add in all of the new controls
 	p.auto_select=0;
+	p.intake = d.button[Gamepad_button::A];
+	p.eject = d.button[Gamepad_button::Y];
+	p.close = d.button[Gamepad_button::X];
+	p.open = d.button[Gamepad_button::B];
 	return p;
 }
 

@@ -8,6 +8,10 @@ struct Panel{
 	static const unsigned PORT = 2;
 	bool in_use;
 	//Buttons:
+	bool intake;
+	bool eject;
+	bool close;
+	bool open;
 	//2 position swicthes:
 	//3 position switches:
 	//10 position switches:
