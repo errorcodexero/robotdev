@@ -119,8 +119,9 @@ class MP_drive:public Step_impl_inner<MP_drive>{
 
 class Navx_drive_straight:public Step_impl_inner<Navx_drive_straight>{
 	Inch target_distance;
-	double angle_i;
-	Settable_constant<Drivebase::Goal> drive_goal;
+	//double angle_i;
+	//Settable_constant<Drivebase::Goal> drive_goal;
+	bool init;
 
 	public:
 	explicit Navx_drive_straight(Inch);
@@ -199,7 +200,7 @@ struct Rotate: Step_impl_inner<Rotate>{//orients the robot to a certain angle re
 
 struct Navx_rotate: Step_impl_inner<Navx_rotate>{//orients the robot to a certain angle relative to its starting orientation //TODO
 	double target_angle;
-	Settable_constant<Drivebase::Goal> drive_goal;
+	bool init;
 
 	explicit Navx_rotate(double);
 	

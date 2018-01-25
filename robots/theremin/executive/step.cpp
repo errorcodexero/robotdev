@@ -84,21 +84,24 @@ bool Rotate::operator==(Rotate const& b)const{
 }
 ////
 
-Navx_rotate::Navx_rotate(double a):target_angle(a){}
+Navx_rotate::Navx_rotate(double a):target_angle(a),init(false){}
 
 Toplevel::Goal Navx_rotate::run(Run_info info){
 	return run(info,{});
 }
 
 Toplevel::Goal Navx_rotate::run(Run_info info,Toplevel::Goal goals){
-	drive_goal = Drivebase::Goal::rotate(info.status.drive.angle + target_angle);
-	goals.drive = *drive_goal;
+	if(!init) {
+		Drivebase::drivebase_controller.initAngle(target_angle);
+		init = true;
+	}
+	goals.drive = Drivebase::Goal::rotate();
 	return goals;
 }
 
 Step::Status Navx_rotate::done(Next_mode_info info){
-	drive_goal = Drivebase::Goal::rotate(info.status.drive.angle + target_angle);
-	return ready(info.status.drive, *drive_goal) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
+	//drive_goal = Drivebase::Goal::rotate(info.status.drive.angle + target_angle);
+	return ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
 }
 
 std::unique_ptr<Step_impl> Navx_rotate::clone()const{
@@ -106,7 +109,7 @@ std::unique_ptr<Step_impl> Navx_rotate::clone()const{
 }
 
 bool Navx_rotate::operator==(Navx_rotate const& b)const{
-	return target_angle == b.target_angle;
+	return target_angle == b.target_angle && init == b.init;
 }
 
 //Step::Step(Step_impl const& a):impl(a.clone().get()){}
@@ -258,11 +261,11 @@ bool MP_drive::operator==(MP_drive const& a)const{
 	return target_distance==a.target_distance && drive_goal==a.drive_goal;
 }
 
-Navx_drive_straight::Navx_drive_straight(Inch target):target_distance(target),angle_i(0){}
+Navx_drive_straight::Navx_drive_straight(Inch target):target_distance(target),init(false){}
 
 Step::Status Navx_drive_straight::done(Next_mode_info info){
-	drive_goal = Drivebase::Goal::drive_straight(Drivebase::Distances(target_distance) + info.status.drive.distances, info.status.drive.angle, angle_i);
-	return ready(info.status.drive, *drive_goal) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+	//drive_goal = Drivebase::Goal::drive_straight(Drivebase::Distances(target_distance) + info.status.drive.distances, info.status.drive.angle, angle_i);
+	return ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
 }
 
 Toplevel::Goal Navx_drive_straight::run(Run_info info){
@@ -270,9 +273,15 @@ Toplevel::Goal Navx_drive_straight::run(Run_info info){
 }
 
 Toplevel::Goal Navx_drive_straight::run(Run_info info, Toplevel::Goal goals){
-	drive_goal = Drivebase::Goal::drive_straight(Drivebase::Distances(target_distance) + info.status.drive.distances, info.status.drive.angle, angle_i);
-	angle_i += (total_angle_to_displacement((*drive_goal).angle()) - total_angle_to_displacement(info.status.drive.angle)) * info.status.drive.dt;
-	goals.drive = Drivebase::Goal::drive_straight((*drive_goal).distances(), (*drive_goal).angle(), angle_i);
+	if(!init) {
+		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+		Drivebase::drivebase_controller.initDistance(avg_status + target_distance);
+		init = true;
+	}
+	goals.drive = Drivebase::Goal::drive_straight();
+	//drive_goal = Drivebase::Goal::drive_straight(Drivebase::Distances(target_distance) + info.status.drive.distances, info.status.drive.angle, angle_i);
+	//angle_i += (total_angle_to_displacement((*drive_goal).angle()) - total_angle_to_displacement(info.status.drive.angle)) * info.status.drive.dt;
+	//goals.drive = Drivebase::Goal::drive_straight((*drive_goal).distances(), (*drive_goal).angle(), angle_i);
 	return goals;
 }
 
@@ -281,7 +290,7 @@ unique_ptr<Step_impl> Navx_drive_straight::clone()const{
 }
 
 bool Navx_drive_straight::operator==(Navx_drive_straight const& a)const{
-	return target_distance==a.target_distance && drive_goal==a.drive_goal;
+	return target_distance == a.target_distance && init == a.init;
 }
 
 Ram::Ram(Inch goal):target_dist(goal),initial_distances(Drivebase::Distances{0,0}),init(false){}

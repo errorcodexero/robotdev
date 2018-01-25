@@ -11,6 +11,7 @@ TARGET=control.a
 # define the source code files
 #
 SRC = \
+	drivebase_controller.cpp\
 	drivebase.cpp\
 	force.cpp\
 	force_interface.cpp\
@@ -22,7 +23,6 @@ SRC = \
 	nop.cpp\
 	pump.cpp\
 	sim.cpp\
-	pidctrl.cpp\
 	toplevel.cpp
 
 #

@@ -1,10 +1,12 @@
 #include "pidctrl.h"
 
+PIDCtrl::PIDCtrl():PIDCtrl(0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {}
 
 PIDCtrl::PIDCtrl(double p, double i, double d, double f, double floor, double ceil) {
 	Init(p, i, d, f, floor, ceil);
 	current = 0;
 }
+
 void PIDCtrl::Init(double p, double i, double d, double f, double floor, double ceil) {
 	PIDConsts.p = p;
 	PIDConsts.i = i;
@@ -14,6 +16,7 @@ void PIDCtrl::Init(double p, double i, double d, double f, double floor, double 
 	PIDConsts.ceil = ceil;
 	integral = 0;
 }
+
 double PIDCtrl::getOutput(double target, double current, double timeDifference) {
 	double error = target - current;
 	double pOut = PIDConsts.p*error;

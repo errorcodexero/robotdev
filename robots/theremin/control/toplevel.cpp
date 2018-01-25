@@ -98,7 +98,7 @@ ostream& operator<<(ostream& o,Toplevel::Output_applicator const&){
 
 Toplevel::Output::Output():
 	pump(Pump::Output::AUTO),
-	drive(0.0,0.0),
+	drive(0.0,0.0,false),
 	lights()
 {}
 
