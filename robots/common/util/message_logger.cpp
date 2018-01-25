@@ -68,10 +68,12 @@ void test_logger() {
 	messageLogger logger;
 	
 	//Test enable function
-	logger.enable(messageLogger::messageType::debug);
 	logger.enable(messageLogger::messageType::warning);
 	logger.enable(messageLogger::messageType::error);
 	logger.enable(messageLogger::messageType::info);
+#ifdef _DEBUG
+	logger.enable(messageLogger::messageType::debug);
+#endif
 	
 	assert(logger.isMessageTypeEnabled(messageLogger::messageType::debug));
 	assert(logger.isMessageTypeEnabled(messageLogger::messageType::warning));
@@ -87,9 +89,11 @@ void test_logger() {
 	logger << ", with two calls" << ", and more calls" ;
 	logger.endMessaeg() ;
 
+	double left = 1.0 ;
+	double right = 0.8 ;
 	logger.startMessage(messageLogger::messageType::info) ;
-	logger << "The left motor is at " << 1.0 << " volts" ;
-	logger << ", and the right motor is at " << 0.8 << " volts" ;
+	logger << "The left motor is at " << left << " volts" ;
+	logger << ", and the right motor is at " << right << " volts" ;
 	logger.endMessage() ;
 }
 

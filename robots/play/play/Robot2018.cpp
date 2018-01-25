@@ -214,9 +214,9 @@ void Robot2018::RobotInit()
     setupConsoleLogger();
     setupSmartDashboardLogger() ;
     // setupTcpLogger("10.14.25.25", 8888);
-    //setupUdpLogger(8888) ;
+    // setupUdpLogger(8888) ;
     
-    readParams();
+    // readParams();
     extractParams();
     dumpParams();
     
@@ -224,14 +224,14 @@ void Robot2018::RobotInit()
     
     for(int addr: left_can_addrs)
     {
-	std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
-	left_motors.push_back(motor_p) ;
+		std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
+		left_motors.push_back(motor_p) ;
     }
     
     for(int addr: right_can_addrs)
     {
-	std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
-	right_motors.push_back(motor_p) ;
+		std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
+		right_motors.push_back(motor_p) ;
     }
     
     m_drivebase_p->setMotors(left_motors, right_motors);
@@ -246,11 +246,11 @@ void Robot2018::RobotInit()
 
     try
     {
-	angle_measure_p = std::make_shared<NavXAngleMeasurementDevice>();
+		angle_measure_p = std::make_shared<NavXAngleMeasurementDevice>();
     }
     catch (const std::exception &ex)
     {
-	angle_measure_p = std::make_shared<EncoderAngleMeasurementDevice>(left_enc_p, right_enc_p);
+		angle_measure_p = std::make_shared<EncoderAngleMeasurementDevice>(left_enc_p, right_enc_p);
     }
 
     m_drivebase_p->setAngleMeasurementDevice(angle_measure_p);

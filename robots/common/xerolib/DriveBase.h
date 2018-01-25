@@ -254,8 +254,6 @@ namespace xerolib
 	    return std::max(vmin, std::min(v, vmax));
 	}
 
-	void putModeInDashboard() ;
-
 	double getDrift();
 
 	void resetEncoderValues()

@@ -4,7 +4,6 @@
 #include "Timer.h"
 #include "DataUdpDestination.h"
 #include "DataTcpDestination.h"
-#include "DataDashboardDestination.h"
 #include "ParamFileReader.h"
 #include <iostream>
 
@@ -68,8 +67,6 @@ namespace xerolib
 
     void XeroRobotBase::setupSmartDashboardLogger()
     {
-		std::shared_ptr<DataDashboardDestination> dest_p = std::make_shared<DataDashboardDestination>() ;
-		m_data.addDestination(dest_p) ;
     }
 
     void XeroRobotBase::Disabled()
