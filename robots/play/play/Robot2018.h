@@ -34,8 +34,6 @@ protected:
 	return nullptr;
     }
 
-    virtual void doOneLoop(RobotModeType type) ;
-
 private:
     static const std::string ParamDiameter;
     static const std::string ParamStraightThreshold;

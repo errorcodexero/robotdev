@@ -2,7 +2,6 @@
 
 #include "MessageLogger.h"
 #include "DataLogger.h"
-#include "FileManager.h"
 #include <Timer.h>
 #include <SampleRobot.h>
 #include <memory>
@@ -128,11 +127,6 @@ namespace xerolib
 	// The data logger for the robot
 	//
 	DataLogger m_data;
-
-	//
-	// The file manager for finding a location for the data and message files
-	//
-	FileManager m_filemgr ;
 
 	//
 	// The index for the time variable

@@ -66,62 +66,31 @@ bool messageLogger::streamMsg(std::ostream &f, messageType type, bool clearMsg, 
 
 void test_logger() {
 	messageLogger logger;
+	
 	//Test enable function
-	logger.enable(messageType::debug);
-	logger.enable(messageType::warning);
-	logger.enable(messageType::error);
-	logger.enable(messageType::info);
+	logger.enable(messageLogger::messageType::debug);
+	logger.enable(messageLogger::messageType::warning);
+	logger.enable(messageLogger::messageType::error);
+	logger.enable(messageLogger::messageType::info);
 	
-	assert(logger.getModeState(messageType::debug));
-	assert(logger.getModeState(messageType::warning));
-	assert(logger.getModeState(messageType::info));
-	assert(logger.getModeState(messageType::error));
+	assert(logger.isMessageTypeEnabled(messageLogger::messageType::debug));
+	assert(logger.isMessageTypeEnabled(messageLogger::messageType::warning));
+	assert(logger.isMessageTypeEnabled(messageLogger::messageType::info));
+	assert(logger.isMessageTypeEnabled(messageLogger::messageType::error));
 	
-	//Test disable function
-	logger.disable(messageType::info);
-	
-	assert(!logger.getModeState(messageType::info));
-	assert(logger.writeMsg("Error ", messageType::error, false));
-	assert(logger.writeMsg("Debug ", messageType::debug, false));
-	assert(logger.writeMsg("Warning ", messageType::warning, false));
-	assert(!logger.writeMsg("Info ", messageType::info, false));
+	logger.startMessage(messageLogger::messageType::info) ;
+	logger << "This is an info message" ;
+	logger.endMessage() ;
 
-	//Test writeMsg
-	assert(logger.writeMsg("message: ", messageType::error, false));
-	assert(logger.writeMsg("message: ", messageType::debug, false));
-	assert(logger.writeMsg("message: ", messageType::warning, false));
-	assert(!logger.writeMsg("message: ", messageType::info, false));
+	logger.startMessage(messageLogger::messageType::warning) ;
+	logger << "This is a warning message" ;
+	logger << ", with two calls" << ", and more calls" ;
+	logger.endMessaeg() ;
 
-	int errorNumber = -7, debugNumber = 12;
-	double warningNumber = -0.824;
-
-	assert(logger.writeMsg(errorNumber, messageType::error, false));
-	assert(logger.writeMsg(debugNumber, messageType::debug, false));
-	assert(logger.writeMsg(warningNumber, messageType::warning, false));
-	assert(!logger.writeMsg(-912.5, messageType::info, false));
-
-	assert(logger.getMessage(messageType::error) == "Error message: -7");
-	assert(logger.getMessage(messageType::debug) == "Debug message: 12");
-	assert(logger.getMessage(messageType::warning) == "Warning message: -0.824000");
-	assert(logger.getMessage(messageType::info) == "");
-
-	//Test overwriting
-	assert(logger.writeMsg("Overwrited error number: ", messageType::error, true));
-	assert(logger.writeMsg("Overwrited debug number: ", messageType::debug, true));
-	assert(logger.writeMsg("Overwrited warning number: ", messageType::warning, true));
-	assert(!logger.writeMsg("Overwrited info number: ", messageType::info, true));
-
-	assert(logger.writeMsg(errorNumber, messageType::error, false));
-	assert(logger.writeMsg(debugNumber, messageType::debug, false));
-	assert(logger.writeMsg(warningNumber, messageType::warning, false));
-	assert(!logger.writeMsg(-912.5, messageType::info, false));
-
-	assert(logger.getMessage(messageType::error) == "Overwrited error number: -7");
-	assert(logger.getMessage(messageType::debug) == "Overwrited debug number: 12");
-	assert(logger.getMessage(messageType::warning) == "Overwrited warning number: -0.824000");
-	assert(logger.getMessage(messageType::info) == "");
-
-
+	logger.startMessage(messageLogger::messageType::info) ;
+	logger << "The left motor is at " << 1.0 << " volts" ;
+	logger << ", and the right motor is at " << 0.8 << " volts" ;
+	logger.endMessage() ;
 }
 
 int main() {

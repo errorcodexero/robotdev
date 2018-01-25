@@ -40,8 +40,7 @@ SRC = \
 	SubsystemBase.cpp\
 	TcpClientSocket.cpp\
 	TrapezoidSpeedProfile.cpp\
-	XeroRobotBase.cpp\
-	FileManager.cpp
+	XeroRobotBase.cpp
 
 
 #
