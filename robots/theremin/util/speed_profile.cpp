@@ -2,8 +2,16 @@
 #include <cassert>
 #include <cmath>
 
-SpeedProfile::SpeedProfile(double dist, double accel, double decel, double start, double cruise, double end, double time):start_time(time),distance(dist),acceleration(accel),deceleration(decel),start_v(start),end_v(end),cruising_v(cruise) {
+SpeedProfile::SpeedProfile(double dist, double accel, double decel, double start, double cruise, double end, double time) {
 	type = Type::TRAPEZOID;
+
+	cruising_v = cruise ;
+	distance = dist ;
+	acceleration = accel ;
+	deceleration = decel ;
+	start_v = start ;
+	end_v = end ;
+	start_time = time ;
 
 	double accel_time = (cruising_v - start_v) / acceleration;
 	double accel_dist = start_v * accel_time + .5 * acceleration * accel_time * accel_time;

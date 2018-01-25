@@ -1,19 +1,12 @@
-#
-# include the validation stuff
-#
 
-include ../../makefiles/valid.mk
 
-SUBDIRS = \
+LIBSUBDIRS = \
+	util\
 	control\
 	input\
-	executive\
-	util\
+	executive
+
+TOPDIR = \
 	roborio
 
-all:: $(SUBDIRS)
-
-$(SUBDIRS)::
-	(cd $@ ; $(MAKE) CONFIG=$(CONFIG))
-
-.PHONY: all $(SUBDIRS)
+include ../../makefiles/toplevel.mk

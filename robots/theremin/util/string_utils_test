@@ -1,2 +1,0 @@
-g++ string_utils.cpp -DSTRING_UTILS_TEST \
- -o string_utils 2&>1 && valgrind ./string_utils 2>&1

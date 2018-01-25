@@ -52,7 +52,6 @@ string get_logfilename(){
 	X(orientation) \
 	X(current) \
 	X(pump) \
-	X(camera)
 
 template<typename Func>
 void visit(Func f,double d){
@@ -181,11 +180,13 @@ void visit(Func f,Digital_out const& a){
 	f.terminal(a);
 }
 
+#ifdef NEED_PIXY_CAM
 template<typename Func>
 void visit(Func f,Camera const& r){
 	#define CAMERA_ITEMS(X) X(FOV) X(enabled) X(blocks)
 	CAMERA_ITEMS(VISIT)
 }
+#endif
 
 template<typename Func>
 void visit(Func f,PID_values const& r){
