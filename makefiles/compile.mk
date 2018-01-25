@@ -1,3 +1,9 @@
+
+#
+# To print a line on the output
+#
+LINE="===================================================================================="
+
 #
 # Setup the flags based on debug versus
 #
@@ -116,7 +122,8 @@ OBJS=$(addprefix $(OBJDIR)/,$(patsubst %.cpp,%.o,$(SRC)))
 ifdef COMMON
 COMMONHDRSFULL=$(addprefix -I../../common/,$(COMMON))
 CXXFLAGS += $(COMMONHDRSFULL)
-COMMONLIBSFULL=$(addprefix ../../common/builddir/$(CONFIG)/,$(addsuffix .a,$(COMMON)))
+COMMONLIBSFILES=$(addsuffix .a,$(addprefix ../../common/builddir/$(CONFIG)/lib,$(COMMON)))
+COMMONLIBSFULL=-L ../../common/builddir/$(CONFIG) $(addprefix -l,$(COMMON))
 COMMONDIRS=$(addprefix ../../common/,$(COMMON))
 endif
 
@@ -211,3 +218,4 @@ $(OBJDIR)/%.o : %.cpp
 	@$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 	@echo done
 endif
+

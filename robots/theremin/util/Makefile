@@ -27,12 +27,14 @@ SRC = \
 	output.cpp\
 	perf_tracker.cpp\
 	persistent_tracker.cpp\
+	pidctrl.cpp\
 	point.cpp\
 	posedge_toggle.cpp\
 	posedge_trigger.cpp\
 	posedge_trigger_debounce.cpp\
 	settable_constant.cpp\
 	settable_toggle.cpp\
+	speed_profile.cpp\
 	speed_tracker.cpp\
 	stall_monitor.cpp\
 	string_utils.cpp\
@@ -71,7 +73,6 @@ COMPLEXTESTS = \
 	driver_station_interface\
 	interface\
 	meta
-
 
 #
 # include a central make file that defines our compilation recipe

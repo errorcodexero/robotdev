@@ -187,6 +187,13 @@ namespace xerolib
 		double deltat = now - m_lasttime;
 
 		data.logData(m_mode_col, static_cast<double>(m_mode));
+		//
+		// Ask an angular PID controller for the offset to the motors to cause the motors to drive straight.  If
+		// we are in rotate mode, the PID constants for the m_angle_pid are set to zero so the offset is always
+		// zero.
+		//
+		double offset = 0.0 ;
+		double right_direction = -1.0;
 
 		if (m_mode == Mode::Idle)
 		{
