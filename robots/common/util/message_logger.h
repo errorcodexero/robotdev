@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <map>
+#include <list>
 #include <cassert>
 
 
@@ -42,26 +42,26 @@ public:
 	/// \brief operator overload the output a string value
 	/// \param value_p the string to output
 	/// \returns a copy of the message logger
-	messageLogger &operator(const char *value_p)  ;
+	messageLogger &operator<<(const char *value_p)  ;
 	
 	/// \brief operator overload the output a string value
 	/// \param value the string to output
 	/// \returns a copy of the message logger
-	messageLogger &operator(const std::string &value) ;
+	messageLogger &operator<<(const std::string &value) ;
 	
 	/// \brief operator overload the output an integer value
 	/// \param value the integer to output
 	/// \returns a copy of the message logger
-	messageLogger &operator(int value) ;
+	messageLogger &operator<<(int value) ;
 	
 	/// \brief operator overload the output a floating point value
 	/// \param value the floating point number to output
 	/// \returns a copy of the message logger
-	messageLogger &operator(double value) ;
+	messageLogger &operator<<(double value) ;
 
 private:
 	// The modes currently enabled
-	std::list<messageType> mEnabledMOdes ;
+	std::list<messageType> mEnabledModes ;
 
 	// If true, we have seen a startMessage() call but not an
 	// endMessage() call
