@@ -5,7 +5,7 @@
 #
 # define our target library
 #
-TARGET=util.a
+TARGET=helpers.a
 
 #
 # define the source code files

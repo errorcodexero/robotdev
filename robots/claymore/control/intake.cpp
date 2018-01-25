@@ -6,8 +6,8 @@ using namespace std;
 
 #define INTAKE_ADDRESS_R 2
 #define INTAKE_ADDRESS_L 3
-#define L_INTAKE_POWER 4.0 //TODO tune this
-#define R_INTAKE_POWER 6.0 //TODO tune this
+#define L_INTAKE_POWER 0.40 //TODO tune this
+#define R_INTAKE_POWER 0.60 //TODO tune this
 
 ostream& operator<<(ostream& o, Intake::Goal a){
 	#define X(name) if(a==Intake::Goal::name)return o<<"Intake::Goal("#name")";

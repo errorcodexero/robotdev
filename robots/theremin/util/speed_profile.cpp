@@ -2,8 +2,7 @@
 #include <cassert>
 #include <cmath>
 
-SpeedProfile::SpeedProfile(double dist, double accel, double decel, double start, double cruise, double end, double time)
-{
+SpeedProfile::SpeedProfile(double dist, double accel, double decel, double start, double cruise, double end, double time) {
 	type = Type::TRAPEZOID;
 
 	cruising_v = cruise ;

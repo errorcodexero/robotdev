@@ -5,11 +5,14 @@
 #include <set>
 #include "../util/interface.h"
 #include "motor_check.h"
+#include "drivebase_controller.h"
 #include "../util/quick.h"
 #include "../util/countdown_timer.h"
 #include "../util/stall_monitor.h"
 
 struct Drivebase{
+	static DrivebaseController drivebase_controller;
+
 	enum Motor{LEFT1,LEFT2,RIGHT1,RIGHT2,MOTORS};
 
 	typedef std::pair<Digital_in,Digital_in> Encoder_info;
@@ -51,7 +54,8 @@ struct Drivebase{
 
 	#define DRIVEBASE_OUTPUT(X)\
 		X(double,l)\
-		X(double,r)
+		X(double,r)\
+		X(bool,zero_yaw)
 	DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
 	#define SPEEDS_ITEMS(X) \
@@ -124,10 +128,11 @@ struct Drivebase{
 		
 		static Goal distances(Distances);
 		static Goal absolute(double,double);
-		static Goal drive_straight(Distances,double,double);
-		static Goal rotate(Rad);
+		static Goal drive_straight(/*Distances,double,double*/);
+		static Goal rotate(/*Rad*/);
 	};
 };
+
 bool operator==(Drivebase::Encoder_ticks const&,Drivebase::Encoder_ticks const&);
 bool operator!=(Drivebase::Encoder_ticks const&,Drivebase::Encoder_ticks const&);
 bool operator<(Drivebase::Encoder_ticks const&,Drivebase::Encoder_ticks const&);
