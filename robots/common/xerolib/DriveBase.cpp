@@ -316,7 +316,7 @@ namespace xerolib
 		// we are in rotate mode, the PID constants for the m_angle_pid are set to zero so the offset is always
 		// zero.
 		//
-		double offset;
+		double offset = 0.0 ;
 		double right_direction = -1.0;
 
 		if (m_mode == Mode::Straight)
