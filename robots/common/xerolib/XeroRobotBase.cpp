@@ -27,10 +27,8 @@ namespace xerolib
 
     void XeroRobotBase::readParams()
     {
+	std::string file = "/home/lvuser/params" ;
 	xerolib::MessageLogger &logger = getMessageLogger();
-
-	std::string file = getenv("HOME");
-	file += "/params";
 
 	if (!xerolib::ParamFileReader::readParamFile(logger, file, m_parameters))
 	{
