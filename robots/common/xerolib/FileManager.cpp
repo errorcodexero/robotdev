@@ -6,10 +6,14 @@ namespace xerolib
 {
     fs::path FileManager::FlashDriveName("/media/sda1") ;
 
-
     FileManager::FileManager()
     {
-	m_basedir = getenv("HOME") ;
+	m_basedir = "home/lvuser" ;
+	
+	const char *home_p = getenv("HOME") ;
+	if (home_p != nullptr)
+	    m_basedir = home_p ;
+
 	m_includetime = false ;
     
 	if (fs::exists(FlashDriveName) && fs::is_directory(FlashDriveName))
