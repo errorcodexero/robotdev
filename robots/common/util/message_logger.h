@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <algorithm>
 #include <cassert>
 
 
@@ -37,7 +38,7 @@ public:
 	void startMessage(const messageType &type) ;
 
 	/// \brief end the current message
-	void endMessage() ;
+	void endMessage(std::ostream &f) ;
 
 	/// \brief operator overload the output a string value
 	/// \param value_p the string to output
