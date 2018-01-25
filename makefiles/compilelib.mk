@@ -7,7 +7,7 @@ include ../../../makefiles/compile.mk
 #
 # Define the full name of the real target
 #
-REALTARGET=$(TARGETDIR)/$(TARGET)
+REALTARGET=$(TARGETDIR)/lib$(TARGET)
 
 #
 # The top level make target, makes the directory an library

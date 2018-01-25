@@ -12,7 +12,14 @@ REALTARGET=$(TARGETDIR)/$(TARGET)
 #
 # Define the target app libs
 #
-TARGETAPPLIBS=$(addprefix $(TARGETDIR)/,$(APPLIBS))
+ifdef APPLIBS
+TARGETAPPFILES=$(addsuffix .a,$(addprefix $(TARGETDIR)/lib,$(APPLIBS)))
+TARGETAPPLIBS=-L$(TARGETDIR) $(addprefix -l,$(APPLIBS))
+else
+TARGETAPPFILES=
+TARGETAPPLIBS=
+endif
+
 
 #
 # The top level make target, makes the directory an library
@@ -57,11 +64,11 @@ clean::
 # Make the application
 #
 ifeq ($(VERBOSE),1)
-$(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
-	$(CROSSCXX) -v -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
+$(REALTARGET): $(OBJS) $(TARGETAPPFILES) $(COMMONLIBSFILES)
+	$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
 else
 $(info $(COMMONLIBSFULL))
-$(REALTARGET): $(OBJS) $(TARGETAPPLIBS) $(COMMONLIBSFULL)
+$(REALTARGET): $(OBJS) $(TARGETAPPFILES) $(COMMONLIBSFILES)
 	@echo -n Linking application $@ " ... "
 	@$(CROSSCXX) -o $@ $(OBJS) $(CXXFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
 	@echo complete

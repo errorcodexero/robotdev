@@ -36,8 +36,11 @@ clean::
 		cd .. ; \
 	done
 
-deploy::
+deploy:: robotsw
 	(cd $(TOPDIR) ; make CONFIG=$(CONFIG) deploy)
+
+deployall:: robotsw
+	(cd $(TOPDIR) ; make CONFIG=$(CONFIG) deployall)
 
 
 .PHONY: all $(SUBDIRS)
