@@ -24,6 +24,8 @@ SRC = \
 	AutonomousControllerBase.cpp\
 	AutonomousStepBase.cpp\
 	AutoSetMotorVoltage.cpp\
+	DataDashboardDestination.cpp\
+	DataFileDestination.cpp\
 	DataLogger.cpp\
 	DataFileDestination.cpp\
 	DataTcpDestination.cpp\
@@ -31,6 +33,7 @@ SRC = \
 	DataDashboardDestination.cpp\
 	DriveBase.cpp\
 	EncoderAngleMeasurementDevice.cpp\
+	FileManager.cpp\
 	MessageLogger.cpp\
 	MessageStreamDestination.cpp\
 	NavXAngleMeasurementDevice.cpp\

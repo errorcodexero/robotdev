@@ -19,10 +19,10 @@ include ../../../makefiles/test.mk
 startmsg:
 	@echo
 	@echo Building library $(notdir $(REALTARGET))
-	@echo "======================================================="
+	@echo $(LINE)
 
 endmsg:
-	@echo "======================================================="
+	@echo $(LINE)
 	@echo
 	@echo
 

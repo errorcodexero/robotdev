@@ -1,3 +1,9 @@
+
+#
+# To print a line on the output
+#
+LINE="===================================================================================="
+
 #
 # Setup the flags based on debug versus
 #
@@ -211,3 +217,4 @@ $(OBJDIR)/%.o : %.cpp
 	@$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 	@echo done
 endif
+

@@ -3,6 +3,7 @@
 #
 include ../../../makefiles/compile.mk
 
+
 #
 # Define the full name of the real target
 #
@@ -21,10 +22,10 @@ all: mkdirs shared startmsg $(REALTARGET) endmsg
 startmsg:
 	@echo
 	@echo Building application $(notdir $(REALTARGET))
-	@echo "======================================================="
+	@echo $(LINE)
 
 endmsg:
-	@echo "======================================================="
+	@echo $(LINE)
 	@echo
 	@echo
 
