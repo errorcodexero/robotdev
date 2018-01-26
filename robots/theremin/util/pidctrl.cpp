@@ -1,19 +1,20 @@
 #include "pidctrl.h"
 
-PIDCtrl::PIDCtrl():PIDCtrl(0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {}
+PIDCtrl::PIDCtrl():PIDCtrl(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) {}
 
-PIDCtrl::PIDCtrl(double p, double i, double d, double f, double floor, double ceil) {
-	Init(p, i, d, f, floor, ceil);
+PIDCtrl::PIDCtrl(double p, double i, double d, double f, double floor, double ceil, double integralCeil) {
+	Init(p, i, d, f, floor, ceil, integralCeil);
 	current = 0;
 }
 
-void PIDCtrl::Init(double p, double i, double d, double f, double floor, double ceil) {
+void PIDCtrl::Init(double p, double i, double d, double f, double floor, double ceil, double integralCeil) {
 	PIDConsts.p = p;
 	PIDConsts.i = i;
 	PIDConsts.d = d;
 	PIDConsts.f = f;
 	PIDConsts.floor = floor;
 	PIDConsts.ceil = ceil;
+	PIDConsts.integralCeil = integralCeil;
 	integral = 0;
 }
 

@@ -2,6 +2,7 @@
 #define DRIVEBASE_CONTROLLER_H
 
 #include "../util/pidctrl.h"
+#include "params_parser.h"
 
 class DrivebaseController {
 	private:
@@ -11,14 +12,17 @@ class DrivebaseController {
 		ANGLE
 	};
 	Mode mode;
-	
+
 	bool zero_yaw;
 	double target;
 	double distance_threshold, angle_threshold;
 	PIDCtrl straightness_pid, dist_pid, angle_pid;
+	paramsInput* input_params;
 
 	public:
 	DrivebaseController();
+
+	void setParams(paramsInput*);
 
 	void initDistance(double);
 	void initAngle(double);

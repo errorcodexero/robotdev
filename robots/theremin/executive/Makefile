@@ -8,6 +8,11 @@
 TARGET=executive.a
 
 #
+# Tell the make system we want the shared code (COMMON)
+#
+COMMON=helpers
+
+#
 # define our source code
 #
 SRC = \

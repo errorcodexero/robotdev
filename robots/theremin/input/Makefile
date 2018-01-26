@@ -8,6 +8,11 @@
 TARGET=input.a
 
 #
+# Tell the make system we want the shared code (COMMON)
+#
+COMMON=helpers
+
+#
 # define the source code files
 #
 SRC = \

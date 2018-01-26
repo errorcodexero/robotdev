@@ -6,6 +6,7 @@
 #include "driver_station_interface.h"
 #include "maybe_inline.h"
 #include "checked_array.h"
+#include "params_parser.h"
 
 #ifdef NEED_PIXY_CAM
 #include "../input/pixycam/PixyUART.h"
@@ -392,6 +393,8 @@ struct Robot_inputs{
 #ifdef NEED_PIXY_CAM
 	Camera camera;
 #endif
+
+	paramsInput* input_params;
 
 	Robot_inputs();
 };

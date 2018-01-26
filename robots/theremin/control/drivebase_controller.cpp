@@ -5,22 +5,49 @@ DrivebaseController::DrivebaseController() {
 	mode = Mode::IDLE;
 	zero_yaw = false;
 	target = 0.0;
-	distance_threshold = 1.0;
-	angle_threshold = 1.0;
+	distance_threshold = 0.0;
+	angle_threshold = 0.0;
+}
+
+void DrivebaseController::setParams(paramsInput* input_params) {
+	input_params = input_params;
+	distance_threshold = input_params->getValue("drivebase:straight:threshold", 1.0);
+	angle_threshold = input_params->getValue("drivebase:angle:threshold", 1.0);
 }
 
 void DrivebaseController::initDistance(double distance) {
 	mode = Mode::DISTANCE;
 	target = distance;
-	dist_pid.Init(0.2, 0.0, 0.0, 0.0, -1.0, 1.0);
-	straightness_pid.Init(0.2, 0.0, 0.0, 0.0, 0.0, 0.0);
+	dist_pid.Init(input_params->getValue("drivebase:distance:p", 0.2),
+		input_params->getValue("drivebase:distance:i", 0.0),
+		input_params->getValue("drivebase:distance:d", 0.0),
+		input_params->getValue("drivebase:distance:f", 0.0),
+		-1.0,
+		1.0,
+		input_params->getValue("drivebase:distance:imax", 1000.0)
+	);
+	straightness_pid.Init(input_params->getValue("drivebase:angleCorrection:p", 0.2),
+		input_params->getValue("drivebase:angleCorrection:i", 0.0),
+		input_params->getValue("drivebase:angleCorrection:d", 0.0),
+		input_params->getValue("drivebase:angleCorrection:f", 0.0),
+		-1.0,
+		 1.0,
+		input_params->getValue("drivebase:angleCorrection:imax", 1000.0)
+	);
 	zero_yaw = true;
 }
 
 void DrivebaseController::initAngle(double angle) {
 	mode = Mode::ANGLE;
 	target = angle;
-	angle_pid.Init(0.2, 0.0, 0.0, 0.0, -1.0, 1.0);
+	angle_pid.Init(input_params->getValue("drivebase:angle:p", 0.2),
+		input_params->getValue("drivebase:angle:i", 0.0),
+		input_params->getValue("drivebase:angle:d", 0.0),
+		input_params->getValue("drivebase:angle:f", 0.0),
+		-1.0,
+		 1.0,
+		input_params->getValue("drivebase:angle:imax", 1000.0)
+	);
 	zero_yaw = true;
 }
 
