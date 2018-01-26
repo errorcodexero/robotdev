@@ -68,7 +68,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	if(mode == Mode::DISTANCE) {
 		double avg_dist = (distances_l + distances_r) / 2.0;
 		std::cout << ", distance " << avg_dist ;
-		if(std::fabs(target - avg_dist) < distance_threshold) {
+		if((target - avg_dist) < distance_threshold) {
 			std::cout << "AT TARGET" ;
 			mode = Mode::IDLE;
 		}
@@ -85,7 +85,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		std::cout << ", r " << out_r ;
 		
 	} else if(mode == Mode::ANGLE) {
-		if(std::fabs(target - angle) < angle_threshold) {
+		if((target - angle) < angle_threshold) {
 			mode = Mode::IDLE;
 		}
 
