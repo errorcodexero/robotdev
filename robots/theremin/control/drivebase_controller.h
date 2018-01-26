@@ -17,7 +17,7 @@ class DrivebaseController {
 	double target;
 	double distance_threshold, angle_threshold;
 	PIDCtrl straightness_pid, dist_pid, angle_pid;
-	paramsInput* input_params;
+	paramsInput* mInput_params;
 
 	public:
 	DrivebaseController();
