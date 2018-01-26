@@ -202,68 +202,15 @@ void Robot2018::dumpParams()
 
 void Robot2018::RobotInit()
 {
-    std::list<std::shared_ptr<frc::SpeedController>> left_motors ;
-    std::list<std::shared_ptr<frc::SpeedController>> right_motors ;
-    
-    std::list<int> left_can_addrs = { 1, 2} ;
-    std::list<int> right_can_addrs = { 3, 4 } ;
-
-    frc::Wait(2.0) ;
-    
     setupLoggers("robot.log", "robot.csv");
     setupConsoleLogger();
-    setupSmartDashboardLogger() ;
+    // setupSmartDashboardLogger() ;
     // setupTcpLogger("10.14.25.25", 8888);
-    //setupUdpLogger(8888) ;
+    // setupUdpLogger(8888) ;
     
     readParams();
-    extractParams();
-    dumpParams();
-    
-    m_drivebase_p = std::make_shared<DriveBase>(*this);
-    
-    for(int addr: left_can_addrs)
-    {
-	std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
-	left_motors.push_back(motor_p) ;
-    }
-    
-    for(int addr: right_can_addrs)
-    {
-	std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
-	right_motors.push_back(motor_p) ;
-    }
-    
-    m_drivebase_p->setMotors(left_motors, right_motors);
-    
-    std::shared_ptr<frc::Encoder> left_enc_p = std::make_shared<frc::Encoder>(0, 1);
-    std::shared_ptr<frc::Encoder> right_enc_p = std::make_shared<frc::Encoder>(2, 3);
-    
-    m_drivebase_p->setEncoders(left_enc_p, right_enc_p);
-    
-
-    std::shared_ptr<AngleMeasurementDevice> angle_measure_p;
-
-    try
-    {
-	angle_measure_p = std::make_shared<NavXAngleMeasurementDevice>();
-    }
-    catch (const std::exception &ex)
-    {
-	angle_measure_p = std::make_shared<EncoderAngleMeasurementDevice>(left_enc_p, right_enc_p);
-    }
-
-    m_drivebase_p->setAngleMeasurementDevice(angle_measure_p);
-
-
-    m_drivebase_p->setPhysicalChar(TicksPerRev, Diameter);
-    m_drivebase_p->setStraightMotionProfiles(StraightParams, DistanceThreshold, 10000.0);
-    m_drivebase_p->setStraightPIDConstants(StraightPIDConstants, DistancePIDConstants, AngleCorrPIDConstants);
-    m_drivebase_p->setRotationalMotionProfiles(RotationalParams, AngleThreshold, 10000.0);
-    m_drivebase_p->setRotationalPIDConstants(RotationalPIDConstants, AngleCorrPIDConstants);
-    m_drivebase_p->setErrorThreshold(ErrorThreshold);
-
-    addSubsystem(m_drivebase_p);
+    // extractParams();
+    // dumpParams();
 }
 
 

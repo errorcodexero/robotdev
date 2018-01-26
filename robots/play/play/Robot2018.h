@@ -14,24 +14,26 @@ public:
 
     virtual void RobotInit();
 
+	virtual void Autonomous() ;
+
 protected:
     /// @brief this method is implemented by a derived class and creates the autonomous controller
     virtual std::shared_ptr<xerolib::RobotControllerBase> createAutonomousController()
     {
-	std::shared_ptr<Robot2018Autonomous> ctrl_p = std::make_shared<Robot2018Autonomous>(*this);
-	return ctrl_p;
+		std::shared_ptr<Robot2018Autonomous> ctrl_p = std::make_shared<Robot2018Autonomous>(*this);
+		return ctrl_p;
     }
 
     /// @brief this method is implemented by a derived class and creates the operator controller
     virtual std::shared_ptr<xerolib::RobotControllerBase> createOperatorControlController()
     {
-	return nullptr;
+		return nullptr;
     }
 
     /// @brief this method is implemented by a derived class and creates the test controller
     virtual std::shared_ptr<xerolib::RobotControllerBase> createTestController()
     {
-	return nullptr;
+		return nullptr;
     }
 
 private:
