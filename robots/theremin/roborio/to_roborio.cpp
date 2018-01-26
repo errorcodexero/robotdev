@@ -373,18 +373,33 @@ template<typename USER_CODE>
 class Robot_adapter: public frc::SampleRobot{
 	To_roborio<USER_CODE> u;
 
+	double looptime = 0.05 ;
+
 	void RobotInit(){}
 	
 	void Autonomous(void)
 	{
+		int cnt = 0 ;
+		
 		while(IsAutonomous() && IsEnabled()){
 			//might need a loop here
+
+			double start = frc::Timer::GetFPGATimestamp() ;
 			Robot_mode mode;
 			mode.autonomous=1;
 			mode.enabled=IsEnabled();
 			u.run(mode);
-			
-			frc::Wait(0.005);
+
+			double elapsed = frc::Timer::GetFPGATimestamp() - start ;
+			if (elapsed < looptime)
+				frc::Wait(looptime - elapsed) ;
+
+			cnt++ ;
+			if (cnt == 60) {
+				std::cout << "heartbeat" << std::endl ;
+				cnt = 0 ;
+			}
+
 		}
 	}
 
