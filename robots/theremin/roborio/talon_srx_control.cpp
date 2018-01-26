@@ -21,6 +21,7 @@ void Talon_srx_control::init(int CANBusAddress){
 	talon = new ctre::phoenix::motorcontrol::can::WPI_TalonSRX(CANBusAddress);
 	assert(talon);
 	talon->SetSafetyEnabled(false);
+	talon->SetInverted(true);
 }
 
 ostream& operator<<(ostream& o,Talon_srx_control::Mode a){
