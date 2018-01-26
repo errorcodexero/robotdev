@@ -1,5 +1,6 @@
 #include "drivebase_controller.h"
 #include <cmath>
+#include <iostream>
 
 DrivebaseController::DrivebaseController() {
 	mode = Mode::IDLE;
@@ -16,6 +17,8 @@ void DrivebaseController::setParams(paramsInput* input_params) {
 }
 
 void DrivebaseController::initDistance(double distance) {
+	std::cout << "DriveBaseController::initDistance, distance = " << distance << std::endl ;
+	
 	mode = Mode::DISTANCE;
 	target = distance;
 	dist_pid.Init(mInput_params->getValue("drivebase:distance:p", 0.015),
@@ -51,20 +54,32 @@ void DrivebaseController::initAngle(double angle) {
 	zero_yaw = true;
 }
 
-void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt, double& out_l, double& out_r, bool& out_zero_yaw) {
+void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt,
+								 double& out_l, double& out_r, bool& out_zero_yaw)
+{
+	std::cout << "update" ;
 	out_zero_yaw = zero_yaw;
 	zero_yaw = false;
 
 	if(mode == Mode::DISTANCE) {
 		double avg_dist = (distances_l + distances_r) / 2.0;
+		std::cout << ", distance " << avg_dist ;
 		if(std::fabs(target - avg_dist) < distance_threshold) {
+			std::cout << "AT TARGET" ;
 			mode = Mode::IDLE;
 		}
 
-		double base = dist_pid.getOutput(0.0, target - avg_dist, dt);
+		double remaining = target - avg_dist ;
+		double base = dist_pid.getOutput(0.0, remaining, dt);
+		std::cout << ", remaining " << remaining ;
+		std::cout << ", base " << base ;
 		double offset = straightness_pid.getOutput(0.0, angle, dt);
+		std::cout << ", offset " << offset ;
 		out_l = base + offset;
 		out_r = base - offset;
+		std::cout << ", l " << out_l ;
+		std::cout << ", r " << out_r ;
+		
 	} else if(mode == Mode::ANGLE) {
 		if(std::fabs(target - angle) < angle_threshold) {
 			mode = Mode::IDLE;
@@ -79,6 +94,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		out_l = 0.0;
 		out_r = 0.0;
 	}
+	std::cout << std::endl ;
 }
 
 bool DrivebaseController::done() {
