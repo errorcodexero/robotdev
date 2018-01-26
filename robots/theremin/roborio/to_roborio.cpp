@@ -154,6 +154,8 @@ public:
 		}
 
 		input_params.readFile("/home/lvuser/params.txt");
+		std::cout << "-------------------------------------------" << std::endl ;
+		input_params.printMap(std::cout) ;
 		Drivebase::drivebase_controller.setParams(&input_params);
 
 		/*
@@ -393,10 +395,12 @@ class Robot_adapter: public frc::SampleRobot{
 			double elapsed = frc::Timer::GetFPGATimestamp() - start ;
 			if (elapsed < looptime)
 				frc::Wait(looptime - elapsed) ;
+			else
+				std::cout << "Loop exceeded loop time, actual " << elapsed << std::endl ;
 
 			cnt++ ;
 			if (cnt == 60) {
-				std::cout << "heartbeat" << std::endl ;
+				std::cout << "heartbeat - 2" << std::endl ;
 				cnt = 0 ;
 			}
 

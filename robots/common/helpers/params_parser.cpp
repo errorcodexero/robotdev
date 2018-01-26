@@ -12,7 +12,7 @@ bool paramsInput::readFile(const std::string &filename)
     bool ret = false ;
     this->mFilename = filename;
 
-    std::fstream f(filename) ;
+    std::ifstream f(filename) ;
     if (f.is_open())
     {
 		std::string buffer;
@@ -57,6 +57,10 @@ bool paramsInput::readFile(const std::string &filename)
 		}
 		ret = true ;
     }
+	else
+	{
+		std::cout << "Could not open file '" << filename << "'" << std::endl ;
+	}
 
     return ret ;
 }

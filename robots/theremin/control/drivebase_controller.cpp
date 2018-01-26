@@ -21,14 +21,18 @@ void DrivebaseController::initDistance(double distance) {
 	
 	mode = Mode::DISTANCE;
 	target = distance;
-	dist_pid.Init(mInput_params->getValue("drivebase:distance:p", 0.015),
-		mInput_params->getValue("drivebase:distance:i", 0.1),
-		mInput_params->getValue("drivebase:distance:d", 0.0),
-		mInput_params->getValue("drivebase:distance:f", 0.0),
-		-1.0,
-		1.0,
-		mInput_params->getValue("drivebase:distance:imax", 1000.0)
-	);
+
+	double p = mInput_params->getValue("drivebase:distance:p", 0.015) ;
+	double i = mInput_params->getValue("drivebase:distance:i", 0.1) ;
+	double d = mInput_params->getValue("drivebase:distance:d", 0.0) ;
+	double f = mInput_params->getValue("drivebase:distance:f", 0.0) ;
+	double imax = mInput_params->getValue("drivebase:distance:imax", 6.0) ;
+
+	std::cout << "InitPID " << p << " " << i << " " << d << " " << f ;
+	std::cout << " " << imax << std::endl ;
+	
+	dist_pid.Init(p, i, d, f, -1.0, 1.0, imax) ;
+	
 	straightness_pid.Init(mInput_params->getValue("drivebase:angleCorrection:p", 0.015),
 		mInput_params->getValue("drivebase:angleCorrection:i", 0.1),
 		mInput_params->getValue("drivebase:angleCorrection:d", 0.0),
