@@ -213,10 +213,11 @@ void Robot2018::RobotInit()
     setupLoggers("robot.log", "robot.csv");
     setupConsoleLogger();
     setupSmartDashboardLogger() ;
-    // setupTcpLogger("10.14.25.25", 8888);
+	
+    setupTcpLogger("10.14.25.20", 8888);
     // setupUdpLogger(8888) ;
     
-    // readParams();
+    readParams();
     extractParams();
     dumpParams();
     
@@ -225,12 +226,14 @@ void Robot2018::RobotInit()
     for(int addr: left_can_addrs)
     {
 		std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
+		motor_p->SetInverted(true) ;
 		left_motors.push_back(motor_p) ;
     }
     
     for(int addr: right_can_addrs)
     {
 		std::shared_ptr<frc::SpeedController> motor_p = std::make_shared<ctre::phoenix::motorcontrol::can::WPI_TalonSRX>(addr) ;
+		motor_p->SetInverted(true) ;
 		right_motors.push_back(motor_p) ;
     }
     
@@ -255,7 +258,6 @@ void Robot2018::RobotInit()
 
     m_drivebase_p->setAngleMeasurementDevice(angle_measure_p);
 
-
     m_drivebase_p->setPhysicalChar(TicksPerRev, Diameter);
     m_drivebase_p->setStraightMotionProfiles(StraightParams, DistanceThreshold, 10000.0);
     m_drivebase_p->setStraightPIDConstants(StraightPIDConstants, DistancePIDConstants, AngleCorrPIDConstants);
@@ -264,6 +266,22 @@ void Robot2018::RobotInit()
     m_drivebase_p->setErrorThreshold(ErrorThreshold);
 
     addSubsystem(m_drivebase_p);
+}
+
+void Robot2018::Autonomous()
+{
+    readParams();
+    extractParams();
+    dumpParams();
+	
+    m_drivebase_p->setPhysicalChar(TicksPerRev, Diameter);
+    m_drivebase_p->setStraightMotionProfiles(StraightParams, DistanceThreshold, 10000.0);
+    m_drivebase_p->setStraightPIDConstants(StraightPIDConstants, DistancePIDConstants, AngleCorrPIDConstants);
+    m_drivebase_p->setRotationalMotionProfiles(RotationalParams, AngleThreshold, 10000.0);
+    m_drivebase_p->setRotationalPIDConstants(RotationalPIDConstants, AngleCorrPIDConstants);
+    m_drivebase_p->setErrorThreshold(ErrorThreshold);
+	
+	XeroRobotBase::Autonomous() ;
 }
 
 

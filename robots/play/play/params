@@ -7,7 +7,7 @@ drivebase:encoderPulsesPerRev				200
 #
 # The diameter of the wheel in inches
 #
-drivebase:diameter					4.000000
+drivebase:diameter							4.000000
 
 #
 # During drive straight, if the distance is less than this
@@ -18,13 +18,24 @@ drivebase:diameter					4.000000
 drivebase:straight:switch:threshold 			100000
 
 #
+# These are the PID controller constants for distance PID control
+#
+drivebase:distance:p 0.015
+drivebase:distance:i 0.01
+drivebase:distance:d 0.000000
+drivebase:distance:f 0.000000
+drivebase:distance:imax 6.0
+
+#
 # If we get under this threshold in distance to the target we
 # consider ourselves sucessful
 #
-drivebase:straight:threshold 				1.000000
+drivebase:straight:threshold	 				1.000000
 
 #
-# If the
+# If use a velocity profile and velocity tracking, and the
+# distance error exceeds this value, recalculate the velocity
+# profile
 #
 # TODO- this needs to be split between the drive straight
 #       and the rotational
@@ -48,15 +59,6 @@ drivebase:straight:i 0.000000
 drivebase:straight:d 0.000000
 drivebase:straight:f 0.000000
 drivebase:straight:imax 0.000000
-
-#
-# These are the PID controller constants for distance PID control
-#
-drivebase:distance:p 0.000000
-drivebase:distance:i 0.000000
-drivebase:distance:d 0.000000
-drivebase:distance:f 0.000000
-drivebase:distance:imax 0.000000
 
 #
 # These are the PID controller constants for correcting the angle

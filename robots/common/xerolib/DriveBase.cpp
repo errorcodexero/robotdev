@@ -15,6 +15,9 @@ namespace xerolib
 		m_left_voltage = 0.0;
 		m_right_voltage = 0.0;
 
+		m_max_voltage_change = 1.0 ;
+		m_max_voltage = 0.6 ;
+
 		m_drive_straight_mode = StraightDrivingStrategy::Encoders;
 
 		DataLogger &data = robot.getDataLogger();
@@ -187,14 +190,7 @@ namespace xerolib
 		double deltat = now - m_lasttime;
 
 		data.logData(m_mode_col, static_cast<double>(m_mode));
-		//
-		// Ask an angular PID controller for the offset to the motors to cause the motors to drive straight.  If
-		// we are in rotate mode, the PID constants for the m_angle_pid are set to zero so the offset is always
-		// zero.
-		//
-		double offset = 0.0 ;
-		double right_direction = -1.0;
-
+		
 		if (m_mode == Mode::Idle)
 		{
 			m_left_voltage = 0.0;
@@ -303,8 +299,10 @@ namespace xerolib
 				//
 				// In C++-17 we get std::clamp, but for now we provide our own
 				//
-				m_left_voltage = DriveBase::clamp(motor + offset, -1.0, 1.0);
-				m_right_voltage = DriveBase::clamp(right_direction * motor - offset, -1.0, 1.0);
+				m_left_voltage = DriveBase::clamp(motor + offset, -m_max_voltage, m_max_voltage,
+												  m_left_voltage, m_max_voltage_change) ;
+				m_right_voltage = DriveBase::clamp(right_direction * motor - offset, -m_max_voltage, m_max_voltage,
+												   m_right_voltage, m_max_voltage_change) ;
 			}
 		}
 		else if (m_mode == Mode::Distance)
@@ -316,11 +314,9 @@ namespace xerolib
 			data.logData(m_drift_error_col, drift);
 			double mult = m_ang_corr_pid.calcOutput(deltat, 0.0, drift);
 
-			motor = (1.0 + mult);
-
-			m_left_voltage = DriveBase::clamp(motor * (1.0 + mult), -1.0, 1.0);
-			m_right_voltage = DriveBase::clamp(motor * (1.0 - mult), -1.0, 1.0);
-
+			m_left_voltage = DriveBase::clamp(motor * (1.0 + mult), -1.0, 1.0, m_left_voltage, deltat * m_max_voltage_change) ;
+			m_right_voltage = DriveBase::clamp(motor * (1.0 - mult), -1.0, 1.0, m_right_voltage, deltat * m_max_voltage_change) ;
+			
 			data.logData(m_straight_target_dist_col, m_target);
 		}
 		else if (m_mode == Mode::Angle)
