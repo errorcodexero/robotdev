@@ -48,6 +48,7 @@ bool paramsInput::readFile(const std::string &filename)
 				catch(...)
 				{
 					std::cout << "cannot parse string '" << valueString << "' as a decimal" << std::endl ;
+					std::cout << "key is '" << Key << "'" << std::endl ;
 				}
 				mParamsMap.insert(std::pair<std::string, double>(Key, value));
 			}
