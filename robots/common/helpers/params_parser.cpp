@@ -21,6 +21,8 @@ bool paramsInput::readFile(const std::string &filename)
 		{
 			std::getline(f, buffer);
 			unsigned int commentStart = buffer.find('#');
+
+			std::cout << "line '" << buffer << "'" << std::endl ;
       
 			if (commentStart != buffer.npos)
 			{
@@ -88,7 +90,7 @@ double paramsInput::getValue(const std::string &paramName, double defaultValue)
 }
 
 #ifdef  PARAMS_PARSER_TEST
-static const char *paramsFile = "paramsTest.txt";
+static const char *paramsFile = "params.txt";
 
 
 
