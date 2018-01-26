@@ -18,16 +18,16 @@ void DrivebaseController::setParams(paramsInput* input_params) {
 void DrivebaseController::initDistance(double distance) {
 	mode = Mode::DISTANCE;
 	target = distance;
-	dist_pid.Init(input_params->getValue("drivebase:distance:p", 0.2),
-		input_params->getValue("drivebase:distance:i", 0.0),
+	dist_pid.Init(input_params->getValue("drivebase:distance:p", 0.015),
+		input_params->getValue("drivebase:distance:i", 0.1),
 		input_params->getValue("drivebase:distance:d", 0.0),
 		input_params->getValue("drivebase:distance:f", 0.0),
 		-1.0,
 		1.0,
 		input_params->getValue("drivebase:distance:imax", 1000.0)
 	);
-	straightness_pid.Init(input_params->getValue("drivebase:angleCorrection:p", 0.2),
-		input_params->getValue("drivebase:angleCorrection:i", 0.0),
+	straightness_pid.Init(input_params->getValue("drivebase:angleCorrection:p", 0.015),
+		input_params->getValue("drivebase:angleCorrection:i", 0.1),
 		input_params->getValue("drivebase:angleCorrection:d", 0.0),
 		input_params->getValue("drivebase:angleCorrection:f", 0.0),
 		-1.0,

@@ -27,6 +27,8 @@ NAVX=true
 #
 CTRE=true
 
+DEPLOYADD=params.txt
+
 #
 # define the app lib
 #
