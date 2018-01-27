@@ -683,7 +683,7 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 		case Drivebase::Goal::Mode::ROTATE:
 			{
 				Drivebase::Output out(0.0, 0.0, false);
-				Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
+				Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, status.now, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
 				
 				return out;
 			}

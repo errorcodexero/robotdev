@@ -67,21 +67,26 @@ void DrivebaseController::initAngle(double angle) {
 	logger.endMessage() ;
 }
 
-void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt,
+void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt, double time,
 								 double& out_l, double& out_r, bool& out_zero_yaw)
 {
 	out_zero_yaw = zero_yaw;
 	zero_yaw = false;
 
 	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug) ;
+	logger << "time " << time << " " << zero_time  ;
+	logger.endMessage() ;
 
+	const double ZERO_DELAY = .05; //seconds
 	if(out_zero_yaw)
 	{
 		logger.startMessage(messageLogger::messageType::debug) ;
 		logger << "First cycle: settings YAW to zero" ;
 		logger.endMessage() ;
+		zero_time = time;
 	}
-	else
+	else if (time - zero_time > ZERO_DELAY)
 	{
 		if(mode == Mode::DISTANCE) {
 			double avg_dist = (distances_l + distances_r) / 2.0;

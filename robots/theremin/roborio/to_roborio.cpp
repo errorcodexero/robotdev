@@ -130,7 +130,7 @@ class To_roborio
 	std::ofstream null_stream;
 	paramsInput input_params;
 public:
-  To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
+  To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
 		messageLogger &logger = messageLogger::get();
 		logger.enable(messageLogger::messageType::error);

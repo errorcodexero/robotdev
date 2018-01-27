@@ -14,6 +14,8 @@ class DrivebaseController {
 	Mode mode;
 
 	bool zero_yaw;
+	double zero_time;
+
 	double target;
 	double distance_threshold, angle_threshold;
 	PIDCtrl straightness_pid, dist_pid, angle_pid;
@@ -27,7 +29,7 @@ class DrivebaseController {
 	void initDistance(double);
 	void initAngle(double);
 
-	void update(double, double, double, double, double&, double&, bool&);
+	void update(double, double, double, double, double, double&, double&, bool&);
 	bool done();
 };
 
