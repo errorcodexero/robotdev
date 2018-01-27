@@ -139,7 +139,17 @@ public:
 			if(!solenoid[i]) error_code|=8;
 		}
 		talon_srx_controls.init();
-		
+#ifdef THEREMIN
+		//talon_srx_controls.set_inverted(2);
+		//talon_srx_controls.set_inverted(3);
+
+#endif
+	
+#ifdef CLAYMORE
+		talon_srx_controls.set_inverted(0);
+		talon_srx_controls.set_inverted(1);
+		talon_srx_controls.set_inverted(2);
+#endif				
 		for(unsigned i=0;i<Robot_outputs::PWMS;i++){
 			pwm[i]=new frc::VictorSP(i);
 			if(!pwm[i]) error_code|=8;

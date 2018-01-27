@@ -513,14 +513,14 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 #ifdef THEREMIN
 	robot.talon_srx[L_MOTOR_LOC_1].power_level = b.l;
 	robot.talon_srx[L_MOTOR_LOC_2].power_level = b.l;
-	robot.talon_srx[R_MOTOR_LOC_1].power_level = -b.r;
-	robot.talon_srx[R_MOTOR_LOC_2].power_level = -b.r;//reverse right side for software dev bot 2017
+	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
+	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
 #endif
 
 #ifdef CLAYMORE
-	robot.talon_srx[L_MOTOR_LOC_1].power_level = -b.l;
-	robot.talon_srx[L_MOTOR_LOC_2].power_level = -b.l;
-	robot.talon_srx[L_MOTOR_LOC_3].power_level = -b.l;
+	robot.talon_srx[L_MOTOR_LOC_1].power_level = b.l;
+	robot.talon_srx[L_MOTOR_LOC_2].power_level = b.l;
+	robot.talon_srx[L_MOTOR_LOC_3].power_level = b.l;
 	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;

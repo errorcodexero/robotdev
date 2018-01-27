@@ -21,6 +21,9 @@ void Talon_srx_control::init(int CANBusAddress){
 	talon = new ctre::phoenix::motorcontrol::can::WPI_TalonSRX(CANBusAddress);
 	assert(talon);
 	talon->SetSafetyEnabled(false);
+}
+
+void Talon_srx_control::set_inverted(){
 	talon->SetInverted(true);
 }
 
@@ -128,6 +131,10 @@ void Talon_srx_controls::init(){
 		}
 		init_=true;
 	}
+}
+
+void Talon_srx_controls::set_inverted(int id){
+	talons[id].set_inverted();
 }
 
 void Talon_srx_controls::set(Checked_array<Talon_srx_output,Robot_outputs::TALON_SRX_OUTPUTS> const& a,Checked_array<bool,Robot_outputs::TALON_SRX_OUTPUTS> const& enable){
