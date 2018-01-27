@@ -89,6 +89,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		logger << "update(DISTANCE)" ;
 		logger << ", target " << target ;
 		logger << ", distance " << avg_dist ;
+		logger << ", angle " << angle ;
 		logger << ", ldist " << distances_l ;
 		logger << ", rdist " << distances_r ;
 		logger << ", base " << base ;
