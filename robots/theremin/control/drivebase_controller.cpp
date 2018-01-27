@@ -9,6 +9,8 @@ DrivebaseController::DrivebaseController() {
 	target = 0.0;
 	distance_threshold = 0.0;
 	angle_threshold = 0.0;
+	mLastVoltage = 0.0 ;
+	mMaxChange = 1.0 ;
 }
 
 void DrivebaseController::setParams(paramsInput* input_params) {
@@ -70,23 +72,18 @@ void DrivebaseController::initAngle(double angle) {
 void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt, double time,
 								 double& out_l, double& out_r, bool& out_zero_yaw)
 {
+	messageLogger &logger = messageLogger::get() ;
+	
 	out_zero_yaw = zero_yaw;
 	zero_yaw = false;
 
-	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug) ;
-	logger << "time " << time << " " << zero_time  ;
-	logger.endMessage() ;
-
-	const double ZERO_DELAY = .05; //seconds
 	if(out_zero_yaw)
 	{
 		logger.startMessage(messageLogger::messageType::debug) ;
 		logger << "First cycle: settings YAW to zero" ;
 		logger.endMessage() ;
-		zero_time = time;
 	}
-	else if (time - zero_time > ZERO_DELAY)
+	else
 	{
 		if(mode == Mode::DISTANCE) {
 			double avg_dist = (distances_l + distances_r) / 2.0;
@@ -95,6 +92,17 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			}
 				
 			double base = dist_pid.getOutput(target, avg_dist, dt);
+			
+			double chg = std::fabs(base - mLastVoltage) ;
+			if (chg > mMaxChange * dt)
+			{
+				if (base > mLastVoltage)
+					base = mLastVoltage + mMaxChange * dt ;
+				else
+					base = mLastVoltage - mMaxChange * dt ;
+			}
+
+			mLastVoltage = base ;
 			double offset = straightness_pid.getOutput(0.0, angle, dt);
 			out_l = base + offset;
 			out_r = base - offset;
@@ -142,6 +150,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	if(mode == Mode::IDLE) {
 		out_l = 0.0;
 		out_r = 0.0;
+		zero_yaw = true ;
 	}
 }
 

@@ -14,12 +14,14 @@ class DrivebaseController {
 	Mode mode;
 
 	bool zero_yaw;
-	double zero_time;
 
 	double target;
 	double distance_threshold, angle_threshold;
 	PIDCtrl straightness_pid, dist_pid, angle_pid;
 	paramsInput* mInput_params;
+
+	double mLastVoltage ;
+	double mMaxChange ;
 
 	public:
 	DrivebaseController();
