@@ -1,5 +1,7 @@
 #include "drivebase_controller.h"
 #include "message_logger.h"
+#include "UdpBroadcastSender.h"
+
 #include <cmath>
 #include <iostream>
 
@@ -11,6 +13,8 @@ DrivebaseController::DrivebaseController() {
 	angle_threshold = 0.0;
 	mLastVoltage = 0.0 ;
 	mMaxChange = 1.0 ;
+
+	mSender.open(8888) ;
 }
 
 void DrivebaseController::setParams(paramsInput* input_params) {
@@ -23,6 +27,8 @@ void DrivebaseController::initDistance(double distance) {
 	
 	mode = Mode::DISTANCE;
 	target = distance;
+
+	mSender.send("new") ;
 
 	double p = mInput_params->getValue("drivebase:distance:p", 0.015) ;
 	double i = mInput_params->getValue("drivebase:distance:i", 0.1) ;
@@ -73,6 +79,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 								 double& out_l, double& out_r, bool& out_zero_yaw)
 {
 	messageLogger &logger = messageLogger::get() ;
+	std::string msg ;
 	
 	out_zero_yaw = zero_yaw;
 	zero_yaw = false;
@@ -90,8 +97,15 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if((target - avg_dist) < distance_threshold) {
 				mode = Mode::IDLE;
 			}
+
+			msg += "time=" + std::to_string(time) ;
+			msg += ",ldist=" + std::to_string(distances_l) ;
+			msg += ",rdist=" + std::to_string(distances_r) ;
+			msg += ",dist=" + std::to_string(avg_dist) ;
+			msg += ",angle=" + std::to_string(angle) ;
 				
 			double base = dist_pid.getOutput(target, avg_dist, dt);
+			msg += ",base=" + std::to_string(angle) ;
 			
 			double chg = std::fabs(base - mLastVoltage) ;
 			if (chg > mMaxChange * dt)
@@ -101,12 +115,18 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 				else
 					base = mLastVoltage - mMaxChange * dt ;
 			}
+			msg += ",change=" + std::to_string(angle) ;
 
 			mLastVoltage = base ;
 			double offset = straightness_pid.getOutput(0.0, angle, dt);
 			out_l = base + offset;
 			out_r = base - offset;
 		
+			msg += ",left=" + std::to_string(out_l) ;
+			msg += ",right=" + std::to_string(out_r) ;
+
+			mSender.send(msg) ;
+
 			messageLogger &logger = messageLogger::get() ;
 			logger.startMessage(messageLogger::messageType::debug) ;
 			logger << "update(DISTANCE)" ;

@@ -3,6 +3,7 @@
 
 #include "../util/pidctrl.h"
 #include "params_parser.h"
+#include "UdpBroadcastSender.h"
 
 class DrivebaseController {
 	private:
@@ -22,6 +23,8 @@ class DrivebaseController {
 
 	double mLastVoltage ;
 	double mMaxChange ;
+
+	bwgnet::UdpBroadcastSender mSender ;
 
 	public:
 	DrivebaseController();
