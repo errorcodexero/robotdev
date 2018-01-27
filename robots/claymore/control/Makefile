@@ -8,10 +8,21 @@
 TARGET=control.a
 
 #
+# Tell the make system we want the shared code (COMMON)
+#
+COMMON=helpers
+
+#
+# Add flags to indicate the robot we are building
+#
+ADDCXXFLAGS = -DCLAYMORE
+
+#
 # define the source code files
 #
 SRC = \
 	drivebase.cpp\
+	drivebase_controller.cpp\
 	force.cpp\
 	force_interface.cpp\
 	gear_shifter.cpp\
@@ -25,7 +36,6 @@ SRC = \
 	nop.cpp\
 	pump.cpp\
 	sim.cpp\
-	pidctrl.cpp\
 	toplevel.cpp
 
 TESTS = \

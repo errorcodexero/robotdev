@@ -13,6 +13,12 @@ TARGET=executive.a
 COMMON=helpers
 
 #
+# Add flags to indicate the robot we are buiding
+#
+ADDCXXFLAGS = -DTHEREMIN
+
+
+#
 # define our source code
 #
 SRC = \

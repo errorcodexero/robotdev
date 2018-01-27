@@ -13,6 +13,8 @@ TARGET=helpers.a
 SRC = \
 	params_parser.cpp\
 	message_logger.cpp
+	drivebase.cpp\
+	drivebase_controller.cpp\
 
 # message_logger.cpp
 
@@ -23,3 +25,5 @@ TESTS = \
 # include a central make file that defines our compilation recipe
 #
 include ../../../makefiles/compilelib.mk
+message_logger.cpp
+params_parser.cpp

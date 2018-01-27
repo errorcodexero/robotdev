@@ -40,7 +40,7 @@ robotdev
   - wpilib2017			First WPILibs for 2017
 - robots			repository for all robot code
   - common			code common to multiple robots
-    - util			common code for theremin/claymore
+    - helpers			common code for theremin/claymore
     - xerolib			common code for playing with new arch
   - gopigo3
     - gopigo3hw			hardware library for the gopigo3 robot

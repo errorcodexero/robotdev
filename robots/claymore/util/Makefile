@@ -8,6 +8,16 @@
 TARGET=util.a
 
 #
+# Tell the make system we want the common code
+#
+COMMON=helpers
+
+#
+# Indicates the robot we are buiding
+#
+ADDCXXFLAGS = -DCLAYMORE
+
+#
 # define the source code files
 #
 SRC = \
@@ -27,6 +37,7 @@ SRC = \
 	output.cpp\
 	perf_tracker.cpp\
 	persistent_tracker.cpp\
+	pidctrl.cpp\
 	point.cpp\
 	posedge_toggle.cpp\
 	posedge_trigger.cpp\

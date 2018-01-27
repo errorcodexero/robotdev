@@ -13,6 +13,11 @@ TARGET=util.a
 COMMON=helpers
 
 #
+# Indicate the robot we are building
+#
+ADDCXXFLAGS = -DTHEREMIN
+
+#
 # define the source code files
 #
 SRC = \

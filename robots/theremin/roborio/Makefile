@@ -27,6 +27,14 @@ NAVX=true
 #
 CTRE=true
 
+#
+# Add flags to indicate the robot we are buiding
+#
+ADDCXXFLAGS = -DTHEREMIN
+
+#
+# Deploy this file as well in the deployall make target
+#
 DEPLOYADD=params.txt
 
 #

@@ -8,6 +8,18 @@
 TARGET=executive.a
 
 #
+# Tell the make system we want the shared code (COMMON)
+#
+COMMON=helpers
+
+
+#
+# Add flags to indicate the robot we are building
+#
+ADDCXXFLAGS = -DCLAYMORE
+
+
+#
 # define our source code
 #
 SRC = \

@@ -11,20 +11,43 @@
 using namespace std;
 
 //these are all off by one
+#ifdef THEREMIN
 #define L_MOTOR_LOC_1 0
 #define L_MOTOR_LOC_2 1
 #define R_MOTOR_LOC_1 2
 #define R_MOTOR_LOC_2 3
+#endif
+
+#ifdef CLAYMORE
+#define L_MOTOR_LOC_1 0
+#define L_MOTOR_LOC_2 1
+#define L_MOTOR_LOC_3 2
+#define R_MOTOR_LOC_1 3
+#define R_MOTOR_LOC_2 4
+#define R_MOTOR_LOC_3 5
+#endif
+
 
 DrivebaseController Drivebase::drivebase_controller;
 
 unsigned pdb_location(Drivebase::Motor m){
 	#define X(NAME,INDEX) if(m==Drivebase::NAME) return INDEX;
 	//WILL NEED CORRECT VALUES
+#ifdef THEREMIN
 	X(LEFT1,0)
 	X(LEFT2,1)
 	X(RIGHT1,2)
 	X(RIGHT2,13)
+#endif
+
+#ifdef CLAYMORE
+	X(LEFT1,13)
+	X(LEFT2,14)
+	X(LEFT3,15)
+	X(RIGHT1,0)
+	X(RIGHT2,1)
+	X(RIGHT3,2)
+#endif
 	#undef X
 	assert(0);
 	//assert(m>=0 && m<Drivebase::MOTORS);
@@ -433,10 +456,22 @@ ostream& operator<<(ostream& o,Drivebase const& a){
 
 double get_output(Drivebase::Output out,Drivebase::Motor m){
 	#define X(NAME,POSITION) if(m==Drivebase::NAME) return out.POSITION;
+#ifdef THEREMIN
 	X(LEFT1,l)
 	X(LEFT2,l)
 	X(RIGHT1,r)
 	X(RIGHT2,r)
+#endif
+
+#ifdef CLAYMORE
+	X(LEFT1,l)
+	X(LEFT2,l)
+	X(LEFT3,l)
+
+	X(RIGHT1,r)
+	X(RIGHT2,r)
+	X(RIGHT3,r)
+#endif
 	#undef X
 	assert(0);
 }
@@ -475,10 +510,21 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 }
 
 Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drivebase::Output b)const{
+#ifdef THEREMIN
 	robot.talon_srx[L_MOTOR_LOC_1].power_level = b.l;
 	robot.talon_srx[L_MOTOR_LOC_2].power_level = b.l;
 	robot.talon_srx[R_MOTOR_LOC_1].power_level = -b.r;
 	robot.talon_srx[R_MOTOR_LOC_2].power_level = -b.r;//reverse right side for software dev bot 2017
+#endif
+
+#ifdef CLAYMORE
+	robot.talon_srx[L_MOTOR_LOC_1].power_level = -b.l;
+	robot.talon_srx[L_MOTOR_LOC_2].power_level = -b.l;
+	robot.talon_srx[L_MOTOR_LOC_3].power_level = -b.l;
+	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
+	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
+	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;
+#endif
 
 	auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 		robot.digital_io[a] = Digital_out::encoder(loc,1);
@@ -487,12 +533,6 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	
 	set_encoder(L_ENCODER_PORTS,L_ENCODER_LOC);
 	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);
-	/*robot.digital_io[0]=Digital_out::encoder(0,1);
-	robot.digital_io[1]=Digital_out::encoder(0,0);
-	robot.digital_io[2]=Digital_out::encoder(1,1);
-	robot.digital_io[3]=Digital_out::encoder(1,0);
-	robot.digital_io[4]=Digital_out::encoder(2,1);
-	robot.digital_io[5]=Digital_out::encoder(2,0);*/
 
 	robot.navx.zero_yaw = b.zero_yaw;
 
