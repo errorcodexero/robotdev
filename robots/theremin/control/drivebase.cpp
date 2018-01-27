@@ -673,23 +673,24 @@ Drivebase::Output drive_straight(Drivebase::Status status, Drivebase::Goal goal)
 }
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
+	Drivebase::Output out(0.0, 0.0, false);
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::DISTANCES:
-			return trapezoidal_speed_control(status,goal);
+			out = trapezoidal_speed_control(status,goal);
+			out.zero_yaw = true;
+			break;
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			return Drivebase::Output{goal.left(),goal.right(),false};
+			out = Drivebase::Output{goal.left(),goal.right(),true};
+			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 			//return drive_straight(status,goal);
 		case Drivebase::Goal::Mode::ROTATE:
-			{
-				Drivebase::Output out(0.0, 0.0, false);
-				Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, status.now, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
-				
-				return out;
-			}
+			Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, status.now, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
+			break;
 		default:
 			nyi
 	}
+	return out;
 }
 
 Drivebase::Status status(Drivebase::Status a){ return a; }

@@ -30,7 +30,7 @@ void DrivebaseController::initDistance(double distance) {
 	double f = mInput_params->getValue("drivebase:distance:f", 0.0) ;
 	double imax = mInput_params->getValue("drivebase:distance:imax", 6.0) ;
 
-	dist_pid.Init(p, i, d, f, -1.0, 1.0, imax) ;
+	dist_pid.Init(p, i, d, f, -0.6, 0.6, imax) ;
 	
 	double ap = mInput_params->getValue("drivebase:angleCorrection:p", 0.0) ;
 	double ai = mInput_params->getValue("drivebase:angleCorrection:i", 0.0) ;
@@ -38,7 +38,7 @@ void DrivebaseController::initDistance(double distance) {
 	double af = mInput_params->getValue("drivebase:angleCorrection:f", 0.0) ;
 	double aimax = mInput_params->getValue("drivebase:angleCorrection:imax", 0.0) ;
 	
-	straightness_pid.Init(ap, ai, ad, af, -1.0, 1.0, aimax) ;
+	straightness_pid.Init(ap, ai, ad, af, -0.6, 0.6, aimax) ;
 	zero_yaw = true;
 
 	messageLogger &logger = messageLogger::get() ;
@@ -59,7 +59,7 @@ void DrivebaseController::initAngle(double angle) {
 	double af = mInput_params->getValue("drivebase:angle:f", 0.0) ;
 	double aimax = mInput_params->getValue("drivebase:angle:imax", 0.0) ;
 	
-	angle_pid.Init(ap, ai, ad, af, -1.0, 1.0, aimax) ;
+	angle_pid.Init(ap, ai, ad, af, -0.6, 0.6, aimax) ;
 	zero_yaw = true;
 
 	messageLogger &logger = messageLogger::get() ;
