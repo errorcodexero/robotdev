@@ -5,6 +5,8 @@
 #include <cmath>
 #include <iostream>
 
+int x;
+
 DrivebaseController::DrivebaseController() {
 	mode = Mode::IDLE;
 	zero_yaw = false;
@@ -29,6 +31,7 @@ void DrivebaseController::initDistance(double distance) {
 	target = distance;
 
 	mSender.send("new") ;
+	x = 0 ;
 
 	double p = mInput_params->getValue("drivebase:distance:p", 0.015) ;
 	double i = mInput_params->getValue("drivebase:distance:i", 0.1) ;
@@ -97,8 +100,8 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if((target - avg_dist) < distance_threshold) {
 				mode = Mode::IDLE;
 			}
-
-			msg += "time=" + std::to_string(time) ;
+			msg = "data," + std::to_string(x++) ;
+			msg += ",time=" + std::to_string(time) ;
 			msg += ",ldist=" + std::to_string(distances_l) ;
 			msg += ",rdist=" + std::to_string(distances_r) ;
 			msg += ",dist=" + std::to_string(avg_dist) ;
