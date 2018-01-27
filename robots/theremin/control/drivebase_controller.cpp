@@ -74,17 +74,21 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	zero_yaw = false;
 
 	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug);
-	logger<<"angle: "<<angle<<"\n";
-	logger.endMessage();
 
-	if(!out_zero_yaw) {
+	if(out_zero_yaw)
+	{
+		logger.startMessage(messageLogger::messageType::debug) ;
+		logger << "First cycle: settings YAW to zero" ;
+		logger.endMessage() ;
+	}
+	else
+	{
 		if(mode == Mode::DISTANCE) {
 			double avg_dist = (distances_l + distances_r) / 2.0;
-				if((target - avg_dist) < distance_threshold) {
+			if((target - avg_dist) < distance_threshold) {
 				mode = Mode::IDLE;
 			}
-	
+				
 			double base = dist_pid.getOutput(target, avg_dist, dt);
 			double offset = straightness_pid.getOutput(0.0, angle, dt);
 			out_l = base + offset;
@@ -93,9 +97,9 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			messageLogger &logger = messageLogger::get() ;
 			logger.startMessage(messageLogger::messageType::debug) ;
 			logger << "update(DISTANCE)" ;
+			logger << ", angle " << angle ;
 			logger << ", target " << target ;
 			logger << ", distance " << avg_dist ;
-			logger << ", angle " << angle ;
 			logger << ", ldist " << distances_l ;
 			logger << ", rdist " << distances_r ;
 			logger << ", base " << base ;

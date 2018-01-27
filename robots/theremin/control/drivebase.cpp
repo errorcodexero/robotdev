@@ -536,11 +536,6 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);
 
 	robot.navx.zero_yaw = b.zero_yaw;
-	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug);
-	logger<<"zero_yaw: "<<b.zero_yaw<<"\n";
-	logger.endMessage();
-
 	robot.digital_io[10] = Digital_out::one();
 
 	return robot;
@@ -678,11 +673,6 @@ Drivebase::Output drive_straight(Drivebase::Status status, Drivebase::Goal goal)
 }
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
-	//cout << status.distances.l << " " << status.distances.r << "\n";
-	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug);
-	//logger<<"angle: "<<status.angle<<"\n";
-	logger.endMessage();
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::DISTANCES:
 			return trapezoidal_speed_control(status,goal);

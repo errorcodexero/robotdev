@@ -8,6 +8,7 @@ messageLogger::messageLogger()
 {
     //Initialize maps
     m_current_message = "";
+	mInMessage = false ;
 }
 
 messageLogger &messageLogger::get()
@@ -56,7 +57,9 @@ void messageLogger::endMessage()
 {
     assert(mInMessage);
     mInMessage = false;
-    std::cout << m_current_message ;
+	if (isMessageTypeEnabled(mCurrentType))
+		std::cout << m_current_message << std::endl ;
+	
     m_current_message = "";
 }
 

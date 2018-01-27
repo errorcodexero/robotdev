@@ -106,16 +106,16 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 
 Talon_srx_input Talon_srx_control::get(){
 	if(since_query > QUERY_LIM){
-		in.current=talon->GetBusVoltage(); //TODO: look into this again
-		in.velocity=talon->GetSelectedSensorVelocity(0);
-		ctre::phoenix::motorcontrol::SensorCollection collection = talon->GetSensorCollection();
-		in.a=collection.GetPinStateQuadA();
-		in.b=collection.GetPinStateQuadB();
-		in.encoder_position=collection.GetQuadraturePosition();
-		ctre::phoenix::motorcontrol::Faults faults;
-		talon->GetFaults(faults);
-		in.fwd_limit_switch=faults.ForwardLimitSwitch;
-		in.rev_limit_switch=faults.ReverseLimitSwitch;
+		// in.current=talon->GetBusVoltage(); //TODO: look into this again
+		// in.velocity=talon->GetSelectedSensorVelocity(0);
+		// ctre::phoenix::motorcontrol::SensorCollection collection = talon->GetSensorCollection();
+		// in.a=collection.GetPinStateQuadA();
+		// in.b=collection.GetPinStateQuadB();
+		// in.encoder_position=collection.GetQuadraturePosition();
+		// ctre::phoenix::motorcontrol::Faults faults;
+		// talon->GetFaults(faults);
+		// in.fwd_limit_switch=faults.ForwardLimitSwitch;
+		// in.rev_limit_switch=faults.ReverseLimitSwitch;
 		since_query=0;
 	}
 	since_query++;
