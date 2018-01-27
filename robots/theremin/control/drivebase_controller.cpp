@@ -73,56 +73,63 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	out_zero_yaw = zero_yaw;
 	zero_yaw = false;
 
-	if(mode == Mode::DISTANCE) {
-		double avg_dist = (distances_l + distances_r) / 2.0;
-		if((target - avg_dist) < distance_threshold) {
-			mode = Mode::IDLE;
-		}
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug);
+	logger<<"angle: "<<angle<<"\n";
+	logger.endMessage();
 
-		double base = dist_pid.getOutput(target, avg_dist, dt);
-		double offset = straightness_pid.getOutput(0.0, angle, dt);
-		out_l = base + offset;
-		out_r = base - offset;
+	if(!out_zero_yaw) {
+		if(mode == Mode::DISTANCE) {
+			double avg_dist = (distances_l + distances_r) / 2.0;
+				if((target - avg_dist) < distance_threshold) {
+				mode = Mode::IDLE;
+			}
+	
+			double base = dist_pid.getOutput(target, avg_dist, dt);
+			double offset = straightness_pid.getOutput(0.0, angle, dt);
+			out_l = base + offset;
+			out_r = base - offset;
 		
-		messageLogger &logger = messageLogger::get() ;
-		logger.startMessage(messageLogger::messageType::debug) ;
-		logger << "update(DISTANCE)" ;
-		logger << ", target " << target ;
-		logger << ", distance " << avg_dist ;
-		logger << ", angle " << angle ;
-		logger << ", ldist " << distances_l ;
-		logger << ", rdist " << distances_r ;
-		logger << ", base " << base ;
-		logger << ", offset " << offset ;
-		logger << ", l " << out_l ;
-		logger << ", r " << out_r ;
-		if (mode == Mode::IDLE)
-			logger << ", TARGET" ;
-		logger.endMessage() ;
-
-		
-	} else if(mode == Mode::ANGLE) {
-		if((target - angle) < angle_threshold) {
-			mode = Mode::IDLE;
+			messageLogger &logger = messageLogger::get() ;
+			logger.startMessage(messageLogger::messageType::debug) ;
+			logger << "update(DISTANCE)" ;
+			logger << ", target " << target ;
+			logger << ", distance " << avg_dist ;
+			logger << ", angle " << angle ;
+			logger << ", ldist " << distances_l ;
+			logger << ", rdist " << distances_r ;
+			logger << ", base " << base ;
+			logger << ", offset " << offset ;
+			logger << ", l " << out_l ;
+			logger << ", r " << out_r ;
+			if (mode == Mode::IDLE)
+				logger << ", TARGET" ;
+			logger.endMessage() ;
+	
+			
+		} else if(mode == Mode::ANGLE) {
+			if((target - angle) < angle_threshold) {
+				mode = Mode::IDLE;
+			}
+	
+			double base = angle_pid.getOutput(target, angle, dt);
+			out_l = base;
+			out_r = -base;
+	
+			messageLogger &logger = messageLogger::get() ;
+			logger.startMessage(messageLogger::messageType::debug) ;
+			logger << "update(ANGLE)" ;
+			logger << ", target " << target ;
+			logger << ", angle " << angle ;
+			logger << ", base " << base ;
+			logger << ", l " << out_l ;
+			logger << ", r " << out_r ;
+			if (mode == Mode::IDLE)
+				logger << ", TARGET" ;
+			logger.endMessage() ;
 		}
-
-		double base = angle_pid.getOutput(target, angle, dt);
-		out_l = base;
-		out_r = -base;
-
-		messageLogger &logger = messageLogger::get() ;
-		logger.startMessage(messageLogger::messageType::debug) ;
-		logger << "update(ANGLE)" ;
-		logger << ", target " << target ;
-		logger << ", angle " << angle ;
-		logger << ", base " << base ;
-		logger << ", l " << out_l ;
-		logger << ", r " << out_r ;
-		if (mode == Mode::IDLE)
-			logger << ", TARGET" ;
-		logger.endMessage() ;
 	}
-
+	
 	if(mode == Mode::IDLE) {
 		out_l = 0.0;
 		out_r = 0.0;

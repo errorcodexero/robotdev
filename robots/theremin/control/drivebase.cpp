@@ -4,6 +4,7 @@
 #include "../util/util.h"
 #include "../util/robot_constants.h"
 #include "../util/motion_profile.h"
+#include "message_logger.h"
 //temp
 #include "../util/point.h"
 #include <fstream>
@@ -535,6 +536,10 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);
 
 	robot.navx.zero_yaw = b.zero_yaw;
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug);
+	logger<<"zero_yaw: "<<b.zero_yaw<<"\n";
+	logger.endMessage();
 
 	robot.digital_io[10] = Digital_out::one();
 
@@ -674,6 +679,10 @@ Drivebase::Output drive_straight(Drivebase::Status status, Drivebase::Goal goal)
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 	//cout << status.distances.l << " " << status.distances.r << "\n";
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug);
+	//logger<<"angle: "<<status.angle<<"\n";
+	logger.endMessage();
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::DISTANCES:
 			return trapezoidal_speed_control(status,goal);
@@ -685,6 +694,7 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 			{
 				Drivebase::Output out(0.0, 0.0, false);
 				Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
+				
 				return out;
 			}
 		default:

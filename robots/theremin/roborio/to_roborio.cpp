@@ -338,6 +338,9 @@ public:
 			talon_srx_controls.set(out.talon_srx,enable_all); 
 		}
 		pump_control.set(out.pump);
+
+		navx_control.set(out.navx);	
+
 		return error_code;
 	}
 	

@@ -24,12 +24,17 @@ Navx_input Navx_control::get(){
 	NAVX_INPUT_ITEMS(X)
 	#undef X
 
+	std::cout << "incoming_yaw: " << ahrs->GetYaw() << "\n";
+
 	return in;
 }
 
 void Navx_control::set(Navx_output a){
 	out = a;
 	
+	std::cout << "outgoing zero_yaw: " << a.zero_yaw << "\n";
+	if(a.zero_yaw) ahrs->ZeroYaw();
+
 	#define X(TYPE,NAME,FUNC) if(a.NAME) ahrs->FUNC();
 	NAVX_OUTPUT_ITEMS(X)
 	#undef X
