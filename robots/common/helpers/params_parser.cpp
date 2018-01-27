@@ -94,7 +94,7 @@ double paramsInput::getValue(const std::string &paramName, double defaultValue)
 }
 
 #ifdef  PARAMS_PARSER_TEST
-static const char *paramsFile = "params.txt";
+static const char *paramsFile = "paramsTest.txt";
 
 
 
