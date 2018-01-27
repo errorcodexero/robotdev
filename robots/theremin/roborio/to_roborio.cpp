@@ -5,11 +5,13 @@
 #include "talon_srx_control.h"
 #include "pump_control.h"
 #include "navx_control.h"
-#include "params_parser.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
+
+#include "params_parser.h"
+#include "message_logger.h"
 
 using namespace std;
 

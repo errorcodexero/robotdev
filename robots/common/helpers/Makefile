@@ -11,7 +11,8 @@ TARGET=helpers.a
 # define the source code files
 #
 SRC = \
-	params_parser.cpp
+	params_parser.cpp\
+	message_logger.cpp
 
 # message_logger.cpp
 

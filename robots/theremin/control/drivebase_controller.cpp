@@ -1,4 +1,5 @@
 #include "drivebase_controller.h"
+#include "message_logger.h"
 #include <cmath>
 #include <iostream>
 
@@ -38,12 +39,12 @@ void DrivebaseController::initDistance(double distance) {
 	straightness_pid.Init(ap, ai, ad, af, -1.0, 1.0, aimax) ;
 	zero_yaw = true;
 
-#ifdef _DEBUG
-	std::cout << "initDistance, distance = " << distance << std::endl ;
-	std::cout << ", dpid " << p << " " << i << " " << d << " " << f << " " << imax ;
-	std::cout << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << imax ;
-	std::cout << std::endl ;
-#endif	
+	messageLogger &logger = messageLogger::get() ;
+	logger.startMessage(messageLogger::messageType::debug) ;
+	logger << "initDistance, distance = " << distance ;
+	logger << ", dpid " << p << " " << i << " " << d << " " << f << " " << imax ;
+	logger << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << imax ;
+	logger.endMessage() ;
 }
 
 void DrivebaseController::initAngle(double angle) {
@@ -59,11 +60,11 @@ void DrivebaseController::initAngle(double angle) {
 	angle_pid.Init(ap, ai, ad, af, -1.0, 1.0, aimax) ;
 	zero_yaw = true;
 
-#ifdef _DEBUG	
-	std::cout << "initAngle, angle = " << angle << std::endl ;
-	std::cout << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << aimax ;
-	std::cout << std::endl ;
-#endif
+	messageLogger &logger = messageLogger::get() ;
+	logger.startMessage(messageLogger::messageType::debug) ;
+	logger << "initAngle, angle = " << angle ;
+	logger << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << aimax ;
+	logger.endMessage() ;
 }
 
 void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt,
@@ -83,19 +84,19 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		out_l = base + offset;
 		out_r = base - offset;
 		
-#ifdef _DEBUG
-		std::cout << "update(DISTANCE)" ;
-		std::cout << ", target " << target ;
-		std::cout << ", distance " << avg_dist ;
-		std::cout << ", base " << base ;
-		std::cout << ", offset " << offset ;
-		std::cout << ", l " << out_l ;
-		std::cout << ", r " << out_r ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug) ;
+		logger << "update(DISTANCE)" ;
+		logger << ", target " << target ;
+		logger << ", distance " << avg_dist ;
+		logger << ", base " << base ;
+		logger << ", offset " << offset ;
+		logger << ", l " << out_l ;
+		logger << ", r " << out_r ;
 		if (mode == Mode::IDLE)
-			std::cout << ", TARGET" ;
-		std::cout << std::endl ;
-		
-#endif
+			logger << ", TARGET" ;
+		logger.endMessage() ;
+
 		
 	} else if(mode == Mode::ANGLE) {
 		if((target - angle) < angle_threshold) {
@@ -105,17 +106,18 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		double base = angle_pid.getOutput(target, angle, dt);
 		out_l = base;
 		out_r = -base;
-#ifdef _DEBUG
-		std::cout << "update(ANGLE)" ;
-		std::cout << ", target " << target ;
-		std::cout << ", angle " << angle ;
-		std::cout << ", base " << base ;
-		std::cout << ", l " << out_l ;
-		std::cout << ", r " << out_r ;
+
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug) ;
+		logger << "update(ANGLE)" ;
+		logger << ", target " << target ;
+		logger << ", angle " << angle ;
+		logger << ", base " << base ;
+		logger << ", l " << out_l ;
+		logger << ", r " << out_r ;
 		if (mode == Mode::IDLE)
-			std::cout << ", TARGET" ;
-		std::cout << std::endl ;
-#endif
+			logger << ", TARGET" ;
+		logger.endMessage() ;
 	}
 
 	if(mode == Mode::IDLE) {

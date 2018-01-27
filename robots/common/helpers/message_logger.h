@@ -20,6 +20,10 @@ public:
 	/// \brief create a new message logger object
 	messageLogger();
 
+	/// \brief get the single message logger
+	/// \returns the single message logger
+	static messageLogger &get() ;
+
 	/// \brief returns true if a given message type is active
 	/// \param the type of message to check for active
 	/// \returns true if the message type is active, otherwise false
@@ -38,7 +42,7 @@ public:
 	void startMessage(const messageType &type) ;
 
 	/// \brief end the current message
-	void endMessage(std::ostream &f) ;
+	void endMessage() ;
 
 	/// \brief operator overload the output a string value
 	/// \param value_p the string to output
@@ -61,6 +65,9 @@ public:
 	messageLogger &operator<<(double value) ;
 
 private:
+	// The single message logger
+	static messageLogger *mTheOneLogger ;
+	
 	// The modes currently enabled
 	std::list<messageType> mEnabledModes ;
 
