@@ -132,6 +132,12 @@ class To_roborio
 public:
   To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
+		messageLogger &logger = messageLogger::get();
+		logger.enable(messageLogger::messageType::error);
+		logger.enable(messageLogger::messageType::warning);
+		logger.enable(messageLogger::messageType::info);
+		logger.enable(messageLogger::messageType::debug);
+
 		power = new frc::PowerDistributionPanel();
 
 		for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
@@ -140,8 +146,8 @@ public:
 		}
 		talon_srx_controls.init();
 #ifdef THEREMIN
-		//talon_srx_controls.set_inverted(2);
-		//talon_srx_controls.set_inverted(3);
+		talon_srx_controls.set_inverted(2);
+		talon_srx_controls.set_inverted(3);
 
 #endif
 	
