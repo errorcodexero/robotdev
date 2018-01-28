@@ -5,6 +5,8 @@
 #include <cmath>
 #include <iostream>
 
+int seq = 0 ;
+
 DrivebaseController::DrivebaseController() {
 	mode = Mode::IDLE;
 	zero_yaw = false;
@@ -89,6 +91,9 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		logger.startMessage(messageLogger::messageType::debug) ;
 		logger << "First cycle: settings YAW to zero" ;
 		logger.endMessage() ;
+
+		mLeftStart = distances_l ;
+		mRightStart = distances_r ;
 	}
 	else
 	{
@@ -98,10 +103,12 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 				mode = Mode::IDLE;
 			}
 
-			msg += "time=" + std::to_string(time) ;
-			msg += ",ldist=" + std::to_string(distances_l) ;
-			msg += ",rdist=" + std::to_string(distances_r) ;
-			msg += ",dist=" + std::to_string(avg_dist) ;
+			msg = "data," + std::to_string(seq++) ;
+			msg += ",time=" + std::to_string(time) ;
+			msg += ",ldist=" + std::to_string(distances_l - mLeftStart) ;
+			msg += ",rdist=" + std::to_string(distances_r - mRightStart)  ;
+			double stavg = (mLeftStart + mRightStart) / 2.0 ;
+			msg += ",dist=" + std::to_string(avg_dist - stavg) ;
 			msg += ",angle=" + std::to_string(angle) ;
 				
 			double base = dist_pid.getOutput(target, avg_dist, dt);

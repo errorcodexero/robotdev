@@ -6,7 +6,7 @@ namespace xerolib
 
 	DataUdpDestination::DataUdpDestination(uint16_t port)
 	{
-		m_sender.open("10.70.74.149", port);
+		m_sender.open(port);
 		m_seq_no = 0;
 	}
 

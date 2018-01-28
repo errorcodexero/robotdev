@@ -24,6 +24,9 @@ class DrivebaseController {
 	double mLastVoltage ;
 	double mMaxChange ;
 
+	double mLeftStart ;
+	double mRightStart ;
+
 	bwgnet::UdpBroadcastSender mSender ;
 
 	public:
