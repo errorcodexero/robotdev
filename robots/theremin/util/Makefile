@@ -20,6 +20,7 @@ SRC = \
 	bound_tracker.cpp\
 	countdown_timer.cpp\
 	countup_timer.cpp\
+	data_logger.cpp\
 	debounce.cpp\
 	driver_station_interface.cpp\
 	fixVictor.cpp\

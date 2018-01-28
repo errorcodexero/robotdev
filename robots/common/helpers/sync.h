@@ -6,8 +6,6 @@
 
 class sync {
 public:
-	sync();
-	virtual void getMessage(const std::string&);
-	virtual void getMessage(const std::vector<std::string>&);
-	virtual void sendMessage();
+	virtual void getMessage(const std::vector<std::string>&)=0;
+	virtual void sendMessage()=0;
 };
