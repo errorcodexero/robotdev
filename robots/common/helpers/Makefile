@@ -12,7 +12,6 @@ TARGET=helpers.a
 #
 SRC = \
 	params_parser.cpp\
-	sync.cpp\
 	udp_sync.cpp\
 	message_logger.cpp
 

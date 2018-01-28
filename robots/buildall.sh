@@ -1,10 +1,11 @@
 #!/bin/bash
 
-ALLROBOTS="theremin claymore play"
+ALLROBOTS="theremin claymore play sabre"
+
+rm -rf common/builddir
 
 for robot in $ALLROBOTS ;
 do
-    rm -rf common/builddir
     pushd $robot > /dev/null
     rm -rf builddir
     make CONFIG=debug
