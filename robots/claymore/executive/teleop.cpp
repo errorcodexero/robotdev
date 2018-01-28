@@ -104,12 +104,20 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		return Intake_actuator::Goal::X;
 	}();
 
-	if(info.driver_joystick.button[Gamepad_button::A]) goals.intake = Intake::Goal::IN;
-	if(info.driver_joystick.button[Gamepad_button::Y]) goals.intake = Intake::Goal::OUT;
+	goals.lifter = [&]{
+		if(info.panel.up) return Lifter::Goal::up();
+		if(info.panel.down) return Lifter::Goal::down();
+		return Lifter::Goal::stop();
+	}();
 	
-	if(info.driver_joystick.button[Gamepad_button::X]) goals.intake_actuator = Intake_actuator::Goal::CLOSE;
-	if(info.driver_joystick.button[Gamepad_button::B]) goals.intake_actuator = Intake_actuator::Goal::OPEN;
-	
+	{
+		info.status.lights.lifter_height = (unsigned)0;//TODO
+		info.status.lights.climbing = false;//TODO
+		info.status.lights.autonomous = info.in.robot_mode.autonomous;
+		info.status.lights.alliance = info.in.ds_info.alliance;
+		info.status.lights.now = info.in.now;
+	}
+
 	#ifdef PRINT_OUTS
 	if(info.in.ds_info.connected && (print_number%10)==0){
 		cout<<"\nencoders:"<<info.status.drive<<"\n";
