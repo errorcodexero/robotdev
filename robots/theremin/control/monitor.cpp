@@ -1,6 +1,6 @@
 #include "monitor.h"
 #include "main.h"
-#include "../util/interface.h"
+#include "interface.h"
 
 using namespace std;
 

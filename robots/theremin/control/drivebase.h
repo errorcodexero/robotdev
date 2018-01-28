@@ -3,12 +3,12 @@
 
 #include <iosfwd>
 #include <set>
-#include "../util/interface.h"
+#include "interface.h"
 #include "motor_check.h"
 #include "drivebase_controller.h"
-#include "../util/quick.h"
-#include "../util/countdown_timer.h"
-#include "../util/stall_monitor.h"
+#include "quick.h"
+#include "countdown_timer.h"
+#include "stall_monitor.h"
 
 #ifdef THEREMIN
 #else

@@ -7,11 +7,6 @@
 #include "maybe_inline.h"
 #include "checked_array.h"
 #include "params_parser.h"
-
-#ifdef NEED_PIXY_CAM
-#include "../input/pixycam/PixyUART.h"
-#endif
-
 #include "quick.h"
 
 typedef double Time;//Seconds
@@ -347,20 +342,6 @@ bool operator==(Digital_inputs const&,Digital_inputs const&);
 bool operator!=(Digital_inputs const&,Digital_inputs const&);
 std::ostream& operator<<(std::ostream&,Digital_inputs const&);
 
-#ifdef NEED_PIXY_CAM
-struct Camera{
-	static const double FOV; //degrees
-	bool enabled;
-	std::vector<Pixy::Block> blocks;
-	
-	Camera();
-};
-bool operator<(Camera const&,Camera const&);
-bool operator==(Camera const&,Camera const&);
-bool operator!=(Camera const&,Camera const&);
-std::ostream& operator<<(std::ostream&,Camera const&);
-#endif
-
 typedef float Volt;
 typedef double Rad; //radians, clockwise
 
@@ -389,11 +370,6 @@ struct Robot_inputs{
 	static const unsigned CURRENT=16;
 	Checked_array<double,CURRENT> current;
 	Pump_input pump;
-
-#ifdef NEED_PIXY_CAM
-	Camera camera;
-#endif
-
 	paramsInput* input_params;
 
 	Robot_inputs();

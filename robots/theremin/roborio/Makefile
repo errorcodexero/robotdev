@@ -30,7 +30,7 @@ CTRE=true
 #
 # Add flags to indicate the robot we are buiding
 #
-ADDCXXFLAGS = -DTHEREMIN
+ADDCXXFLAGS = -DTHEREMIN -I../util -I../control -I../executive -I../input
 
 #
 # Deploy this file as well in the deployall make target

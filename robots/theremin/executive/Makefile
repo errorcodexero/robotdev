@@ -15,7 +15,7 @@ COMMON=helpers
 #
 # Add flags to indicate the robot we are buiding
 #
-ADDCXXFLAGS = -DTHEREMIN
+ADDCXXFLAGS = -DTHEREMIN -I../control -I../util -I../input
 
 
 #

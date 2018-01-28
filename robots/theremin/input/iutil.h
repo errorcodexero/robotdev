@@ -2,7 +2,7 @@
 #define INPUT_UTIL_H
 
 #include<iosfwd>
-#include "../util/interface.h"
+#include "interface.h"
 
 enum class Joystick_section{LEFT,RIGHT,UP,DOWN,CENTER};
 std::ostream& operator<<(std::ostream&,Joystick_section);

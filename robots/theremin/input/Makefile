@@ -13,14 +13,19 @@ TARGET=input.a
 COMMON=helpers
 
 #
+# Add flags to indicate the robot we are building
+#
+ADDCXXFLAGS = -DTHEREMIN -I../util
+
+#
 # define the source code files
 #
 SRC = \
 	panel.cpp\
-	util.cpp
+	iutil.cpp
 
 TESTS = \
-	util.cpp
+	iutil.cpp
 
 COMPLEXTESTS = \
 	panel

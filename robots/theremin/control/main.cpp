@@ -5,10 +5,10 @@
 #include <math.h>
 #include <stdlib.h>
 #include "toplevel.h"
-#include "../util/util.h"
-#include "../input/util.h"
+#include "util.h"
+#include "iutil.h"
 #include <vector>
-#include "../executive/teleop.h"
+#include "teleop.h"
 
 using namespace std;
 

@@ -15,7 +15,7 @@ COMMON=helpers
 #
 # Indicate the robot we are building
 #
-ADDCXXFLAGS = -DTHEREMIN
+ADDCXXFLAGS = -DTHEREMIN -I../control -I.
 
 #
 # define the source code files

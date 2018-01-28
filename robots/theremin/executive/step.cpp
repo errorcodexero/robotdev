@@ -1,7 +1,7 @@
 #include "step.h"
 #include<queue>
 #include "executive.h"
-#include "../util/util.h"
+#include "util.h"
 #include <cmath>
 //#include "teleop.h"
 

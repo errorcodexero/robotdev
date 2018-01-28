@@ -1,8 +1,8 @@
 #ifndef PANEL_H
 #define PANEL_H 
 
-#include "../util/maybe.h"
-#include "../util/interface.h"
+#include "maybe.h"
+#include "interface.h"
 
 struct Panel{
 	static const unsigned PORT = 2;

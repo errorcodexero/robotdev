@@ -2,9 +2,9 @@
 #define TELEOP_H
 
 #include "executive.h"
-#include "../util/posedge_trigger_debounce.h"
-#include "../util/posedge_toggle.h"
-#include "../util/quick.h"
+#include "posedge_trigger_debounce.h"
+#include "posedge_toggle.h"
+#include "quick.h"
 
 struct Teleop : Executive_impl<Teleop> {
 	enum Nudges{FORWARD,BACKWARD,CLOCKWISE,COUNTERCLOCKWISE,NUDGES};

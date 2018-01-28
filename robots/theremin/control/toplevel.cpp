@@ -2,7 +2,7 @@
 #include<iostream>
 #include<cassert>
 #include<math.h>
-#include "../util/util.h"
+#include "util.h"
 
 using namespace std;
 
@@ -359,8 +359,8 @@ set<Toplevel::Output> examples(Toplevel::Output*){
 
 #ifdef TOPLEVEL_TEST
 #include "formal.h"
-#include "../util/input.h"
-#include "../util/output.h"
+#include "input.h"
+#include "output.h"
 
 bool approx_equal(float a, float b){
 	return a==b;//TODO: why?

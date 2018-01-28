@@ -1,7 +1,7 @@
 #ifndef NAVX_CONTROL_H
 #define NAVX_CONTROL_H
 
-#include "../util/interface.h"
+#include "interface.h"
 #include "SPI.h"
 
 class AHRS;

@@ -1,14 +1,13 @@
 #include "drivebase.h"
 #include <iostream>
 #include <math.h>
-#include "../util/util.h"
-#include "../util/robot_constants.h"
-#include "../util/motion_profile.h"
+#include "util.h"
+#include "robot_constants.h"
+#include "motion_profile.h"
 #include "message_logger.h"
-//temp
-#include "../util/point.h"
+#include "point.h"
 #include <fstream>
-//end temp
+
 using namespace std;
 
 //these are all off by one

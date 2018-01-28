@@ -1,7 +1,7 @@
 #ifndef DRIVEBASE_CONTROLLER_H
 #define DRIVEBASE_CONTROLLER_H
 
-#include "../util/pidctrl.h"
+#include "pidctrl.h"
 #include "params_parser.h"
 #include "UdpBroadcastSender.h"
 

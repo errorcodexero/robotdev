@@ -1,6 +1,6 @@
 #include "pump_control.h"
 #include "Compressor.h"
-#include "../util/util.h"
+#include "util.h"
 #include <cmath>
 #include <cassert>
 

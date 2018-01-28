@@ -2,10 +2,10 @@
 #define MAIN_H
 
 #include "force_interface.h"
-#include "../util/perf_tracker.h"
-#include "../util/countup_timer.h"
+#include "perf_tracker.h"
+#include "countup_timer.h"
 #include "log.h"
-#include "../executive/executive.h"
+#include "executive.h"
 
 struct Main{
 	Executive mode;

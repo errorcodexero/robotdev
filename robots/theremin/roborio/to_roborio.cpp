@@ -1,6 +1,6 @@
 #include "WPILib.h"
 #include "AHRS.h"
-#include "../control/main.h"
+#include "main.h"
 #include "dio_control.h"
 #include "talon_srx_control.h"
 #include "pump_control.h"

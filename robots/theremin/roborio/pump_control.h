@@ -1,8 +1,8 @@
 #ifndef PUMP_CONTROL_H
 #define PUMP_CONTROL_H
 
-#include "../util/interface.h"
-#include "../util/checked_array.h"
+#include "interface.h"
+#include "checked_array.h"
 
 namespace frc{
 	class Compressor;
