@@ -4,6 +4,7 @@
 #include "../util/util.h"
 #include "../util/robot_constants.h"
 #include "../util/motion_profile.h"
+#include "message_logger.h"
 //temp
 #include "../util/point.h"
 #include <fstream>
@@ -513,14 +514,14 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 #ifdef THEREMIN
 	robot.talon_srx[L_MOTOR_LOC_1].power_level = b.l;
 	robot.talon_srx[L_MOTOR_LOC_2].power_level = b.l;
-	robot.talon_srx[R_MOTOR_LOC_1].power_level = -b.r;
-	robot.talon_srx[R_MOTOR_LOC_2].power_level = -b.r;//reverse right side for software dev bot 2017
+	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
+	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
 #endif
 
 #ifdef CLAYMORE
-	robot.talon_srx[L_MOTOR_LOC_1].power_level = -b.l;
-	robot.talon_srx[L_MOTOR_LOC_2].power_level = -b.l;
-	robot.talon_srx[L_MOTOR_LOC_3].power_level = -b.l;
+	robot.talon_srx[L_MOTOR_LOC_1].power_level = b.l;
+	robot.talon_srx[L_MOTOR_LOC_2].power_level = b.l;
+	robot.talon_srx[L_MOTOR_LOC_3].power_level = b.l;
 	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;
@@ -535,7 +536,6 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);
 
 	robot.navx.zero_yaw = b.zero_yaw;
-
 	robot.digital_io[10] = Digital_out::one();
 
 	return robot;
@@ -673,23 +673,25 @@ Drivebase::Output drive_straight(Drivebase::Status status, Drivebase::Goal goal)
 }
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
-	//cout << status.distances.l << " " << status.distances.r << "\n";
+	std::cout << status.distances << std::endl ;
+	Drivebase::Output out(0.0, 0.0, false);
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::DISTANCES:
-			return trapezoidal_speed_control(status,goal);
+			out = trapezoidal_speed_control(status,goal);
+			out.zero_yaw = true;
+			break;
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			return Drivebase::Output{goal.left(),goal.right(),false};
+			out = Drivebase::Output{goal.left(),goal.right(),true};
+			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 			//return drive_straight(status,goal);
 		case Drivebase::Goal::Mode::ROTATE:
-			{
-				Drivebase::Output out(0.0, 0.0, false);
-				Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
-				return out;
-			}
+			Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, status.now, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
+			break;
 		default:
 			nyi
 	}
+	return out;
 }
 
 Drivebase::Status status(Drivebase::Status a){ return a; }

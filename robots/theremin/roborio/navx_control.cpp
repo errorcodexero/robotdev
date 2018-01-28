@@ -4,7 +4,7 @@
 using namespace std;
 
 Navx_control::Navx_control():ahrs(NULL),in(){}
-Navx_control::Navx_control(frc::SerialPort::Port port):ahrs(NULL),in(){
+Navx_control::Navx_control(frc::SPI::Port port):ahrs(NULL),in(){
 	init(port);
 }
 
@@ -12,7 +12,7 @@ Navx_control::~Navx_control(){
 	delete ahrs;
 }
 
-void Navx_control::init(frc::SerialPort::Port port){
+void Navx_control::init(frc::SPI::Port port){
 	assert(!ahrs);	
 	ahrs = new AHRS(port);
 	assert(ahrs);
@@ -30,9 +30,9 @@ Navx_input Navx_control::get(){
 void Navx_control::set(Navx_output a){
 	out = a;
 	
-	#define X(TYPE,NAME,FUNC) if(a.NAME) ahrs->FUNC();
-	NAVX_OUTPUT_ITEMS(X)
-	#undef X
+	if (a.zero_yaw)
+		ahrs->ZeroYaw();
+
 }
 
 ostream& operator<<(ostream& o,Navx_control){

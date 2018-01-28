@@ -2,7 +2,7 @@
 #define NAVX_CONTROL_H
 
 #include "../util/interface.h"
-#include "SerialPort.h"
+#include "SPI.h"
 
 class AHRS;
 
@@ -15,12 +15,12 @@ class Navx_control{
 
 	public:
 	Navx_control();
-	Navx_control(frc::SerialPort::Port);
+	Navx_control(frc::SPI::Port);
 	~Navx_control();
 
 	Navx_input get();
 	void set(Navx_output);
-	void init(frc::SerialPort::Port);
+	void init(frc::SPI::Port);
 	friend std::ostream& operator<<(std::ostream&,Navx_control);
 };
 

@@ -21,6 +21,9 @@ void Talon_srx_control::init(int CANBusAddress){
 	talon = new ctre::phoenix::motorcontrol::can::WPI_TalonSRX(CANBusAddress);
 	assert(talon);
 	talon->SetSafetyEnabled(false);
+}
+
+void Talon_srx_control::set_inverted(){
 	talon->SetInverted(true);
 }
 
@@ -103,16 +106,16 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 
 Talon_srx_input Talon_srx_control::get(){
 	if(since_query > QUERY_LIM){
-		in.current=talon->GetBusVoltage(); //TODO: look into this again
-		in.velocity=talon->GetSelectedSensorVelocity(0);
-		ctre::phoenix::motorcontrol::SensorCollection collection = talon->GetSensorCollection();
-		in.a=collection.GetPinStateQuadA();
-		in.b=collection.GetPinStateQuadB();
-		in.encoder_position=collection.GetQuadraturePosition();
-		ctre::phoenix::motorcontrol::Faults faults;
-		talon->GetFaults(faults);
-		in.fwd_limit_switch=faults.ForwardLimitSwitch;
-		in.rev_limit_switch=faults.ReverseLimitSwitch;
+		// in.current=talon->GetBusVoltage(); //TODO: look into this again
+		// in.velocity=talon->GetSelectedSensorVelocity(0);
+		// ctre::phoenix::motorcontrol::SensorCollection collection = talon->GetSensorCollection();
+		// in.a=collection.GetPinStateQuadA();
+		// in.b=collection.GetPinStateQuadB();
+		// in.encoder_position=collection.GetQuadraturePosition();
+		// ctre::phoenix::motorcontrol::Faults faults;
+		// talon->GetFaults(faults);
+		// in.fwd_limit_switch=faults.ForwardLimitSwitch;
+		// in.rev_limit_switch=faults.ReverseLimitSwitch;
 		since_query=0;
 	}
 	since_query++;
@@ -128,6 +131,10 @@ void Talon_srx_controls::init(){
 		}
 		init_=true;
 	}
+}
+
+void Talon_srx_controls::set_inverted(int id){
+	talons[id].set_inverted();
 }
 
 void Talon_srx_controls::set(Checked_array<Talon_srx_output,Robot_outputs::TALON_SRX_OUTPUTS> const& a,Checked_array<bool,Robot_outputs::TALON_SRX_OUTPUTS> const& enable){

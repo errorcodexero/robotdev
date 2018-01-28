@@ -22,8 +22,6 @@ bool paramsInput::readFile(const std::string &filename)
 			std::getline(f, buffer);
 			unsigned int commentStart = buffer.find('#');
 
-			std::cout << "line '" << buffer << "'" << std::endl ;
-      
 			if (commentStart != buffer.npos)
 			{
 				buffer = buffer.substr(0, commentStart);
