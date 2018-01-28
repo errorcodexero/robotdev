@@ -8,11 +8,6 @@
 TARGET=FRCUserProgram
 
 #
-# Tell the make system we want the shared code (COMMON)
-#
-COMMON=util
-
-#
 # Tell the make system we need to the WPI libraries
 #
 WPILIB=true
@@ -31,10 +26,10 @@ CTRE=true
 # define the app lib
 #
 APPLIBS=\
-	control.a\
-	input.a\
-	executive.a\
-	util.a
+	control\
+	input\
+	executive\
+	util
 
 #
 # define the source code
