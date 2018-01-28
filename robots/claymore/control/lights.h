@@ -10,20 +10,37 @@ struct Lights{
 	enum class Camera_light{ON,OFF};
 	struct Goal{//TODO: use macros
 		Camera_light camera_light;
-
+		int blinky_light_info;	
+	
 		Goal();
 		Goal(Camera_light);
 	};
 	
 	using Input=Nop::Input;
 
-	using Status_detail = Nop::Status_detail;
+	struct Status_detail{
+		unsigned lifter_height;
+		bool climbing;
+		bool autonomous;//communicate mode?
+		Alliance alliance;
+		
+		Time now;
 
-	typedef Status_detail Status;
+		Status_detail();
+		Status_detail(unsigned,bool,bool,Alliance,Time);
+	};
+
+	using Status = Status_detail;
 
 	using Input_reader=Nop::Input_reader;
 
-	using Output = Goal;
+	struct Output{ 
+		bool camera_light;
+		double blinky_light_info;
+
+		Output();
+		Output(bool,double);
+	};
 	
 	struct Output_applicator{
 		Output operator()(Robot_outputs)const;	
@@ -43,8 +60,18 @@ struct Lights{
 };
 
 std::ostream& operator<<(std::ostream&,Lights::Camera_light);
+std::ostream& operator<<(std::ostream&,Lights::Status_detail);
+std::ostream& operator<<(std::ostream&,Lights::Output);
 std::ostream& operator<<(std::ostream&,Lights::Goal);
 std::ostream& operator<<(std::ostream&,Lights);
+
+bool operator==(Lights::Status_detail,Lights::Status_detail);
+bool operator!=(Lights::Status_detail,Lights::Status_detail);
+bool operator<(Lights::Status_detail,Lights::Status_detail);
+
+bool operator==(Lights::Output,Lights::Output);
+bool operator!=(Lights::Output,Lights::Output);
+bool operator<(Lights::Output,Lights::Output);
 
 bool operator<(Lights::Goal,Lights::Goal);
 bool operator==(Lights::Goal,Lights::Goal);
@@ -58,9 +85,11 @@ bool operator!=(Lights::Estimator,Lights::Estimator);
 bool operator==(Lights,Lights);
 bool operator!=(Lights,Lights);
 
+std::set<Lights::Status_detail> examples(Lights::Status_detail*);
+std::set<Lights::Output> examples(Lights::Output*);
 std::set<Lights::Goal> examples(Lights::Goal*);
 
 Lights::Output control(Lights::Status_detail, Lights::Goal);
 bool ready(Lights::Status, Lights::Goal);
-
+Lights::Status status(Lights::Status_detail const&);
 #endif

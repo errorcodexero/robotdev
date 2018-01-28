@@ -12,6 +12,8 @@ struct Panel{
 	bool eject;
 	bool close;
 	bool open;
+	bool up;
+	bool down;
 	//2 position swicthes:
 	//3 position switches:
 	//10 position switches:

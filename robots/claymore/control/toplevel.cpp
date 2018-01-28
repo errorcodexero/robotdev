@@ -102,6 +102,7 @@ Toplevel::Output::Output():
 	gear_shifter(Gear_shifter::Output::LOW),
 	intake(Intake::Output::OFF),
 	intake_actuator(Intake_actuator::Output::OPEN),
+	lifter(0.0),
 	lights()
 {}
 
@@ -156,6 +157,7 @@ Toplevel::Status::Status():
 	gear_shifter(*examples((Gear_shifter::Status*)nullptr).begin()),
 	intake(*examples((Intake::Status*)nullptr).begin()),
 	intake_actuator(*examples((Intake_actuator::Status*)nullptr).begin()),
+	lifter(*examples((Lifter::Status*)nullptr).begin()),
 	lights(*examples((Lights::Status*)nullptr).begin())
 {}
 bool operator==(Toplevel::Status a,Toplevel::Status b){
@@ -332,6 +334,9 @@ set<Toplevel::Status_detail> examples(Toplevel::Status_detail*){
 		Pump::Status_detail{Pump::Status::FULL},
 		*examples((Drivebase::Status_detail*)0).begin(),
 		*examples((Gear_shifter::Status_detail*)0).begin(),
+		*examples((Intake::Status_detail*)0).begin(),
+		*examples((Intake_actuator::Status_detail*)0).begin(),
+		*examples((Lifter::Status_detail*)0).begin(),
 		*examples((Lights::Status_detail*)0).begin()
 	}};
 }
@@ -349,7 +354,10 @@ set<Toplevel::Input> examples(Toplevel::Input*){
 		Pump::Input{},
 		*examples((Drivebase::Input*)0).begin(),
 		*examples((Gear_shifter::Input*)0).begin(),
-		*examples((Lights::Input*)0).begin(),
+		*examples((Intake::Input*)0).begin(),
+		*examples((Intake_actuator::Input*)0).begin(),
+		*examples((Lifter::Input*)0).begin(),
+		*examples((Lights::Input*)0).begin()
 	};
 	return {a};
 }

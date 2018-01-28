@@ -8,6 +8,7 @@
 #include "intake.h"
 #include "intake_actuator.h"
 #include "nop.h"
+#include "lifter.h"
 #include "lights.h"
 
 #define TOPLEVEL_ITEMS \
@@ -16,6 +17,7 @@
 	X(Gear_shifter,gear_shifter,Gear_shifter::Goal::LOW)\
 	X(Intake,intake,Intake::Goal::OFF)\
 	X(Intake_actuator,intake_actuator,Intake_actuator::Goal::OPEN)\
+	X(Lifter,lifter,Lifter::Goal::stop())\
 	X(Lights,lights,)
 	
 class Toplevel{
