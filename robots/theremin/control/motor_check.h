@@ -2,7 +2,7 @@
 #define MOTOR_CHECK_H
 
 #include<set>
-#include "../util/util.h"
+#include "util.h"
 
 typedef double Amps;
 

@@ -1,7 +1,7 @@
 #ifndef NOP_H
 #define NOP_H
 
-#include "../util/interface.h"
+#include "interface.h"
 
 struct Nop{
 	struct Input{};

@@ -11,10 +11,10 @@ ifndef CONFIG
 $(error missing the CONFIG variable on the make command line, e.g. make CONFIG=debug)
 else
 ifeq ($(CONFIG), debug)
-CXXFLAGS += -ggdb -D_DEBUG
+CXXFLAGS = -D_DEBUG
 else
 ifeq ($(CONFIG), release)
-CXXFLAGS += -O3 -DRELEASE
+CXXFLAGS = -DRELEASE
 else
 $(error CONFIG must be set to either 'debug' or 'release')
 endif
@@ -79,7 +79,12 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Td
 #
 # The flags to apply to the C++ compilation
 #
-CXXFLAGS += -std=c++14 -Wall $(DEPFLAGS)
+CXXFLAGS += -std=c++1y -Wall -O0 -Og -g3 -fmessage-length=0 -pthread $(DEPFLAGS)
+
+#
+# The flags to apply to the link step
+#
+LDFLAGS += -pthread -rdynamic -Wl,-rpath,/opt/GenICam_v3_0_NI/bin/Linux32_ARM,-rpath,/usr/local/frc/lib
 
 #
 # The preprocessor flags to apply

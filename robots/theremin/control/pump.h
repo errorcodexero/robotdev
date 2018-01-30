@@ -6,8 +6,8 @@
 
 #include<iosfwd>
 #include<set>
-#include "../util/maybe.h"
-#include "../util/interface.h"
+#include "maybe.h"
+#include "interface.h"
 
 struct Pump{
 	enum class Goal{AUTO,OFF};

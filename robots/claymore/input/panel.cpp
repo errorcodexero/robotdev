@@ -6,14 +6,16 @@
 #include <cmath>
 
 using namespace std;
-static const unsigned int ROLLER_CONTROL_AXIS=0, ROLLER_AXIS=1, ROLLER_ARM_AXIS=2, CLIMBER_MODE_AXIS=3, GEAR_GRABBER_AXIS=4, GEAR_ARM_AXIS=5, AUTO_SELECTOR_AXIS=6, SPEED_DIAL_AXIS=7;//TODO: rename constants
-static const unsigned int CAMERA_LIGHT_LOC=1, SHOOT_LOC=2, PREP_COLLECT_GEAR_LOC=3, PREP_SCORE_GEAR_LOC=4, COLLECT_GEAR_LOC=5, SCORE_GEAR_LOC=6, CLIMB_LOC=7, LEARN_LOC=8, GEAR_SENSING_FULL_AUTO_LOC=9, GEAR_SENSING_NO_AUTO_LOC=10;//TODO: rename constants 
+
+const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 
 #define BUTTONS \
 	X(intake) \
 	X(eject) \
 	X(close) \
-	X(open) 
+	X(open) \
+	X(up) \
+	X(down) 
 
 #define THREE_POS_SWITCHES \
 
@@ -145,6 +147,8 @@ Panel interpret_gamepad(Joystick_data d){
 	p.eject = d.button[Gamepad_button::Y];
 	p.close = d.button[Gamepad_button::X];
 	p.open = d.button[Gamepad_button::B];
+	p.up = d.button[Gamepad_button::RB];
+	p.down = d.button[Gamepad_button::LB];
 	return p;
 }
 

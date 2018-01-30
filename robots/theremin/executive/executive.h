@@ -3,10 +3,10 @@
 
 #include <memory>
 #include <typeindex>
-#include "../control/toplevel.h"
-#include "../input/panel.h"
-#include "../util/interface.h"
-#include "../util/type.h"
+#include "toplevel.h"
+#include "panel.h"
+#include "interface.h"
+#include "type.h"
 
 #define NEXT_MODE_INFO_ITEMS(X)\
 	X(bool,autonomous)\

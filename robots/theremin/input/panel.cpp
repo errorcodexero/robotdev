@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdlib.h> 
 #include "util.h"
-#include "../util/util.h"
+#include "iutil.h"
 #include <cmath>
 
 using namespace std;

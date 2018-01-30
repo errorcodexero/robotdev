@@ -6,8 +6,8 @@
 #include<sstream>
 #include<vector>
 #include <stdlib.h>
-#include "../util/interface.h"
-#include "../util/util.h"
+#include "interface.h"
+#include "util.h"
 
 template<
 	typename Part,

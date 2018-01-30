@@ -1,6 +1,6 @@
 #include "talon_srx_control.h"
 #include "ctre/phoenix/MotorControl/SensorCollection.h"
-#include "../util/util.h"
+#include "util.h"
 #include <cmath>
 #include <cassert>
 

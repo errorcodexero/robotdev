@@ -2,7 +2,7 @@
 #include<iostream>
 #include<cassert>
 #include<vector>
-#include "../util/util.h"
+#include "util.h"
 
 using namespace std;
 

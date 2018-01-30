@@ -1,14 +1,14 @@
 #ifdef SIM_TEST
 #include "toplevel.h"
-#include "../util/type.h"
+#include "type.h"
 #include "nop.h"
-#include "../executive/step.h"
-#include "../executive/chain.h"
-#include "../executive/teleop.h"
+#include "step.h"
+#include "chain.h"
+#include "teleop.h"
 #include <math.h>
 #include "main.h"
-#include "../util/point.h"
-#include "../util/util.h"
+#include "point.h"
+#include "util.h"
 
 using namespace std;
 

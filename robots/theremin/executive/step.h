@@ -2,9 +2,9 @@
 #define STEP_H
 
 #include "executive.h"
-#include "../util/motion_profile.h"
-#include "../util/settable_constant.h"
-#include "../util/robot_constants.h"
+#include "motion_profile.h"
+#include "settable_constant.h"
+#include "robot_constants.h"
 
 struct Step_impl;
 

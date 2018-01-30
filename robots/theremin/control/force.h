@@ -2,7 +2,7 @@
 #ifndef FORCE_H
 #define FORCE_H
 
-#include "../util/interface.h"
+#include "interface.h"
 
 struct Force{
 	Robot_outputs values;

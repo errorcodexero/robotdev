@@ -2,7 +2,7 @@
 #define LOG_H
 
 #include<fstream>
-#include "../util/interface.h"
+#include "interface.h"
 #include "toplevel.h"
 
 class Log{

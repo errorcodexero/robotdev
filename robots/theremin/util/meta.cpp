@@ -236,8 +236,6 @@ bool operator<(IO const& a,IO const& b){
 }
 
 #ifdef META_TEST
-//#include "../control/tilt.h"
-//#include "../control/front.h"
 
 template<typename T>
 set<IO> find_ios(T const& t){

@@ -5,7 +5,7 @@
 #include <cmath>
 #include <iostream>
 
-int x;
+int seq = 0 ;
 
 DrivebaseController::DrivebaseController() {
 	mode = Mode::IDLE;
@@ -14,7 +14,7 @@ DrivebaseController::DrivebaseController() {
 	distance_threshold = 0.0;
 	angle_threshold = 0.0;
 	mLastVoltage = 0.0 ;
-	mMaxChange = 1.0 ;
+	mMaxChange = 3.0 ;
 
 	mSender.open(8888) ;
 }
@@ -92,6 +92,9 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		logger.startMessage(messageLogger::messageType::debug) ;
 		logger << "First cycle: settings YAW to zero" ;
 		logger.endMessage() ;
+
+		mLeftStart = distances_l ;
+		mRightStart = distances_r ;
 	}
 	else
 	{
@@ -100,11 +103,12 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if((target - avg_dist) < distance_threshold) {
 				mode = Mode::IDLE;
 			}
-			msg = "data," + std::to_string(x++) ;
+			msg = "data," + std::to_string(seq++) ;
 			msg += ",time=" + std::to_string(time) ;
-			msg += ",ldist=" + std::to_string(distances_l) ;
-			msg += ",rdist=" + std::to_string(distances_r) ;
-			msg += ",dist=" + std::to_string(avg_dist) ;
+			msg += ",ldist=" + std::to_string(distances_l - mLeftStart) ;
+			msg += ",rdist=" + std::to_string(distances_r - mRightStart)  ;
+			double stavg = (mLeftStart + mRightStart) / 2.0 ;
+			msg += ",dist=" + std::to_string(avg_dist - stavg) ;
 			msg += ",angle=" + std::to_string(angle) ;
 				
 			double base = dist_pid.getOutput(target, avg_dist, dt);

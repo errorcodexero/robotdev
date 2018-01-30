@@ -1,38 +1,28 @@
-#include "Datalogger.h"
+#include "data_logger.h"
 
-int Datalogger::createColumn(string name)
+
+
+#ifdef DATALOGGER_TEST     // THIS NEEDS TO BE UPDATED
+void test_datalogger()
 {
-	columns.push_back(name);
-	return columns.size()-1;
-}
+	DataloggerDestination target;
+	Datalogger test(target);
+	int columnindex = createColumn("name");
+	assert(0 == columnindex);
+	int columnindex1 = createColumn("name");
+	assert(1 == columnindex1);
+	startLoop();
+	logData(0, 20);
 
-void Datalogger::startLoop()
+	endLoop();
+
+
+
+}
+int main() 
 {
-	data.resize(columns.size());
-	data_entered.resize(columns.size());
-
-	data_entered.assign(data_entered.size(), false);
-
+	test_datalogger();
+	return 0;
 }
+#endif 
 
-void Datalogger::logData(int colnumber, double value)
-{
-	data[colnumber] = value;
-	data_entered[colnumber] = true;
-}
-
-void Datalogger::endLoop()
-{
-	for (size_t i = 0; i < columns.size(); i++)
-	{
-		cout << columns[i] << "=";
-		if (data_entered[i]) {
-			cout << data[i];
-		}
-		
-		if (i < columns.size() - 1) {
-			cout << "  ";
-		}
-	}
-	cout << endl;
-}

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <set>
-#include "../util/interface.h"
+#include "interface.h"
 #include "nop.h"
 
 struct Lights{

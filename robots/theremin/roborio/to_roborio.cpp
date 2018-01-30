@@ -1,6 +1,6 @@
 #include "WPILib.h"
 #include "AHRS.h"
-#include "../control/main.h"
+#include "main.h"
 #include "dio_control.h"
 #include "talon_srx_control.h"
 #include "pump_control.h"
@@ -171,8 +171,9 @@ public:
 			if(!analog_in[i]) error_code|=8;
 		}
 
-		input_params.readFile("/home/lvuser/params.txt");
-		input_params.printMap(std::cout) ;
+		if (!input_params.readFile("/home/lvuser/params.txt"))
+			std::cout << "DID NOT READ THE PARAMS FILE" << std::endl ;
+		
 		Drivebase::drivebase_controller.setParams(&input_params);
 
 		/*

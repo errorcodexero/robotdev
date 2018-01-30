@@ -1,8 +1,8 @@
 #ifndef DIO_CONTROL_H
 #define DIO_CONTROL_H
 
-#include "../util/interface.h"
-#include "../util/checked_array.h"
+#include "interface.h"
+#include "checked_array.h"
 
 namespace frc{
 	class DigitalInput;

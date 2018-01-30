@@ -2,7 +2,7 @@
 #include<iostream>
 #include<set>
 #include<cmath>
-#include "../util/util.h"
+#include "util.h"
 
 using namespace std;
 

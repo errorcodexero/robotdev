@@ -5,6 +5,7 @@
 #include <bitset>
 #include "driver_station_interface.h"
 #include "maybe_inline.h"
+#include "util.h"
 #include "checked_array.h"
 
 #ifdef NEED_PIXY_CAM

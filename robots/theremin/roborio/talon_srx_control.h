@@ -2,8 +2,8 @@
 #define TALON_SRX_CONTROL_H
 
 #include "ctre/phoenix/MotorControl/CAN/WPI_TalonSRX.h"
-#include "../util/interface.h"
-#include "../util/checked_array.h"
+#include "interface.h"
+#include "checked_array.h"
 
 class Talon_srx_control{
 	private:

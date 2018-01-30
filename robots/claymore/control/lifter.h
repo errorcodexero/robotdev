@@ -6,16 +6,23 @@
 struct Lifter{
 	struct Goal{
 		public:
-		enum class Mode{GO_TO_HEIGHT,UP,DOWN,STOP};//TODO: add modes for swtich, scale, etc
+		#define LIFTER_GOAL_MODES X(GO_TO_HEIGHT) X(UP) X(DOWN) X(STOP)
+		enum class Mode{
+			#define X(MODE) MODE,
+			LIFTER_GOAL_MODES
+			#undef X
+		};//TODO: add modes for swtich, scale, etc
 		
 		private:
 		Goal();
 		Mode mode_;
-		double height;
-
+		double target_;
+		double tolerance_;
+		
 		public:
 		Mode mode()const;
-		double height()const;
+		double target()const;
+		double tolerance()const;
 
 		static Goal go_to_height(double,double);
 		static Goal up();
@@ -23,20 +30,24 @@ struct Lifter{
 		static Goal stop();
 	};
 
-	struct Output{
-
-	};
+	using Output = double;//pwm value, positive is up
 
 	struct Input{
-
+		//TODO
+		/*
+		- Hall-effect for lowest position
+		- Hall-effect for highest position
+		- Hall-effect for climbed position
+		- Encoder
+		*/
 	};
 
 	struct Status_detail{
-
+		//TODO
 	};
 
 	struct Status{
-
+		//TODO
 	};
 					 
 	struct Output_applicator{
@@ -59,13 +70,35 @@ struct Lifter{
 	Estimator estimator;
 };
 
+bool operator==(Lifter::Input const&, Lifter::Input const&);
+bool operator!=(Lifter::Input const&, Lifter::Input const&);
+bool operator<(Lifter::Input const&,Lifter::Input const&);
+std::ostream& operator<<(std::ostream&, Lifter::Input const&);
+
+bool operator==(Lifter::Status_detail const&, Lifter::Status_detail const&);
+bool operator!=(Lifter::Status_detail const&, Lifter::Status_detail const&);
+bool operator<(Lifter::Status_detail const&,Lifter::Status_detail const&);
+std::ostream& operator<<(std::ostream&,Lifter::Status_detail const&);
+
+bool operator==(Lifter::Status const&, Lifter::Status const&);
+bool operator!=(Lifter::Status const&, Lifter::Status const&);
+bool operator<(Lifter::Status const&,Lifter::Status const&);
+std::ostream& operator<<(std::ostream&, Lifter::Status const&);
+
+bool operator==(Lifter::Estimator const&, Lifter::Estimator const&);
+bool operator!=(Lifter::Estimator const&, Lifter::Estimator const&);
+
+bool operator<(Lifter::Goal const&,Lifter::Goal const&);
+std::ostream& operator<<(std::ostream&,Lifter::Goal const&);
+
 std::set<Lifter::Input> examples(Lifter::Input*);
 std::set<Lifter::Output> examples(Lifter::Output*);
 std::set<Lifter::Status_detail> examples(Lifter::Status_detail*);
+std::set<Lifter::Status> examples(Lifter::Status*);
 std::set<Lifter::Goal> examples(Lifter::Goal*);
 
 Lifter::Output control(Lifter::Status_detail const&,Lifter::Goal const&);
 Lifter::Status status(Lifter::Status_detail const&);
-bool ready(Lifter::Status_detail const&,Lifter::Goal const&);
+bool ready(Lifter::Status const&,Lifter::Goal const&);
 
 #endif
