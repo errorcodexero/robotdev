@@ -1,12 +1,12 @@
-drivebase:distance:p             0.015
-drivebase:distance:i             0.1
+drivebase:distance:p             0.0166
+drivebase:distance:i             0.0
 drivebase:distance:d             0.0
 drivebase:distance:f             0.0
 drivebase:distance:imax          10.0
 
-drivebase:angleCorrection:p      0.05
-drivebase:angleCorrection:i      0.1
-drivebase:angleCorrection:d      0.005
+drivebase:angleCorrection:p      -0.02
+drivebase:angleCorrection:i      -0.0
+drivebase:angleCorrection:d      0.00
 drivebase:angleCorrection:f      0.0
 drivebase:angleCorrection:imax   1000.0
 

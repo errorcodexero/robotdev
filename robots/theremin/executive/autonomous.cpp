@@ -48,7 +48,7 @@ Executive get_auto_mode(Next_mode_info info){
 	}};
 
 	Executive drive_straight_test{Chain{
-		Step{Navx_drive_straight{168.0}},
+		Step{Navx_drive_straight{132.0}},
 		Executive{Teleop()}
 	}};
 	

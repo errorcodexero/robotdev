@@ -45,6 +45,8 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 	std::cout << ", pOut " << pOut ;
 	std::cout << ", iOut " << iOut ;
 	std::cout << ", dOut " << dOut ;
+	std::cout << ", error " << error;
+	std::cout << ", derivative " << derivative;
 	std::cout << std::endl ;
 
 	

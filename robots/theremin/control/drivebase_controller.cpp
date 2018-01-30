@@ -14,7 +14,7 @@ DrivebaseController::DrivebaseController() {
 	distance_threshold = 0.0;
 	angle_threshold = 0.0;
 	mLastVoltage = 0.0 ;
-	mMaxChange = 3.0 ;
+	mMaxChange = 6.0 ;
 
 	mSender.open(8888) ;
 }
@@ -31,7 +31,6 @@ void DrivebaseController::initDistance(double distance) {
 	target = distance;
 
 	mSender.send("new") ;
-	x = 0 ;
 
 	double p = mInput_params->getValue("drivebase:distance:p", 0.015) ;
 	double i = mInput_params->getValue("drivebase:distance:i", 0.1) ;
@@ -126,8 +125,8 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 
 			mLastVoltage = base ;
 			double offset = straightness_pid.getOutput(0.0, angle, dt);
-			out_l = base + offset;
-			out_r = base - offset;
+			out_l = base - offset;
+			out_r = base + offset;
 		
 			msg += ",left=" + std::to_string(out_l) ;
 			msg += ",right=" + std::to_string(out_r) ;
@@ -137,11 +136,12 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			messageLogger &logger = messageLogger::get() ;
 			logger.startMessage(messageLogger::messageType::debug) ;
 			logger << "update(DISTANCE)" ;
+			logger << ", dt " << dt;
 			logger << ", angle " << angle ;
 			logger << ", target " << target ;
 			logger << ", distance " << avg_dist ;
-			logger << ", ldist " << distances_l ;
-			logger << ", rdist " << distances_r ;
+			//logger << ", ldist " << distances_l ;
+			//logger << ", rdist " << distances_r ;
 			logger << ", base " << base ;
 			logger << ", offset " << offset ;
 			logger << ", l " << out_l ;
