@@ -672,7 +672,7 @@ Drivebase::Output drive_straight(Drivebase::Status status, Drivebase::Goal goal)
 }
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
-	std::cout << status.distances << std::endl ;
+	//std::cout << status.distances << std::endl ;
 	Drivebase::Output out(0.0, 0.0, false);
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::DISTANCES:

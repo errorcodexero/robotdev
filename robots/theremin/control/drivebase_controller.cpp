@@ -14,7 +14,7 @@ DrivebaseController::DrivebaseController() {
 	distance_threshold = 0.0;
 	angle_threshold = 0.0;
 	mLastVoltage = 0.0 ;
-	mMaxChange = 1.0 ;
+	mMaxChange = 3.0 ;
 
 	mSender.open(8888) ;
 }
