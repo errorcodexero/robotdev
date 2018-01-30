@@ -57,7 +57,7 @@ Executive get_auto_mode(Next_mode_info info){
 		Executive{Teleop()}
 	}};
 
-	return drive_straight_test;
+	return rotate_test;
 
 	/*
 	

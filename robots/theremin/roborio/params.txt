@@ -10,8 +10,8 @@ drivebase:angleCorrection:d      0.00
 drivebase:angleCorrection:f      0.0
 drivebase:angleCorrection:imax   1000.0
 
-drivebase:angle:p                0.015
-drivebase:angle:i                0.1
+drivebase:angle:p                0.0133
+drivebase:angle:i                0.0
 drivebase:angle:d                0.0
 drivebase:angle:f                0.0
 drivebase:angle:imax             1000.0
