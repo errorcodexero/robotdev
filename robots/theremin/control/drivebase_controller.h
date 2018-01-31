@@ -12,7 +12,7 @@ public:
 
 	void setParams(paramsInput*);
 
-	void initDistance(double);
+	void initDistance(double, double);
 	void initAngle(double);
 
 	void update(double dl, double dr, double angle, double dt, double time,
@@ -21,7 +21,8 @@ public:
 	void idle(double dl, double dr, double angle, double dt, double time);
 
 	bool done();
-	private:
+	
+private:
 	enum class Mode {
 		IDLE,
 		DISTANCE,
@@ -31,7 +32,7 @@ public:
 
 	bool zero_yaw;
 
-	double target;
+	double target, target_correction_angle;
 	double distance_threshold, angle_threshold;
 	PIDCtrl straightness_pid, dist_pid, angle_pid;
 	paramsInput* mInput_params;
@@ -46,7 +47,6 @@ public:
 
 	bool mDataDumpMode ;
 	double mDataDumpStartTime ;
-
 };
 
 #endif

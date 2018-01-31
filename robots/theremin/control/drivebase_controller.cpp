@@ -11,6 +11,7 @@ DrivebaseController::DrivebaseController() {
 	mode = Mode::IDLE;
 	zero_yaw = false;
 	target = 0.0;
+	target_correction_angle = 0.0;
 	distance_threshold = 0.0;
 	angle_threshold = 0.0;
 	mLastVoltage = 0.0 ;
@@ -25,10 +26,11 @@ void DrivebaseController::setParams(paramsInput* input_params) {
 	angle_threshold = mInput_params->getValue("drivebase:angle:threshold", 1.0);
 }
 
-void DrivebaseController::initDistance(double distance) {
+void DrivebaseController::initDistance(double distance, double angle) {
 	
 	mode = Mode::DISTANCE;
 	target = distance;
+	target_correction_angle = angle;
 
 	mSender.send("new") ;
 
@@ -46,8 +48,7 @@ void DrivebaseController::initDistance(double distance) {
 	double af = mInput_params->getValue("drivebase:angleCorrection:f", 0.0) ;
 	double aimax = mInput_params->getValue("drivebase:angleCorrection:imax", 0.0) ;
 	
-	straightness_pid.Init(ap, ai, ad, af, -0.6, 0.6, aimax, true) ;
-	zero_yaw = true;
+	straightness_pid.Init(ap, ai, ad, af, -0.3, 0.3, aimax, false) ;
 
 	messageLogger &logger = messageLogger::get() ;
 	logger.startMessage(messageLogger::messageType::debug) ;
@@ -67,8 +68,7 @@ void DrivebaseController::initAngle(double angle) {
 	double af = mInput_params->getValue("drivebase:angle:f", 0.0) ;
 	double aimax = mInput_params->getValue("drivebase:angle:imax", 0.0) ;
 	
-	angle_pid.Init(ap, ai, ad, af, -0.6, 0.6, aimax, true) ;
-	zero_yaw = true;
+	angle_pid.Init(ap, ai, ad, af, -0.6, 0.6, aimax, false) ;
 
 	messageLogger &logger = messageLogger::get() ;
 	logger.startMessage(messageLogger::messageType::debug) ;
@@ -143,7 +143,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			msg += ",change=" + std::to_string(angle) ;
 
 			mLastVoltage = base ;
-			double offset = straightness_pid.getOutput(0.0, angle, dt);
+			double offset = straightness_pid.getOutput(target_correction_angle, angle, dt);
 			out_l = base - offset;
 			out_r = base + offset;
 		
@@ -196,8 +196,6 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	if(mode == Mode::IDLE) {
 		out_l = 0.0;
 		out_r = 0.0;
-		zero_yaw = true ;
-
 		mDataDumpMode = true ;
 		mDataDumpStartTime = time ;
 	}
