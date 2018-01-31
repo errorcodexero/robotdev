@@ -20,5 +20,5 @@ private:
 	char* createMsg(const std::string&, DATATYPE& data);
 	void endLoop(vector<string>& columns, vector<DATATYPE>& data);
 public:
-	destinationServer(char *remoteAddr, unsigned int port);
+	destinationServer(const char *remoteAddr, unsigned int port);
 };

@@ -4,7 +4,7 @@
 #include <cassert>
 
 template <typename DATATYPE>
-destinationServer<DATATYPE>::destinationServer(char *serverIP, unsigned int port) {
+destinationServer<DATATYPE>::destinationServer(const char *serverIP, unsigned int port) {
 
 	//Opens and binds socket. It works...somehow
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -16,13 +16,16 @@ destinationServer<DATATYPE>::destinationServer(char *serverIP, unsigned int port
 	clientAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	clientAddr.sin_port = htons(0);
 
-	assert(bind(fd, (struct sockaddr *)&clientAddr, sizeof(clientAddr)) >= 0);
+	int res;
+	res = bind(fd, (struct sockaddr *)&clientAddr, sizeof(clientAddr));
+	assert(res == 0);
 	
 	memset((char *)&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(port);
 	
-	assert(inet_aton(serverIP, &serverAddr.sin_addr) != 0);
+	res = inet_aton(serverIP, &serverAddr.sin_addr);
+	assert(res != 0);
 
 
 };
@@ -34,7 +37,8 @@ void destinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATY
 		std::stringstream msg;
 		msg << columns[i] << " " << data[i];
 		strcpy(buffer, msg.str().c_str());
-		assert(sendto(fd, buffer, strlen(buffer), 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr)));
+		ssize_t res = sendto(fd, buffer, strlen(buffer), 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
+		assert(res != -1);
 	}
 }
 
@@ -44,16 +48,16 @@ void destinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATY
 #ifdef DESTINATION_SERVER_TEST
 
 int main() {
-	char *svIP = "10.0.0.255";
+	const char *svIP = "10.0.0.255";
 	destinationServer<double> Client(svIP, 1425);
 	Datalogger<double> test;
 	destinationServer<double> *pClient = &Client;
 	test.addDestination(pClient);
-	int columnindex = test.createColumn("name");
-	int columnindex1 = test.createColumn("name");
+	int colindex1 = test.createColumn("col1");
+	int colindex2 = test.createColumn("col2");
 	test.startLoop();
-	test.logData(0, 42);
-	test.logData(1, -0.4);
+	test.logData(colindex1, 42);
+	test.logData(colindex2, -0.4);
 
 	test.endLoop();
 	return 0;
