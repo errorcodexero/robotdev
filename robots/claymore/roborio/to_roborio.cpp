@@ -129,7 +129,7 @@ class To_roborio
 #endif
 	std::ofstream null_stream;
 public:
-  To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
+To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
 		power = new frc::PowerDistributionPanel();
 
@@ -231,7 +231,7 @@ public:
 		return c;
 	}
 #endif
-  
+
 	pair<Robot_inputs,int> read(Robot_mode robot_mode){
 		int error_code=0;
 		Robot_inputs r;

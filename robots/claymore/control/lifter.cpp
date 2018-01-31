@@ -2,15 +2,17 @@
 
 using namespace std;
 
-#define LIFTER_ADDRESS_L 2
-#define LIFTER_ADDRESS_R 3 //TODO
+#define LIFTER_ADDRESS_L 0
+#define LIFTER_ADDRESS_R 1 //TODO
 
 #define LIFTER_POWER .30 //TODO tune
 
-#define BOTTOM_HALL_EFFECT_ADDRESS 1
-#define CLIMBED_HALL_EFFECT_ADDRESS 2
-#define TOP_HALL_EFFECT_ADDRESS 3
-#define ENCODER_ADDRESS 4
+#define BOTTOM_HALL_EFFECT_ADDRESS 8
+#define CLIMBED_HALL_EFFECT_ADDRESS 2 //MXP DIO 0
+#define TOP_HALL_EFFECT_ADDRESS 9
+#define ENCODER_ADDRESS 4 //TODO
+
+int bottom_ticks = 0, top_ticks = 100;//arbitrary
 
 ostream& operator<<(ostream& o, Lifter::Goal::Mode a){
 	#define X(MODE) if(a==Lifter::Goal::Mode::MODE) return o<<""#MODE;
@@ -134,6 +136,11 @@ bool operator<(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
 }
 
 ostream& operator<<(ostream& o, Lifter::Status_detail const& a){
+	o<<"(";
+	o<<"top:"<<a.at_top;
+	o<<" bottom:"<<a.at_bottom;
+	o<<" height:"<<a.height;
+	o<<")";
 	return o;
 }
 
@@ -174,8 +181,20 @@ Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
 void Lifter::Estimator::update(Time const&, Lifter::Input const& in, Lifter::Output const&){
 	last.at_bottom = in.bottom_hall_effect;
 	last.at_top = in.top_hall_effect;
-	
-	//TODO
+
+	if(last.at_top != last.at_bottom){ // != being used like xor
+		if(last.at_top){
+			top_ticks = in.ticks;
+		} 
+		if(last.at_bottom){ 
+			bottom_ticks = in.ticks;
+		}
+	}
+	cout<<"\n"<<last<<"\n";	
+	const double MAX_LIFTER_HEIGHT = 100;//inches //TODO arbitrary
+	const double INCHES_PER_TICK = MAX_LIFTER_HEIGHT / (top_ticks - bottom_ticks); 
+
+	last.height = in.ticks*INCHES_PER_TICK;
 }
 
 Lifter::Status_detail Lifter::Estimator::get()const{
@@ -209,14 +228,17 @@ set<Lifter::Status_detail> examples(Lifter::Status_detail*){
 }
 
 set<Lifter::Status> examples(Lifter::Status*){
-	return {Lifter::Status{}};
+	return {Lifter::Status::MIDDLE};
 }
 
 set<Lifter::Goal> examples(Lifter::Goal*){
 	return {Lifter::Goal::up(),Lifter::Goal::stop(),Lifter::Goal::down(),Lifter::Goal::go_to_height(0.0,0.0)};
 }
 
-Lifter::Output control(Lifter::Status_detail const&,Lifter::Goal const& goal){
+Lifter::Output control(Lifter::Status_detail const& status_detail,Lifter::Goal const& goal){
+	if(ready(status(status_detail), goal)){
+		return {0.0};
+	}
 	switch(goal.mode()){
 		case Lifter::Goal::Mode::UP:
 			return {LIFTER_POWER};
@@ -231,12 +253,32 @@ Lifter::Output control(Lifter::Status_detail const&,Lifter::Goal const& goal){
 	}
 }
 
-Lifter::Status status(Lifter::Status_detail const&){
-	return {};
+Lifter::Status status(Lifter::Status_detail const& status_detail){
+	if(status_detail.at_top && status_detail.at_bottom){
+		return Lifter::Status::ERROR;
+	} 
+	if(status_detail.at_top){
+		return Lifter::Status::TOP;
+	}
+	if(status_detail.at_bottom){
+		return Lifter::Status::BOTTOM;
+	}
+	return Lifter::Status::MIDDLE;
 }
 
-bool ready(Lifter::Status const&,Lifter::Goal const&){
-	return true;
+bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
+	switch(goal.mode()){
+		case Lifter::Goal::Mode::UP:
+			return status == Lifter::Status::TOP;
+		case Lifter::Goal::Mode::DOWN:
+			return status == Lifter::Status::BOTTOM;
+		case Lifter::Goal::Mode::STOP:
+			return true;
+		case Lifter::Goal::Mode::GO_TO_HEIGHT:
+			return true;//TODO
+		default:
+			nyi
+	}
 }
 
 #ifdef LIFTER_TEST
