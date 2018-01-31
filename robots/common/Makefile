@@ -5,7 +5,7 @@
 include ../../makefiles/valid.mk
 
 SUBDIRS = \
-	util
+	helpers
 
 all:: $(SUBDIRS)
 
