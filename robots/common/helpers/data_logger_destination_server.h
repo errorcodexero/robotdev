@@ -18,7 +18,7 @@ private:
 	int fd;
 	struct sockaddr_in clientAddr, serverAddr;
 	char* createMsg(const std::string&, DATATYPE& data);
-	void endLoop(vector<string>& columns, vector<DATATYPE>& data);
+	void endLoop(const vector<string>& columns, const vector<DATATYPE>& data);
 public:
 	DataloggerDestinationServer(const char *remoteAddr, unsigned int port);
 };

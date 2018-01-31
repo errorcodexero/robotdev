@@ -31,7 +31,7 @@ DataloggerDestinationServer<DATATYPE>::DataloggerDestinationServer(const char *s
 };
 
 template <typename DATATYPE>
-void DataloggerDestinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATYPE>& data) {
+void DataloggerDestinationServer<DATATYPE>::endLoop(const vector<string>& columns, const vector<DATATYPE>& data) {
 	for (unsigned int i = 0; i < columns.size(); i++) {
 		char* buffer=new char[256];
 		std::stringstream msg;
