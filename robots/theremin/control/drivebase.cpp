@@ -98,7 +98,7 @@ Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const
 	encoder(R_ENCODER_PORTS,in.right);
 	all.digital_io.encoder[L_ENCODER_LOC] = -inches_to_ticks(in.distances.l);
 	all.digital_io.encoder[R_ENCODER_LOC] = inches_to_ticks(in.distances.r);
-	all.navx.yaw = in.angle;
+	all.navx.angle = in.angle;
 	return all;
 }
 
@@ -106,7 +106,6 @@ Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)cons
 	auto encoder_info=[&](unsigned a, unsigned b){
 		return make_pair(in.digital_io.in[a],in.digital_io.in[b]);
 	};
-	//cout<<in.navx.angle<<" "<<total_angle_to_displacement(in.navx.angle)<<" "<<in.navx.yaw<<"\n";
 	return Drivebase::Input{
 		[&](){
 			array<double,Drivebase::MOTORS> r;
@@ -122,7 +121,7 @@ Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)cons
 			-ticks_to_inches(encoderconv(in.digital_io.encoder[L_ENCODER_LOC])),
 			ticks_to_inches(encoderconv(in.digital_io.encoder[R_ENCODER_LOC]))
 		},
-		in.navx.yaw
+		in.navx.angle
 	};
 }
 
@@ -673,7 +672,7 @@ Drivebase::Output drive_straight(Drivebase::Status status, Drivebase::Goal goal)
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 	//std::cout << status.distances << std::endl ;
-	std::cout << "angle: " << status.angle << std::endl;
+	//std::cout << "angle: " << status.angle << std::endl;
 	Drivebase::Output out(0.0, 0.0, false);
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::DISTANCES:

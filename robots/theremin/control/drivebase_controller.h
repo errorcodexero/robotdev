@@ -16,7 +16,7 @@ class DrivebaseController {
 
 	bool zero_yaw;
 
-	double target;
+	double target, target_correction_angle;
 	double distance_threshold, angle_threshold;
 	PIDCtrl straightness_pid, dist_pid, angle_pid;
 	paramsInput* mInput_params;
@@ -34,7 +34,7 @@ class DrivebaseController {
 
 	void setParams(paramsInput*);
 
-	void initDistance(double);
+	void initDistance(double, double);
 	void initAngle(double);
 
 	void update(double, double, double, double, double, double&, double&, bool&);
