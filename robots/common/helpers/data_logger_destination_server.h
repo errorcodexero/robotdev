@@ -12,7 +12,7 @@
 //Set up a client class
 
 template <class DATATYPE>
-class destinationServer : public DataloggerDestination<DATATYPE> {
+class DataloggerDestinationServer : public DataloggerDestination<DATATYPE> {
 private:
 	char *message;
 	int fd;
@@ -20,5 +20,5 @@ private:
 	char* createMsg(const std::string&, DATATYPE& data);
 	void endLoop(vector<string>& columns, vector<DATATYPE>& data);
 public:
-	destinationServer(const char *remoteAddr, unsigned int port);
+	DataloggerDestinationServer(const char *remoteAddr, unsigned int port);
 };

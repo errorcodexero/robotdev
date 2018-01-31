@@ -4,7 +4,7 @@
 #include <cassert>
 
 template <typename DATATYPE>
-destinationServer<DATATYPE>::destinationServer(const char *serverIP, unsigned int port) {
+DataloggerDestinationServer<DATATYPE>::DataloggerDestinationServer(const char *serverIP, unsigned int port) {
 
 	//Opens and binds socket. It works...somehow
 	fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -31,7 +31,7 @@ destinationServer<DATATYPE>::destinationServer(const char *serverIP, unsigned in
 };
 
 template <typename DATATYPE>
-void destinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATYPE>& data) {
+void DataloggerDestinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATYPE>& data) {
 	for (unsigned int i = 0; i < columns.size(); i++) {
 		char* buffer=new char[256];
 		std::stringstream msg;
@@ -49,10 +49,9 @@ void destinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATY
 
 int main() {
 	const char *svIP = "10.0.0.255";
-	destinationServer<double> Client(svIP, 1425);
+	DataloggerDestinationServer<double> Client(svIP, 1425);
 	Datalogger<double> test;
-	destinationServer<double> *pClient = &Client;
-	test.addDestination(pClient);
+	test.addDestination(&Client);
 	int colindex1 = test.createColumn("col1");
 	int colindex2 = test.createColumn("col2");
 	test.startLoop();
