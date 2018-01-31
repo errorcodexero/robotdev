@@ -12,12 +12,12 @@ TARGET=helpers.a
 #
 SRC = \
 	data_logger.cpp\
-	destination_server.cpp
+	data_logger_destination_server.cpp
 
 # message_logger.cpp
 
 TESTS = \
-	destination_server.cpp
+	data_logger_destination_server.cpp
 #
 # include a central make file that defines our compilation recipe
 #

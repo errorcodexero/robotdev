@@ -1,5 +1,5 @@
 
-#include "destination_server.h"
+#include "data_logger_destination_server.h"
 #include "data_logger.h"
 #include <cassert>
 
@@ -45,7 +45,7 @@ void destinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATY
 
 
 
-#ifdef DESTINATION_SERVER_TEST
+#ifdef DATA_LOGGER_DESTINATION_SERVER_TEST
 
 int main() {
 	const char *svIP = "10.0.0.255";
