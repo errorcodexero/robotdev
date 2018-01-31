@@ -6,6 +6,21 @@
 #include "UdpBroadcastSender.h"
 
 class DrivebaseController {
+public:
+
+	DrivebaseController();
+
+	void setParams(paramsInput*);
+
+	void initDistance(double);
+	void initAngle(double);
+
+	void update(double dl, double dr, double angle, double dt, double time,
+				double &out_l, double &out_r, bool &out_zero_yaw);
+
+	void idle(double dl, double dr, double angle, double dt, double time);
+
+	bool done();
 	private:
 	enum class Mode {
 		IDLE,
@@ -29,16 +44,9 @@ class DrivebaseController {
 
 	bwgnet::UdpBroadcastSender mSender ;
 
-	public:
-	DrivebaseController();
+	bool mDataDumpMode ;
+	double mDataDumpStartTime ;
 
-	void setParams(paramsInput*);
-
-	void initDistance(double);
-	void initAngle(double);
-
-	void update(double, double, double, double, double, double&, double&, bool&);
-	bool done();
 };
 
 #endif

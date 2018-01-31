@@ -77,6 +77,25 @@ void DrivebaseController::initAngle(double angle) {
 	logger.endMessage() ;
 }
 
+void DrivebaseController::idle(double distances_l, double distances_r, double angle, double dt, double time)
+{
+	if (mDataDumpMode)
+	{
+		double avg_dist = (distances_l + distances_r) / 2.0;
+			
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug) ;
+		logger << "IDLE: dt " << dt;
+		logger << ", time " << time ;
+		logger << ", angle " << angle ;
+		logger << ", distance " << avg_dist ;
+		logger.endMessage() ;
+
+		if (time - mDataDumpStartTime > 5.0)
+			mDataDumpMode = false ;
+	}
+}
+
 void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt, double time,
 								 double& out_l, double& out_r, bool& out_zero_yaw)
 {
@@ -178,6 +197,9 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		out_l = 0.0;
 		out_r = 0.0;
 		zero_yaw = true ;
+
+		mDataDumpMode = true ;
+		mDataDumpStartTime = time ;
 	}
 }
 

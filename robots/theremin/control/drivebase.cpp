@@ -682,6 +682,7 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 			break;
 		case Drivebase::Goal::Mode::ABSOLUTE:
 			out = Drivebase::Output{goal.left(),goal.right(),false};
+			Drivebase::drivebase_controller.idle(status.distances.l, status.distances.r, status.angle, status.dt, status.now) ;
 			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 			//return drive_straight(status,goal);
