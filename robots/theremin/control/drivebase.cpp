@@ -681,7 +681,7 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 			out.zero_yaw = true;
 			break;
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			out = Drivebase::Output{goal.left(),goal.right(),true};
+			out = Drivebase::Output{goal.left(),goal.right(),false};
 			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 			//return drive_straight(status,goal);
