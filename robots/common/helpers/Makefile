@@ -11,16 +11,13 @@ TARGET=helpers.a
 # define the source code files
 #
 SRC = \
-	params_parser.cpp\
-	sync.cpp\
-	udp_sync.cpp\
-	message_logger.cpp
+	data_logger.cpp\
+	destination_server.cpp
 
 # message_logger.cpp
 
 TESTS = \
-	params_parser.cpp\
-	udp_sync.cpp
+	destination_server.cpp
 #
 # include a central make file that defines our compilation recipe
 #

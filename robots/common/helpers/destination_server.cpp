@@ -30,48 +30,21 @@ destinationServer<DATATYPE>::destinationServer(char *serverIP, unsigned int port
 template <typename DATATYPE>
 void destinationServer<DATATYPE>::endLoop(vector<string>& columns, vector<DATATYPE>& data) {
 	for (unsigned int i = 0; i < columns.size(); i++) {
-		char* buffer;
-		strcpy(buffer, (createMsg(columns[i], data[i])));
+		char* buffer=new char[256];
+		std::stringstream msg;
+		msg << columns[i] << " " << data[i];
+		strcpy(buffer, msg.str().c_str());
 		assert(sendto(fd, buffer, strlen(buffer), 0, (struct sockaddr*)&serverAddr, sizeof(serverAddr)));
 	}
 }
 
-template<>
-char* destinationServer<int>::createMsg(const std::string& column, int &data) {
-	char *buffer = new char [256];
-	std::stringstream ss;
-	ss << column << " " << data;
-	std::string msg = ss.str();
-	strcpy(buffer, msg.c_str());
-	char buffer_value = *(buffer);
-	return buffer;
-}
 
-template<>
-char* destinationServer<double>::createMsg(const std::string& column, double &data) {
-	char *buffer = new char[256];
-	std::stringstream ss;
-	ss << column << " " << data;
-	std::string msg = ss.str();
-	strcpy(buffer, msg.c_str());
-	return buffer;
-}
-
-template<>
-char* destinationServer<std::string>::createMsg(const std::string& column, std::string &data) {
-	char *buffer = new char[256];
-	std::stringstream ss;
-	ss << column << " " << data;
-	std::string msg = ss.str();
-	strcpy(buffer, msg.c_str());
-	return buffer;
-}
 
 
 #ifdef DESTINATION_SERVER_TEST
 
 int main() {
-	char *svIP = "10.0.0.214";
+	char *svIP = "10.0.0.255";
 	destinationServer<double> Client(svIP, 1425);
 	Datalogger<double> test;
 	destinationServer<double> *pClient = &Client;
@@ -79,7 +52,8 @@ int main() {
 	int columnindex = test.createColumn("name");
 	int columnindex1 = test.createColumn("name");
 	test.startLoop();
-	test.logData(0.7, -5.2);
+	test.logData(0, 42);
+	test.logData(1, -0.4);
 
 	test.endLoop();
 	return 0;
