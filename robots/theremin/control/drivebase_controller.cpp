@@ -159,8 +159,8 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			logger << ", angle " << angle ;
 			logger << ", target " << target ;
 			logger << ", distance " << avg_dist ;
-			//logger << ", ldist " << distances_l ;
-			//logger << ", rdist " << distances_r ;
+			logger << ", ldist " << distances_l ;
+			logger << ", rdist " << distances_r ;
 			logger << ", base " << base ;
 			logger << ", offset " << offset ;
 			logger << ", l " << out_l ;
@@ -171,7 +171,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	
 			
 		} else if(mode == Mode::ANGLE) {
-			if((target - angle) < angle_threshold) {
+			if(fabs(target - angle) < angle_threshold) {
 				mode = Mode::IDLE;
 			}
 	
