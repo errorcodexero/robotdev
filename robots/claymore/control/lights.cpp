@@ -7,6 +7,19 @@ using namespace std;
 #define CAMERA_LIGHT_ADDRESS 4
 #define BLINKY_LIGHT_INFO_ADDRESS 5
 
+PWM_transcriber Lights::blinky_light_transcriber;
+
+void Lights::init_blinky_light_transcriber(){
+	blinky_light_transcriber.add("climbing",set<bool>{true,false});
+	blinky_light_transcriber.add("autonomous",set<bool>{true,false});
+	blinky_light_transcriber.add("alliance",set<Alliance>{Alliance::RED,Alliance::BLUE,Alliance::INVALID});
+	set<unsigned> heights;
+	for(unsigned i = 0; i < 100; i +=3){
+		heights.insert(i);
+	}
+	blinky_light_transcriber.add("lifter_height",heights);
+}
+
 Lights::Goal::Goal(Camera_light a):camera_light(a){}
 Lights::Goal::Goal():Lights::Goal(Camera_light::OFF){}
 
@@ -37,7 +50,6 @@ ostream& operator<<(ostream& o, Lights::Status_detail a){
 ostream& operator<<(ostream& o, Lights::Output a){
 	o<<"(";
 	o<<"camera_light:"<<a.camera_light;
-	o<<" blinky_light_info:"<<a.blinky_light_info;
 	o<<")";
 	return o;
 }
@@ -86,7 +98,7 @@ bool operator<(Lights::Output a,Lights::Output b){
 }
 
 bool operator==(Lights::Goal a,Lights::Goal b){
-	return a.camera_light == b.camera_light && a.blinky_light_info == b.blinky_light_info;
+	return a.camera_light == b.camera_light;
 }
 
 bool operator<(Lights::Goal a,Lights::Goal b){
@@ -136,10 +148,12 @@ Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Out
 
 Lights::Estimator::Estimator(){}
 
-void Lights::Estimator::update(Time,Lights::Input,Lights::Output){}
+void Lights::Estimator::update(Time now,Lights::Input,Lights::Output){
+	last.now = now;
+}
 
 Lights::Status_detail Lights::Estimator::get()const{
-	return {};
+	return last;
 }
 
 set<Lights::Status_detail> examples(Lights::Status_detail*){ 
@@ -173,25 +187,8 @@ set<Lights::Goal> examples(Lights::Goal*){
 double encode_robot_status(Lights::Status_detail status){
 	const unsigned INFO_TYPES = 4;//number of types of data for transmission
 	
-	//values increase by one as we go
-	const map<bool, int> ENCODE_CLIMBING = {
-		{false, 0}, //not climbing 
-		{true, 1} //climbing
-	};
-	const map<bool, int> ENCODE_AUTONOMOUS = {
-		{false, 2}, //teleop 
-		{true, 3} //autonomous
-	};
-	const map<Alliance, int> ENCODE_ALLIANCE = {
-		{Alliance::INVALID, 4},
-		{Alliance::RED, 5},
-		{Alliance::BLUE, 6} 
-	};
-	int encode_lifter_height = status.lifter_height + 7;
-	//
-
-	const Time TRANSMIT_TIME = 0.1;//seconds
-	const Time TIME_INTERVAL = TRANSMIT_TIME / INFO_TYPES;//seconds to transmit each part of data
+	const Time TRANSMIT_TIME = 1;//seconds
+	const Time TIME_INTERVAL = TRANSMIT_TIME / (double)INFO_TYPES;//seconds to transmit each part of data
 
 	double time_remainder = [&]{//time since the last transmit cycle began
 		double remainder, integer;
@@ -201,34 +198,28 @@ double encode_robot_status(Lights::Status_detail status){
 	
 	int to_transmit = [&]{//select one of the info types to transmit based on the time into the transmit cycle
 		for(unsigned i = 1; i <= INFO_TYPES; i++){
-			if(time_remainder < TIME_INTERVAL * i + 1E-14){
+			if(time_remainder < TIME_INTERVAL * (double)i + 1E-14){
 				return i;
 			}
 		}
 		nyi
 	}();
 	
-	int transmit_value = [&]{//the integer value to transmit
+	double out = [&]{
 		switch(to_transmit){
 			case 1:
-				return ENCODE_CLIMBING.at(status.climbing);
+				return Lights::blinky_light_transcriber.transcribe("climbing",status.climbing);
 			case 2:
-				return ENCODE_AUTONOMOUS.at(status.autonomous);
+				return Lights::blinky_light_transcriber.transcribe("autonomous",status.autonomous);
 			case 3:
-				return ENCODE_ALLIANCE.at(status.alliance);
+				return Lights::blinky_light_transcriber.transcribe("alliance",status.alliance);
 			case 4: 
-				return encode_lifter_height;
+				return Lights::blinky_light_transcriber.transcribe("lifter_height",status.lifter_height);
 			default:
 				nyi
 		}
 	}();
-
-	const unsigned INFO_STATES = 107;//number of possible values to send (lifter height may be clipped at 100 in, but that's fine)
-	const double PWM_RANGE = 2.0;
-	const double INCREMENT = PWM_RANGE / (double)INFO_STATES;
-	const double STARTING_VALUE = -1.0;
-	
-	return STARTING_VALUE + INCREMENT * transmit_value; //convert the integer transmission value to a pwm value
+	return out;
 }
 
 Lights::Output control(Lights::Status status, Lights::Goal goal){
@@ -248,6 +239,7 @@ Lights::Status status(Lights::Status_detail const& a){
 #include "formal.h"
 
 int main(){
+	Lights::init_blinky_light_transcriber();
 	{
 		Lights a;
 		Tester_mode mode;
@@ -256,6 +248,7 @@ int main(){
 	}
 	cout<<"\n\n=============================================\n\n";
 	{//this generates example output values for debugging the blinky light arduino code
+		cout<<"\n\n"<<Lights::blinky_light_transcriber<<"\n\n";
 		unsigned lifter_height = 8;
 		bool climbing = false;
 		bool autonomous = true;
@@ -267,7 +260,7 @@ int main(){
 		
 		cout<<"status:"<<status<<"\n";
 		cout<<"{";
-		for(Time t = 0; t < .1; t+= .01){
+		for(Time t = 0; t < 2; t+= .01){
 			if(t != 0) cout<<",";
 			status.now = t;
 			Lights::Output out = control(status,goal);

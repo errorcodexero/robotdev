@@ -5,12 +5,15 @@
 #include <set>
 #include "../util/interface.h"
 #include "nop.h"
+#include "../util/pwm_transcriber.h"
 
 struct Lights{
+	static PWM_transcriber blinky_light_transcriber;
+	static void init_blinky_light_transcriber();
+
 	enum class Camera_light{ON,OFF};
 	struct Goal{//TODO: use macros
 		Camera_light camera_light;
-		int blinky_light_info;	
 	
 		Goal();
 		Goal(Camera_light);
@@ -48,6 +51,8 @@ struct Lights{
 	};
 
 	struct Estimator{
+		Status_detail last;
+		
 		void update(Time,Input,Output);
 		Status_detail get()const;
 

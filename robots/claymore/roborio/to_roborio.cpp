@@ -185,6 +185,8 @@ To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_stat
 		//Slave
 		
 		cout<<"Initialization Complete."<<endl<<flush;
+
+		Lights::init_blinky_light_transcriber();
 	}
 	
 	int read_analog(Robot_inputs &r){

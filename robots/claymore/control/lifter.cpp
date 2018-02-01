@@ -5,7 +5,7 @@ using namespace std;
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1 //TODO
 
-#define LIFTER_POWER .30 //TODO tune
+#define LIFTER_POWER .60 //TODO tune
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 8
 #define CLIMBED_HALL_EFFECT_ADDRESS 2 //MXP DIO 0
