@@ -20,14 +20,17 @@ void Lights::init_blinky_light_transcriber(){
 	blinky_light_transcriber.add("lifter_height",heights);
 }
 
-Lights::Goal::Goal(Camera_light a):camera_light(a){}
-Lights::Goal::Goal():Lights::Goal(Camera_light::OFF){}
+Lights::Goal::Goal(Camera_light a,bool c,unsigned h):camera_light(a),climbing(c),lifter_height(h){}
+Lights::Goal::Goal():Lights::Goal(Camera_light::OFF,false,0){}
 
 Lights::Output::Output(bool c,double b):camera_light(c),blinky_light_info(b){}
 Lights::Output::Output():Output(false,0.0){}
 
 Lights::Status_detail::Status_detail(unsigned h,bool c,bool m,Alliance a,Time t):lifter_height(h),climbing(c),autonomous(m),alliance(a),now(t){}
 Lights::Status_detail::Status_detail():Status_detail(0,false,false,Alliance::INVALID,0){}
+
+Lights::Input::Input(bool a,Alliance al):autonomous(a),alliance(al){}
+Lights::Input::Input():Input(false,Alliance::INVALID){}
 
 ostream& operator<<(ostream& o, Lights::Camera_light a){
 	#define X(name) if(a==Lights::Camera_light::name)return o<<""#name;
@@ -50,13 +53,23 @@ ostream& operator<<(ostream& o, Lights::Status_detail a){
 ostream& operator<<(ostream& o, Lights::Output a){
 	o<<"(";
 	o<<"camera_light:"<<a.camera_light;
+	o<<"blinky_light_info:"<<a.blinky_light_info;
 	o<<")";
 	return o;
 }
 
 ostream& operator<<(ostream& o, Lights::Goal a){
 	o<<"(";
-	o<<" camera_light:"<<a.camera_light;
+	o<<"camera_light:"<<a.camera_light;
+	o<<" climbing:"<<a.climbing;
+	o<<" lifter_height:"<<a.lifter_height;
+	return o<<")";
+}
+
+ostream& operator<<(ostream& o, Lights::Input a){
+	o<<"(";
+	o<<"autonomous:"<<a.autonomous;
+	o<<"alliance:"<<a.alliance;
 	return o<<")";
 }
 
@@ -98,17 +111,36 @@ bool operator<(Lights::Output a,Lights::Output b){
 }
 
 bool operator==(Lights::Goal a,Lights::Goal b){
-	return a.camera_light == b.camera_light;
+	return a.camera_light == b.camera_light && a.climbing == b.climbing && a.lifter_height == b.lifter_height;
 }
 
 bool operator<(Lights::Goal a,Lights::Goal b){
-	if(a.camera_light<b.camera_light) return 1;
-	if(b.camera_light<a.camera_light) return 0;
+	CMP(camera_light)
+	CMP(climbing)
+	CMP(lifter_height)
 	return 0;
 }
 
 bool operator!=(Lights::Goal a, Lights::Goal b){
 	return !(a==b);
+}
+
+bool operator==(Lights::Input a,Lights::Input b){
+	return a.autonomous == b.autonomous && a.alliance == b.alliance;
+}
+
+bool operator!=(Lights::Input a,Lights::Input b){
+	return !(a==b);
+}
+
+bool operator<(Lights::Input a,Lights::Input b){
+	CMP(autonomous)
+	CMP(alliance)
+	return false;
+}
+
+bool operator==(Lights::Input_reader, Lights::Input_reader){
+	return true;
 }
 
 bool operator==(Lights::Output_applicator, Lights::Output_applicator){
@@ -133,6 +165,16 @@ bool operator!=(Lights a, Lights b){
 
 #undef CMP
 
+Lights::Input Lights::Input_reader::operator()(Robot_inputs r)const{
+	return {r.robot_mode.autonomous,r.ds_info.alliance};
+}
+
+Robot_inputs Lights::Input_reader::operator()(Robot_inputs r, Lights::Input in)const{
+	r.robot_mode.autonomous = in.autonomous;
+	r.ds_info.alliance = in.alliance;
+	return r;
+}
+
 Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.camera_light = r.digital_io[CAMERA_LIGHT_ADDRESS] == Digital_out::one();
@@ -148,12 +190,25 @@ Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Out
 
 Lights::Estimator::Estimator(){}
 
-void Lights::Estimator::update(Time now,Lights::Input,Lights::Output){
+void Lights::Estimator::update(Time now,Lights::Input in,Lights::Output){
 	last.now = now;
+	last.alliance = in.alliance;
+	last.autonomous = in.autonomous;
 }
 
 Lights::Status_detail Lights::Estimator::get()const{
 	return last;
+}
+
+set<Lights::Input> examples(Lights::Input*){ 
+	return {
+		{false,Alliance::INVALID},
+		{false,Alliance::RED},
+		{false,Alliance::BLUE},
+		{true,Alliance::INVALID},
+		{true,Alliance::RED},
+		{true,Alliance::BLUE}
+	};
 }
 
 set<Lights::Status_detail> examples(Lights::Status_detail*){ 
@@ -179,8 +234,10 @@ set<Lights::Output> examples(Lights::Output*){
 
 set<Lights::Goal> examples(Lights::Goal*){ 
 	return {
-		Lights::Goal{Lights::Camera_light::ON},
-		Lights::Goal{Lights::Camera_light::OFF}
+		Lights::Goal{Lights::Camera_light::ON,false,0},
+		Lights::Goal{Lights::Camera_light::ON,true,0},
+		Lights::Goal{Lights::Camera_light::OFF,false,0},
+		Lights::Goal{Lights::Camera_light::OFF,true,0}
 	};
 }
 
@@ -249,7 +306,7 @@ int main(){
 	cout<<"\n\n=============================================\n\n";
 	{//this generates example output values for debugging the blinky light arduino code
 		cout<<"\n\n"<<Lights::blinky_light_transcriber<<"\n\n";
-		unsigned lifter_height = 8;
+		unsigned lifter_height = 6;
 		bool climbing = false;
 		bool autonomous = true;
 		Alliance alliance = Alliance::BLUE;

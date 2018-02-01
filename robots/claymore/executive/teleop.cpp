@@ -110,6 +110,11 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		return Lifter::Goal::stop();
 	}();
 	
+	{
+		goals.lights.climbing = false;//TODO
+		goals.lights.lifter_height = (int)(info.status.lifter.height / 3);
+	}
+	
 	#ifdef PRINT_OUTS
 	if(info.in.ds_info.connected && (print_number%10)==0){
 		cout<<"\nencoders:"<<info.status.drive<<"\n";

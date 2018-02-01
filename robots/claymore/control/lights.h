@@ -15,11 +15,19 @@ struct Lights{
 	struct Goal{//TODO: use macros
 		Camera_light camera_light;
 	
+		bool climbing;
+		unsigned lifter_height;
+		
 		Goal();
-		Goal(Camera_light);
+		Goal(Camera_light,bool,unsigned);
 	};
 	
-	using Input=Nop::Input;
+	struct Input{
+		bool autonomous;
+		Alliance alliance;
+		Input();	
+		Input(bool,Alliance);	
+	};
 
 	struct Status_detail{
 		unsigned lifter_height;
@@ -35,7 +43,10 @@ struct Lights{
 
 	using Status = Status_detail;
 
-	using Input_reader=Nop::Input_reader;
+	struct Input_reader{
+		Input operator()(Robot_inputs)const;	
+		Robot_inputs operator()(Robot_inputs,Input)const;
+	};
 
 	struct Output{ 
 		bool camera_light;
@@ -68,6 +79,7 @@ std::ostream& operator<<(std::ostream&,Lights::Camera_light);
 std::ostream& operator<<(std::ostream&,Lights::Status_detail);
 std::ostream& operator<<(std::ostream&,Lights::Output);
 std::ostream& operator<<(std::ostream&,Lights::Goal);
+std::ostream& operator<<(std::ostream&,Lights::Input);
 std::ostream& operator<<(std::ostream&,Lights);
 
 bool operator==(Lights::Status_detail,Lights::Status_detail);
@@ -82,6 +94,11 @@ bool operator<(Lights::Goal,Lights::Goal);
 bool operator==(Lights::Goal,Lights::Goal);
 bool operator!=(Lights::Goal,Lights::Goal);
 
+bool operator<(Lights::Input,Lights::Input);
+bool operator==(Lights::Input,Lights::Input);
+bool operator!=(Lights::Input,Lights::Input);
+
+bool operator==(Lights::Input_reader,Lights::Input_reader);
 bool operator==(Lights::Output_applicator,Lights::Output_applicator);
 
 bool operator==(Lights::Estimator,Lights::Estimator);
@@ -90,6 +107,7 @@ bool operator!=(Lights::Estimator,Lights::Estimator);
 bool operator==(Lights,Lights);
 bool operator!=(Lights,Lights);
 
+std::set<Lights::Input> examples(Lights::Input*);
 std::set<Lights::Status_detail> examples(Lights::Status_detail*);
 std::set<Lights::Output> examples(Lights::Output*);
 std::set<Lights::Goal> examples(Lights::Goal*);
