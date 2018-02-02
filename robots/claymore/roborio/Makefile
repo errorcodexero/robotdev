@@ -47,6 +47,7 @@ APPLIBS=\
 #
 SRC = \
 	dio_control.cpp\
+	i2c_control.cpp\
 	navx_control.cpp\
 	pump_control.cpp\
 	talon_srx_control.cpp\

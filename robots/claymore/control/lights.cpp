@@ -178,13 +178,13 @@ Robot_inputs Lights::Input_reader::operator()(Robot_inputs r, Lights::Input in)c
 Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.camera_light = r.digital_io[CAMERA_LIGHT_ADDRESS] == Digital_out::one();
-	out.blinky_light_info = r.pwm[BLINKY_LIGHT_INFO_ADDRESS];
+	//out.blinky_light_info = r.pwm[BLINKY_LIGHT_INFO_ADDRESS];
 	return out;
 }
 
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.digital_io[CAMERA_LIGHT_ADDRESS] = out.camera_light ? Digital_out::one() : Digital_out::zero();
-	r.pwm[BLINKY_LIGHT_INFO_ADDRESS] = out.blinky_light_info;
+	//r.pwm[BLINKY_LIGHT_INFO_ADDRESS] = out.blinky_light_info;
 	return r;
 }
 
@@ -241,7 +241,7 @@ set<Lights::Goal> examples(Lights::Goal*){
 	};
 }
 
-double encode_robot_status(Lights::Status_detail status){
+unsigned encode_robot_status(Lights::Status_detail status){
 	const unsigned INFO_TYPES = 4;//number of types of data for transmission
 	
 	const Time TRANSMIT_TIME = 1;//seconds
@@ -262,16 +262,16 @@ double encode_robot_status(Lights::Status_detail status){
 		nyi
 	}();
 	
-	double out = [&]{
+	unsigned out = [&]{
 		switch(to_transmit){
 			case 1:
-				return Lights::blinky_light_transcriber.transcribe("climbing",status.climbing);
+				return Lights::blinky_light_transcriber.map("climbing",status.climbing);
 			case 2:
-				return Lights::blinky_light_transcriber.transcribe("autonomous",status.autonomous);
+				return Lights::blinky_light_transcriber.map("autonomous",status.autonomous);
 			case 3:
-				return Lights::blinky_light_transcriber.transcribe("alliance",status.alliance);
+				return Lights::blinky_light_transcriber.map("alliance",status.alliance);
 			case 4: 
-				return Lights::blinky_light_transcriber.transcribe("lifter_height",status.lifter_height);
+				return Lights::blinky_light_transcriber.map("lifter_height",status.lifter_height);
 			default:
 				nyi
 		}
