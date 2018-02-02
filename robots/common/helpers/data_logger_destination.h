@@ -11,7 +11,7 @@ private:
 
 public:
 	virtual ~DataloggerDestination() =0;
-	virtual void endLoop(vector<string>& columns, vector<DATATYPE>& data) =0;
+	virtual void endLoop(const vector<string>& columns, const vector<DATATYPE>& data) =0;
 };
 
 

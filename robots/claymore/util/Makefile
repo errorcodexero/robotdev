@@ -42,6 +42,7 @@ SRC = \
 	posedge_toggle.cpp\
 	posedge_trigger.cpp\
 	posedge_trigger_debounce.cpp\
+	pwm_transcriber.cpp\
 	settable_constant.cpp\
 	settable_toggle.cpp\
 	speed_tracker.cpp\
@@ -63,6 +64,7 @@ TESTS = \
 	network.cpp\
 	output.cpp\
 	perf_tracker.cpp\
+	pwm_transcriber.cpp\
 	settable_constant.cpp\
 	speed_profile.cpp\
 	stall_monitor.cpp\

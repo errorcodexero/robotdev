@@ -25,7 +25,7 @@ public:
 
 	void setReportColName(bool report);
 	bool getReportColName() const;
-	void endLoop(vector<string>& columns, vector<DATATYPE>& data);
+	void endLoop(const vector<string>& columns, const vector<DATATYPE>& data);
 };
 
 
@@ -70,7 +70,7 @@ bool DataloggerDestinationFile<DATATYPE>::getReportColName() const
 }
 
 template <typename DATATYPE>
-void DataloggerDestinationFile<DATATYPE>::endLoop(vector<string>& columns, vector<DATATYPE>& data)
+void DataloggerDestinationFile<DATATYPE>::endLoop(const vector<string>& columns, const vector<DATATYPE>& data)
 {
 	for (size_t i = 0; i < columns.size(); i++)
 	{

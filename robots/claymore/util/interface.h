@@ -277,19 +277,18 @@ std::ostream& operator<<(std::ostream& o,Robot_outputs);
 #define JOY_BUTTONS 13
 
 struct Joystick_data{
-  Joystick_data()
-  {
-    for(unsigned i = 0 ; i < JOY_AXES ; i++)
-      axis[i] = 0 ;
+	Joystick_data(){
+		for(unsigned i = 0 ; i < JOY_AXES ; i++)
+			axis[i] = 0 ;
+	
+		pov = -1 ;
+	}
 
-    pov = -1 ;
-  }
-  
-  Checked_array<double,JOY_AXES> axis;
-  std::bitset<JOY_BUTTONS> button;
-  int pov;
-  
-  static Maybe<Joystick_data> parse(std::string const&);
+	Checked_array<double,JOY_AXES> axis;
+	std::bitset<JOY_BUTTONS> button;
+	int pov;
+
+	static Maybe<Joystick_data> parse(std::string const&);
 };
 bool operator<(Joystick_data,Joystick_data);
 bool operator==(Joystick_data,Joystick_data);

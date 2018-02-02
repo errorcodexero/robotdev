@@ -2,10 +2,17 @@
 
 using namespace std;
 
-#define LIFTER_ADDRESS_L 2
-#define LIFTER_ADDRESS_R 3 //TODO
+#define LIFTER_ADDRESS_L 0
+#define LIFTER_ADDRESS_R 1 //TODO
 
-#define LIFTER_POWER .30 //TODO tune
+#define LIFTER_POWER .60 //TODO tune
+
+#define BOTTOM_HALL_EFFECT_ADDRESS 8
+#define CLIMBED_HALL_EFFECT_ADDRESS 2 //MXP DIO 0
+#define TOP_HALL_EFFECT_ADDRESS 9
+#define ENCODER_ADDRESS 4 //TODO
+
+int bottom_ticks = 0, top_ticks = 100;//arbitrary
 
 ostream& operator<<(ostream& o, Lifter::Goal::Mode a){
 	#define X(MODE) if(a==Lifter::Goal::Mode::MODE) return o<<""#MODE;
@@ -54,6 +61,15 @@ Lifter::Goal Lifter::Goal::go_to_height(double target, double tolerance){
 	return a;
 }
 
+Lifter::Input::Input(bool b, bool c, bool t, int e):bottom_hall_effect(b),climbed_hall_effect(c),top_hall_effect(t),ticks(e){}
+Lifter::Input::Input():Input(false,false,false,0){}
+
+Lifter::Status_detail::Status_detail(bool b,bool t,double h):at_bottom(b),at_top(t),height(h){}
+Lifter::Status_detail::Status_detail():Status_detail(false,false,0.0){}
+
+Lifter::Estimator::Estimator(Lifter::Status_detail s):last(s){}
+Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{}){}
+
 #define CMP(VAR) \
 	if(a.VAR < b.VAR) return true; \
 	if(b.VAR < a.VAR) return false; 	
@@ -74,20 +90,11 @@ ostream& operator<<(ostream& o, Lifter::Input const&){
 	return o;
 }
 
-bool operator<(Lifter::Status const& a,Lifter::Status const& b){
-	return false;
-}
-
-bool operator==(Lifter::Status const& a, Lifter::Status const& b){
-	return true;
-}
-
-bool operator!=(Lifter::Status const& a, Lifter::Status const& b){
-	return !(a==b);
-}
-
-ostream& operator<<(ostream& o, Lifter::Status const&){
-	return o;
+ostream& operator<<(ostream& o, Lifter::Status const& a){
+	#define X(STATUS) if(a==Lifter::Status::STATUS) return o<<""#STATUS;
+	LIFTER_STATUSES
+	#undef X
+	assert(0);
 }
 
 bool operator==(Lifter::Estimator const& a, Lifter::Estimator const& b){
@@ -129,6 +136,11 @@ bool operator<(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
 }
 
 ostream& operator<<(ostream& o, Lifter::Status_detail const& a){
+	o<<"(";
+	o<<"top:"<<a.at_top;
+	o<<" bottom:"<<a.at_bottom;
+	o<<" height:"<<a.height;
+	o<<")";
 	return o;
 }
 
@@ -148,24 +160,58 @@ Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)cons
 	return r.pwm[LIFTER_ADDRESS_L]; //assuming that left and right sides are set to the same value
 }
 
-Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const&)const{
+Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const& in)const{
+	r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] = in.bottom_hall_effect ? Digital_in::_1 : Digital_in::_0;
+	r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] = in.climbed_hall_effect ? Digital_in::_1 : Digital_in::_0;
+	r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] = in.top_hall_effect ? Digital_in::_1 : Digital_in::_0;
+	r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
+	
 	return r;
 }
 
-Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const&)const{
-	return {};
+Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
+	return {
+		r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] == Digital_in::_1,
+		r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] == Digital_in::_1,
+		r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_1,
+		r.digital_io.encoder[ENCODER_ADDRESS]
+	};
 }
 
-void Lifter::Estimator::update(Time const&, Lifter::Input const&, Lifter::Output const&){
-	//do nothing
+void Lifter::Estimator::update(Time const&, Lifter::Input const& in, Lifter::Output const&){
+	last.at_bottom = in.bottom_hall_effect;
+	last.at_top = in.top_hall_effect;
+
+	if(last.at_top != last.at_bottom){ // != being used like xor
+		if(last.at_top){
+			top_ticks = in.ticks;
+		} 
+		if(last.at_bottom){ 
+			bottom_ticks = in.ticks;
+		}
+	}
+	cout<<"\n"<<last<<"\n";	
+	const double MAX_LIFTER_HEIGHT = 100;//inches //TODO arbitrary
+	const double INCHES_PER_TICK = MAX_LIFTER_HEIGHT / (top_ticks - bottom_ticks); 
+
+	last.height = in.ticks*INCHES_PER_TICK;
 }
 
 Lifter::Status_detail Lifter::Estimator::get()const{
-	return {};
+	return last;
 }
 
 set<Lifter::Input> examples(Lifter::Input*){
-	return {Lifter::Input{}};
+	return {
+		{false,false,false,0},
+		{true,false,false,0},
+		{true,true,false,0},
+		{true,true,true,0},
+		{false,true,false,0},
+		{false,true,true,0},
+		{false,false,true,0},
+		{true,false,true,0}
+	};
 }
 
 set<Lifter::Output> examples(Lifter::Output*){
@@ -173,18 +219,26 @@ set<Lifter::Output> examples(Lifter::Output*){
 }
 
 set<Lifter::Status_detail> examples(Lifter::Status_detail*){
-	return {Lifter::Status_detail{}};
+	return {
+		{false,false,0.0},
+		{true,false,0.0},
+		{false,true,0.0},
+		{true,true,0.0}
+	};
 }
 
 set<Lifter::Status> examples(Lifter::Status*){
-	return {Lifter::Status{}};
+	return {Lifter::Status::MIDDLE};
 }
 
 set<Lifter::Goal> examples(Lifter::Goal*){
 	return {Lifter::Goal::up(),Lifter::Goal::stop(),Lifter::Goal::down(),Lifter::Goal::go_to_height(0.0,0.0)};
 }
 
-Lifter::Output control(Lifter::Status_detail const&,Lifter::Goal const& goal){
+Lifter::Output control(Lifter::Status_detail const& status_detail,Lifter::Goal const& goal){
+	if(ready(status(status_detail), goal)){
+		return {0.0};
+	}
 	switch(goal.mode()){
 		case Lifter::Goal::Mode::UP:
 			return {LIFTER_POWER};
@@ -199,12 +253,32 @@ Lifter::Output control(Lifter::Status_detail const&,Lifter::Goal const& goal){
 	}
 }
 
-Lifter::Status status(Lifter::Status_detail const&){
-	return {};
+Lifter::Status status(Lifter::Status_detail const& status_detail){
+	if(status_detail.at_top && status_detail.at_bottom){
+		return Lifter::Status::ERROR;
+	} 
+	if(status_detail.at_top){
+		return Lifter::Status::TOP;
+	}
+	if(status_detail.at_bottom){
+		return Lifter::Status::BOTTOM;
+	}
+	return Lifter::Status::MIDDLE;
 }
 
-bool ready(Lifter::Status const&,Lifter::Goal const&){
-	return true;
+bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
+	switch(goal.mode()){
+		case Lifter::Goal::Mode::UP:
+			return status == Lifter::Status::TOP;
+		case Lifter::Goal::Mode::DOWN:
+			return status == Lifter::Status::BOTTOM;
+		case Lifter::Goal::Mode::STOP:
+			return true;
+		case Lifter::Goal::Mode::GO_TO_HEIGHT:
+			return true;//TODO
+		default:
+			nyi
+	}
 }
 
 #ifdef LIFTER_TEST

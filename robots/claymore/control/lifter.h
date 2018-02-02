@@ -33,21 +33,29 @@ struct Lifter{
 	using Output = double;//pwm value, positive is up
 
 	struct Input{
-		//TODO
-		/*
-		- Hall-effect for lowest position
-		- Hall-effect for highest position
-		- Hall-effect for climbed position
-		- Encoder
-		*/
+		bool bottom_hall_effect;
+		bool climbed_hall_effect;
+		bool top_hall_effect;
+		int ticks;
+	
+		Input();
+		Input(bool,bool,bool,int);
 	};
 
 	struct Status_detail{
-		//TODO
+		bool at_bottom;
+		bool at_top;
+		double height;
+	
+		Status_detail();
+		Status_detail(bool,bool,double);
 	};
 
-	struct Status{
-		//TODO
+	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR)
+	enum class Status{
+		#define X(MODE) MODE,
+		LIFTER_STATUSES
+		#undef X
 	};
 					 
 	struct Output_applicator{
@@ -61,8 +69,13 @@ struct Lifter{
 	};
 
 	struct Estimator{
+		Status_detail last;
+
 		void update(Time const&,Input const&,Output const&);
 		Status_detail get()const;
+		
+		Estimator();
+		Estimator(Lifter::Status_detail);
 	};
 
 	Output_applicator output_applicator;
@@ -80,9 +93,6 @@ bool operator!=(Lifter::Status_detail const&, Lifter::Status_detail const&);
 bool operator<(Lifter::Status_detail const&,Lifter::Status_detail const&);
 std::ostream& operator<<(std::ostream&,Lifter::Status_detail const&);
 
-bool operator==(Lifter::Status const&, Lifter::Status const&);
-bool operator!=(Lifter::Status const&, Lifter::Status const&);
-bool operator<(Lifter::Status const&,Lifter::Status const&);
 std::ostream& operator<<(std::ostream&, Lifter::Status const&);
 
 bool operator==(Lifter::Estimator const&, Lifter::Estimator const&);

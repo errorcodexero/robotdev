@@ -29,14 +29,14 @@ std::set<Intake_actuator::Output> examples(Intake_actuator::Output*){
 }
 
 std::set<Intake_actuator::Input> examples(Intake_actuator::Input*){
-        return {
-                {false},
+	return {
+		{false},
 		{true}
-        };
+	};
 }
 
 std::ostream& operator<<(std::ostream& o,Intake_actuator::Input a){
-        return o<<"Input(enabled:"<<a.enabled<<")";
+	return o<<"Input(enabled:"<<a.enabled<<")";
 }
 
 ostream& operator<<(ostream& o,Intake_actuator::Output a){
@@ -73,10 +73,10 @@ std::ostream& operator<<(std::ostream& o,Intake_actuator const&){
 }
 
 bool operator<(Intake_actuator::Input a,Intake_actuator::Input b){
-        return !a.enabled && b.enabled;
+	return !a.enabled && b.enabled;
 }
 bool operator==(Intake_actuator::Input a,Intake_actuator::Input b){
-        return a.enabled == b.enabled;
+	return a.enabled == b.enabled;
 }
 bool operator!=(Intake_actuator::Input a, Intake_actuator::Input b){ return !(a==b); }
 
