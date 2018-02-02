@@ -52,25 +52,28 @@ SRC = \
 	util.cpp\
 	visitable.cpp
 
+ifndef TESTS
 TESTS = \
-	auto_distances.cpp\
-	bound_tracker.cpp\
-	countdown_timer.cpp\
-	countup_timer.cpp\
-	fixVictor.cpp\
-	input.cpp\
-	motion_profile.cpp\
-	negedge_trigger.cpp\
-	network.cpp\
-	output.cpp\
-	perf_tracker.cpp\
-	settable_constant.cpp\
-	speed_profile.cpp\
-	stall_monitor.cpp\
-	string_utils.cpp\
-	type.cpp\
-	util.cpp
+	auto_distances\
+	bound_tracker\
+	countdown_timer\
+	countup_timer\
+	fixVictor\
+	input\
+	motion_profile\
+	negedge_trigger\
+	network\
+	output\
+	perf_tracker\
+	settable_constant\
+	speed_profile\
+	stall_monitor\
+	string_utils\
+	type\
+	util
+endif
 
+ifndef COMPLEXTESTS
 COMPLEXTESTS = \
 	debounce\
 	visitable\
@@ -83,6 +86,7 @@ COMPLEXTESTS = \
 	driver_station_interface\
 	interface\
 	meta
+endif
 
 #
 # include a central make file that defines our compilation recipe

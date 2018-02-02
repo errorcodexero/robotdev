@@ -31,9 +31,12 @@ SRC = \
 	test.cpp\
 	timed.cpp
 
+ifndef TESTS
 TESTS = \
-	timed.cpp
+	timed
+endif
 
+ifndef COMPLEXTESTS
 COMPLEXTESTS = \
 	autonomous\
 	chain\
@@ -41,6 +44,7 @@ COMPLEXTESTS = \
 	step\
 	teleop\
 	test
+endif
 
 #
 # include a central make file that defines our compilation recipe

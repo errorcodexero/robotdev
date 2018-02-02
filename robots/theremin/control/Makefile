@@ -35,9 +35,12 @@ SRC = \
 	sim.cpp\
 	toplevel.cpp
 
+ifndef TESTS
 TESTS = \
-	motor_check.cpp
+	motor_check
+endif
 
+ifndef COMPLEXTESTS
 COMPLEXTESTS = \
 	drivebase\
 	force_interface\
@@ -48,6 +51,8 @@ COMPLEXTESTS = \
 	nop\
 	pump\
 	toplevel
+endif
+
 #
 # include a central make file that defines our compilation recipe
 #
