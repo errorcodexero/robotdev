@@ -111,13 +111,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}();
 	
 	{
-		info.status.lights.lifter_height = (unsigned)0;//TODO
-		info.status.lights.climbing = false;//TODO
-		info.status.lights.autonomous = info.in.robot_mode.autonomous;
-		info.status.lights.alliance = info.in.ds_info.alliance;
-		info.status.lights.now = info.in.now;
+		goals.lights.climbing = false;//TODO
+		goals.lights.lifter_height = (int)(info.status.lifter.height / 3);
 	}
-
+	
 	#ifdef PRINT_OUTS
 	if(info.in.ds_info.connected && (print_number%10)==0){
 		cout<<"\nencoders:"<<info.status.drive<<"\n";
