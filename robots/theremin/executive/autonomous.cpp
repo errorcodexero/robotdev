@@ -48,26 +48,32 @@ Executive get_auto_mode(Next_mode_info info){
 	}};
 
 	Executive drive_straight_test{Chain{
-		Step{Navx_drive_straight{132.0}},
+		Step{Navx_drive_straight{120.0}},
 		Executive{Teleop()}
 	}};
 	
 	Executive rotate_test{Chain{
-		Step{Navx_rotate{90.0}},
+		Step{Navx_rotate{45.0}},
 		Executive{Teleop()}
 	}};
 
 	Executive combo_test{Chain{
 		vector<Step>{
-			Step{Navx_drive_straight{168.0}},
-			Step{Wait{3.0}},
-			Step{Navx_rotate{90.0}},
-			Step{Wait{3.0}},
 			Step{Navx_drive_straight{120.0}},
-			Step{Wait{3.0}},
+			Step{Wait{2.0}},
 			Step{Navx_rotate{-90.0}},
-			Step{Wait{3.0}},
-			Step{Navx_drive_straight{120.0}}
+			Step{Wait{2.0}},
+			Step{Navx_drive_straight{132.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{2.0}},
+			Step{Navx_drive_straight{120.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{2.0}},
+			Step{Navx_drive_straight{132.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{-90.0}}
 		},
 		Executive{Teleop()}
 	}};
