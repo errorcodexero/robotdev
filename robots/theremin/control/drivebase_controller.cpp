@@ -40,6 +40,7 @@ void DrivebaseController::initDistance(double distance, double angle) {
 	target = distance;
 	target_correction_angle = angle;
 	reset_pid = false;
+	distance_history.clear();
 
 	mSender.send("new") ;
 

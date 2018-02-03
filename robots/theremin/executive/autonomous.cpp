@@ -97,8 +97,13 @@ Executive get_auto_mode(Next_mode_info info){
 		},
 		Executive{Teleop()}
 	}};
-		
-	return opposite_switch;
+
+	Executive spin_test{Chain{
+		Step{Spin{0.2, -0.2}},
+		Executive{Teleop()}
+	}};
+
+	return spin_test;
 
 	/*
 	

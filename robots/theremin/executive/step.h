@@ -178,6 +178,17 @@ class Combo: public Step_impl_inner<Combo>{//Runs two steps at the same time
 	bool operator==(Combo const&)const;
 };
 
+struct Spin: Step_impl_inner<Spin>{
+	double left, right;
+
+	explicit Spin(double, double);
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Spin const&)const;
+};
+
 struct Rotate: Step_impl_inner<Rotate>{//orients the robot to a certain angle relative to its starting orientation
 	Rad target_angle;//radians,clockwise=positive
 	Drivebase::Distances initial_distances;
