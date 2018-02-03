@@ -19,8 +19,11 @@ SRC = \
 
 # message_logger.cpp
 
+ifndef TESTS
 TESTS = \
-	data_logger_destination_server.cpp
+	data_logger_destination_server
+endif
+
 #
 # include a central make file that defines our compilation recipe
 #

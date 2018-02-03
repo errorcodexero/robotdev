@@ -37,21 +37,24 @@ SRC = \
 	util.cpp\
 	visitable.cpp
 
+ifndef TESTS
 TESTS = \
-	bound_tracker.cpp\
-	countdown_timer.cpp\
-	countup_timer.cpp\
-	fixVictor.cpp\
-	input.cpp\
-	motion_profile.cpp\
+	bound_tracker\
+	countdown_timer\
+	countup_timer\
+	fixVictor\
+	input\
+	motion_profile\
 	nav\
-	negedge_trigger.cpp\
-	network.cpp\
-	output.cpp\
-	perf_tracker.cpp\
-	string_utils.cpp\
-	type.cpp\
+	negedge_trigger\
+	network\
+	output\
+	perf_tracker\
+	string_utils\
+	type\
+endif
 
+ifndef COMPLEXTESTS
 COMPLEXTESTS = \
 	debounce\
 	nav2\
@@ -64,7 +67,7 @@ COMPLEXTESTS = \
 	interface\
 	meta\
 	util
-
+endif
 
 #
 # include a central make file that defines our compilation recipe

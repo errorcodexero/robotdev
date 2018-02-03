@@ -14,11 +14,15 @@ SRC = \
 	panel.cpp\
 	util.cpp
 
-TESTS = \
+ifndef TESTS
+TESTS =
+endif
 
+ifndef COMPLEXTESTS
 COMPLEXTESTS = \
 	panel\
 	util
+endif
 
 
 #

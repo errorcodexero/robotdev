@@ -32,10 +32,13 @@ SRC = \
 	tilt_presets.cpp\
 	toplevel.cpp
 
+ifndef TESTS
 TESTS = \
-	motor_check.cpp\
+	motor_check\
 	tilt_presets\
-	
+endif
+
+ifndef COMPLEXTESTS
 COMPLEXTESTS = \
 	drivebase\
 	climb_release\
@@ -52,6 +55,8 @@ COMPLEXTESTS = \
 	pump\
 	shooter_constants\
 	toplevel
+endif
+
 #
 # include a central make file that defines our compilation recipe
 #

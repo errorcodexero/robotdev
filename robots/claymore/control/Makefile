@@ -39,9 +39,12 @@ SRC = \
 	sim.cpp\
 	toplevel.cpp
 
+ifndef TESTS
 TESTS = \
-	motor_check.cpp
+	motor_check
+endif
 
+ifndef COMPLEXTESTS
 COMPLEXTESTS = \
 	lights\
 	drivebase\
@@ -56,12 +59,14 @@ COMPLEXTESTS = \
 	nop\
 	pump\
 	toplevel
+endif
+
 #
 # include a central make file that defines our compilation recipe
 #
 include ../../../makefiles/compilelib.mk
 
-$(TESTTARGETDIR)/drivebase$(EXEEXT): drivebase.cpp motor_check.cpp 
+$(TESTTARGETDIR)/drivebase$(EXEEXT): drivebase.cpp motor_check.cpp drivebase_controller.cpp
 $(TESTTARGETDIR)/drivebase$(EXEEXT): ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/interface.cpp 
 $(TESTTARGETDIR)/drivebase$(EXEEXT): ../util/util.cpp ../util/point.cpp ../util/driver_station_interface.cpp
 

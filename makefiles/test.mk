@@ -4,8 +4,9 @@
 
 TARGETBASE=$(basename $(TARGET))
 TESTTARGETDIR=$(TARGETDIR)/tests/$(TARGETBASE)
-TESTNAMES=$(basename $(TESTS))
-TESTTARGETS=$(addprefix $(TESTTARGETDIR)/,$(TESTNAMES))
+
+TESTSRC=$(addsuffix .cpp,$(TESTS))
+TESTTARGETS=$(addprefix $(TESTTARGETDIR)/,$(TESTS))
 
 ifeq ($(OS),Windows_NT)
 TESTTARGETNAMES=$(addsuffix .exe,$(TESTTARGETS))

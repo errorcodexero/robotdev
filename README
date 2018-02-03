@@ -93,3 +93,7 @@ By default a short message indicating build steps is displayed. If
 VERBOSE=1 is set on the make invocation then the full build command
 line is displayed.  (e.g. make CONFIG=debug VERBOSE=1)
 
+Running a 'tests' target requires the dependencies be generated, but
+building tests does not generate them.  Therefore, the robot target
+must be built in a given directory first then the tests will have
+the needed dependency files.
