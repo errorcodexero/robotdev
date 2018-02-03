@@ -42,13 +42,13 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 	
 	double output = pOut + iOut + dOut;
 	
-	/*std::cout << "integral " << integral ;
+	std::cout << "integral " << integral ;
 	std::cout << ", pOut " << pOut ;
 	std::cout << ", iOut " << iOut ;
 	std::cout << ", dOut " << dOut ;
 	std::cout << ", error " << error;
 	std::cout << ", derivative " << derivative;
-	std::cout << std::endl ;*/
+	std::cout << std::endl ;
 
 	
 	if (output <= PIDConsts.floor)

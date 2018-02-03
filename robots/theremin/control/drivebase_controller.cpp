@@ -14,6 +14,8 @@ DrivebaseController::DrivebaseController() {
 	target_correction_angle = 0.0;
 	distance_threshold = 0.0;
 	angle_threshold = 0.0;
+	angle_v_threshold = 0.0;
+	last_angle = 0.0;
 	n_samples = 5;
 	reset_pid = false;
 	pid_reset_threshold = 0.0;
@@ -27,6 +29,7 @@ void DrivebaseController::setParams(paramsInput* input_params) {
 	mInput_params = input_params;
 	distance_threshold = mInput_params->getValue("drivebase:straight:threshold", 1.0);
 	angle_threshold = mInput_params->getValue("drivebase:angle:threshold", 1.0);
+	angle_v_threshold = mInput_params->getValue("drivebase:angle:v_threshold", .1);
 	n_samples = mInput_params->getValue("drivebase:n_samples", 5);
 	pid_reset_threshold = mInput_params->getValue("drivebase:distance:reset:threshold", .1);
 }
@@ -132,7 +135,11 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if(distance_history.size() > n_samples)
 				distance_history.pop_front();
 			
+			messageLogger &logger = messageLogger::get() ;
+			logger.startMessage(messageLogger::messageType::debug) ;
 			if(!reset_pid && distance_history.size() == n_samples && (distance_history.back() - distance_history.front()) < pid_reset_threshold) {
+				logger << "SWITCHED PID CONSTANTS\n";
+
 				double p = mInput_params->getValue("drivebase:distance:reset:p", 0.0) ;
 				double i = mInput_params->getValue("drivebase:distance:reset:i", 0.15) ;
 				double d = mInput_params->getValue("drivebase:distance:reset:d", 0.0) ;
@@ -143,7 +150,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 				reset_pid = true;
 			}
 
-			msg = "data," + std::to_string(seq++) ;
+			msg += "data," + std::to_string(seq++) ;
 			msg += ",time=" + std::to_string(time) ;
 			msg += ",ldist=" + std::to_string(distances_l - mLeftStart) ;
 			msg += ",rdist=" + std::to_string(distances_r - mRightStart)  ;
@@ -174,8 +181,6 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 
 			mSender.send(msg) ;
 
-			messageLogger &logger = messageLogger::get() ;
-			logger.startMessage(messageLogger::messageType::debug) ;
 			logger << "update(DISTANCE)" ;
 			logger << ", dt " << dt;
 			logger << ", angle " << angle ;
@@ -193,7 +198,8 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	
 			
 		} else if(mode == Mode::ANGLE) {
-			if(fabs(target - angle) < angle_threshold) {
+			double angular_v = (angle - last_angle) / dt;
+			if(fabs(target - angle) < angle_threshold && fabs(angular_v) < angle_v_threshold) {
 				mode = Mode::IDLE;
 			}
 	
@@ -207,6 +213,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			logger << ", time " << time ;
 			logger << ", target " << target ;
 			logger << ", angle " << angle ;
+			logger << ", angular_v " << angular_v;
 			logger << ", base " << base ;
 			logger << ", l " << out_l ;
 			logger << ", r " << out_r ;
@@ -222,6 +229,8 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		mDataDumpMode = true ;
 		mDataDumpStartTime = time ;
 	}
+
+	last_angle = angle;
 }
 
 bool DrivebaseController::done() {
