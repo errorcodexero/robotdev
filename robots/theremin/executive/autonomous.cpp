@@ -48,12 +48,12 @@ Executive get_auto_mode(Next_mode_info info){
 	}};
 
 	Executive drive_straight_test{Chain{
-		Step{Navx_drive_straight{120.0}},
+		Step{Navx_drive_straight{165.0}},
 		Executive{Teleop()}
 	}};
 	
 	Executive rotate_test{Chain{
-		Step{Navx_rotate{45.0}},
+		Step{Navx_rotate{90.0}},
 		Executive{Teleop()}
 	}};
 
@@ -77,8 +77,28 @@ Executive get_auto_mode(Next_mode_info info){
 		},
 		Executive{Teleop()}
 	}};
+
+	Executive same_switch{Chain{
+		Step{Navx_drive_straight{128.0}},
+		Executive{Teleop()}
+	}};
+
+	Executive opposite_switch{Chain{
+		vector<Step>{
+			Step{Navx_drive_straight{52.0}},
+			Step{Wait{1.0}},
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{1.0}},
+			Step{Navx_drive_straight{104.0}},
+			Step{Wait{1.0}},
+			Step{Navx_rotate{90.0}},
+			Step{Wait{1.0}},
+			Step{Navx_drive_straight{56}}
+		},
+		Executive{Teleop()}
+	}};
 		
-	return combo_test;
+	return opposite_switch;
 
 	/*
 	
