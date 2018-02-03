@@ -5,8 +5,6 @@
 
 using namespace std;
 
-using byte = unsigned char;
-
 I2C_control::I2C_control():i2c(NULL),i2c_port(I2C_port::ONBOARD){}
 I2C_control::I2C_control(I2C_port port,int address):i2c(NULL),i2c_port(I2C_port::ONBOARD) {
 	init(port,address);

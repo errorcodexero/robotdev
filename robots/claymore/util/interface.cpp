@@ -197,6 +197,40 @@ bool operator<(Navx_output a,Navx_output b){
 	return false;
 }
 
+I2C_io::I2C_io(byte* b,int s):data(b),data_size(s){}
+I2C_io::I2C_io(byte a[]):I2C_io(a,(sizeof(a)/sizeof(*a))){}
+I2C_io::I2C_io():I2C_io(NULL,0){}
+
+std::ostream& operator<<(std::ostream& o,I2C_io a){
+	o<<"(";
+	o<<"data:"<<(*a.data);
+	o<<" size:"<<a.data_size;
+	o<<")";
+	return o;
+}
+
+bool operator==(I2C_io a,I2C_io b){
+	#define X(NAME) if(a.NAME != b.NAME) return false;
+	X(data) X(data_size)
+	#undef X
+	return true;
+}
+
+bool operator!=(I2C_io a,I2C_io b){
+	return !(a==b);
+}
+
+bool operator<(I2C_io a,I2C_io b){
+	#define X(NAME) \
+		if(a.NAME<b.NAME) return true; \
+		if(b.NAME<a.NAME) return false;
+	X(data) X(data_size)
+	#undef X
+	return false;
+}
+
+
+
 IMPL_STRUCT(Pump_input::Pump_input,PUMP_INPUT_ITEMS)
 Pump_input::Pump_input():Pump_input(false,false){}
 
@@ -394,7 +428,7 @@ bool operator<(Digital_out a, Digital_out b){
 	return 0;
 }
 
-Robot_outputs::Robot_outputs():pump(){
+Robot_outputs::Robot_outputs():pump(),i2c(){
 	for(unsigned i=0;i<PWMS;i++){
 		pwm[i]=0;
 	}
@@ -432,7 +466,7 @@ bool operator==(Robot_outputs a,Robot_outputs b){
 			return 0;
 		}
 	}
-	return a.pump==b.pump && a.navx==b.navx && a.driver_station==b.driver_station;
+	return a.pump==b.pump && a.i2c==b.i2c && a.navx==b.navx && a.driver_station==b.driver_station;
 }
 
 bool operator!=(Robot_outputs a,Robot_outputs b){
@@ -470,6 +504,9 @@ bool operator<(Robot_outputs a,Robot_outputs b){
 	if(a.navx < b.navx) return 1;
 	if(b.navx < a.navx) return 0;
 
+	if(a.i2c < b.i2c) return 1;
+	if(b.i2c < a.i2c) return 0;
+	
 	return a.pump<b.pump;
 }
 
@@ -499,6 +536,7 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	}
 	o<<" navx:"<<a.navx;
 	o<<" pump:"<<a.pump;
+	o<<" i2c:"<<a.i2c;
 	o<<" driver_station_output:"<<a.driver_station;
 	return o<<")";
 }

@@ -50,10 +50,10 @@ struct Lights{
 
 	struct Output{ 
 		bool camera_light;
-		double blinky_light_info;
+		int blinky_light_info;
 
 		Output();
-		Output(bool,double);
+		Output(bool,int);
 	};
 	
 	struct Output_applicator{

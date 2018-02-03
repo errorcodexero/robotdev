@@ -23,8 +23,8 @@ void Lights::init_blinky_light_transcriber(){
 Lights::Goal::Goal(Camera_light a,bool c,unsigned h):camera_light(a),climbing(c),lifter_height(h){}
 Lights::Goal::Goal():Lights::Goal(Camera_light::OFF,false,0){}
 
-Lights::Output::Output(bool c,double b):camera_light(c),blinky_light_info(b){}
-Lights::Output::Output():Output(false,0.0){}
+Lights::Output::Output(bool c,int b):camera_light(c),blinky_light_info(b){}
+Lights::Output::Output():Output(false,0){}
 
 Lights::Status_detail::Status_detail(unsigned h,bool c,bool m,Alliance a,Time t):lifter_height(h),climbing(c),autonomous(m),alliance(a),now(t){}
 Lights::Status_detail::Status_detail():Status_detail(0,false,false,Alliance::INVALID,0){}
@@ -178,13 +178,15 @@ Robot_inputs Lights::Input_reader::operator()(Robot_inputs r, Lights::Input in)c
 Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.camera_light = r.digital_io[CAMERA_LIGHT_ADDRESS] == Digital_out::one();
-	//out.blinky_light_info = r.pwm[BLINKY_LIGHT_INFO_ADDRESS];
+	out.blinky_light_info = r.i2c.data[0];
 	return out;
 }
 
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.digital_io[CAMERA_LIGHT_ADDRESS] = out.camera_light ? Digital_out::one() : Digital_out::zero();
-	//r.pwm[BLINKY_LIGHT_INFO_ADDRESS] = out.blinky_light_info;
+	byte a[1];
+	a[0] = out.blinky_light_info;
+	r.i2c = {a};
 	return r;
 }
 
@@ -227,8 +229,8 @@ set<Lights::Status_detail> examples(Lights::Status_detail*){
 
 set<Lights::Output> examples(Lights::Output*){ 
 	return {
-		Lights::Output{false,0.0},
-		Lights::Output{true,0.0}	
+		Lights::Output{false,0},
+		Lights::Output{true,0}	
 	};
 }
 

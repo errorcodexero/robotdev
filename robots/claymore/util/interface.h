@@ -16,6 +16,7 @@
 
 typedef double Time;//Seconds
 typedef bool Solenoid_output;
+using byte = unsigned char;
 
 using Pwm_output = double;
 
@@ -188,6 +189,19 @@ bool operator==(Navx_output,Navx_output);
 bool operator!=(Navx_output,Navx_output);
 bool operator<(Navx_output,Navx_output);
 
+struct I2C_io{
+	byte* data;
+	int data_size;
+	I2C_io();
+	I2C_io(byte[]);
+	I2C_io(byte*,int);
+};
+
+std::ostream& operator<<(std::ostream&,I2C_io);
+bool operator==(I2C_io,I2C_io);
+bool operator!=(I2C_io,I2C_io);
+bool operator<(I2C_io,I2C_io);
+
 struct Pump_input{
 	#define PUMP_INPUT_ITEMS(X) \
 		X(bool,pressure_switch_triggered)
@@ -259,6 +273,8 @@ struct Robot_outputs{
 	Driver_station_output driver_station;
 	
 	Pump_output pump;
+	
+	I2C_io i2c;
 
 	Robot_outputs();
 };
