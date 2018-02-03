@@ -5,6 +5,7 @@
 #include "talon_srx_control.h"
 #include "pump_control.h"
 #include "navx_control.h"
+#include "i2c_control.h"
 #include "params_parser.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -115,6 +116,7 @@ class To_roborio
 	USER_CODE main;
 	Talon_srx_controls talon_srx_controls;
 	Navx_control navx_control;
+	I2C_control i2c_control;
 	//DriverStationLCD *lcd;
 	//NetworkTable *table;
 	//Gyro *gyro;
@@ -129,7 +131,7 @@ class To_roborio
 #endif
 	std::ofstream null_stream;
 public:
-To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
+To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
 		power = new frc::PowerDistributionPanel();
 
@@ -185,8 +187,6 @@ To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_stat
 		//Slave
 		
 		cout<<"Initialization Complete."<<endl<<flush;
-
-		Lights::init_blinky_light_transcriber();
 	}
 	
 	int read_analog(Robot_inputs &r){
@@ -316,6 +316,9 @@ To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),driver_stat
 			}
 			talon_srx_controls.set(out.talon_srx,enable_all); 
 		}
+	
+		i2c_control.write(out.i2c);	
+	
 		pump_control.set(out.pump);
 		return error_code;
 	}

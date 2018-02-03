@@ -190,11 +190,9 @@ bool operator!=(Navx_output,Navx_output);
 bool operator<(Navx_output,Navx_output);
 
 struct I2C_io{
-	byte* data;
-	int data_size;
+	std::vector<byte> data;
 	I2C_io();
-	I2C_io(byte[]);
-	I2C_io(byte*,int);
+	I2C_io(std::vector<byte>);
 };
 
 std::ostream& operator<<(std::ostream&,I2C_io);
@@ -323,7 +321,7 @@ bool operator==(Robot_mode,Robot_mode);
 bool operator!=(Robot_mode,Robot_mode);
 std::ostream& operator<<(std::ostream&,Robot_mode);
 
-enum class Alliance{RED,BLUE,INVALID};
+enum class Alliance{RED = 0,BLUE = 1,INVALID = 2};
 std::ostream& operator<<(std::ostream&,Alliance const&);
 
 struct DS_info{

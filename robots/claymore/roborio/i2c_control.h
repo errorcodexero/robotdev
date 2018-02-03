@@ -22,12 +22,13 @@ class I2C_control{
 	
 	public:
 	I2C_control();
-	~I2C_control();
+	I2C_control(int address);
 	I2C_control(I2C_port port,int address);
+	~I2C_control();
 	
 	void init(I2C_port port,int address);
-	void write(uint8_t*,int)const;
-	void read(uint8_t*,int)const;
+	void write(I2C_io const&)const;
+	void read(I2C_io const&)const;
 	friend std::ostream& operator<<(std::ostream&,I2C_control);
 };
 

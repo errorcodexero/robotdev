@@ -197,21 +197,19 @@ bool operator<(Navx_output a,Navx_output b){
 	return false;
 }
 
-I2C_io::I2C_io(byte* b,int s):data(b),data_size(s){}
-I2C_io::I2C_io(byte a[]):I2C_io(a,(sizeof(a)/sizeof(*a))){}
-I2C_io::I2C_io():I2C_io(NULL,0){}
+I2C_io::I2C_io(vector<byte> a):data(a){}
+I2C_io::I2C_io():I2C_io(vector<byte>{}){}
 
 std::ostream& operator<<(std::ostream& o,I2C_io a){
 	o<<"(";
-	o<<"data:"<<(*a.data);
-	o<<" size:"<<a.data_size;
+	o<<"data:"<<a.data;
 	o<<")";
 	return o;
 }
 
 bool operator==(I2C_io a,I2C_io b){
 	#define X(NAME) if(a.NAME != b.NAME) return false;
-	X(data) X(data_size)
+	X(data)
 	#undef X
 	return true;
 }
@@ -224,7 +222,7 @@ bool operator<(I2C_io a,I2C_io b){
 	#define X(NAME) \
 		if(a.NAME<b.NAME) return true; \
 		if(b.NAME<a.NAME) return false;
-	X(data) X(data_size)
+	X(data)
 	#undef X
 	return false;
 }
@@ -647,16 +645,15 @@ ostream& operator<<(ostream& o,Robot_mode m){
 }
 
 ostream& operator<<(ostream& o,Alliance const& a){
-	o<<"Alliance(";
-	#define X(value) case value: o<<#value; break;
+	#define X(value) case Alliance::value: o<<#value; break;
 	switch(a){
-		X(Alliance::RED)
-		X(Alliance::BLUE)
-		X(Alliance::INVALID)
+		X(RED)
+		X(BLUE)
+		X(INVALID)
 		default: assert(0);
 	}
 	#undef X
-	return o<<")";
+	return o;
 }
 
 Digital_in random(Digital_in* d){

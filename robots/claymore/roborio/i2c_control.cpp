@@ -6,6 +6,9 @@
 using namespace std;
 
 I2C_control::I2C_control():i2c(NULL),i2c_port(I2C_port::ONBOARD){}
+I2C_control::I2C_control(int address):i2c(NULL),i2c_port(I2C_port::ONBOARD) {
+	init(I2C_port::ONBOARD,address);
+}
 I2C_control::I2C_control(I2C_port port,int address):i2c(NULL),i2c_port(I2C_port::ONBOARD) {
 	init(port,address);
 }
@@ -43,11 +46,17 @@ ostream& operator<<(ostream& o,I2C_control a){
 	return o<<")";
 }
 
-void I2C_control::write(byte* to_send, int send_size)const{
-	i2c -> Transaction(to_send, send_size, NULL, 0);
+void I2C_control::write(I2C_io const& a)const{
+	byte to_send[a.data.size()];
+	for(unsigned i = 0; i < a.data.size(); i++){
+		to_send[i] = a.data[i];
+	}
+
+	i2c -> Transaction(to_send, a.data.size() /*a.data.size()*/ /*sizeof(to_send)/sizeof(*to_send)*/, NULL, 0);
 }
 
-void I2C_control::read(byte* to_read,int read_size)const{
-	i2c -> Transaction(NULL, 0, to_read, read_size);
+void I2C_control::read(I2C_io const& a)const{
+	byte* to_read = new byte[a.data.size()];
+	i2c -> Transaction(NULL, 0, to_read, a.data.size());
 }
 

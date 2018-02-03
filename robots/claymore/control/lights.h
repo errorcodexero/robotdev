@@ -5,12 +5,8 @@
 #include <set>
 #include "../util/interface.h"
 #include "nop.h"
-#include "../util/pwm_transcriber.h"
 
 struct Lights{
-	static PWM_transcriber blinky_light_transcriber;
-	static void init_blinky_light_transcriber();
-
 	enum class Camera_light{ON,OFF};
 	struct Goal{//TODO: use macros
 		Camera_light camera_light;
@@ -24,21 +20,23 @@ struct Lights{
 	
 	struct Input{
 		bool autonomous;
+		bool enabled;
 		Alliance alliance;
 		Input();	
-		Input(bool,Alliance);	
+		Input(bool,bool,Alliance);	
 	};
 
 	struct Status_detail{
-		unsigned lifter_height;
-		bool climbing;
+		unsigned lifter_height;//TODO remove
+		bool climbing;//TODO remove
 		bool autonomous;//communicate mode?
+		bool enabled;
 		Alliance alliance;
 		
 		Time now;
 
 		Status_detail();
-		Status_detail(unsigned,bool,bool,Alliance,Time);
+		Status_detail(unsigned,bool,bool,bool,Alliance,Time);
 	};
 
 	using Status = Status_detail;
@@ -50,10 +48,10 @@ struct Lights{
 
 	struct Output{ 
 		bool camera_light;
-		int blinky_light_info;
+		std::vector<byte> blinky_light_info;
 
 		Output();
-		Output(bool,int);
+		Output(bool,std::vector<byte>);
 	};
 	
 	struct Output_applicator{

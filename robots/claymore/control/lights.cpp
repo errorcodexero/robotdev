@@ -7,30 +7,17 @@ using namespace std;
 #define CAMERA_LIGHT_ADDRESS 4
 #define BLINKY_LIGHT_INFO_ADDRESS 5
 
-PWM_transcriber Lights::blinky_light_transcriber;
-
-void Lights::init_blinky_light_transcriber(){
-	blinky_light_transcriber.add("climbing",set<bool>{true,false});
-	blinky_light_transcriber.add("autonomous",set<bool>{true,false});
-	blinky_light_transcriber.add("alliance",set<Alliance>{Alliance::RED,Alliance::BLUE,Alliance::INVALID});
-	set<unsigned> heights;
-	for(unsigned i = 0; i < 100; i +=3){
-		heights.insert(i);
-	}
-	blinky_light_transcriber.add("lifter_height",heights);
-}
-
 Lights::Goal::Goal(Camera_light a,bool c,unsigned h):camera_light(a),climbing(c),lifter_height(h){}
 Lights::Goal::Goal():Lights::Goal(Camera_light::OFF,false,0){}
 
-Lights::Output::Output(bool c,int b):camera_light(c),blinky_light_info(b){}
-Lights::Output::Output():Output(false,0){}
+Lights::Output::Output(bool c,vector<byte> b):camera_light(c),blinky_light_info(b){}
+Lights::Output::Output():Output(false,{}){}
 
-Lights::Status_detail::Status_detail(unsigned h,bool c,bool m,Alliance a,Time t):lifter_height(h),climbing(c),autonomous(m),alliance(a),now(t){}
-Lights::Status_detail::Status_detail():Status_detail(0,false,false,Alliance::INVALID,0){}
+Lights::Status_detail::Status_detail(unsigned h,bool c,bool m,bool e,Alliance a,Time t):lifter_height(h),climbing(c),autonomous(m),enabled(e),alliance(a),now(t){}
+Lights::Status_detail::Status_detail():Status_detail(0,false,false,false,Alliance::INVALID,0){}
 
-Lights::Input::Input(bool a,Alliance al):autonomous(a),alliance(al){}
-Lights::Input::Input():Input(false,Alliance::INVALID){}
+Lights::Input::Input(bool a,bool e,Alliance al):autonomous(a),enabled(e),alliance(al){}
+Lights::Input::Input():Input(false,false,Alliance::INVALID){}
 
 ostream& operator<<(ostream& o, Lights::Camera_light a){
 	#define X(name) if(a==Lights::Camera_light::name)return o<<""#name;
@@ -44,6 +31,7 @@ ostream& operator<<(ostream& o, Lights::Status_detail a){
 	o<<" lifter_height:"<<a.lifter_height;
 	o<<" climbing:"<<a.climbing;
 	o<<" autonomous:"<<a.autonomous;
+	o<<" enabled:"<<a.enabled;
 	o<<" alliance:"<<a.alliance;
 	o<<" now:"<<a.now;
 	o<<")";
@@ -69,7 +57,8 @@ ostream& operator<<(ostream& o, Lights::Goal a){
 ostream& operator<<(ostream& o, Lights::Input a){
 	o<<"(";
 	o<<"autonomous:"<<a.autonomous;
-	o<<"alliance:"<<a.alliance;
+	o<<" enabled:"<<a.enabled;
+	o<<" alliance:"<<a.alliance;
 	return o<<")";
 }
 
@@ -80,7 +69,7 @@ ostream& operator<<(ostream& o, Lights){ return o<<"Lights()";}
 	if(b.ELEM < a.ELEM) return false;
 
 bool operator==(Lights::Status_detail a,Lights::Status_detail b){
-	return a.lifter_height == b.lifter_height && a.climbing == b.climbing && a.autonomous == b.autonomous && a.alliance == b.alliance && a.now == b.now;
+	return a.lifter_height == b.lifter_height && a.climbing == b.climbing && a.autonomous == b.autonomous && a.enabled == b.enabled && a.alliance == b.alliance && a.now == b.now;
 }
 
 bool operator!=(Lights::Status_detail a,Lights::Status_detail b){
@@ -92,6 +81,7 @@ bool operator<(Lights::Status_detail a,Lights::Status_detail b){
 	CMP(climbing)
 	CMP(autonomous)
 	CMP(alliance)
+	CMP(enabled)
 	CMP(now)
 	return false;
 }
@@ -126,7 +116,7 @@ bool operator!=(Lights::Goal a, Lights::Goal b){
 }
 
 bool operator==(Lights::Input a,Lights::Input b){
-	return a.autonomous == b.autonomous && a.alliance == b.alliance;
+	return a.autonomous == b.autonomous && a.enabled == b.enabled && a.alliance == b.alliance;
 }
 
 bool operator!=(Lights::Input a,Lights::Input b){
@@ -136,6 +126,7 @@ bool operator!=(Lights::Input a,Lights::Input b){
 bool operator<(Lights::Input a,Lights::Input b){
 	CMP(autonomous)
 	CMP(alliance)
+	CMP(enabled)
 	return false;
 }
 
@@ -166,27 +157,26 @@ bool operator!=(Lights a, Lights b){
 #undef CMP
 
 Lights::Input Lights::Input_reader::operator()(Robot_inputs r)const{
-	return {r.robot_mode.autonomous,r.ds_info.alliance};
+	return {r.robot_mode.autonomous,r.robot_mode.enabled,r.ds_info.alliance};
 }
 
 Robot_inputs Lights::Input_reader::operator()(Robot_inputs r, Lights::Input in)const{
 	r.robot_mode.autonomous = in.autonomous;
 	r.ds_info.alliance = in.alliance;
+	r.robot_mode.enabled = in.enabled;
 	return r;
 }
 
 Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.camera_light = r.digital_io[CAMERA_LIGHT_ADDRESS] == Digital_out::one();
-	out.blinky_light_info = r.i2c.data[0];
+	out.blinky_light_info = r.i2c.data;
 	return out;
 }
 
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.digital_io[CAMERA_LIGHT_ADDRESS] = out.camera_light ? Digital_out::one() : Digital_out::zero();
-	byte a[1];
-	a[0] = out.blinky_light_info;
-	r.i2c = {a};
+	r.i2c.data = out.blinky_light_info;
 	return r;
 }
 
@@ -195,6 +185,7 @@ Lights::Estimator::Estimator(){}
 void Lights::Estimator::update(Time now,Lights::Input in,Lights::Output){
 	last.now = now;
 	last.alliance = in.alliance;
+	last.enabled = in.enabled;
 	last.autonomous = in.autonomous;
 }
 
@@ -203,14 +194,17 @@ Lights::Status_detail Lights::Estimator::get()const{
 }
 
 set<Lights::Input> examples(Lights::Input*){ 
-	return {
-		{false,Alliance::INVALID},
-		{false,Alliance::RED},
-		{false,Alliance::BLUE},
-		{true,Alliance::INVALID},
-		{true,Alliance::RED},
-		{true,Alliance::BLUE}
-	};
+	set<Lights::Input> s;
+	vector<bool> bools = {false,true};
+	vector<Alliance> alliances = {Alliance::RED,Alliance::BLUE,Alliance::INVALID};
+	for(bool a: bools){
+		for(bool e: bools){
+			for(Alliance al: alliances){
+				s.insert({a,e,al});
+			}
+		}
+	}
+	return s;
 }
 
 set<Lights::Status_detail> examples(Lights::Status_detail*){ 
@@ -219,8 +213,10 @@ set<Lights::Status_detail> examples(Lights::Status_detail*){
 	vector<Alliance> alliances = {Alliance::RED,Alliance::BLUE,Alliance::INVALID};
 	for(bool c: bools){
 		for(bool m: bools){
-			for(Alliance a: alliances){
-				s.insert({0,c,m,a,0.0});
+			for(bool e: bools){
+				for(Alliance a: alliances){
+					s.insert({0,c,m,e,a,0.0});
+				}
 			}
 		}
 	}
@@ -228,10 +224,18 @@ set<Lights::Status_detail> examples(Lights::Status_detail*){
 }
 
 set<Lights::Output> examples(Lights::Output*){ 
-	return {
-		Lights::Output{false,0},
-		Lights::Output{true,0}	
-	};
+	set<Lights::Output> s;
+	vector<bool> bools = {false,true};
+	set<Lights::Status_detail> statuses = examples((Lights::Status_detail*)nullptr);
+	set<Lights::Goal> goals = examples((Lights::Goal*)nullptr);
+	for(bool c: bools){
+		for(Lights::Status_detail status: statuses){
+			for(Lights::Goal goal: goals){
+				s.insert({c,vector<byte>{goal.climbing, status.autonomous, status.enabled, (byte)static_cast<int>(status.alliance), (byte)goal.lifter_height}});
+			}
+		}
+	}
+	return s;
 }
 
 set<Lights::Goal> examples(Lights::Goal*){ 
@@ -243,48 +247,10 @@ set<Lights::Goal> examples(Lights::Goal*){
 	};
 }
 
-unsigned encode_robot_status(Lights::Status_detail status){
-	const unsigned INFO_TYPES = 4;//number of types of data for transmission
-	
-	const Time TRANSMIT_TIME = 1;//seconds
-	const Time TIME_INTERVAL = TRANSMIT_TIME / (double)INFO_TYPES;//seconds to transmit each part of data
-
-	double time_remainder = [&]{//time since the last transmit cycle began
-		double remainder, integer;
-		remainder = modf(status.now / TRANSMIT_TIME, &integer);
-		return remainder * TRANSMIT_TIME;
-	}();
-	
-	int to_transmit = [&]{//select one of the info types to transmit based on the time into the transmit cycle
-		for(unsigned i = 1; i <= INFO_TYPES; i++){
-			if(time_remainder < TIME_INTERVAL * (double)i + 1E-14){
-				return i;
-			}
-		}
-		nyi
-	}();
-	
-	unsigned out = [&]{
-		switch(to_transmit){
-			case 1:
-				return Lights::blinky_light_transcriber.map("climbing",status.climbing);
-			case 2:
-				return Lights::blinky_light_transcriber.map("autonomous",status.autonomous);
-			case 3:
-				return Lights::blinky_light_transcriber.map("alliance",status.alliance);
-			case 4: 
-				return Lights::blinky_light_transcriber.map("lifter_height",status.lifter_height);
-			default:
-				nyi
-		}
-	}();
-	return out;
-}
-
 Lights::Output control(Lights::Status status, Lights::Goal goal){
 	Lights::Output out;
 	out.camera_light = goal.camera_light == Lights::Camera_light::ON;
-	out.blinky_light_info = encode_robot_status(status);
+	out.blinky_light_info = {goal.climbing, status.autonomous, status.enabled, (byte)static_cast<int>(status.alliance), (byte)goal.lifter_height}; //encode_robot_status(status);
 	return out;
 }
 
@@ -298,35 +264,10 @@ Lights::Status status(Lights::Status_detail const& a){
 #include "formal.h"
 
 int main(){
-	Lights::init_blinky_light_transcriber();
-	{
-		Lights a;
-		Tester_mode mode;
-		mode.check_outputs_exhaustive = false;
-		tester(a,mode);
-	}
-	cout<<"\n\n=============================================\n\n";
-	{//this generates example output values for debugging the blinky light arduino code
-		cout<<"\n\n"<<Lights::blinky_light_transcriber<<"\n\n";
-		unsigned lifter_height = 6;
-		bool climbing = false;
-		bool autonomous = true;
-		Alliance alliance = Alliance::BLUE;
-		
-		Lights::Status_detail status =  {lifter_height, climbing, autonomous, alliance, 0.0};
-		
-		Lights::Goal goal = *examples((Lights::Goal*)nullptr).begin();
-		
-		cout<<"status:"<<status<<"\n";
-		cout<<"{";
-		for(Time t = 0; t < 2; t+= .01){
-			if(t != 0) cout<<",";
-			status.now = t;
-			Lights::Output out = control(status,goal);
-			cout<<out.blinky_light_info;
-		}
-		cout<<"}";
-	}
+	Lights a;
+	Tester_mode mode;
+	mode.check_outputs_exhaustive = false;
+	tester(a,mode);
 }
 
 #endif
