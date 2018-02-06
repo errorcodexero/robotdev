@@ -270,8 +270,8 @@ set<Drivebase::Goal> examples(Drivebase::Goal*){
 		Drivebase::Goal::rotate(/*0*/),
 		Drivebase::Goal::drive_straight(/*0,0,0*/),
 		Drivebase::Goal::distances({0,0}),
-		Drivebase::Goal::absolute(0,0),
-		Drivebase::Goal::absolute(1,1)
+		Drivebase::Goal::absolute(0,0,Talon_srx_output::Speed_mode::NO_OVERRIDE),
+		Drivebase::Goal::absolute(1,1,Talon_srx_output::Speed_mode::NO_OVERRIDE)
 	};
 }
 
@@ -282,7 +282,7 @@ std::ostream& operator<<(std::ostream& o, Drivebase::Goal::Mode a){
 	nyi
 }
 
-Drivebase::Goal::Goal():mode_(Drivebase::Goal::Mode::ABSOLUTE),distances_({0,0}),angle_(0),left_(0),right_(0){}
+Drivebase::Goal::Goal():mode_(Drivebase::Goal::Mode::ABSOLUTE),distances_({0,0}),angle_(0),left_(0),right_(0),talon_speed_mode_(Talon_srx_output::Speed_mode::NO_OVERRIDE){}
 
 Drivebase::Goal::Mode Drivebase::Goal::mode()const{
 	return mode_;
@@ -303,6 +303,10 @@ double Drivebase::Goal::left()const{
 	return left_;
 }
 
+Talon_srx_output::Speed_mode Drivebase::Goal::talon_speed_mode()const{
+	return talon_speed_mode_;
+}
+
 double Drivebase::Goal::angle()const{
 	assert(mode_ == Drivebase::Goal::Mode::ROTATE || mode_ == Drivebase::Goal::Mode::DRIVE_STRAIGHT);
 	return angle_;
@@ -321,10 +325,15 @@ Drivebase::Goal Drivebase::Goal::distances(Drivebase::Distances distances){
 }
 
 Drivebase::Goal Drivebase::Goal::absolute(double left,double right){
+	return Drivebase::Goal::absolute(left, right, Talon_srx_output::Speed_mode::NO_OVERRIDE);
+}
+
+Drivebase::Goal Drivebase::Goal::absolute(double left,double right, Talon_srx_output::Speed_mode talon_speed_mode){
 	Drivebase::Goal a;
 	a.mode_ = Drivebase::Goal::Mode::ABSOLUTE;
 	a.left_ = left;
 	a.right_ = right;
+	a.talon_speed_mode_ = talon_speed_mode;
 	return a;
 }
 
@@ -345,7 +354,7 @@ Drivebase::Goal Drivebase::Goal::rotate(/*double angle*/){
 }
 
 ostream& operator<<(ostream& o,Drivebase::Goal const& a){
-	o<<"Drivebase::Goal("<<a.mode()<<" ";
+	o<<"Drivebase::Goal("<<a.mode()<<" "<<a.talon_speed_mode()<<" ";
 	switch(a.mode()){
 		case Drivebase::Goal::Mode::ROTATE:
 			//o<<a.angle();
@@ -370,6 +379,7 @@ ostream& operator<<(ostream& o,Drivebase::Goal const& a){
 bool operator==(Drivebase::Goal const& a,Drivebase::Goal const& b){
 	#define X(NAME) if(a.NAME != b.NAME) return false;
 	X(mode())
+	X(talon_speed_mode())
 	switch(a.mode()){
 		case Drivebase::Goal::Mode::ABSOLUTE:
 			X(left())
@@ -401,6 +411,7 @@ bool operator<(Drivebase::Goal const& a,Drivebase::Goal const& b){
 		case Drivebase::Goal::Mode::ABSOLUTE:
 			CMP(left())
 			CMP(right())
+			CMP(talon_speed_mode())
 			break;
 		case Drivebase::Goal::Mode::DISTANCES:
 			CMP(distances())
@@ -422,8 +433,8 @@ CMP_OPS(Drivebase::Output,DRIVEBASE_OUTPUT)
 
 set<Drivebase::Output> examples(Drivebase::Output*){
 	return {
-		Drivebase::Output{0,0,false},
-		Drivebase::Output{1,1,false}
+		Drivebase::Output{0,0,false,Talon_srx_output::Speed_mode::NO_OVERRIDE},
+		Drivebase::Output{1,1,false,Talon_srx_output::Speed_mode::NO_OVERRIDE}
 	};
 }
 
@@ -435,7 +446,7 @@ set<Drivebase::Input> examples(Drivebase::Input*){
 	}};
 }
 
-Drivebase::Estimator::Estimator():motor_check(),last({{{}},false,{0,0},{0,0},{0,0,false},0.0,0.0,0.0,0.0}){}
+Drivebase::Estimator::Estimator():motor_check(),last({{{}},false,{0,0},{0,0},{0,0,false,Talon_srx_output::Speed_mode::NO_OVERRIDE},0.0,0.0,0.0,0.0}){}
 
 Drivebase::Status_detail Drivebase::Estimator::get()const{
 	/*array<Motor_check::Status,MOTORS> a;
@@ -515,6 +526,11 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.talon_srx[L_MOTOR_LOC_2].power_level = b.l;
 	robot.talon_srx[R_MOTOR_LOC_1].power_level = -b.r;
 	robot.talon_srx[R_MOTOR_LOC_2].power_level = -b.r;//reverse right side for software dev bot 2017
+
+	robot.talon_srx[L_MOTOR_LOC_1].speed_mode = b.speed_mode;
+	robot.talon_srx[L_MOTOR_LOC_2].speed_mode = b.speed_mode;
+	robot.talon_srx[R_MOTOR_LOC_1].speed_mode = b.speed_mode;
+	robot.talon_srx[R_MOTOR_LOC_2].speed_mode = b.speed_mode;
 #endif
 
 #ifdef CLAYMORE
@@ -524,6 +540,13 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;
+
+	robot.talon_srx[L_MOTOR_LOC_1].speed_mode = b.speed_mode;
+	robot.talon_srx[L_MOTOR_LOC_2].speed_mode = b.speed_mode;
+	robot.talon_srx[L_MOTOR_LOC_3].speed_mode = b.speed_mode;
+	robot.talon_srx[R_MOTOR_LOC_1].speed_mode = b.speed_mode;
+	robot.talon_srx[R_MOTOR_LOC_2].speed_mode = b.speed_mode;
+	robot.talon_srx[R_MOTOR_LOC_3].speed_mode = b.speed_mode;
 #endif
 
 	auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
@@ -546,7 +569,8 @@ Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)c
 	return Drivebase::Output{	
 		robot.talon_srx[L_MOTOR_LOC_1].power_level,
 		-robot.talon_srx[R_MOTOR_LOC_1].power_level, //reverse right side for software dev bot 2017
-		robot.navx.zero_yaw
+		robot.navx.zero_yaw,
+		robot.talon_srx[L_MOTOR_LOC_1].speed_mode
 	};
 }
 
@@ -577,7 +601,7 @@ bool operator!=(Drivebase const& a,Drivebase const& b){
 
 //TODO: Rename units
 Drivebase::Output trapezoidal_speed_control(Drivebase::Status status, Drivebase::Goal goal){
-	Drivebase::Output out = {0,0,false};
+	Drivebase::Output out = {0,0,false,goal.talon_speed_mode()};
 	const double MAX_OUT = .6;//in "volts
 	double avg_goal = (goal.distances().l + goal.distances().r) / 2;
 	double avg_dist = (status.distances.l + status.distances.r) / 2;
@@ -595,7 +619,7 @@ Drivebase::Output trapezoidal_speed_control(Drivebase::Status status, Drivebase:
 		//cout<<"\ndt:"<<status.dt * MILLISECONDS_PER_SECOND<<" ms step:"<<step<<" "<<status<<"\n";
 		
 		double avg_out = clamp(avg_last + step, -MAX_OUT, MAX_OUT);
-		out = {avg_out, avg_out, false};
+		out = {avg_out, avg_out, false,goal.talon_speed_mode()};
 		//out = {clamp(status.last_output.l + l_step,-MAX_OUT,MAX_OUT),clamp(status.last_output.r + r_step,-MAX_OUT,MAX_OUT)};
 	}	
 	{//for ramping down (based on distance)
@@ -606,7 +630,7 @@ Drivebase::Output trapezoidal_speed_control(Drivebase::Status status, Drivebase:
 		
 		if(error < SLOW_WITHIN_DISTANCE) {
 			double slow_out = clamp(error * SLOPE, -avg_last, avg_last);
-			out = {slow_out, slow_out, false};
+			out = {slow_out, slow_out, false, goal.talon_speed_mode()};
 		}
 	
 		/*
@@ -632,7 +656,7 @@ double total_angle_to_displacement(const double ANGLE){//converts total angle to
 }
 
 Drivebase::Output rotation_control(Drivebase::Status status, Drivebase::Goal goal){
-	Drivebase::Output out = {0,0,false};
+	Drivebase::Output out = {0,0,false,goal.talon_speed_mode()};
 	static const double MAX_OUT = 0.5;
 	static const double P = 0.005;//TODO: currently arbitrary value
 	
@@ -641,7 +665,7 @@ Drivebase::Output rotation_control(Drivebase::Status status, Drivebase::Goal goa
 	
 	double error = goal_angle_displacement - status_angle_displacement;
 	double power = clamp(error*P,-MAX_OUT,MAX_OUT);
-	out = Drivebase::Output(power,-power,false);
+	out = Drivebase::Output(power,-power,false,goal.talon_speed_mode());
 
 	static const double FLOOR = .15;
 	if(fabs(out.l) > .0001 && fabs(out.l) < FLOOR) out.l = copysign(FLOOR, out.l);
@@ -678,12 +702,12 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 		case Drivebase::Goal::Mode::DISTANCES:
 			return trapezoidal_speed_control(status,goal);
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			return Drivebase::Output{goal.left(),goal.right(),false};
+			return Drivebase::Output{goal.left(),goal.right(),false,goal.talon_speed_mode()};
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 			//return drive_straight(status,goal);
 		case Drivebase::Goal::Mode::ROTATE:
 			{
-				Drivebase::Output out(0.0, 0.0, false);
+				Drivebase::Output out(0.0, 0.0, false, goal.talon_speed_mode());
 				Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, out.l, out.r, out.zero_yaw);//rotation_control(status,goal);
 				return out;
 			}

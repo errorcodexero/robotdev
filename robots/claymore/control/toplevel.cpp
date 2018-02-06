@@ -98,7 +98,7 @@ ostream& operator<<(ostream& o,Toplevel::Output_applicator const&){
 
 Toplevel::Output::Output():
 	pump(Pump::Output::AUTO),
-	drive(0.0,0.0,false),
+	drive(0.0,0.0,false,Talon_srx_output::Speed_mode::NO_OVERRIDE),
 	gear_shifter(Gear_shifter::Output::LOW),
 	intake(Intake::Output::OFF),
 	intake_actuator(Intake_actuator::Output::OPEN),

@@ -71,7 +71,8 @@ struct Drivebase{
 #define DRIVEBASE_OUTPUT(X)			\
     X(double,l)					\
     X(double,r)					\
-    X(bool,zero_yaw)
+    X(bool,zero_yaw)                            \
+    X(Talon_srx_output::Speed_mode,speed_mode)
     DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
 #define SPEEDS_ITEMS(X)				\
@@ -128,11 +129,14 @@ struct Drivebase{
 	double angle_;//degrees
 	double angle_i_;//integral of angle error
 	double left_,right_;
+	Talon_srx_output::Speed_mode talon_speed_mode_;
 
     public:
 	Goal();	
 
 	Mode mode()const;
+
+	Talon_srx_output::Speed_mode talon_speed_mode()const;
 		
 	Distances distances()const;
 
@@ -143,6 +147,7 @@ struct Drivebase{
 	double left()const;
 		
 	static Goal distances(Distances);
+	static Goal absolute(double,double,Talon_srx_output::Speed_mode);
 	static Goal absolute(double,double);
 	static Goal drive_straight(/*Distances,double,double*/);
 	static Goal rotate(/*Rad*/);

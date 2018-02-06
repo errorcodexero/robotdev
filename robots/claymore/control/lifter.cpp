@@ -5,7 +5,8 @@ using namespace std;
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1 //TODO
 
-#define LIFTER_POWER .60 //TODO tune
+#define MANUAL_LIFTER_POWER .60 //TODO tune
+#define AUTO_LIFTER_POWER .60 //TODO tune
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 8
 #define CLIMBED_HALL_EFFECT_ADDRESS 2 //MXP DIO 0
@@ -215,7 +216,7 @@ set<Lifter::Input> examples(Lifter::Input*){
 }
 
 set<Lifter::Output> examples(Lifter::Output*){
-	return {-LIFTER_POWER,0.0,LIFTER_POWER};
+	return {-MANUAL_LIFTER_POWER,0.0,MANUAL_LIFTER_POWER};
 }
 
 set<Lifter::Status_detail> examples(Lifter::Status_detail*){
@@ -236,18 +237,24 @@ set<Lifter::Goal> examples(Lifter::Goal*){
 }
 
 Lifter::Output control(Lifter::Status_detail const& status_detail,Lifter::Goal const& goal){
-	if(ready(status(status_detail), goal)){
+	Lifter::Status s = status(status_detail);
+	if(ready(s, goal) || s == Lifter::Status::ERROR){
 		return {0.0};
 	}
 	switch(goal.mode()){
 		case Lifter::Goal::Mode::UP:
-			return {LIFTER_POWER};
+			return {MANUAL_LIFTER_POWER};
 		case Lifter::Goal::Mode::STOP:
 			return {0.0};
 		case Lifter::Goal::Mode::DOWN:
-			return {-LIFTER_POWER};
+			return {-MANUAL_LIFTER_POWER};
 		case Lifter::Goal::Mode::GO_TO_HEIGHT:
-			return {0.0};//TODO
+			{
+				//TODO inplement full PID control
+				double error = goal.target() - status_detail.height;
+				const double P = 0.5;
+				return clip(AUTO_LIFTER_POWER * error * P);
+			}
 		default:
 			nyi
 	}

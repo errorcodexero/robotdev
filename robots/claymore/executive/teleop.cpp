@@ -82,8 +82,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			if(spin) power-=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
 			return power;
 		}());
+		
+		const Talon_srx_output::Speed_mode DRIVE_SPEED_MODE = info.driver_joystick.button[Gamepad_button::A] ?  Talon_srx_output::Speed_mode::COAST : Talon_srx_output::Speed_mode::BRAKE;
 
-		goals.drive = Drivebase::Goal::absolute(left,right);
+		goals.drive = Drivebase::Goal::absolute(left,right,DRIVE_SPEED_MODE);
 	}
 
 	goals.gear_shifter=[&]{
