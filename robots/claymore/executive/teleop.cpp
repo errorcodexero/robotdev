@@ -94,10 +94,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		return Gear_shifter::Goal::AUTO;
 	}();
 
-	goals.intake = [&]{
-		if(info.panel.intake) return Intake::Goal::IN;
-		if(info.panel.eject) return Intake::Goal::OUT;
-		return Intake::Goal::OFF;
+	goals.intake_belts = [&]{
+		if(info.panel.intake) return Intake_belts::Goal::IN;
+		if(info.panel.eject) return Intake_belts::Goal::OUT;
+		return Intake_belts::Goal::OFF;
 	}();
 	
 	goals.intake_actuator = [&]{

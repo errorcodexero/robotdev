@@ -8,9 +8,9 @@ using namespace std;
 #define MANUAL_LIFTER_POWER .60 //TODO tune
 #define AUTO_LIFTER_POWER .60 //TODO tune
 
-#define BOTTOM_HALL_EFFECT_ADDRESS 8
+#define BOTTOM_HALL_EFFECT_ADDRESS 9
 #define CLIMBED_HALL_EFFECT_ADDRESS 2 //MXP DIO 0
-#define TOP_HALL_EFFECT_ADDRESS 9
+#define TOP_HALL_EFFECT_ADDRESS 8
 #define ENCODER_ADDRESS 4 //TODO
 
 int bottom_ticks = 0, top_ticks = 100;//arbitrary
@@ -162,9 +162,9 @@ Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)cons
 }
 
 Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const& in)const{
-	r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] = in.bottom_hall_effect ? Digital_in::_1 : Digital_in::_0;
-	r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] = in.climbed_hall_effect ? Digital_in::_1 : Digital_in::_0;
-	r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] = in.top_hall_effect ? Digital_in::_1 : Digital_in::_0;
+	r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] = in.bottom_hall_effect ? Digital_in::_0 : Digital_in::_1;
+	r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] = in.climbed_hall_effect ? Digital_in::_0 : Digital_in::_1;
+	r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] = in.top_hall_effect ? Digital_in::_0 : Digital_in::_1;//active low now I guess
 	r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
 	
 	return r;
@@ -172,9 +172,9 @@ Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input cons
 
 Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
 	return {
-		r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] == Digital_in::_1,
-		r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] == Digital_in::_1,
-		r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_1,
+		r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] == Digital_in::_0,
+		r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] == Digital_in::_0,
+		r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_0,
 		r.digital_io.encoder[ENCODER_ADDRESS]
 	};
 }
