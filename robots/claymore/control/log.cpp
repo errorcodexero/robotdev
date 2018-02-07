@@ -319,7 +319,7 @@ void visit(Func f,Lights::Status_detail const& a){
 }
 
 template<typename Func>
-void visit(Func f,Intake_actuator::Status_detail const& a){
+void visit(Func f,Intake_grabber::Status_detail const& a){
 	f.terminal(a);
 }
 

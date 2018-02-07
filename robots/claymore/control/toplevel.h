@@ -6,7 +6,7 @@
 #include "drivebase.h"
 #include "gear_shifter.h"
 #include "intake_belts.h"
-#include "intake_actuator.h"
+#include "intake_grabber.h"
 #include "nop.h"
 #include "lifter.h"
 #include "lights.h"
@@ -16,7 +16,7 @@
 	X(Drivebase,drive,)\
 	X(Gear_shifter,gear_shifter,Gear_shifter::Goal::LOW)\
 	X(Intake_belts,intake_belts,Intake_belts::Goal::OFF)\
-	X(Intake_actuator,intake_actuator,Intake_actuator::Goal::OPEN)\
+	X(Intake_grabber,intake_grabber,Intake_grabber::Goal::OPEN)\
 	X(Lifter,lifter,Lifter::Goal::stop())\
 	X(Lights,lights,)
 	

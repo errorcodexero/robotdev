@@ -100,10 +100,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		return Intake_belts::Goal::OFF;
 	}();
 	
-	goals.intake_actuator = [&]{
-		if(info.panel.open) return Intake_actuator::Goal::OPEN;
-		if(info.panel.close) return Intake_actuator::Goal::CLOSE;
-		return Intake_actuator::Goal::X;
+	goals.intake_grabber = [&]{
+		if(info.panel.open) return Intake_grabber::Goal::OPEN;
+		if(info.panel.close) return Intake_grabber::Goal::CLOSE;
+		return Intake_grabber::Goal::X;
 	}();
 
 	goals.lifter = [&]{
