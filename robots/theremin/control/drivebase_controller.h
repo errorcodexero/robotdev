@@ -9,53 +9,132 @@
 class DrivebaseController {
 public:
 
-	DrivebaseController();
+    DrivebaseController();
 
-	void setParams(paramsInput*);
+    void setParams(paramsInput*);
 
-	void initDistance(double, double);
-	void initAngle(double);
+    void initDistance(double, double);
+    void initAngle(double);
 
-	void update(double dl, double dr, double angle, double dt, double time,
-				double &out_l, double &out_r, bool &out_zero_yaw);
+    void update(double dl, double dr, double angle, double dt, double time,
+		double &out_l, double &out_r);
 
-	void idle(double dl, double dr, double angle, double dt, double time);
+    void idle(double dl, double dr, double angle, double dt, double time);
 
-	bool done();
+    bool done();
 	
 private:
-	enum class Mode {
-		IDLE,
-		DISTANCE,
-		ANGLE
-	};
-	Mode mode;
+    enum class Mode {
+	IDLE,
+	DISTANCE,
+	ANGLE
+    };
 
-	bool zero_yaw;
+    //
+    // The current mode of the drivebase.  Either trying to acheive a distance, or an
+    // angle, or IDLE mode.  In IDLE mode the drivebase motors are controlled by the
+    // drivebase.cpp code.
+    //
+    Mode mMode;
 
-	double target, target_correction_angle;
-	double distance_threshold, angle_threshold, angle_v_threshold;
-	PIDCtrl straightness_pid, dist_pid, angle_pid;
-	
-	double last_angle;
+    //
+    // The target distance or angle, depending on the mode of the drivebase_controller
+    //
+    double mTarget ;
 
-	std::list<double> distance_history;
-	size_t n_samples;
-	bool reset_pid;
-	double pid_reset_threshold;
+    //
+    // The starting angle, that we are trying to maintain, while driving straight
+    //
+    double mTargetCorrectionAngle;
 
-	paramsInput* mInput_params;
+    //
+    // The threshold for declaring a distance target met.
+    //
+    double mDistanceThreshold;
 
-	double mLastVoltage ;
-	double mMaxChange ;
+    //
+    // The threshold for declaring an angle target met
+    //
+    double mAngleThreshold ;
 
-	double mLeftStart ;
-	double mRightStart ;
+    //
+    // The velocity threshold for declaring an angle target met.  The rotational
+    // velocity of the robot must be below this value to consider the angle target
+    // met.
+    //
+    double mAngleVThreshold;
 
-	bwgnet::UdpBroadcastSender mSender ;
+    //
+    // The PID controller for adjusting to the left and right motor to drive straight
+    //
+    PIDCtrl mStraightnessPid ;
 
-	bool mDataDumpMode ;
-	double mDataDumpStartTime ;
+    //
+    // The PID controller for driving a given distance
+    //
+    PIDCtrl mDistPid ;
+
+    //
+    // The PID controller for rotating to a given distance
+    //
+    PIDCtrl mAnglePid;
+
+    //
+    // The angle of the robot during the last robot loop.  Used to calculate
+    // the angular velocity of the robot
+    //
+    double mLastAngle;
+
+    //
+    // The distance travelled by the robot for the last N robot loops.  This
+    // is used to determine if the robot is stalled
+    //
+    std::list<double> mDistanceHistory;
+
+    //
+    // The number of samples to keep to determine if the robot is stalled
+    //
+    size_t mNsamples;
+
+    //
+    // If true, ther PID controller for distance has been reset from the long distance
+    // PID constants, to the local PID constants
+    //
+    bool mResetPid;
+
+    //
+    // The threshold below which, the drivebase is considered stalled and the
+    // PID constants are reset to the local PID constants
+    //
+    double mPidResetThreshold;
+
+    //
+    // The input paramsters object.  Used to get all tunable parameters from a
+    // file.
+    //
+    paramsInput* mInputParams;
+
+    //
+    // The last voltage applied to the motors, used to ensure we dont ramp the
+    // voltage to the motors any faster than mMaxChange.
+    //
+    double mLastVoltage ;
+
+    //
+    // The maximum voltage change per second allowed on the motors
+    //
+    double mMaxChange ;
+
+    //
+    // If true continue to dump data while in the IDLE mode, used to detect drift
+    //
+    bool mDataDumpMode ;
+
+    //
+    // The start time for dumping data in IDLE mode, allows us to limit the IDLE data
+    // dump to a five second time period
+    //
+    double mDataDumpStartTime ;
 };
 
 #endif
