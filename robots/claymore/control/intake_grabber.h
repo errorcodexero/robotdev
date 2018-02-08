@@ -7,29 +7,51 @@
 #include "nop.h"
 
 struct Intake_grabber{
-	#define INTAKE_GRABBER_GOALS(X) X(CLOSE) X(OPEN) X(X)
-	enum class Goal{
-		#define X(NAME) NAME,
-		INTAKE_GRABBER_GOALS(X)
-		#undef X
+	struct Goal{
+		public:
+		#define INTAKE_GRABBER_GOAL_MODES X(GO_TO_ANGLE) X(OPEN) X(CLOSE) X(STOP)
+		enum class Mode{
+			#define X(MODE) MODE,
+			INTAKE_GRABBER_GOAL_MODES
+			#undef X
+		};
+		
+		private:
+		Goal();
+		Mode mode_;
+		double target_;
+		double tolerance_;
+		
+		public:
+		Mode mode()const;
+		double target()const;
+		double tolerance()const;
+
+		static Goal go_to_angle(double,double);
+		static Goal open();
+		static Goal close();
+		static Goal stop();
 	};
 
-	#define INTAKE_GRABBER_OUTPUTS(X) X(CLOSE) X(OPEN)
-	enum class Output{
-		#define X(NAME) NAME,
-		INTAKE_GRABBER_OUTPUTS(X)
-		#undef X
-	};
+	using Output = double;
 	
 	struct Input{
-		bool enabled;
+		int ticks_l;
+		int ticks_r;
+		
 		Input();
-		Input(bool);
+		Input(int,int);
 	};
 
-	enum class Status_detail{CLOSED,CLOSING,OPENING,OPEN};
+	struct Status_detail{
+		double angle_l;
+		double angle_r;
+		
+		Status_detail();
+		Status_detail(double,double);
+	};
 	
-	typedef Status_detail Status;
+	using Status = Status_detail;
 	
 	struct Input_reader{
 		Input operator()(Robot_inputs const&)const;
@@ -43,7 +65,6 @@ struct Intake_grabber{
 
 	struct Estimator{
 		Status_detail last;
-		Countdown_timer state_timer;		
 
 		void update(Time,Input,Output);
 		Status_detail get()const;
@@ -62,7 +83,6 @@ std::set<Intake_grabber::Status_detail> examples(Intake_grabber::Status_detail*)
 
 std::ostream& operator<<(std::ostream&,Intake_grabber::Goal);
 std::ostream& operator<<(std::ostream&,Intake_grabber::Input);
-std::ostream& operator<<(std::ostream&,Intake_grabber::Output);
 std::ostream& operator<<(std::ostream&,Intake_grabber::Status_detail);
 std::ostream& operator<<(std::ostream&,Intake_grabber const&);
 
