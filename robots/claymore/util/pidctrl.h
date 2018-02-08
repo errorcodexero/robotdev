@@ -13,7 +13,7 @@ public:
 	/// \param floor the lowest possible value for the output
 	/// \param ceil the highest possible value for the output
 	/// \param integralCeil the largest magnitude for the stored integral sum
-	PIDCtrl(double p, double i, double d, double f, double floor, double ceil, double integralCeil);
+	PIDCtrl(double p, double i, double d, double f, double floor, double ceil, double integralCeil, bool isangle = false);
 
 	
 	/// \brief Initialize the PID controller with a new set of constants
@@ -24,7 +24,8 @@ public:
 	/// \param floor the lowest possible value for the output
 	/// \param ceil the highest possible value for the output
 	/// \param integralCeil the largest magnitude for the stored integral sum
-	void Init(double p, double i, double d, double f, double floor, double ceil, double integralCeil);
+	/// \param isangle if true the values are angles that wrap at +/- 180
+	void Init(double p, double i, double d, double f, double floor, double ceil, double integralCeil, bool isangle = false);
 
 	/// \brief Return the output given a target, the current value, and the time that has passed
 	/// \param target the target value we are trying to reach
@@ -33,17 +34,19 @@ public:
 	double getOutput(double target, double current, double timeDifference);
 
 private:
+	double calcError(double target, double current) ;
+
+private:
 	struct PIDConstants
 	{
 		double p, i, d, f;
 		double floor, ceil;
 		double integralCeil;
 	} PIDConsts;
-	
+
+	bool mIsAngle ;
 	double target ;
 	double current ;
 	double timeDifference;
 	double integral;
-	
-
 };

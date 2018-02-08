@@ -5,13 +5,13 @@ PIDCtrl::PIDCtrl():PIDCtrl(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 {
 }
 
-PIDCtrl::PIDCtrl(double p, double i, double d, double f, double floor, double ceil, double integralCeil)
+PIDCtrl::PIDCtrl(double p, double i, double d, double f, double floor, double ceil, double integralCeil, bool isAngle)
 {
 	Init(p, i, d, f, floor, ceil, integralCeil);
 	current = 0;
 }
 
-void PIDCtrl::Init(double p, double i, double d, double f, double floor, double ceil, double integralCeil)
+void PIDCtrl::Init(double p, double i, double d, double f, double floor, double ceil, double integralCeil, bool isangle)
 {
 	PIDConsts.p = p;
 	PIDConsts.i = i;
@@ -20,12 +20,13 @@ void PIDCtrl::Init(double p, double i, double d, double f, double floor, double 
 	PIDConsts.floor = floor;
 	PIDConsts.ceil = ceil;
 	PIDConsts.integralCeil = integralCeil;
+	mIsAngle = isangle ;
 	integral = 0;
 }
 
 double PIDCtrl::getOutput(double target, double current, double timeDifference)
 {
-	double error = target - current;
+	double error = calcError(target, current) ;
 	double pOut = PIDConsts.p*error;
 	double derivative = (current - this->current) / timeDifference;
 	double dOut = PIDConsts.d*derivative;
@@ -40,13 +41,16 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 	double iOut = PIDConsts.i * integral;
 	
 	double output = pOut + iOut + dOut;
-	
+
+#ifdef PRINT_PID_INTERNALS
 	std::cout << "integral " << integral ;
 	std::cout << ", pOut " << pOut ;
 	std::cout << ", iOut " << iOut ;
 	std::cout << ", dOut " << dOut ;
+	std::cout << ", error " << error;
+	std::cout << ", derivative " << derivative;
 	std::cout << std::endl ;
-
+#endif
 	
 	if (output <= PIDConsts.floor)
 		output = PIDConsts.floor;
@@ -55,4 +59,19 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 		output = PIDConsts.ceil;
 	
 	return output;
+}
+
+double PIDCtrl::calcError(double target, double current)
+{
+	double error = target - current ;
+	if (mIsAngle)
+	{
+		while (error > 180)
+			error -= 360 ;
+
+		while (error < -180)
+			error += 360 ;
+	}
+
+	return error ;
 }
