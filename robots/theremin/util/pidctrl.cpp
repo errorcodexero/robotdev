@@ -41,7 +41,8 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 	double iOut = PIDConsts.i * integral;
 	
 	double output = pOut + iOut + dOut;
-	
+
+#ifdef PRINT_PID_INTERNALS
 	std::cout << "integral " << integral ;
 	std::cout << ", pOut " << pOut ;
 	std::cout << ", iOut " << iOut ;
@@ -49,7 +50,7 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 	std::cout << ", error " << error;
 	std::cout << ", derivative " << derivative;
 	std::cout << std::endl ;
-
+#endif
 	
 	if (output <= PIDConsts.floor)
 		output = PIDConsts.floor;

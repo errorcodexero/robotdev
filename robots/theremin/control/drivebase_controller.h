@@ -9,6 +9,7 @@
 class DrivebaseController {
 public:
 
+	/// \brief create the drive base controller object
     DrivebaseController();
 
 	/// \brief set the parameters object
@@ -158,6 +159,22 @@ private:
     // dump to a five second time period
     //
     double mDataDumpStartTime ;
+
+	//
+	// The number of cycles to skip before processing the target distance or angle
+	//
+	int mCycleInterval ;
+
+	//
+	// The current cycle number for the drivebase
+	//
+	int mCurrentCycle ;
+
+	//
+	// The previous voltage for the motors
+	//
+	double mLastLeftVoltage ;
+	double mLastRightVoltage ;
 };
 
 #endif
