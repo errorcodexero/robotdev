@@ -11,23 +11,46 @@ public:
 
     DrivebaseController();
 
-    void setParams(paramsInput*);
+	/// \brief set the parameters object
+	/// This object is used to lookup parameters read from the parameters file
+	/// \param pi_p pointer to the parameter input reader
+    void setParams(paramsInput *pi_p);
 
-    void initDistance(double, double);
-    void initAngle(double);
+	/// \brief initialize the drive controller to drive a fixed distance value
+	/// \param dist the absolute distance to drive to
+	/// \param angle the angle to maintain while driving
+    void initDistance(double dist, double angle);
 
-    void update(double dl, double dr, double angle, double dt, double time,
-		double &out_l, double &out_r);
+	/// \brief rotate to the given angle
+	/// \param angle the angle to rotate to
+    void initAngle(double angle);
 
+	/// \brief update the left and right motor values to acheive the desired goal
+	/// \param dl the distance traveled by the left wheel
+	/// \param dr the distance traveled by the right wheel
+	/// \param angle the current angle of the robot
+	/// \param dt the time elapsed since the last time update was called
+	/// \param time the absolute time value
+	/// \param out_l return value for the left motor voltage
+	/// \param out_r return value for the right motor voltage
+    void update(double dl, double dr, double angle, double dt, double time, double &out_l, double &out_r);
+
+	/// \brief called when the drivebase is idle
+	/// \param dl the distance traveled by the left wheel
+	/// \param dr the distance traveled by the right wheel
+	/// \param angle the current angle of the robot
+	/// \param dt the time elapsed since the last time update was called
+	/// \param time the absolute time value
     void idle(double dl, double dr, double angle, double dt, double time);
 
+	/// \brief returns true when the robot has reached its distance or angle goal
     bool done();
 	
 private:
     enum class Mode {
-	IDLE,
-	DISTANCE,
-	ANGLE
+		IDLE,
+		DISTANCE,
+		ANGLE
     };
 
     //
