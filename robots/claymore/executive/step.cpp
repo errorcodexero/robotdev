@@ -275,7 +275,7 @@ Toplevel::Goal Navx_drive_straight::run(Run_info info){
 Toplevel::Goal Navx_drive_straight::run(Run_info info, Toplevel::Goal goals){
 	if(!init) {
 		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-		Drivebase::drivebase_controller.initDistance(avg_status + target_distance);
+		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle);
 		init = true;
 	}
 	goals.drive = Drivebase::Goal::drive_straight();

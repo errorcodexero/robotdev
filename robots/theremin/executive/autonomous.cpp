@@ -52,7 +52,12 @@ Executive get_auto_mode(Next_mode_info info){
 		Executive{Teleop()}
 	}};
 	
-	Executive rotate_test{Chain{
+	Executive rotate90_test{Chain{
+		Step{Navx_rotate{90.0}},
+		Executive{Teleop()}
+	}};
+	
+	Executive rotaten90_test{Chain{
 		Step{Navx_rotate{90.0}},
 		Executive{Teleop()}
 	}};
@@ -83,6 +88,17 @@ Executive get_auto_mode(Next_mode_info info){
 		Executive{Teleop()}
 	}};
 
+	Executive rotate_test{Chain{
+		vector<Step>{
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{90.0}},
+			Step{Wait{2.0}},
+		},
+		Executive{Teleop()}
+	}};
+	
+
 	Executive opposite_switch{Chain{
 		vector<Step>{
 			Step{Navx_drive_straight{52.0}},
@@ -103,7 +119,7 @@ Executive get_auto_mode(Next_mode_info info){
 		Executive{Teleop()}
 	}};
 
-	return spin_test;
+	return rotate_test ;
 
 	/*
 	

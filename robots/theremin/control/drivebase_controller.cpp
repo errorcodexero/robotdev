@@ -35,13 +35,14 @@ void DrivebaseController::setParams(paramsInput* input_params) {
     mPidResetThreshold = mInputParams->getValue("drivebase:distance:reset:threshold", .1);
 }
 
-void DrivebaseController::initDistance(double distance, double angle) {
+void DrivebaseController::initDistance(double distance, double angle, double time) {
 
     mMode = Mode::DISTANCE;
     mTarget = distance;
     mTargetCorrectionAngle = angle;
     mResetPid = false;
     mDistanceHistory.clear();
+	mTargetStartTime = time ;
 
 	mCurrentCycle = 0 ;
 	mLastLeftVoltage = 0.0 ;
@@ -71,9 +72,10 @@ void DrivebaseController::initDistance(double distance, double angle) {
     logger.endMessage();
 }
 
-void DrivebaseController::initAngle(double angle) {
+void DrivebaseController::initAngle(double angle, double time) {
     mMode = Mode::ANGLE;
     mTarget = angle;
+	mTargetStartTime = time ;
 	
 	mCurrentCycle = 0 ;
 	mLastLeftVoltage = 0.0 ;
@@ -84,13 +86,15 @@ void DrivebaseController::initAngle(double angle) {
     double ad = mInputParams->getValue("drivebase:angle:d", 0.0);
     double af = mInputParams->getValue("drivebase:angle:f", 0.0);
     double aimax = mInputParams->getValue("drivebase:angle:imax", 0.0);
-
-    mAnglePid.Init(ap, ai, ad, af, -0.6, 0.6, aimax, false);
+	double minvolts = mInputParams->getValue("drivebase:angle:minv", -0.3) ;
+	double maxvolts = mInputParams->getValue("drivebase:angle:maxv", 0.3) ;
+    mAnglePid.Init(ap, ai, ad, af, minvolts, maxvolts, aimax, false);
 
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug);
     logger << "initAngle, angle = " << angle;
     logger << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << aimax;
+	logger << ", minv " << minvolts << ", maxv " << maxvolts ;
     logger.endMessage();
 }
 
@@ -173,8 +177,11 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			logger << ", offset " << offset;
 			logger << ", l " << out_l;
 			logger << ", r " << out_r;
-			if (mMode == Mode::IDLE)
-				logger << ", REACHED";
+			if (mMode == Mode::IDLE) {
+				logger << ", Success " ;
+				logger << (time - mTargetStartTime) ;
+				logger << " seconds" ;
+			}
 			logger.endMessage();
 
 
@@ -199,8 +206,11 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			logger << ", base " << base;
 			logger << ", l " << out_l;
 			logger << ", r " << out_r;
-			if (mMode == Mode::IDLE)
-				logger << ", REACHED";
+			if (mMode == Mode::IDLE) {
+				logger << ", Success " ;
+				logger << (time - mTargetStartTime) ;
+				logger << " seconds" ;
+			}
 			logger.endMessage();
 		}
 	

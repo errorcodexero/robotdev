@@ -15,7 +15,7 @@ COMMON=helpers
 #
 # Add flags to indicate the robot we are buiding
 #
-ADDCXXFLAGS = -DTHEREMIN -I../util -I../executive -I../input -I.
+ADDCXXFLAGS = -DTHEREMIN -I../util -I../executive -I../input -I. -DLIMIT_VOLTAGE_CHANGE
 
 #
 # define the source code files

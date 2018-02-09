@@ -43,7 +43,7 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 	double output = pOut + iOut + dOut;
 
 #ifdef PRINT_PID_INTERNALS
-	std::cout << "integral " << integral ;
+	std::cout << "   PIDCTRL sum " << integral ;
 	std::cout << ", pOut " << pOut ;
 	std::cout << ", iOut " << iOut ;
 	std::cout << ", dOut " << dOut ;

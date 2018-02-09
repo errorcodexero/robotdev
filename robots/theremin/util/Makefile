@@ -15,6 +15,7 @@ COMMON=helpers
 #
 # Indicate the robot we are building
 #
+#ADDCXXFLAGS = -DTHEREMIN -DPRINT_PID_INTERNALS -I../control -I.
 ADDCXXFLAGS = -DTHEREMIN -I../control -I.
 
 #
