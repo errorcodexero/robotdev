@@ -54,19 +54,19 @@ struct Intake_grabber{
 	using Status = Status_detail;
 	
 	struct Input_reader{
-		Input operator()(Robot_inputs const&)const;
-		Robot_inputs operator()(Robot_inputs,Input)const;
+		Intake_grabber::Input operator()(Robot_inputs const&)const;
+		Robot_inputs operator()(Robot_inputs,Intake_grabber::Input)const;
 	};
 
 	struct Output_applicator{
-		Robot_outputs operator()(Robot_outputs,Output)const;
-		Output operator()(Robot_outputs const&)const;
+		Robot_outputs operator()(Robot_outputs,Intake_grabber::Output)const;
+		Intake_grabber::Output operator()(Robot_outputs const&)const;
 	};
 
 	struct Estimator{
 		Status_detail last;
 
-		void update(Time,Input,Output);
+		void update(Time,Intake_grabber::Input,Intake_grabber::Output);
 		Status_detail get()const;
 		Estimator();
 	};

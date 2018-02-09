@@ -1,12 +1,13 @@
 #include "intake_grabber.h"
+#include <cmath>
 
 using namespace std;
 
 #define INTAKE_L 2
 #define INTAKE_R 3
 
-#define ENCODER_L 1
-#define ENCODER_R 2
+#define L_ENCODER 0
+#define R_ENCODER 1
 
 #define MANUAL_INTAKE_GRABBER_POWER .60 //TODO tune
 #define AUTO_INTAKE_GRABBER_POWER .60 //TODO tune
@@ -87,7 +88,8 @@ std::set<Intake_grabber::Output> examples(Intake_grabber::Output*){
 
 std::set<Intake_grabber::Input> examples(Intake_grabber::Input*){
 	return {
-		{0,0}
+		{0,0},
+		{1,1}
 	};
 }
 
@@ -175,12 +177,15 @@ bool operator!=(Intake_grabber a, Intake_grabber b){
 #undef CMP
 
 Intake_grabber::Input Intake_grabber::Input_reader::operator()(Robot_inputs const& r) const{
-	return {r.digital_io.encoder[ENCODER_L],r.digital_io.encoder[ENCODER_R]};
+	return {
+		r.digital_io.encoder[L_ENCODER] ? *r.digital_io.encoder[L_ENCODER] : 10000,
+		r.digital_io.encoder[R_ENCODER] ? *r.digital_io.encoder[R_ENCODER] : 10000
+	};
 }
 
 Robot_inputs Intake_grabber::Input_reader::operator()(Robot_inputs r, Intake_grabber::Input in) const{
-	r.digital_io.encoder[ENCODER_L] = in.ticks_l;
-	r.digital_io.encoder[ENCODER_R] = in.ticks_r;
+	r.digital_io.encoder[L_ENCODER] = in.ticks_l;
+	r.digital_io.encoder[R_ENCODER] = in.ticks_r;
 	return r;
 }
 
@@ -203,10 +208,6 @@ Intake_grabber::Status Intake_grabber::Estimator::get()const{
 }
 
 Intake_grabber::Output control(Intake_grabber::Status status_detail,Intake_grabber::Goal goal){
-	Intake_grabber::Status s = status(status_detail);
-	if(ready(s, goal)){
-		return {0.0};
-	}
 	switch(goal.mode()){
 		case Intake_grabber::Goal::Mode::OPEN:
 			return {MANUAL_INTAKE_GRABBER_POWER};
@@ -231,7 +232,16 @@ Intake_grabber::Status status(Intake_grabber::Status s){
 }
 
 bool ready(Intake_grabber::Status status,Intake_grabber::Goal goal){
-	return true;//TODO
+	switch(goal.mode()){
+		case Intake_grabber::Goal::Mode::OPEN:
+		case Intake_grabber::Goal::Mode::CLOSE:
+		case Intake_grabber::Goal::Mode::STOP:
+			return true;
+		case Intake_grabber::Goal::Mode::GO_TO_ANGLE:
+			return fabs(goal.target() - status.angle_l) < 1;//TODO
+		default:
+			nyi
+	}
 }
 
 #ifdef INTAKE_GRABBER_TEST
