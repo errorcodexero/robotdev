@@ -101,9 +101,9 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}();
 	
 	goals.intake_grabber = [&]{
-		if(info.panel.open) return Intake_grabber::Goal::OPEN;
-		if(info.panel.close) return Intake_grabber::Goal::CLOSE;
-		return Intake_grabber::Goal::X;
+		if(info.panel.open) return Intake_grabber::Goal::open();
+		if(info.panel.close) return Intake_grabber::Goal::close();
+		return Intake_grabber::Goal::stop();
 	}();
 
 	goals.lifter = [&]{

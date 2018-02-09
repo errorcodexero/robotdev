@@ -3,11 +3,9 @@
 
 using namespace std;
 
-#define INTAKE_L 2
-#define INTAKE_R 3
+#define INTAKE_ADDRESS 2
 
-#define L_ENCODER 0
-#define R_ENCODER 1
+#define ENCODER_ADDRESS 0
 
 #define MANUAL_INTAKE_GRABBER_POWER .60 //TODO tune
 #define AUTO_INTAKE_GRABBER_POWER .60 //TODO tune
@@ -70,11 +68,11 @@ Intake_grabber::Goal Intake_grabber::Goal::go_to_angle(double target, double tol
 	return a;
 }
 
-Intake_grabber::Input::Input(int l, int r):ticks_l(l),ticks_r(r){}
-Intake_grabber::Input::Input():Input(0,0){}
+Intake_grabber::Input::Input(int t):ticks(t){}
+Intake_grabber::Input::Input():Input(0){}
 
-Intake_grabber::Status_detail::Status_detail(double l,double r):angle_l(l),angle_r(r){}
-Intake_grabber::Status_detail::Status_detail():Status_detail(0.0,0.0){}
+Intake_grabber::Status_detail::Status_detail(double a):angle(a){}
+Intake_grabber::Status_detail::Status_detail():Status_detail(0.0){}
 
 Intake_grabber::Estimator::Estimator():last(){}
 
@@ -88,27 +86,25 @@ std::set<Intake_grabber::Output> examples(Intake_grabber::Output*){
 
 std::set<Intake_grabber::Input> examples(Intake_grabber::Input*){
 	return {
-		{0,0},
-		{1,1}
+		{0},
+		{1}
 	};
 }
 
 std::ostream& operator<<(std::ostream& o,Intake_grabber::Input a){
 	o<<"(";
-	o<<"ticks_l:"<<a.ticks_l;
-	o<<" ticks_r:"<<a.ticks_r;
+	o<<"ticks:"<<a.ticks;
 	o<<")";
 	return o;
 }
 
 std::set<Intake_grabber::Status_detail> examples(Intake_grabber::Status_detail*){
-	return {{0.0,0.0}};
+	return {{0.0}};
 }
 
 std::ostream& operator<<(std::ostream& o,Intake_grabber::Status_detail a){
 	o<<"(";
-	o<<"angle_l:"<<a.angle_l;
-	o<<" angle_r:"<<a.angle_r;
+	o<<"angle:"<<a.angle;
 	o<<")";
 	return o;
 }
@@ -117,11 +113,17 @@ std::ostream& operator<<(std::ostream& o,Intake_grabber::Status_detail a){
 	if(a.VAR < b.VAR) return true; \
 	if(b.VAR < a.VAR) return false; 
 
-	
 bool operator<(Intake_grabber::Status_detail a,Intake_grabber::Status_detail b){
-	CMP(angle_l)
-	CMP(angle_r)
+	CMP(angle)
 	return false;
+}
+
+bool operator==(Intake_grabber::Status_detail a,Intake_grabber::Status_detail b){
+	return a.angle == b.angle;
+}
+
+bool operator!=(Intake_grabber::Status_detail a, Intake_grabber::Status_detail b){
+	return !(a==b);
 }
 
 bool operator<(Intake_grabber::Goal a,Intake_grabber::Goal b){
@@ -136,18 +138,14 @@ bool operator<(Intake_grabber::Goal a,Intake_grabber::Goal b){
 std::ostream& operator<<(std::ostream& o,Intake_grabber const&){
 	return o<<"Intake_grabber()";
 }
-bool operator==(Intake_grabber::Status_detail a,Intake_grabber::Status_detail b){
-	return a.angle_l == b.angle_l && a.angle_r == b.angle_r;
-}
 
 bool operator<(Intake_grabber::Input a,Intake_grabber::Input b){
-	CMP(ticks_l)
-	CMP(ticks_r)
+	CMP(ticks)
 	return false;
 }
 
 bool operator==(Intake_grabber::Input a,Intake_grabber::Input b){
-	return a.ticks_l == b.ticks_l && a.ticks_r == b.ticks_r;
+	return a.ticks == b.ticks;
 }
 
 bool operator!=(Intake_grabber::Input a, Intake_grabber::Input b){
@@ -178,25 +176,22 @@ bool operator!=(Intake_grabber a, Intake_grabber b){
 
 Intake_grabber::Input Intake_grabber::Input_reader::operator()(Robot_inputs const& r) const{
 	return {
-		r.digital_io.encoder[L_ENCODER] ? *r.digital_io.encoder[L_ENCODER] : 10000,
-		r.digital_io.encoder[R_ENCODER] ? *r.digital_io.encoder[R_ENCODER] : 10000
+		r.digital_io.encoder[ENCODER_ADDRESS] ? *r.digital_io.encoder[ENCODER_ADDRESS] : 10000,
 	};
 }
 
 Robot_inputs Intake_grabber::Input_reader::operator()(Robot_inputs r, Intake_grabber::Input in) const{
-	r.digital_io.encoder[L_ENCODER] = in.ticks_l;
-	r.digital_io.encoder[R_ENCODER] = in.ticks_r;
+	r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
 	return r;
 }
 
 Robot_outputs Intake_grabber::Output_applicator::operator()(Robot_outputs r, Intake_grabber::Output o)const{
-	r.pwm[INTAKE_L] = o;
-	r.pwm[INTAKE_R] = o;
+	r.pwm[INTAKE_ADDRESS] = o;
 	return r;
 }
 
 Intake_grabber::Output Intake_grabber::Output_applicator::operator()(Robot_outputs const& r)const{
-	return r.pwm[INTAKE_L];
+	return r.pwm[INTAKE_ADDRESS];
 }
 
 void Intake_grabber::Estimator::update(Time time,Intake_grabber::Input input,Intake_grabber::Output output){
@@ -218,7 +213,7 @@ Intake_grabber::Output control(Intake_grabber::Status status_detail,Intake_grabb
 		case Intake_grabber::Goal::Mode::GO_TO_ANGLE:
 			{
 				//TODO implement full PID control
-				double error = goal.target() - status_detail.angle_l;
+				double error = goal.target() - status_detail.angle;
 				const double P = 0.5;
 				return clip(AUTO_INTAKE_GRABBER_POWER * error * P);
 			}
@@ -238,7 +233,7 @@ bool ready(Intake_grabber::Status status,Intake_grabber::Goal goal){
 		case Intake_grabber::Goal::Mode::STOP:
 			return true;
 		case Intake_grabber::Goal::Mode::GO_TO_ANGLE:
-			return fabs(goal.target() - status.angle_l) < 1;//TODO
+			return fabs(goal.target() - status.angle) < 1;//TODO
 		default:
 			nyi
 	}

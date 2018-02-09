@@ -16,7 +16,7 @@
 	X(Drivebase,drive,)\
 	X(Gear_shifter,gear_shifter,Gear_shifter::Goal::LOW)\
 	X(Intake_belts,intake_belts,Intake_belts::Goal::OFF)\
-	X(Intake_grabber,intake_grabber,Intake_grabber::Goal::OPEN)\
+	X(Intake_grabber,intake_grabber,Intake_grabber::Goal::stop())\
 	X(Lifter,lifter,Lifter::Goal::stop())\
 	X(Lights,lights,)
 	

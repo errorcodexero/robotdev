@@ -6,31 +6,48 @@
 struct Lifter{
 	struct Goal{
 		public:
-		#define LIFTER_GOAL_MODES X(GO_TO_HEIGHT) X(UP) X(DOWN) X(STOP)
+		#define LIFTER_GEARING_MODES X(LOW) X(HIGH)
+		enum class Gearing{
+			#define X(MODE) MODE,
+			LIFTER_GEARING_MODES
+			#undef X
+		};
+		
+		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(UP) X(DOWN) X(STOP)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
 			#undef X
-		};//TODO: add modes for swtich, scale, etc
+		};//TODO: add modes for switch, scale, etc?
 		
 		private:
 		Goal();
 		Mode mode_;
+		Gearing gearing_;
 		double target_;
 		double tolerance_;
 		
 		public:
 		Mode mode()const;
+		Gearing gearing()const;
 		double target()const;
 		double tolerance()const;
 
+		static Goal climb();
 		static Goal go_to_height(double,double);
 		static Goal up();
 		static Goal down();
 		static Goal stop();
 	};
 
-	using Output = double;//pwm value, positive is up
+	struct Output{
+		double power;//pwm value, positive is up
+		using Gearing = Lifter::Goal::Gearing;
+		Gearing gearing;
+		
+		Output();
+		Output(double,Gearing);
+	};
 
 	struct Input{
 		bool bottom_hall_effect;
@@ -45,13 +62,14 @@ struct Lifter{
 	struct Status_detail{
 		bool at_bottom;
 		bool at_top;
+		bool at_climbed_height;
 		double height;
 	
 		Status_detail();
-		Status_detail(bool,bool,double);
+		Status_detail(bool,bool,bool,double);
 	};
 
-	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR)
+	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR) X(CLIMBED)
 	enum class Status{
 		#define X(MODE) MODE,
 		LIFTER_STATUSES
@@ -92,6 +110,11 @@ bool operator==(Lifter::Status_detail const&, Lifter::Status_detail const&);
 bool operator!=(Lifter::Status_detail const&, Lifter::Status_detail const&);
 bool operator<(Lifter::Status_detail const&,Lifter::Status_detail const&);
 std::ostream& operator<<(std::ostream&,Lifter::Status_detail const&);
+
+bool operator==(Lifter::Output const&,Lifter::Output const&);
+bool operator!=(Lifter::Output const&,Lifter::Output const&);
+bool operator<(Lifter::Output const&,Lifter::Output const&);
+std::ostream& operator<<(std::ostream&, Lifter::Output const&);
 
 std::ostream& operator<<(std::ostream&, Lifter::Status const&);
 

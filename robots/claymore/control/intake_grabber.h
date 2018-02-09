@@ -36,19 +36,17 @@ struct Intake_grabber{
 	using Output = double;
 	
 	struct Input{
-		int ticks_l;
-		int ticks_r;
+		int ticks;
 		
 		Input();
-		Input(int,int);
+		Input(int);
 	};
 
 	struct Status_detail{
-		double angle_l;
-		double angle_r;
+		double angle;
 		
 		Status_detail();
-		Status_detail(double,double);
+		Status_detail(double);
 	};
 	
 	using Status = Status_detail;
@@ -85,6 +83,12 @@ std::ostream& operator<<(std::ostream&,Intake_grabber::Goal);
 std::ostream& operator<<(std::ostream&,Intake_grabber::Input);
 std::ostream& operator<<(std::ostream&,Intake_grabber::Status_detail);
 std::ostream& operator<<(std::ostream&,Intake_grabber const&);
+
+bool operator<(Intake_grabber::Goal,Intake_grabber::Goal);
+
+bool operator<(Intake_grabber::Status_detail,Intake_grabber::Status_detail);
+bool operator==(Intake_grabber::Status_detail,Intake_grabber::Status_detail);
+bool operator!=(Intake_grabber::Status_detail,Intake_grabber::Status_detail);
 
 bool operator<(Intake_grabber::Input,Intake_grabber::Input);
 bool operator==(Intake_grabber::Input,Intake_grabber::Input);

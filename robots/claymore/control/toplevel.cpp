@@ -101,8 +101,8 @@ Toplevel::Output::Output():
 	drive(0.0,0.0,false,Talon_srx_output::Speed_mode::NO_OVERRIDE),
 	gear_shifter(Gear_shifter::Output::LOW),
 	intake_belts(Intake_belts::Output::OFF),
-	intake_grabber(Intake_grabber::Output::OPEN),
-	lifter(0.0),
+	intake_grabber(0.0),
+	lifter({0.0,Lifter::Output::Gearing::HIGH}),
 	lights()
 {}
 
