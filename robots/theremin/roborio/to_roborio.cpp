@@ -172,7 +172,9 @@ public:
 		}
 
 		if (!input_params.readFile("/home/lvuser/params.txt"))
-			std::cout << "DID NOT READ THE PARAMS FILE" << std::endl ;
+			std::cout << "Parameters file read failed" << std::endl ;
+		else
+			std::cout << "Parmeters file read sucessfully" << std::endl ;
 		
 		Drivebase::drivebase_controller.setParams(&input_params);
 
@@ -450,8 +452,6 @@ class Robot_adapter: public frc::SampleRobot{
 	
 	void Autonomous(void)
 	{
-		int cnt = 0 ;
-		
 		while(IsAutonomous() && IsEnabled()){
 			//might need a loop here
 
@@ -469,13 +469,6 @@ class Robot_adapter: public frc::SampleRobot{
 				std::cout << "Loop exceeded loop time, actual " << elapsed * 1000 << " msec" << std::endl ;
 				std::cout << std::endl << std::endl ;
 			}
-
-			cnt++ ;
-			if (cnt == 60) {
-				std::cout << "heartbeat - 2" << std::endl ;
-				cnt = 0 ;
-			}
-
 		}
 	}
 

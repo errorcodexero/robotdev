@@ -20,11 +20,13 @@ public:
 	/// \brief initialize the drive controller to drive a fixed distance value
 	/// \param dist the absolute distance to drive to
 	/// \param angle the angle to maintain while driving
-    void initDistance(double dist, double angle);
+	/// \param the time when this was requested
+    void initDistance(double dist, double angle, double time);
 
 	/// \brief rotate to the given angle
 	/// \param angle the angle to rotate to
-    void initAngle(double angle);
+	/// \param the time when this was requested
+    void initAngle(double angle, double time);
 
 	/// \brief update the left and right motor values to acheive the desired goal
 	/// \param dl the distance traveled by the left wheel
@@ -65,6 +67,11 @@ private:
     // The target distance or angle, depending on the mode of the drivebase_controller
     //
     double mTarget ;
+
+	//
+	// The time we started our search for the target distance or angle
+	//
+	double mTargetStartTime ;
 
     //
     // The starting angle, that we are trying to maintain, while driving straight
