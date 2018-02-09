@@ -248,7 +248,6 @@ void Lifter::Estimator::update(Time const&, Lifter::Input const& in, Lifter::Out
 			bottom_ticks = in.ticks;
 		}
 	}
-	cout<<"\n"<<last<<"\n";	
 	const double MAX_LIFTER_HEIGHT = 100;//inches //TODO arbitrary
 	const double INCHES_PER_TICK = MAX_LIFTER_HEIGHT / (top_ticks - bottom_ticks); 
 
