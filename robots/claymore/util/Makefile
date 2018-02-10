@@ -72,6 +72,7 @@ TESTS = \
 	stall_monitor\
 	string_utils\
 	type\
+	side_decoder.cpp\
 	util
 endif
 

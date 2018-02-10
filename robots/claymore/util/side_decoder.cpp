@@ -1,5 +1,5 @@
 #include "side_decoder.h"
-
+#include <cassert>
 
 sideDecoder::sideDecoder(const std::string& sides) {
 	sideString = sides;
@@ -29,3 +29,17 @@ sideDecoder::side sideDecoder::farSwitch() {
 		return side::RIGHT;
 	}
 }
+
+
+#ifdef SIDE_DECODER_TEST
+
+int main() {
+	std::string sides = "RLL";
+	sideDecoder decoder(sides);
+	assert(decoder.nearSwitch() == sideDecoder::side::RIGHT);
+	assert(decoder.scale() == sideDecoder::side::LEFT);
+	assert(decoder.farSwitch() == sideDecoder::side::LEFT);
+	return 0;
+}
+
+#endif
