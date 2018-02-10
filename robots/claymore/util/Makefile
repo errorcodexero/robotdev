@@ -50,6 +50,7 @@ SRC = \
 	string_utils.cpp\
 	type.cpp\
 	util.cpp\
+	side_decoder.cpp\
 	visitable.cpp
 
 ifndef TESTS
