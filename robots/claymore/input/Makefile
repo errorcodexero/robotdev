@@ -7,6 +7,8 @@
 #
 TARGET=input.a
 
+COMMON=helpers
+
 #
 # define the source code files
 #

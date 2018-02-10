@@ -118,12 +118,7 @@ void visit(Func f,Talon_srx_input const& a){
 }
 
 template<typename Func>
-void visit(Func f,Talon_srx_output::Control_mode const& a){
-	f.terminal(a);
-}
-
-template<typename Func>
-void visit(Func f,Talon_srx_output::Speed_mode const& a){
+void visit(Func f,Talon_srx_output::Mode const& a){
 	f.terminal(a);
 }
 

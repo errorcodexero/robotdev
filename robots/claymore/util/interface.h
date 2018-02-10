@@ -113,7 +113,6 @@ bool operator!=(Talon_srx_input,Talon_srx_input);
 		X(double,compass_heading,GetCompassHeading) \
 		X(bool,calibrating,IsCalibrating) \
 		X(bool,connected,IsConnected) \
-		X(double,uint8_t_count,GetUint8_TCount) \
 		X(double,update_count,GetUpdateCount) \
 		X(long,last_sensor_timestamp,GetLastSensorTimestamp) \
 		X(double,world_linear_accel_x,GetWorldLinearAccelX) \

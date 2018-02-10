@@ -47,7 +47,7 @@ ostream& operator<<(ostream& o,I2C_control a){
 }
 
 void I2C_control::write(I2C_io const& a)const{
-	byte to_send[a.data.size()];
+	uint8_t to_send[a.data.size()];
 	for(unsigned i = 0; i < a.data.size(); i++){
 		to_send[i] = a.data[i];
 	}
@@ -56,7 +56,7 @@ void I2C_control::write(I2C_io const& a)const{
 }
 
 void I2C_control::read(I2C_io const& a)const{
-	byte* to_read = new byte[a.data.size()];
+	uint8_t * to_read = new uint8_t[a.data.size()];
 	i2c -> Transaction(NULL, 0, to_read, a.data.size());
 }
 

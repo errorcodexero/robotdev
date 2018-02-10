@@ -137,7 +137,56 @@ std::ostream& operator<<(std::ostream& o, Talon_srx_output a){
 }
 
 IMPL_STRUCT(Navx_input::Navx_input,NAVX_INPUT_ITEMS)
-Navx_input::Navx_input():Navx_input(0.0,0.0,0.0,0.0,false,false,0.0,0.0,0,0.0,0.0,0.0,false,false,0.0,0.0,false,0.0,false,false,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,"",0,0,false){}
+Navx_input::Navx_input():Navx_input(
+	0.0,		// pitch
+	0.0,		// roll
+	0.0,		// yaw
+	0.0,		// compass_heading
+	false,		// calibrating
+	false,		// connected
+	0.0,		// update_count
+	0,			// last_sensor_timestamp
+	0.0,		// world_linear_accel_x
+	0.0,		// world_linear_accel_y
+	0.0,		// world_linear_accel_z
+	false,		// moving
+	false,		// rotating
+	0.0,
+	0.0,
+	false,
+	0.0,
+	false,
+	false,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	0.0,
+	"",
+	0,
+	0,
+	false)
+{
+}
 
 std::ostream& operator<<(std::ostream& o,Navx_input a){
 	o<<"(";
@@ -196,6 +245,38 @@ bool operator<(Navx_output a,Navx_output b){
 	#undef X
 	return false;
 }
+
+
+I2C_io::I2C_io(vector<uint8_t> a):data(a){}
+I2C_io::I2C_io():I2C_io(vector<uint8_t>{}){}
+
+std::ostream& operator<<(std::ostream& o,I2C_io a){
+    o<<"(";
+    o<<"data:"<<a.data;
+    o<<")";
+    return o;
+}
+
+bool operator==(I2C_io a,I2C_io b){
+    #define X(NAME) if(a.NAME != b.NAME) return false;
+    X(data)
+    #undef X
+    return true;
+}
+
+bool operator!=(I2C_io a,I2C_io b){
+    return !(a==b);
+}
+
+bool operator<(I2C_io a,I2C_io b){
+    #define X(NAME) \
+        if(a.NAME<b.NAME) return true; \
+        if(b.NAME<a.NAME) return false;
+    X(data)
+    #undef X
+    return false;
+}
+
 
 IMPL_STRUCT(Pump_input::Pump_input,PUMP_INPUT_ITEMS)
 Pump_input::Pump_input():Pump_input(false,false){}

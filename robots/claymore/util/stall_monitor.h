@@ -2,7 +2,9 @@
 #define STALL_MONITOR_H
 
 #include "interface.h"
+#include "util.h"
 #include "persistent_tracker.h"
+
 
 class Stall_monitor{
 	static const int KEEP = 5;
