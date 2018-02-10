@@ -30,7 +30,7 @@ CTRE=true
 #
 # Add flags to indicate the robot we are building
 #
-ADDCXXFLAGS = -DCLAYMORE -I../util -I.
+ADDCXXFLAGS = -DCLAYMORE -I../util -I. -I../control
 
 
 #

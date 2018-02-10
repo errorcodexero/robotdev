@@ -90,12 +90,16 @@ ifndef TEAM_NUMBER
 TEAM_NUMBER=1425
 endif
 
+ifndef DEPLOYHOST
+DEPLOYHOST=roboRIO-$(TEAM_NUMBER)-FRC.local
+endif
+
 deploy:: all
-	@ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
+	@ssh lvuser@$(DEPLOYHOST) "rm -f /home/lvuser/FRCUserProgram"
 	@for file in $(REALTARGET) ; do \
-		scp $$file admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser ; \
+		scp $$file lvuser@$(DEPLOYHOST):/home/lvuser ; \
 	done
-	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
+	ssh lvuser@$(DEPLOYHOST) ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
 
 
 deployall:: all

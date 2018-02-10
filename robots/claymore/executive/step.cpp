@@ -1,7 +1,7 @@
 #include "step.h"
 #include<queue>
 #include "executive.h"
-#include "../util/util.h"
+#include "util.h"
 #include <cmath>
 //#include "teleop.h"
 
@@ -25,6 +25,30 @@ Toplevel::Goal Step::run(Run_info info, Toplevel::Goal goals){
 }
 Toplevel::Goal Step::run(Run_info info){
 	return impl->run(info,{});
+}
+
+Spin::Spin(double l, double r):left(l),right(r){}
+
+Toplevel::Goal Spin::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Spin::run(Run_info info,Toplevel::Goal goals){
+	goals.drive = Drivebase::Goal::absolute(left, right);
+	return goals;
+}
+
+Step::Status Spin::done(Next_mode_info info){
+	return Step::Status::UNFINISHED;
+	//return ready(info.status.drive, Drivebase::Goal::absolute(left, right)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
+}
+
+std::unique_ptr<Step_impl> Spin::clone()const{
+	return unique_ptr<Step_impl>(new Spin(*this));
+}
+
+bool Spin::operator==(Spin const& b)const{
+	return left == b.left && right == b.right;
 }
 
 const double RIGHT_SPEED_CORRECTION = /*-0.045; */ 0.0;// 0 is for comp bot. //left and right sides of the practice robot drive at different speeds given the same power, adjust this to make the robot drive straight
@@ -92,7 +116,7 @@ Toplevel::Goal Navx_rotate::run(Run_info info){
 
 Toplevel::Goal Navx_rotate::run(Run_info info,Toplevel::Goal goals){
 	if(!init) {
-		Drivebase::drivebase_controller.initAngle(target_angle);
+		Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now) ;
 		init = true;
 	}
 	goals.drive = Drivebase::Goal::rotate();
@@ -275,7 +299,7 @@ Toplevel::Goal Navx_drive_straight::run(Run_info info){
 Toplevel::Goal Navx_drive_straight::run(Run_info info, Toplevel::Goal goals){
 	if(!init) {
 		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle);
+		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle, info.in.now);
 		init = true;
 	}
 	goals.drive = Drivebase::Goal::drive_straight();

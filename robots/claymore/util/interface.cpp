@@ -105,42 +105,34 @@ std::ostream& operator<<(std::ostream& o, Talon_srx_input in){
 }
 
 IMPL_STRUCT(Talon_srx_output::Talon_srx_output,TALON_SRX_OUTPUT_ITEMS)
-Talon_srx_output::Talon_srx_output():Talon_srx_output(PID_values(),0,0,Talon_srx_output::Control_mode::PERCENT,Talon_srx_output::Speed_mode::NO_OVERRIDE,false){}
+Talon_srx_output::Talon_srx_output():Talon_srx_output(PID_values(),0,0,Talon_srx_output::Mode::PERCENT,false){}
 
 Talon_srx_output Talon_srx_output::percent(double a){
 	Talon_srx_output r;
-	r.control_mode=Control_mode::PERCENT;
+	r.mode=Mode::PERCENT;
 	r.power_level=a;
 	return r;
 }
 
 Talon_srx_output Talon_srx_output::closed_loop(double a){
 	Talon_srx_output r;
-	r.control_mode=Control_mode::SPEED;
+	r.mode=Mode::SPEED;
 	r.speed=a;
 	return r;
 }
 
-std::ostream& operator<<(std::ostream& o, Talon_srx_output::Control_mode a){
-	#define X(NAME) if(a == Talon_srx_output::Control_mode::NAME) return o<<""#NAME;
-	TALON_SRX_OUTPUT_CONTROL_MODES
-	#undef X
-	nyi
-}
-
-std::ostream& operator<<(std::ostream& o, Talon_srx_output::Speed_mode a){
-	#define X(NAME) if(a == Talon_srx_output::Speed_mode::NAME) return o<<""#NAME;
-	TALON_SRX_OUTPUT_SPEED_MODES
+std::ostream& operator<<(std::ostream& o, Talon_srx_output::Mode a){
+	#define X(NAME) if(a == Talon_srx_output::Mode::NAME) return o<<""#NAME;
+	TALON_SRX_OUTPUT_MODES
 	#undef X
 	nyi
 }
 
 std::ostream& operator<<(std::ostream& o, Talon_srx_output a){
-	o<<"(control_mode: "<<a.control_mode;
-	o<<" speed_mode: "<<a.speed_mode;
+	o<<"(mode: "<<a.mode;
 	o<<" pid:"<<a.pid;
-	if(a.control_mode==Talon_srx_output::Control_mode::PERCENT) o<<" power_level:"<<a.power_level;
-	else if(a.control_mode==Talon_srx_output::Control_mode::SPEED) o<<" speed:"<<a.speed;
+	if(a.mode==Talon_srx_output::Mode::PERCENT) o<<" power_level:"<<a.power_level;
+	else if(a.mode==Talon_srx_output::Mode::SPEED) o<<" speed:"<<a.speed;
 	return o<<")";
 }
 
@@ -204,38 +196,6 @@ bool operator<(Navx_output a,Navx_output b){
 	#undef X
 	return false;
 }
-
-I2C_io::I2C_io(vector<byte> a):data(a){}
-I2C_io::I2C_io():I2C_io(vector<byte>{}){}
-
-std::ostream& operator<<(std::ostream& o,I2C_io a){
-	o<<"(";
-	o<<"data:"<<a.data;
-	o<<")";
-	return o;
-}
-
-bool operator==(I2C_io a,I2C_io b){
-	#define X(NAME) if(a.NAME != b.NAME) return false;
-	X(data)
-	#undef X
-	return true;
-}
-
-bool operator!=(I2C_io a,I2C_io b){
-	return !(a==b);
-}
-
-bool operator<(I2C_io a,I2C_io b){
-	#define X(NAME) \
-		if(a.NAME<b.NAME) return true; \
-		if(b.NAME<a.NAME) return false;
-	X(data)
-	#undef X
-	return false;
-}
-
-
 
 IMPL_STRUCT(Pump_input::Pump_input,PUMP_INPUT_ITEMS)
 Pump_input::Pump_input():Pump_input(false,false){}
@@ -434,7 +394,7 @@ bool operator<(Digital_out a, Digital_out b){
 	return 0;
 }
 
-Robot_outputs::Robot_outputs():pump(),i2c(){
+Robot_outputs::Robot_outputs():pump(){
 	for(unsigned i=0;i<PWMS;i++){
 		pwm[i]=0;
 	}
@@ -472,7 +432,7 @@ bool operator==(Robot_outputs a,Robot_outputs b){
 			return 0;
 		}
 	}
-	return a.pump==b.pump && a.i2c==b.i2c && a.navx==b.navx && a.driver_station==b.driver_station;
+	return a.pump==b.pump && a.navx==b.navx && a.driver_station==b.driver_station;
 }
 
 bool operator!=(Robot_outputs a,Robot_outputs b){
@@ -510,9 +470,6 @@ bool operator<(Robot_outputs a,Robot_outputs b){
 	if(a.navx < b.navx) return 1;
 	if(b.navx < a.navx) return 0;
 
-	if(a.i2c < b.i2c) return 1;
-	if(b.i2c < a.i2c) return 0;
-	
 	return a.pump<b.pump;
 }
 
@@ -542,7 +499,6 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	}
 	o<<" navx:"<<a.navx;
 	o<<" pump:"<<a.pump;
-	o<<" i2c:"<<a.i2c;
 	o<<" driver_station_output:"<<a.driver_station;
 	return o<<")";
 }
@@ -653,15 +609,16 @@ ostream& operator<<(ostream& o,Robot_mode m){
 }
 
 ostream& operator<<(ostream& o,Alliance const& a){
-	#define X(value) case Alliance::value: o<<#value; break;
+	o<<"Alliance(";
+	#define X(value) case value: o<<#value; break;
 	switch(a){
-		X(RED)
-		X(BLUE)
-		X(INVALID)
+		X(Alliance::RED)
+		X(Alliance::BLUE)
+		X(Alliance::INVALID)
 		default: assert(0);
 	}
 	#undef X
-	return o;
+	return o<<")";
 }
 
 Digital_in random(Digital_in* d){

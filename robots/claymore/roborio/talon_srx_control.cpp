@@ -1,6 +1,6 @@
 #include "talon_srx_control.h"
 #include "ctre/phoenix/MotorControl/SensorCollection.h"
-#include "../util/util.h"
+#include "util.h"
 #include <cmath>
 #include <cassert>
 
@@ -21,6 +21,10 @@ void Talon_srx_control::init(int CANBusAddress){
 	talon = new ctre::phoenix::motorcontrol::can::WPI_TalonSRX(CANBusAddress);
 	assert(talon);
 	talon->SetSafetyEnabled(false);
+}
+
+void Talon_srx_control::set_inverted(){
+	talon->SetInverted(true);
 }
 
 ostream& operator<<(ostream& o,Talon_srx_control::Mode a){
@@ -59,8 +63,8 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 		}
 		return;
 	}
-	switch(a.control_mode){
-		case Talon_srx_output::Control_mode::PERCENT:
+	switch(a.mode){
+		case Talon_srx_output::Mode::PERCENT:
 			/* TODO:  was causing problems so it has been removed -- should we fix it and use it?
 			if(!approx_equal(a.power_level,clip(a.power_level))){//make sure we're not setting the power to over 100% or under -100%
 				cout<<endl<<"Power level set too high: "<<a.power_level<<endl;
@@ -78,7 +82,7 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 				out.power_level=a.power_level;
 			}
 			break;
-		case Talon_srx_output::Control_mode::SPEED:
+		case Talon_srx_output::Mode::SPEED:
 			if(mode!=Talon_srx_control::Mode::SPEED || !pid_approx(out.pid,a.pid)){
 				talon->Config_kP(0, a.pid.p, 0);
 				talon->Config_kI(0, a.pid.i, 0);
@@ -98,33 +102,20 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 		default:
 			nyi
 	}
-	switch(a.speed_mode){
-		case Talon_srx_output::Speed_mode::BRAKE:
-			talon->SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
-			break;
-		case Talon_srx_output::Speed_mode::COAST:
-			talon->SetNeutralMode(ctre::phoenix::motorcontrol::Coast);
-			break;
-		case Talon_srx_output::Speed_mode::NO_OVERRIDE:
-			talon->SetNeutralMode(ctre::phoenix::motorcontrol::EEPROMSetting);
-			break;
-		default:
-			nyi
-	}
 }
 
 Talon_srx_input Talon_srx_control::get(){
 	if(since_query > QUERY_LIM){
-		in.current=talon->GetBusVoltage(); //TODO: look into this again
-		in.velocity=talon->GetSelectedSensorVelocity(0);
-		ctre::phoenix::motorcontrol::SensorCollection collection = talon->GetSensorCollection();
-		in.a=collection.GetPinStateQuadA();
-		in.b=collection.GetPinStateQuadB();
-		in.encoder_position=collection.GetQuadraturePosition();
-		ctre::phoenix::motorcontrol::Faults faults;
-		talon->GetFaults(faults);
-		in.fwd_limit_switch=faults.ForwardLimitSwitch;
-		in.rev_limit_switch=faults.ReverseLimitSwitch;
+		// in.current=talon->GetBusVoltage(); //TODO: look into this again
+		// in.velocity=talon->GetSelectedSensorVelocity(0);
+		// ctre::phoenix::motorcontrol::SensorCollection collection = talon->GetSensorCollection();
+		// in.a=collection.GetPinStateQuadA();
+		// in.b=collection.GetPinStateQuadB();
+		// in.encoder_position=collection.GetQuadraturePosition();
+		// ctre::phoenix::motorcontrol::Faults faults;
+		// talon->GetFaults(faults);
+		// in.fwd_limit_switch=faults.ForwardLimitSwitch;
+		// in.rev_limit_switch=faults.ReverseLimitSwitch;
 		since_query=0;
 	}
 	since_query++;
@@ -140,6 +131,10 @@ void Talon_srx_controls::init(){
 		}
 		init_=true;
 	}
+}
+
+void Talon_srx_controls::set_inverted(int id){
+	talons[id].set_inverted();
 }
 
 void Talon_srx_controls::set(Checked_array<Talon_srx_output,Robot_outputs::TALON_SRX_OUTPUTS> const& a,Checked_array<bool,Robot_outputs::TALON_SRX_OUTPUTS> const& enable){

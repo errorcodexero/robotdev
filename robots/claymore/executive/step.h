@@ -2,9 +2,9 @@
 #define STEP_H
 
 #include "executive.h"
-#include "../util/motion_profile.h"
-#include "../util/settable_constant.h"
-#include "../util/robot_constants.h"
+#include "motion_profile.h"
+#include "settable_constant.h"
+#include "robot_constants.h"
 
 struct Step_impl;
 
@@ -176,6 +176,17 @@ class Combo: public Step_impl_inner<Combo>{//Runs two steps at the same time
 	void display(std::ostream& o)const;
 	std::unique_ptr<Step_impl> clone()const;
 	bool operator==(Combo const&)const;
+};
+
+struct Spin: Step_impl_inner<Spin>{
+	double left, right;
+
+	explicit Spin(double, double);
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Spin const&)const;
 };
 
 struct Rotate: Step_impl_inner<Rotate>{//orients the robot to a certain angle relative to its starting orientation

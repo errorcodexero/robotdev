@@ -3,20 +3,15 @@
 
 #include <iosfwd>
 #include <bitset>
+#include <set>
 #include "driver_station_interface.h"
 #include "maybe_inline.h"
-#include "util.h"
 #include "checked_array.h"
-
-#ifdef NEED_PIXY_CAM
-#include "../input/pixycam/PixyUART.h"
-#endif
-
+#include "params_parser.h"
 #include "quick.h"
 
 typedef double Time;//Seconds
 typedef bool Solenoid_output;
-using byte = unsigned char;
 
 using Pwm_output = double;
 
@@ -73,33 +68,21 @@ struct Talon_srx_input{
 };
 
 struct Talon_srx_output{
-	#define TALON_SRX_OUTPUT_CONTROL_MODES \
+	#define TALON_SRX_OUTPUT_MODES \
 		X(PERCENT) \
 		X(SPEED)
-
-	enum class Control_mode{
+	
+	enum class Mode{
 		#define X(NAME) NAME,
-		TALON_SRX_OUTPUT_CONTROL_MODES
+		TALON_SRX_OUTPUT_MODES
 		#undef X
 	};//percent means percent voltage on the in terminals on the talon
-
-	#define TALON_SRX_OUTPUT_SPEED_MODES \
-		X(BRAKE) \
-		X(COAST) \
-		X(NO_OVERRIDE) \
-	
-	enum class Speed_mode{
-		#define X(NAME) NAME,
-		TALON_SRX_OUTPUT_SPEED_MODES
-		#undef X
-	};
 
 	#define TALON_SRX_OUTPUT_ITEMS(X) \
 		X(PID_values,pid) \
 		X(double,power_level) \
 		X(double,speed) \
-		X(Control_mode,control_mode) \
-		X(Speed_mode,speed_mode) 
+		X(Mode,mode) 
 
 	STRUCT_MEMBERS(TALON_SRX_OUTPUT_ITEMS)
 	
@@ -111,8 +94,7 @@ struct Talon_srx_output{
 	static Talon_srx_output closed_loop(double);
 };
 
-std::ostream& operator<<(std::ostream&,Talon_srx_output::Speed_mode);
-std::ostream& operator<<(std::ostream&,Talon_srx_output::Control_mode);
+std::ostream& operator<<(std::ostream&,Talon_srx_output::Mode);
 std::ostream& operator<<(std::ostream&,Talon_srx_output);
 bool operator==(Talon_srx_output,Talon_srx_output);
 bool operator!=(Talon_srx_output,Talon_srx_output);
@@ -202,17 +184,6 @@ bool operator==(Navx_output,Navx_output);
 bool operator!=(Navx_output,Navx_output);
 bool operator<(Navx_output,Navx_output);
 
-struct I2C_io{
-	std::vector<byte> data;
-	I2C_io();
-	I2C_io(std::vector<byte>);
-};
-
-std::ostream& operator<<(std::ostream&,I2C_io);
-bool operator==(I2C_io,I2C_io);
-bool operator!=(I2C_io,I2C_io);
-bool operator<(I2C_io,I2C_io);
-
 struct Pump_input{
 	#define PUMP_INPUT_ITEMS(X) \
 		X(bool,pressure_switch_triggered)
@@ -258,7 +229,7 @@ bool operator<(Digital_out,Digital_out);
 bool operator==(Digital_out,Digital_out);
 bool operator!=(Digital_out,Digital_out);
 
-static const unsigned TALON_SRXS = 6;
+static const unsigned TALON_SRXS = 4;
 
 struct Robot_outputs{
 	static const unsigned PWMS=10;//Number of ports on the digital sidecar; there can be up to 20 using the MXP on the roboRIO which we don't do
@@ -284,8 +255,6 @@ struct Robot_outputs{
 	Driver_station_output driver_station;
 	
 	Pump_output pump;
-	
-	I2C_io i2c;
 
 	Robot_outputs();
 };
@@ -304,18 +273,19 @@ std::ostream& operator<<(std::ostream& o,Robot_outputs);
 #define JOY_BUTTONS 13
 
 struct Joystick_data{
-	Joystick_data(){
-		for(unsigned i = 0 ; i < JOY_AXES ; i++)
-			axis[i] = 0 ;
-	
-		pov = -1 ;
-	}
+  Joystick_data()
+  {
+    for(unsigned i = 0 ; i < JOY_AXES ; i++)
+      axis[i] = 0 ;
 
-	Checked_array<double,JOY_AXES> axis;
-	std::bitset<JOY_BUTTONS> button;
-	int pov;
-
-	static Maybe<Joystick_data> parse(std::string const&);
+    pov = -1 ;
+  }
+  
+  Checked_array<double,JOY_AXES> axis;
+  std::bitset<JOY_BUTTONS> button;
+  int pov;
+  
+  static Maybe<Joystick_data> parse(std::string const&);
 };
 bool operator<(Joystick_data,Joystick_data);
 bool operator==(Joystick_data,Joystick_data);
@@ -334,7 +304,7 @@ bool operator==(Robot_mode,Robot_mode);
 bool operator!=(Robot_mode,Robot_mode);
 std::ostream& operator<<(std::ostream&,Robot_mode);
 
-enum class Alliance{RED = 0,BLUE = 1,INVALID = 2};
+enum class Alliance{RED,BLUE,INVALID};
 std::ostream& operator<<(std::ostream&,Alliance const&);
 
 struct DS_info{
@@ -373,20 +343,6 @@ bool operator==(Digital_inputs const&,Digital_inputs const&);
 bool operator!=(Digital_inputs const&,Digital_inputs const&);
 std::ostream& operator<<(std::ostream&,Digital_inputs const&);
 
-#ifdef NEED_PIXY_CAM
-struct Camera{
-	static const double FOV; //degrees
-	bool enabled;
-	std::vector<Pixy::Block> blocks;
-	
-	Camera();
-};
-bool operator<(Camera const&,Camera const&);
-bool operator==(Camera const&,Camera const&);
-bool operator!=(Camera const&,Camera const&);
-std::ostream& operator<<(std::ostream&,Camera const&);
-#endif
-
 typedef float Volt;
 typedef double Rad; //radians, clockwise
 
@@ -415,10 +371,7 @@ struct Robot_inputs{
 	static const unsigned CURRENT=16;
 	Checked_array<double,CURRENT> current;
 	Pump_input pump;
-
-#ifdef NEED_PIXY_CAM
-	Camera camera;
-#endif
+	paramsInput* input_params;
 
 	Robot_inputs();
 };

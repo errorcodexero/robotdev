@@ -1,6 +1,6 @@
 #include "WPILib.h"
 #include "AHRS.h"
-#include "../control/main.h"
+#include "main.h"
 #include "dio_control.h"
 #include "talon_srx_control.h"
 #include "pump_control.h"
@@ -11,6 +11,9 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
+
+#include "params_parser.h"
+#include "message_logger.h"
 
 using namespace std;
 
@@ -130,9 +133,16 @@ class To_roborio
 	bool cam_data_recieved;
 #endif
 	std::ofstream null_stream;
+	paramsInput input_params;
 public:
-To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
+To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
+		messageLogger &logger = messageLogger::get();
+		logger.enable(messageLogger::messageType::error);
+		logger.enable(messageLogger::messageType::warning);
+		logger.enable(messageLogger::messageType::info);
+		logger.enable(messageLogger::messageType::debug);
+
 		power = new frc::PowerDistributionPanel();
 
 		for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
@@ -140,7 +150,17 @@ To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),i2c_control
 			if(!solenoid[i]) error_code|=8;
 		}
 		talon_srx_controls.init();
-		
+#ifdef THEREMIN
+		talon_srx_controls.set_inverted(2);
+		talon_srx_controls.set_inverted(3);
+
+#endif
+	
+#ifdef CLAYMORE
+		talon_srx_controls.set_inverted(0);
+		talon_srx_controls.set_inverted(1);
+		talon_srx_controls.set_inverted(2);
+#endif				
 		for(unsigned i=0;i<Robot_outputs::PWMS;i++){
 			pwm[i]=new frc::VictorSP(i);
 			if(!pwm[i]) error_code|=8;
@@ -155,6 +175,13 @@ To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),i2c_control
 			analog_in[i]=new frc::AnalogInput(i);
 			if(!analog_in[i]) error_code|=8;
 		}
+
+		if (!input_params.readFile("/home/lvuser/params.txt"))
+			std::cout << "Parameters file read failed" << std::endl ;
+		else
+			std::cout << "Parmeters file read sucessfully" << std::endl ;
+		
+		Drivebase::drivebase_controller.setParams(&input_params);
 
 		/*
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
@@ -245,6 +272,7 @@ To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),i2c_control
 		//error_code|=read_driver_station(r.driver_station);
 		r.current=read_currents();
 		r.navx=read_navx();
+		r.input_params = &input_params ;
 		return make_pair(r,error_code);
 	}
 	array<double,Robot_inputs::CURRENT> read_currents(){
@@ -320,44 +348,96 @@ To_roborio():error_code(0),navx_control(frc::SerialPort::Port::kUSB),i2c_control
 		i2c_control.write(out.i2c);	
 	
 		pump_control.set(out.pump);
+
+		navx_control.set(out.navx);	
+
 		return error_code;
 	}
 	
 
 	void run(Robot_inputs in){
 		//std::ostream print_stream=cout;//(in.ds_info.connected && (print_num%PRINT_SPEED)==0)?cout:null_stream;
+
+#ifdef PRINT_TIME
+		double start = frc::Timer::GetFPGATimestamp() ;
+#endif
+		
 		Robot_outputs out=main(in/*,print_stream*/);
-		#ifdef PRINT_OUTS
-		const int PRINT_SPEED=10;
-		static int print_num=0;
-		if(in.ds_info.connected && (print_num%PRINT_SPEED)==0){	
-			cout<<"in: "<<in<<"\n";
-			//cout<<"main: "<<main<<"\n";
-			cout<<"out: "<<out<<"\n";
-			/*if(camera.isNewData()) {
-				vector<Pixy::Block> blocks=camera.getBlocks();
-				cout<<"size: "<<blocks.size()<<" blocks: "<<blocks<<"\n";
-			}
-			else cout<<"No new data."<<in.now<<"\n";*/
-			//cout<<"cam_data_recieved: "<<cam_data_recieved<<"\n";
-			cout<<"CLEAR_SCREEN\n";
-		}
-		print_num++;
-		#endif
+		
+#ifdef PRINT_TIME
+		double elapsed = frc::Timer::GetFPGATimestamp() - start  ;
+		std::cout << "process control " << elapsed * 1000 << " msec" << std::endl ;
+		
+		start = frc::Timer::GetFPGATimestamp() ;
+#endif
+		
 		int x=set_outputs(out,in.robot_mode.enabled);
+		
+#ifdef PRINT_TIME
+		elapsed = frc::Timer::GetFPGATimestamp() - start ;
+		std::cout << "set output " << elapsed * 1000 << " msec" << std::endl ;
+#endif
+		
 		if(x) cout<<"x was:"<<x<<"\n";
 	}
 	
 	void run(Robot_mode mode){
+#ifdef PRINT_TIME
+		double start = frc::Timer::GetFPGATimestamp() ;
+		double elapsed , last ;
+#endif
+		
 		pair<Robot_inputs,int> in1=read(mode);
+		
+#ifdef PRINT_TIME
+		last = frc::Timer::GetFPGATimestamp() ;
+		elapsed = last - start ;
+		std::cout << "    read base inputs " << elapsed * 1000 << " msec" << std::endl ;
+		elapsed = last ;
+#endif
+		
 		Robot_inputs in=in1.first;
+
+		in.navx=read_navx();
+		
+#ifdef PRINT_TIME
+		last = frc::Timer::GetFPGATimestamp() ;
+		elapsed = last - elapsed ;
+		std::cout << "    navx " << elapsed * 1000 << " msec" << std::endl ;
+		elapsed = last ;
+#endif
+
 		error_code|=in1.second;
 		in.digital_io=digital_io.get();
+
+#ifdef PRINT_TIME
+		last = frc::Timer::GetFPGATimestamp() ;
+		elapsed = last - elapsed ;
+		std::cout << "    digital io inputs " << elapsed * 1000 << " msec" << std::endl ;
+		elapsed = last ;
+#endif		
+		
 		in.talon_srx=talon_srx_controls.get();
+
+#ifdef PRINT_TIME
+		last = frc::Timer::GetFPGATimestamp() ;
+		elapsed = last - elapsed ;
+		std::cout << "    talon srx inputs " << elapsed * 1000 << " msec" << std::endl ;
+		elapsed = last ;
+#endif
+		
 		in.pump=pump_control.get();
-		/*if(gyro){
-			in.orientation=gyro->GetAngle();
-		}*/
+		
+#ifdef PRINT_TIME
+		last = frc::Timer::GetFPGATimestamp() ;
+		elapsed = last - elapsed ;
+		std::cout << "    pump inputs " << elapsed * 1000 << " msec" << std::endl ;
+		elapsed = last ;
+		
+		elapsed = elapsed - start ;
+		std::cout << "read inputs " << elapsed * 1000 << " msec" << std::endl ;
+#endif
+		
 		run(in);
 
 		/*              
@@ -375,18 +455,29 @@ template<typename USER_CODE>
 class Robot_adapter: public frc::SampleRobot{
 	To_roborio<USER_CODE> u;
 
+	double looptime = 0.05 ;
+
 	void RobotInit(){}
 	
 	void Autonomous(void)
 	{
 		while(IsAutonomous() && IsEnabled()){
 			//might need a loop here
+
+			double start = frc::Timer::GetFPGATimestamp() ;
 			Robot_mode mode;
 			mode.autonomous=1;
 			mode.enabled=IsEnabled();
 			u.run(mode);
-			
-			frc::Wait(0.005);
+
+			double elapsed = frc::Timer::GetFPGATimestamp() - start ;
+			if (elapsed < looptime)
+				frc::Wait(looptime - elapsed) ;
+			else
+			{
+				std::cout << "Loop exceeded loop time, actual " << elapsed * 1000 << " msec" << std::endl ;
+				std::cout << std::endl << std::endl ;
+			}
 		}
 	}
 

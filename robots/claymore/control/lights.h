@@ -4,6 +4,7 @@
 #include <iostream>
 #include <set>
 #include "../util/interface.h"
+#include "../util/util.h"
 #include "nop.h"
 
 struct Lights{
@@ -48,10 +49,10 @@ struct Lights{
 
 	struct Output{ 
 		bool camera_light;
-		std::vector<byte> blinky_light_info;
+		std::vector<uint8_t> blinky_light_info;
 
 		Output();
-		Output(bool,std::vector<byte>);
+		Output(bool,std::vector<uint8_t>);
 	};
 	
 	struct Output_applicator{

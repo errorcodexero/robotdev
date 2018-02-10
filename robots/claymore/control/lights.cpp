@@ -10,7 +10,7 @@ using namespace std;
 Lights::Goal::Goal(Camera_light a,bool c,unsigned h):camera_light(a),climbing(c),lifter_height(h){}
 Lights::Goal::Goal():Lights::Goal(Camera_light::OFF,false,0){}
 
-Lights::Output::Output(bool c,vector<byte> b):camera_light(c),blinky_light_info(b){}
+Lights::Output::Output(bool c,vector<uint8_t> b):camera_light(c),blinky_light_info(b){}
 Lights::Output::Output():Output(false,{}){}
 
 Lights::Status_detail::Status_detail(unsigned h,bool c,bool m,bool e,Alliance a,Time t):lifter_height(h),climbing(c),autonomous(m),enabled(e),alliance(a),now(t){}
@@ -231,7 +231,7 @@ set<Lights::Output> examples(Lights::Output*){
 	for(bool c: bools){
 		for(Lights::Status_detail status: statuses){
 			for(Lights::Goal goal: goals){
-				s.insert({c,vector<byte>{goal.climbing, status.autonomous, status.enabled, (byte)static_cast<int>(status.alliance), (byte)goal.lifter_height}});
+				s.insert({c,vector<uint8_t>{goal.climbing, status.autonomous, status.enabled, (uint8_t)static_cast<int>(status.alliance), (uint8_t)goal.lifter_height}});
 			}
 		}
 	}
@@ -250,7 +250,7 @@ set<Lights::Goal> examples(Lights::Goal*){
 Lights::Output control(Lights::Status status, Lights::Goal goal){
 	Lights::Output out;
 	out.camera_light = goal.camera_light == Lights::Camera_light::ON;
-	out.blinky_light_info = {goal.climbing, status.autonomous, status.enabled, (byte)static_cast<int>(status.alliance), (byte)goal.lifter_height}; //encode_robot_status(status);
+	out.blinky_light_info = {goal.climbing, status.autonomous, status.enabled, (uint8_t)static_cast<int>(status.alliance), (uint8_t)goal.lifter_height}; //encode_robot_status(status);
 	return out;
 }
 

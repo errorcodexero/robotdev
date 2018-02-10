@@ -48,16 +48,78 @@ Executive get_auto_mode(Next_mode_info info){
 	}};
 
 	Executive drive_straight_test{Chain{
-		Step{Navx_drive_straight{100.0}},
+		Step{Navx_drive_straight{12.0}},
 		Executive{Teleop()}
 	}};
 	
-	Executive rotate_test{Chain{
+	Executive rotate90_test{Chain{
+		Step{Navx_rotate{90.0}},
+		Executive{Teleop()}
+	}};
+	
+	Executive rotaten90_test{Chain{
 		Step{Navx_rotate{90.0}},
 		Executive{Teleop()}
 	}};
 
-	return rotate_test;
+	Executive combo_test{Chain{
+		vector<Step>{
+			Step{Navx_drive_straight{120.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{2.0}},
+			Step{Navx_drive_straight{132.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{2.0}},
+			Step{Navx_drive_straight{120.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{2.0}},
+			Step{Navx_drive_straight{132.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{-90.0}}
+		},
+		Executive{Teleop()}
+	}};
+
+	Executive same_switch{Chain{
+		Step{Navx_drive_straight{128.0}},
+		Executive{Teleop()}
+	}};
+
+	Executive rotate_test{Chain{
+		vector<Step>{
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{2.0}},
+			Step{Navx_rotate{90.0}},
+			Step{Wait{2.0}},
+		},
+		Executive{Teleop()}
+	}};
+	
+
+	Executive opposite_switch{Chain{
+		vector<Step>{
+			Step{Navx_drive_straight{52.0}},
+			Step{Wait{1.0}},
+			Step{Navx_rotate{-90.0}},
+			Step{Wait{1.0}},
+			Step{Navx_drive_straight{100.0}},
+			Step{Wait{1.0}},
+			Step{Navx_rotate{90.0}},
+			Step{Wait{1.0}},
+			Step{Navx_drive_straight{56}}
+		},
+		Executive{Teleop()}
+	}};
+
+	Executive spin_test{Chain{
+		Step{Spin{0.2, -0.2}},
+		Executive{Teleop()}
+	}};
+
+	return rotate_test ;
 
 	/*
 	
