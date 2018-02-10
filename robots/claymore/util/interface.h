@@ -113,7 +113,7 @@ bool operator!=(Talon_srx_input,Talon_srx_input);
 		X(double,compass_heading,GetCompassHeading) \
 		X(bool,calibrating,IsCalibrating) \
 		X(bool,connected,IsConnected) \
-		X(double,byte_count,GetByteCount) \
+		X(double,uint8_t_count,GetUint8_TCount) \
 		X(double,update_count,GetUpdateCount) \
 		X(long,last_sensor_timestamp,GetLastSensorTimestamp) \
 		X(double,world_linear_accel_x,GetWorldLinearAccelX) \
@@ -183,6 +183,19 @@ std::ostream& operator<<(std::ostream&,Navx_output);
 bool operator==(Navx_output,Navx_output);
 bool operator!=(Navx_output,Navx_output);
 bool operator<(Navx_output,Navx_output);
+
+struct I2C_io{
+	std::vector<uint8_t> data;
+	I2C_io();
+	I2C_io(std::vector<uint8_t>);
+};
+
+std::ostream& operator<<(std::ostream&,I2C_io);
+bool operator==(I2C_io,I2C_io);
+bool operator!=(I2C_io,I2C_io);
+bool operator<(I2C_io,I2C_io);
+
+
 
 struct Pump_input{
 	#define PUMP_INPUT_ITEMS(X) \
@@ -255,6 +268,8 @@ struct Robot_outputs{
 	Driver_station_output driver_station;
 	
 	Pump_output pump;
+	
+	I2C_io i2c;
 
 	Robot_outputs();
 };
