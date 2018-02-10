@@ -46,11 +46,11 @@ SRC = \
 	settable_constant.cpp\
 	settable_toggle.cpp\
 	speed_tracker.cpp\
-	stall_monitor.cpp\
 	string_utils.cpp\
 	type.cpp\
 	util.cpp\
-	visitable.cpp
+	visitable.cpp\
+	stall_monitor.cpp
 
 ifndef TESTS
 TESTS = \
