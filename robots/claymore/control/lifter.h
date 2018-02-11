@@ -2,8 +2,11 @@
 #define LIFTER_H
 
 #include "../util/interface.h"
+#include "lifter_controller.h"
 
 struct Lifter{
+	static LifterController lifter_controller;
+
 	struct Goal{
 		public:
 		#define LIFTER_GEARING_MODES X(LOW) X(HIGH)
@@ -13,7 +16,7 @@ struct Lifter{
 			#undef X
 		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(UP) X(DOWN) X(STOP)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -26,15 +29,18 @@ struct Lifter{
 		Gearing gearing_;
 		double target_;
 		double tolerance_;
+		LifterController::Preset preset_target_;
 		
 		public:
 		Mode mode()const;
 		Gearing gearing()const;
 		double target()const;
 		double tolerance()const;
+		LifterController::Preset preset_target()const;
 
 		static Goal climb();
-		static Goal go_to_height(double,double);
+		static Goal go_to_height(double);
+		static Goal go_to_preset(LifterController::Preset);
 		static Goal up();
 		static Goal down();
 		static Goal stop();
@@ -64,6 +70,7 @@ struct Lifter{
 		bool at_top;
 		bool at_climbed_height;
 		double height;
+		double time, dt;
 	
 		Status_detail();
 		Status_detail(bool,bool,bool,double);
@@ -121,6 +128,8 @@ std::ostream& operator<<(std::ostream&, Lifter::Status const&);
 bool operator==(Lifter::Estimator const&, Lifter::Estimator const&);
 bool operator!=(Lifter::Estimator const&, Lifter::Estimator const&);
 
+bool operator==(Lifter::Goal const&, Lifter::Goal const&);
+bool operator!=(Lifter::Goal const&, Lifter::Goal const&);
 bool operator<(Lifter::Goal const&,Lifter::Goal const&);
 std::ostream& operator<<(std::ostream&,Lifter::Goal const&);
 

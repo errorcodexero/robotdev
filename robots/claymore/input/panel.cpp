@@ -10,14 +10,18 @@ using namespace std;
 const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 
 #define BUTTONS \
-	X(intake) \
-	X(eject) \
-	X(close) \
-	X(open) \
-	X(up) \
-	X(down) 
+	X(floor)\
+	X(exchange)\
+	X(switch_)\
+	X(scale)\
+	X(prep_climb)\
+	X(collect_closed)\
+	X(collect_open)\
+	X(eject)\
+	X(climb)
 
 #define THREE_POS_SWITCHES \
+	X(lifter)
 
 #define TEN_POS_SWITCHES \
 	X(auto_select)
@@ -36,6 +40,13 @@ Panel::Panel():
 	#undef X
 	auto_select(0)
 {}
+
+ostream& operator<<(ostream& o,Panel::Lifter a){
+	#define X(NAME) if(a==Panel::Lifter::NAME) return o<<""#NAME;
+	X(DOWN) X(OFF) X(UP)
+	#undef X
+	assert(0);
+}
 
 ostream& operator<<(ostream& o,Panel p){
 	o<<"Panel(";
@@ -143,12 +154,43 @@ Panel interpret_gamepad(Joystick_data d){
 	
 	//TODO: Add in all of the new controls
 	p.auto_select=0;
-	p.intake = d.button[Gamepad_button::A];
+
+	/*p.intake = d.button[Gamepad_button::A];
 	p.eject = d.button[Gamepad_button::Y];
 	p.close = d.button[Gamepad_button::X];
-	p.open = d.button[Gamepad_button::B];
-	p.up = d.button[Gamepad_button::RB];
-	p.down = d.button[Gamepad_button::LB];
+	p.open = d.button[Gamepad_button::B];*/
+
+	p.lifter = Panel::Lifter::OFF;
+	if(d.button[Gamepad_button::RB]) p.lifter = Panel::Lifter::UP;
+	if(d.button[Gamepad_button::LB]) p.lifter = Panel::Lifter::DOWN;
+
+	switch(pov_section(d.pov)){
+		case POV_section::CENTER:
+			break;
+		case POV_section::UP:
+			p.scale = true;
+			break;
+		case POV_section::UP_LEFT:
+			break;
+		case POV_section::LEFT:
+			p.exchange = true;
+			break;
+		case POV_section::DOWN_LEFT:
+			break;
+		case POV_section::DOWN:
+			p.floor = true;
+			break;
+		case POV_section::DOWN_RIGHT:
+			break;
+		case POV_section::RIGHT:
+			p.switch_=true;
+			break;
+		case POV_section::UP_RIGHT:
+			break;
+		default:
+			assert(0);
+	}	
+
 	return p;
 }
 
