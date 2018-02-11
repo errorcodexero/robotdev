@@ -48,13 +48,9 @@ public:
     /// \param dt the time since the last this this was called
     void idle(double height, double time, double dt);
 
-    //
-    // Matthew, Lets talk about what these do
-    //
-#ifdef NOTYET
-    void initOnChange(double height);
-    void initOnChange(Preset preset);
-#endif
+    /// \brief this method 
+    void updateHeightOnChange(double height, double time);
+    void updateHeightOnChange(Preset preset, double time);
 
     /// \brief returns true when the lifter has reached its desired height
     /// \returns true when the lifter has reached its desired height
@@ -81,9 +77,10 @@ private:
     //
     double mTarget;
 
-
-    // Lets talk about this - butch
-    // double mLastTarget;
+    //
+    // The last target value that was applied
+    //
+    double mLastTarget;
 
     //
     // The threshold we use to consider a height target met

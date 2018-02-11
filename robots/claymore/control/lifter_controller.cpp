@@ -96,18 +96,22 @@ void LifterController::idle(double height, double time, double dt) {
     }
 }
 
-#ifdef NOTYET
-void LifterController::initOnChange(double height) {
-    if(height != mLastTarget) {
-	moveToHeight(height);
+void LifterController::updateHeightOnChange(double height, double time) {
+    //
+    // Updated so that we do not compare two floating point
+    // number.  If a new height asked for is within the threshold
+    // we consider valid for reaching our target height we do
+    // not initialize for the new height
+    //
+    if (std::fabs(height - mLastTarget) > mHeightThreshold) {
+	moveToHeight(height, time);
 	mLastTarget = height;
     }
 }
 
-void LifterController::initOnChange(Preset preset) {
-    initOnChange(presetToHeight(preset));
+void LifterController::updateHeightOnChange(Preset preset, double time) {
+    updateHeightOnChange(presetToHeight(preset), time);
 }
-#endif
 
 bool LifterController::done() {
     return mMode == Mode::IDLE;
