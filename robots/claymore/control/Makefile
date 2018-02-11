@@ -29,6 +29,7 @@ SRC = \
 	intake_belts.cpp\
 	intake_grabber.cpp\
 	lifter.cpp\
+	lifter_controller.cpp\
 	lights.cpp\
 	log.cpp\
 	main.cpp\

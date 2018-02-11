@@ -43,7 +43,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():print_number(0){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),print_number(0){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	Toplevel::Goal goals;
@@ -97,7 +97,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		return Gear_shifter::Goal::AUTO;
 	}();
 
-	goals.intake_belts = [&]{
+	/*goals.intake_belts = [&]{
 		if(info.panel.intake) return Intake_belts::Goal::IN;
 		if(info.panel.eject) return Intake_belts::Goal::OUT;
 		return Intake_belts::Goal::OFF;
@@ -107,14 +107,17 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		if(info.panel.open) return Intake_grabber::Goal::open();
 		if(info.panel.close) return Intake_grabber::Goal::close();
 		return Intake_grabber::Goal::stop();
-	}();
+	}();*/
 
-	goals.lifter = [&]{
-		if(info.panel.up) return Lifter::Goal::up();
-		if(info.panel.down) return Lifter::Goal::down();
-		return Lifter::Goal::stop();
-	}();
-	
+	if(info.panel.floor) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
+	if(info.panel.exchange) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+	if(info.panel.switch_) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
+	if(info.panel.scale) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
+	if(info.panel.lifter == Panel::Lifter::UP) lifter_goal = Lifter::Goal::up();
+	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down();
+	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
+	goals.lifter = lifter_goal;
+
 	{
 		goals.lights.climbing = false;//TODO
 		goals.lights.lifter_height = (int)(info.status.lifter.height / 3);

@@ -23,6 +23,7 @@ struct Teleop : Executive_impl<Teleop> {
 	*/
 	#define TELEOP_ITEMS(X)\
 		X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges) \
+		X(Lifter::Goal,lifter_goal) \
 		X(int,print_number)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 

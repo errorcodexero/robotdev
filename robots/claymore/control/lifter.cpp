@@ -16,6 +16,8 @@ using namespace std;
 #define TOP_HALL_EFFECT_ADDRESS 8
 #define ENCODER_ADDRESS 4 //TODO
 
+LifterController Lifter::lifter_controller;
+
 int bottom_ticks = 0, top_ticks = 100;//arbitrary
 
 ostream& operator<<(ostream& o, Lifter::Goal::Gearing a){
@@ -48,6 +50,10 @@ Lifter::Goal::Gearing Lifter::Goal::gearing()const{
 	return gearing_;
 }
 
+LifterController::Preset Lifter::Goal::preset_target()const{
+	return preset_target_;
+}
+
 Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0){}
 
 Lifter::Goal Lifter::Goal::climb(){
@@ -78,12 +84,19 @@ Lifter::Goal Lifter::Goal::down(){
 	return a;
 }
 
-Lifter::Goal Lifter::Goal::go_to_height(double target, double tolerance){
+Lifter::Goal Lifter::Goal::go_to_height(double target){
 	Lifter::Goal a;
 	a.mode_ = Lifter::Goal::Mode::GO_TO_HEIGHT;
 	a.gearing_ = Lifter::Goal::Gearing::HIGH;
 	a.target_ = target;
-	a.tolerance_ = tolerance;
+	return a;
+}
+
+Lifter::Goal Lifter::Goal::go_to_preset(LifterController::Preset preset){
+	Lifter::Goal a;
+	a.mode_ = Lifter::Goal::Mode::GO_TO_PRESET;
+	a.gearing_ = Lifter::Goal::Gearing::HIGH;
+	a.preset_target_ = preset;
 	return a;
 }
 
@@ -153,6 +166,14 @@ bool operator==(Lifter::Estimator const& a, Lifter::Estimator const& b){
 }
 
 bool operator!=(Lifter::Estimator const& a, Lifter::Estimator const& b){
+	return !(a==b);
+}
+
+bool operator==(Lifter::Goal const& a, Lifter::Goal const& b){
+	return a.mode() == b.mode() && a.gearing() == b.gearing() && a.target() == b.target() && a.tolerance() == b.tolerance() && a.preset_target() == b.preset_target();
+}
+
+bool operator!=(Lifter::Goal const& a, Lifter::Goal const& b){
 	return !(a==b);
 }
 
@@ -237,7 +258,7 @@ Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
 	};
 }
 
-void Lifter::Estimator::update(Time const&, Lifter::Input const& in, Lifter::Output const&){
+void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const&){
 	last.at_bottom = in.bottom_hall_effect;
 	last.at_top = in.top_hall_effect;
 
@@ -253,6 +274,9 @@ void Lifter::Estimator::update(Time const&, Lifter::Input const& in, Lifter::Out
 	const double INCHES_PER_TICK = MAX_LIFTER_HEIGHT / (top_ticks - bottom_ticks); 
 
 	last.height = in.ticks*INCHES_PER_TICK;
+	
+	last.dt = last.time - now;
+	last.time = now;
 }
 
 Lifter::Status_detail Lifter::Estimator::get()const{
@@ -300,33 +324,42 @@ set<Lifter::Status> examples(Lifter::Status*){
 }
 
 set<Lifter::Goal> examples(Lifter::Goal*){
-	return {Lifter::Goal::climb(),Lifter::Goal::up(),Lifter::Goal::stop(),Lifter::Goal::down(),Lifter::Goal::go_to_height(0.0,0.0)};
+	return {Lifter::Goal::climb(),Lifter::Goal::up(),Lifter::Goal::stop(),Lifter::Goal::down(),Lifter::Goal::go_to_height(0.0)};
 }
 
-Lifter::Output control(Lifter::Status_detail const& status_detail,Lifter::Goal const& goal){
+Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal const& goal){
 	Lifter::Status s = status(status_detail);
 	if(ready(s, goal) || s == Lifter::Status::ERROR){
 		return {0.0, goal.gearing()};
 	}
+
+	Lifter::Output out = {0.0, goal.gearing()};
 	switch(goal.mode()){
 		case Lifter::Goal::Mode::CLIMB:
-			return {CLIMB_POWER,goal.gearing()};
+			out.power = CLIMB_POWER;
+			break;
 		case Lifter::Goal::Mode::UP:
-			return {MANUAL_LIFTER_POWER,goal.gearing()};
+			out.power = MANUAL_LIFTER_POWER;
+			break;
 		case Lifter::Goal::Mode::STOP:
-			return {0.0,goal.gearing()};
+			Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);
+			out.power = 0.0;
+			break;
 		case Lifter::Goal::Mode::DOWN:
-			return {-MANUAL_LIFTER_POWER,goal.gearing()};
+			out.power = -MANUAL_LIFTER_POWER;
+			break;
 		case Lifter::Goal::Mode::GO_TO_HEIGHT:
-			{
-				//TODO implement full PID control
-				double error = goal.target() - status_detail.height;
-				const double P = 0.5;
-				return {clip(AUTO_LIFTER_POWER * error * P),goal.gearing()};
-			}
+			Lifter::lifter_controller.initOnChange(goal.target());
+			Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
+			break;
+		case Lifter::Goal::Mode::GO_TO_PRESET:
+			Lifter::lifter_controller.initOnChange(goal.preset_target());
+			Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
+			break;
 		default:
 			nyi
 	}
+	return out;
 }
 
 Lifter::Status status(Lifter::Status_detail const& status_detail){
@@ -352,7 +385,7 @@ Lifter::Status status(Lifter::Status_detail const& status_detail){
 bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
 	switch(goal.mode()){
 		case Lifter::Goal::Mode::CLIMB:
-			return status == Lifter::Status::CLIMBED;//TODO
+			return status == Lifter::Status::CLIMBED;
 		case Lifter::Goal::Mode::UP:
 			return status == Lifter::Status::TOP;
 		case Lifter::Goal::Mode::DOWN:
@@ -360,7 +393,8 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
 		case Lifter::Goal::Mode::STOP:
 			return true;
 		case Lifter::Goal::Mode::GO_TO_HEIGHT:
-			return true;//TODO
+		case Lifter::Goal::Mode::GO_TO_PRESET:
+			return Lifter::lifter_controller.done();
 		default:
 			nyi
 	}
