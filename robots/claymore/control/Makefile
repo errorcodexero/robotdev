@@ -26,8 +26,9 @@ SRC = \
 	force.cpp\
 	force_interface.cpp\
 	gear_shifter.cpp\
-	intake_belts.cpp\
-	intake_grabber.cpp\
+	grabber.cpp\
+	grabber_controller.cpp\
+	intake.cpp\
 	lifter.cpp\
 	lifter_controller.cpp\
 	lights.cpp\
@@ -51,8 +52,8 @@ COMPLEXTESTS = \
 	drivebase\
 	force_interface\
 	gear_shifter\
-	intake_belts\
-	intake_grabber\
+	grabber\
+	intake\
 	lifter\
 	log\
 	main\
@@ -79,11 +80,11 @@ $(TESTTARGETDIR)/gear_shifter$(EXEEXT): gear_shifter.cpp nop.cpp drivebase.cpp m
 $(TESTTARGETDIR)/gear_shifter$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 $(TESTTARGETDIR)/gear_shifter$(EXEEXT): ../util/speed_tracker.cpp ../util/countdown_timer.cpp ../util/stall_monitor.cpp 
 
-$(TESTTARGETDIR)/intake_belts$(EXEEXT): intake_belts.cpp nop.cpp
-$(TESTTARGETDIR)/intake_belts$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
+$(TESTTARGETDIR)/grabber$(EXEEXT): grabber.cpp nop.cpp
+$(TESTTARGETDIR)/grabber$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/intake_grabber$(EXEEXT): intake_grabber.cpp nop.cpp
-$(TESTTARGETDIR)/intake_grabber$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
+$(TESTTARGETDIR)/intake$(EXEEXT): intake.cpp nop.cpp
+$(TESTTARGETDIR)/intake$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
 $(TESTTARGETDIR)/lifter$(EXEEXT): lifter.cpp
 $(TESTTARGETDIR)/lifter$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp

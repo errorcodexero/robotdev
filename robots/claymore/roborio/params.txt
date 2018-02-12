@@ -19,6 +19,7 @@ drivebase:angle:imax             1000.0
 drivebase:straight:threshold     1.0
 drivebase:straight:angle         1.0
 
+
 lifter:p                         0.01
 lifter:i                         0.0
 lifter:d                         0.0
@@ -32,3 +33,16 @@ lifter:height:exchange           3.0
 lifter:height:switch             19.0
 lifter:height:scale              72.0
 lifter:height:prep_climb         84.0
+
+
+grabber:p                        0.01
+grabber:i                        0.0
+grabber:d                        0.0
+grabber:f                        0.0
+grabber:imax                     0.0
+
+grabber:threshold                1.0
+
+grabber:angle:closed             0.0
+grabber:angle:open               30.0
+grabber:angle:stowed             90.0
