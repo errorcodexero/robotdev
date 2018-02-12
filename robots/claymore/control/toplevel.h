@@ -5,8 +5,8 @@
 #include "pump.h"
 #include "drivebase.h"
 #include "gear_shifter.h"
-#include "intake_belts.h"
-#include "intake_grabber.h"
+#include "grabber.h"
+#include "intake.h"
 #include "nop.h"
 #include "lifter.h"
 #include "lights.h"
@@ -15,8 +15,8 @@
 	X(Pump,pump,Pump::Goal::AUTO)\
 	X(Drivebase,drive,)\
 	X(Gear_shifter,gear_shifter,Gear_shifter::Goal::LOW)\
-	X(Intake_belts,intake_belts,Intake_belts::Goal::OFF)\
-	X(Intake_grabber,intake_grabber,Intake_grabber::Goal::stop())\
+	X(Grabber,grabber,Grabber::Goal::stop())\
+	X(Intake,intake,Intake::Goal::OFF)\
 	X(Lifter,lifter,Lifter::Goal::stop())\
 	X(Lights,lights,)
 	

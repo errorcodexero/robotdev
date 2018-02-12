@@ -100,8 +100,8 @@ Toplevel::Output::Output():
 	pump(Pump::Output::AUTO),
 	drive(0.0,0.0,false),
 	gear_shifter(Gear_shifter::Output::LOW),
-	intake_belts(Intake_belts::Output::OFF),
-	intake_grabber(0.0),
+	grabber(0.0),
+	intake(Intake::Output::OFF),
 	lifter({0.0,Lifter::Output::Gearing::HIGH}),
 	lights()
 {}
@@ -155,8 +155,8 @@ Toplevel::Status::Status():
 	pump(Pump::Status::NOT_FULL),
 	drive(*examples((Drivebase::Status*)nullptr).begin()),
 	gear_shifter(*examples((Gear_shifter::Status*)nullptr).begin()),
-	intake_belts(*examples((Intake_belts::Status*)nullptr).begin()),
-	intake_grabber(*examples((Intake_grabber::Status*)nullptr).begin()),
+	grabber(*examples((Grabber::Status*)nullptr).begin()),
+	intake(*examples((Intake::Status*)nullptr).begin()),
 	lifter(*examples((Lifter::Status*)nullptr).begin()),
 	lights(*examples((Lights::Status*)nullptr).begin())
 {}
@@ -334,8 +334,8 @@ set<Toplevel::Status_detail> examples(Toplevel::Status_detail*){
 		Pump::Status_detail{Pump::Status::FULL},
 		*examples((Drivebase::Status_detail*)0).begin(),
 		*examples((Gear_shifter::Status_detail*)0).begin(),
-		*examples((Intake_belts::Status_detail*)0).begin(),
-		*examples((Intake_grabber::Status_detail*)0).begin(),
+		*examples((Grabber::Status_detail*)0).begin(),
+		*examples((Intake::Status_detail*)0).begin(),
 		*examples((Lifter::Status_detail*)0).begin(),
 		*examples((Lights::Status_detail*)0).begin()
 	}};
@@ -354,8 +354,8 @@ set<Toplevel::Input> examples(Toplevel::Input*){
 		Pump::Input{},
 		*examples((Drivebase::Input*)0).begin(),
 		*examples((Gear_shifter::Input*)0).begin(),
-		*examples((Intake_belts::Input*)0).begin(),
-		*examples((Intake_grabber::Input*)0).begin(),
+		*examples((Grabber::Input*)0).begin(),
+		*examples((Intake::Input*)0).begin(),
 		*examples((Lifter::Input*)0).begin(),
 		*examples((Lights::Input*)0).begin()
 	};

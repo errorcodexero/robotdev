@@ -48,8 +48,14 @@ public:
     /// \param dt the time since the last this this was called
     void idle(double height, double time, double dt);
 
-    /// \brief this method 
+    /// \brief this method updates the height target internally when a new target is required
+    /// \param height the new requeste height in inches
+    /// \param time the start time of the new request
     void updateHeightOnChange(double height, double time);
+    
+    /// \brief this method updates the height target internally when a new target is required
+    /// \param preset the preset we need to hit
+    /// \param time the start time of the new request
     void updateHeightOnChange(Preset preset, double time);
 
     /// \brief returns true when the lifter has reached its desired height

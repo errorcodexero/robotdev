@@ -18,6 +18,16 @@ COMMON=helpers
 #
 ADDCXXFLAGS = -DCLAYMORE  -I../control -I../util -I../input
 
+ifdef AUTOMODE_TEST
+$(info AUTOMODE_TEST defined, building version of robot code to test auto mode)
+#
+# This allows make to be called with AUTOMODE_TEST=N on the command line and
+# This library will be built to run this automode
+#
+ADDCXXFLAGS += -DAUTOMODE_TEST=$(AUTOMODE_TEST)
+BLEH=$(shell touch autonomous.cpp)
+endif
+
 
 #
 # define our source code
