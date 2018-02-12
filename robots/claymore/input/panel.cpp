@@ -18,9 +18,20 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 	X(collect_closed)\
 	X(collect_open)\
 	X(eject)\
-	X(climb)
+	X(climb)\
+	X(wings)\
+	X(learn)
+
+#define TWO_POS_SWITCHES \
+	X(grabber_auto)\
+	X(intake_auto)\
+	X(wing_lock)\
+	X(climber_speed)
 
 #define THREE_POS_SWITCHES \
+	X(grabber)\
+	X(intake)\
+	X(collector_mode)\
 	X(lifter)
 
 #define TEN_POS_SWITCHES \
@@ -29,6 +40,7 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 
 #define PANEL_ITEMS \
 	BUTTONS \
+	TWO_POS_SWITCHES \
 	THREE_POS_SWITCHES \
 	TEN_POS_SWITCHES \
 	DIALS
@@ -40,6 +52,27 @@ Panel::Panel():
 	#undef X
 	auto_select(0)
 {}
+
+ostream& operator<<(ostream& o,Panel::Grabber a){
+	#define X(NAME) if(a==Panel::Grabber::NAME) return o<<""#NAME;
+	X(CLOSE) X(OFF) X(OPEN)
+	#undef X
+	assert(0);
+}
+
+ostream& operator<<(ostream& o,Panel::Intake a){
+	#define X(NAME) if(a==Panel::Intake::NAME) return o<<""#NAME;
+	X(IN) X(OFF) X(OUT)
+	#undef X
+	assert(0);
+}
+
+ostream& operator<<(ostream& o,Panel::Collector_mode a){
+	#define X(NAME) if(a==Panel::Collector_mode::NAME) return o<<""#NAME;
+	X(NO_AUTO) X(SEMI_AUTO) X(FULL_AUTO)
+	#undef X
+	assert(0);
+}
 
 ostream& operator<<(ostream& o,Panel::Lifter a){
 	#define X(NAME) if(a==Panel::Lifter::NAME) return o<<""#NAME;
@@ -155,42 +188,112 @@ Panel interpret_gamepad(Joystick_data d){
 	//TODO: Add in all of the new controls
 	p.auto_select=0;
 
-	/*p.intake = d.button[Gamepad_button::A];
-	p.eject = d.button[Gamepad_button::Y];
-	p.close = d.button[Gamepad_button::X];
-	p.open = d.button[Gamepad_button::B];*/
+	p.prep_climb = d.button[Gamepad_button::LB];
+	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
 
-	p.lifter = Panel::Lifter::OFF;
-	if(d.button[Gamepad_button::RB]) p.lifter = Panel::Lifter::UP;
-	if(d.button[Gamepad_button::LB]) p.lifter = Panel::Lifter::DOWN;
+	p.climber_speed = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
-	switch(pov_section(d.pov)){
-		case POV_section::CENTER:
+	p.wing_lock = d.button[Gamepad_button::START];
+
+	bool alternate_operation = d.button[Gamepad_button::RB];
+
+	if(!alternate_operation) {
+		p.collect_closed = d.button[Gamepad_button::A];
+		p.collect_open = d.button[Gamepad_button::B];
+		p.eject = d.button[Gamepad_button::X];	
+		p.wings = d.button[Gamepad_button::Y];	
+	
+		switch(pov_section(d.pov)){
+			case POV_section::CENTER:
+				break;
+			case POV_section::UP:
+				p.scale = true;
+				break;
+			case POV_section::UP_LEFT:
+				break;
+			case POV_section::LEFT:
+				p.exchange = true;
+				break;
+			case POV_section::DOWN_LEFT:
+				break;
+			case POV_section::DOWN:
+				p.floor = true;
+				break;
+			case POV_section::DOWN_RIGHT:
+				break;
+			case POV_section::RIGHT:
+				p.switch_ = true;
+				break;
+			case POV_section::UP_RIGHT:
+				break;
+			default:
+				assert(0);
+		}	
+	} else {
+		p.grabber_auto = d.button[Gamepad_button::A];
+		p.intake_auto = d.button[Gamepad_button::B];
+		
+		p.grabber = Panel::Grabber::OFF;
+		p.intake = Panel::Intake::OFF;
+		switch(pov_section(d.pov)){
+			case POV_section::CENTER:
+				break;
+			case POV_section::UP:
+				break;
+			case POV_section::UP_LEFT:	
+				p.grabber = Panel::Grabber::CLOSE;
+				p.intake = Panel::Intake::OUT;
+				break;
+			case POV_section::LEFT:
+				p.grabber = Panel::Grabber::CLOSE;
+				break;
+			case POV_section::DOWN_LEFT:
+				p.grabber = Panel::Grabber::CLOSE;
+				p.intake = Panel::Intake::IN;
+				break;
+			case POV_section::DOWN:
+				p.intake = Panel::Intake::IN;
+				break;
+			case POV_section::DOWN_RIGHT:
+				p.grabber = Panel::Grabber::OPEN;
+				p.intake = Panel::Intake::IN;
+				break;
+			case POV_section::RIGHT:
+				p.grabber = Panel::Grabber::OPEN;
+				break;
+			case POV_section::UP_RIGHT:
+				p.grabber = Panel::Grabber::OPEN;
+				p.intake = Panel::Intake::OUT;
+				break;
+			default:
+				assert(0);
+		}
+	}
+
+	p.collector_mode = Panel::Collector_mode::SEMI_AUTO;
+	switch(joystick_section(d.axis[Gamepad_axis::RIGHTX],d.axis[Gamepad_axis::RIGHTY])){
+		case Joystick_section::UP:
+			p.collector_mode = Panel::Collector_mode::FULL_AUTO;
 			break;
-		case POV_section::UP:
-			p.scale = true;
-			break;
-		case POV_section::UP_LEFT:
-			break;
-		case POV_section::LEFT:
-			p.exchange = true;
-			break;
-		case POV_section::DOWN_LEFT:
-			break;
-		case POV_section::DOWN:
-			p.floor = true;
-			break;
-		case POV_section::DOWN_RIGHT:
-			break;
-		case POV_section::RIGHT:
-			p.switch_=true;
-			break;
-		case POV_section::UP_RIGHT:
+		case Joystick_section::DOWN:
+			p.collector_mode = Panel::Collector_mode::NO_AUTO;
 			break;
 		default:
 			assert(0);
-	}	
+	}
 
+	p.lifter = Panel::Lifter::OFF;
+	switch(joystick_section(d.axis[Gamepad_axis::LEFTX], d.axis[Gamepad_axis::LEFTY])){
+		case Joystick_section::UP:
+			p.lifter = Panel::Lifter::UP;
+			break;
+		case Joystick_section::DOWN:
+			p.lifter = Panel::Lifter::DOWN;
+			break;
+		default:
+			assert(0);
+	}
+	
 	return p;
 }
 

@@ -18,8 +18,19 @@ struct Panel{
 	bool eject;
 	bool climb;
 	bool wings;
+	bool learn;
 	//2 position swicthes:
+	bool grabber_auto;
+	bool intake_auto;
+	bool wing_lock;
+	bool climber_speed;
 	//3 position switches:
+	enum class Grabber{CLOSE,OFF,OPEN};
+	Grabber grabber;
+	enum class Intake{IN,OFF,OUT};
+	Intake intake;
+	enum class Collector_mode{NO_AUTO,SEMI_AUTO,FULL_AUTO};
+	Collector_mode collector_mode;
 	enum class Lifter{DOWN,OFF,UP};
 	Lifter lifter;
 	//10 position switches:
