@@ -48,7 +48,7 @@ Executive get_auto_mode(Next_mode_info info){
 	}};
 
 	Executive drive_straight_test{Chain{
-		Step{Navx_drive_straight{12.0}},
+		Step{Navx_drive_straight{52.0}},
 		Executive{Teleop()}
 	}};
 	
@@ -102,13 +102,9 @@ Executive get_auto_mode(Next_mode_info info){
 	Executive opposite_switch{Chain{
 		vector<Step>{
 			Step{Navx_drive_straight{52.0}},
-			Step{Wait{1.0}},
 			Step{Navx_rotate{-90.0}},
-			Step{Wait{1.0}},
 			Step{Navx_drive_straight{100.0}},
-			Step{Wait{1.0}},
 			Step{Navx_rotate{90.0}},
-			Step{Wait{1.0}},
 			Step{Navx_drive_straight{56}}
 		},
 		Executive{Teleop()}
@@ -119,8 +115,7 @@ Executive get_auto_mode(Next_mode_info info){
 		Executive{Teleop()}
 	}};
 
-	return rotate_test ;
-
+	return opposite_switch ;
 	/*
 	
 	if(!info.panel.in_use){

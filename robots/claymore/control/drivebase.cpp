@@ -59,8 +59,9 @@ int encoderconv(Maybe_inline<Encoder_output> encoder){
 }
 
 const unsigned int TICKS_PER_REVOLUTION=200;
+const double ENCODER_TO_WHEEL_RATIO = 7.5;
 const double WHEEL_CIRCUMFERENCE=Robot_constants::DRIVE_WHEEL_DIAMETER*PI;//inches
-const double INCHES_PER_TICK=WHEEL_CIRCUMFERENCE/(double)TICKS_PER_REVOLUTION;
+const double INCHES_PER_TICK=WHEEL_CIRCUMFERENCE/(double)TICKS_PER_REVOLUTION / ENCODER_TO_WHEEL_RATIO ;
 
 double ticks_to_inches(const int ticks){
 	return ticks*INCHES_PER_TICK;

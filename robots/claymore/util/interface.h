@@ -241,7 +241,7 @@ bool operator<(Digital_out,Digital_out);
 bool operator==(Digital_out,Digital_out);
 bool operator!=(Digital_out,Digital_out);
 
-static const unsigned TALON_SRXS = 4;
+static const unsigned TALON_SRXS = 6;
 
 struct Robot_outputs{
 	static const unsigned PWMS=10;//Number of ports on the digital sidecar; there can be up to 20 using the MXP on the roboRIO which we don't do
