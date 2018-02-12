@@ -8,14 +8,20 @@ struct Panel{
 	static const unsigned PORT = 2;
 	bool in_use;
 	//Buttons:
-	bool intake;
+	bool floor;
+	bool exchange;
+	bool switch_;
+	bool scale;
+	bool prep_climb;
+	bool collect_closed;
+	bool collect_open;
 	bool eject;
-	bool close;
-	bool open;
-	bool up;
-	bool down;
+	bool climb;
+	bool wings;
 	//2 position swicthes:
 	//3 position switches:
+	enum class Lifter{DOWN,OFF,UP};
+	Lifter lifter;
 	//10 position switches:
 	int auto_select;//0-19
 	//Dials:

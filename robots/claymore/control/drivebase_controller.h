@@ -6,55 +6,62 @@
 #include "params_parser.h"
 #include "UdpBroadcastSender.h"
 
+/// \brief The DrivebaseController class contains the intelligence for the drivebase.
+/// This class contains the algorithms to drive specific distances or to rotate to
+/// specific angles.  This work is done with a series of PID controllers.
 class DrivebaseController {
 public:
 
-	/// \brief create the drive base controller object
+    /// \brief create the drive base controller object
     DrivebaseController();
 
-	/// \brief set the parameters object
-	/// This object is used to lookup parameters read from the parameters file
-	/// \param pi_p pointer to the parameter input reader
+    /// \brief set the parameters object
+    /// This object is used to lookup parameters read from the parameters file
+    /// \param pi_p pointer to the parameter input reader
     void setParams(paramsInput *pi_p);
 
-	/// \brief initialize the drive controller to drive a fixed distance value
-	/// \param dist the absolute distance to drive to
-	/// \param angle the angle to maintain while driving
-	/// \param the time when this was requested
+    /// \brief initialize the drive controller to drive a fixed distance value.
+    /// It is assumed that the update method below will be called within the robot
+    /// loop to drive this fixed distance.  This method initializes the internal state
+    /// of the robot controller so that the update method knows what it is trying to
+    /// accomplish.
+    /// \param dist the absolute distance to drive to
+    /// \param angle the angle to maintain while driving
+    /// \param the time when this was requested
     void initDistance(double dist, double angle, double time);
 
-	/// \brief rotate to the given angle
-	/// \param angle the angle to rotate to
-	/// \param the time when this was requested
+    /// \brief rotate to the given angle
+    /// \param angle the angle to rotate to
+    /// \param the time when this was requested
     void initAngle(double angle, double time);
 
-	/// \brief update the left and right motor values to acheive the desired goal
-	/// \param dl the distance traveled by the left wheel
-	/// \param dr the distance traveled by the right wheel
-	/// \param angle the current angle of the robot
-	/// \param dt the time elapsed since the last time update was called
-	/// \param time the absolute time value
-	/// \param out_l return value for the left motor voltage
-	/// \param out_r return value for the right motor voltage
+    /// \brief update the left and right motor values to acheive the desired goal
+    /// \param dl the distance traveled by the left wheel
+    /// \param dr the distance traveled by the right wheel
+    /// \param angle the current angle of the robot
+    /// \param dt the time elapsed since the last time update was called
+    /// \param time the absolute time value
+    /// \param out_l return value for the left motor voltage
+    /// \param out_r return value for the right motor voltage
     void update(double dl, double dr, double angle, double dt, double time, double &out_l, double &out_r);
 
-	/// \brief called when the drivebase is idle
-	/// \param dl the distance traveled by the left wheel
-	/// \param dr the distance traveled by the right wheel
-	/// \param angle the current angle of the robot
-	/// \param dt the time elapsed since the last time update was called
-	/// \param time the absolute time value
+    /// \brief called when the drivebase is idle
+    /// \param dl the distance traveled by the left wheel
+    /// \param dr the distance traveled by the right wheel
+    /// \param angle the current angle of the robot
+    /// \param dt the time elapsed since the last time update was called
+    /// \param time the absolute time value
     void idle(double dl, double dr, double angle, double dt, double time);
 
-	/// \brief returns true when the robot has reached its distance or angle goal
+    /// \brief returns true when the robot has reached its distance or angle goal
     bool done();
 	
 private:
     enum class Mode {
-		IDLE,
-		DISTANCE,
-		ANGLE
-    };
+	IDLE,
+	    DISTANCE,
+	    ANGLE
+	    };
 
     //
     // The current mode of the drivebase.  Either trying to acheive a distance, or an
@@ -68,10 +75,10 @@ private:
     //
     double mTarget ;
 
-	//
-	// The time we started our search for the target distance or angle
-	//
-	double mTargetStartTime ;
+    //
+    // The time we started our search for the target distance or angle
+    //
+    double mTargetStartTime ;
 
     //
     // The starting angle, that we are trying to maintain, while driving straight
@@ -167,21 +174,21 @@ private:
     //
     double mDataDumpStartTime ;
 
-	//
-	// The number of cycles to skip before processing the target distance or angle
-	//
-	int mCycleInterval ;
+    //
+    // The number of cycles to skip before processing the target distance or angle
+    //
+    int mCycleInterval ;
 
-	//
-	// The current cycle number for the drivebase
-	//
-	int mCurrentCycle ;
+    //
+    // The current cycle number for the drivebase
+    //
+    int mCurrentCycle ;
 
-	//
-	// The previous voltage for the motors
-	//
-	double mLastLeftVoltage ;
-	double mLastRightVoltage ;
+    //
+    // The previous voltage for the motors
+    //
+    double mLastLeftVoltage ;
+    double mLastRightVoltage ;
 };
 
 #endif
