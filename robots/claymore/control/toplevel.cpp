@@ -103,7 +103,8 @@ Toplevel::Output::Output():
 	grabber(0.0),
 	intake(Intake::Output::OFF),
 	lifter({0.0,Lifter::Output::Gearing::HIGH}),
-	lights()
+	lights(),
+	wings(Wings::Output::LOCKED)
 {}
 
 bool operator<(Toplevel::Output const& a,Toplevel::Output const& b){
@@ -158,7 +159,8 @@ Toplevel::Status::Status():
 	grabber(*examples((Grabber::Status*)nullptr).begin()),
 	intake(*examples((Intake::Status*)nullptr).begin()),
 	lifter(*examples((Lifter::Status*)nullptr).begin()),
-	lights(*examples((Lights::Status*)nullptr).begin())
+	lights(*examples((Lights::Status*)nullptr).begin()),
+	wings(*examples((Wings::Status*)nullptr).begin())
 {}
 bool operator==(Toplevel::Status a,Toplevel::Status b){
 	#define X(A,name,C) if(a.name!=b.name) return 0;
@@ -337,7 +339,8 @@ set<Toplevel::Status_detail> examples(Toplevel::Status_detail*){
 		*examples((Grabber::Status_detail*)0).begin(),
 		*examples((Intake::Status_detail*)0).begin(),
 		*examples((Lifter::Status_detail*)0).begin(),
-		*examples((Lights::Status_detail*)0).begin()
+		*examples((Lights::Status_detail*)0).begin(),
+		*examples((Wings::Status_detail*)0).begin()
 	}};
 }
 
@@ -357,7 +360,8 @@ set<Toplevel::Input> examples(Toplevel::Input*){
 		*examples((Grabber::Input*)0).begin(),
 		*examples((Intake::Input*)0).begin(),
 		*examples((Lifter::Input*)0).begin(),
-		*examples((Lights::Input*)0).begin()
+		*examples((Lights::Input*)0).begin(),
+		*examples((Wings::Input*)0).begin()
 	};
 	return {a};
 }

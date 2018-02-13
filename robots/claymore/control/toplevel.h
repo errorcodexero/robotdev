@@ -10,6 +10,7 @@
 #include "nop.h"
 #include "lifter.h"
 #include "lights.h"
+#include "wings.h"
 
 #define TOPLEVEL_ITEMS \
 	X(Pump,pump,Pump::Goal::AUTO)\
@@ -18,7 +19,8 @@
 	X(Grabber,grabber,Grabber::Goal::stop())\
 	X(Intake,intake,Intake::Goal::OFF)\
 	X(Lifter,lifter,Lifter::Goal::stop())\
-	X(Lights,lights,)
+	X(Lights,lights,)\
+	X(Wings,wings,Wings::Goal::LOCKED)\
 	
 class Toplevel{
 	public:

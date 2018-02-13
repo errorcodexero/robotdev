@@ -39,7 +39,8 @@ SRC = \
 	nop.cpp\
 	pump.cpp\
 	sim.cpp\
-	toplevel.cpp
+	toplevel.cpp\
+	wings.cpp
 
 ifndef TESTS
 TESTS = \
@@ -60,7 +61,8 @@ COMPLEXTESTS = \
 	monitor\
 	nop\
 	pump\
-	toplevel
+	toplevel\
+	wings
 endif
 
 #
@@ -117,7 +119,10 @@ $(TESTTARGETDIR)/monitor$(EXEEXT): ../util/posedge_trigger.cpp ../util/stall_mon
 $(TESTTARGETDIR)/pump$(EXEEXT): pump.cpp
 $(TESTTARGETDIR)/pump$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp lifter.cpp lights.cpp gear_shifter.cpp intake_belts.cpp intake_grabber.cpp pump.cpp motor_check.cpp nop.cpp
+$(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp lifter.cpp lights.cpp gear_shifter.cpp grabber.cpp intake.cpp wings.cpp pump.cpp motor_check.cpp nop.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/speed_tracker.cpp ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/input.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/output.cpp
+
+$(TESTTARGETDIR)/wings$(EXEEXT): wings.cpp nop.cpp
+$(TESTTARGETDIR)/wings$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
