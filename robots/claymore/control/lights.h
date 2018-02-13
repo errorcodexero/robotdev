@@ -14,9 +14,12 @@ struct Lights{
 	
 		bool climbing;
 		unsigned lifter_height;
-		
+		double drive_left;	
+		double drive_right;	
+		bool has_cube;
+			
 		Goal();
-		Goal(Camera_light,bool,unsigned);
+		Goal(Camera_light,bool,unsigned,double,double,bool);
 	};
 	
 	struct Input{

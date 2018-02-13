@@ -7,8 +7,8 @@ using namespace std;
 #define CAMERA_LIGHT_ADDRESS 4
 #define BLINKY_LIGHT_INFO_ADDRESS 5
 
-Lights::Goal::Goal(Camera_light a,bool c,unsigned h):camera_light(a),climbing(c),lifter_height(h){}
-Lights::Goal::Goal():Lights::Goal(Camera_light::OFF,false,0){}
+Lights::Goal::Goal(Camera_light a,bool c,unsigned h,double l,double r,bool cube):camera_light(a),climbing(c),lifter_height(h),drive_left(l),drive_right(r),has_cube(cube){}
+Lights::Goal::Goal():Lights::Goal(Camera_light::OFF,false,0,0.0,0.0,false){}
 
 Lights::Output::Output(bool c,vector<uint8_t> b):camera_light(c),blinky_light_info(b){}
 Lights::Output::Output():Output(false,{}){}
@@ -51,6 +51,9 @@ ostream& operator<<(ostream& o, Lights::Goal a){
 	o<<"camera_light:"<<a.camera_light;
 	o<<" climbing:"<<a.climbing;
 	o<<" lifter_height:"<<a.lifter_height;
+	o<<" drive_left:"<<a.drive_left;
+	o<<" drive_right"<<a.drive_right;
+	o<<" has_cube:"<<a.has_cube;
 	return o<<")";
 }
 
@@ -101,13 +104,16 @@ bool operator<(Lights::Output a,Lights::Output b){
 }
 
 bool operator==(Lights::Goal a,Lights::Goal b){
-	return a.camera_light == b.camera_light && a.climbing == b.climbing && a.lifter_height == b.lifter_height;
+	return a.camera_light == b.camera_light && a.climbing == b.climbing && a.lifter_height == b.lifter_height && a.drive_left == b.drive_left && a.drive_right == b.drive_right && a.has_cube == b.has_cube;
 }
 
 bool operator<(Lights::Goal a,Lights::Goal b){
 	CMP(camera_light)
 	CMP(climbing)
 	CMP(lifter_height)
+	CMP(drive_left)
+	CMP(drive_right)
+	CMP(has_cube)
 	return 0;
 }
 
@@ -231,7 +237,16 @@ set<Lights::Output> examples(Lights::Output*){
 	for(bool c: bools){
 		for(Lights::Status_detail status: statuses){
 			for(Lights::Goal goal: goals){
-				s.insert({c,vector<uint8_t>{goal.climbing, status.autonomous, status.enabled, (uint8_t)static_cast<int>(status.alliance), (uint8_t)goal.lifter_height}});
+				s.insert({c,vector<uint8_t>{
+					goal.climbing, 
+					status.autonomous, 
+					status.enabled, 
+					(uint8_t)static_cast<int>(status.alliance),
+				       	(uint8_t)goal.lifter_height,
+					(uint8_t)(goal.drive_left * 100),
+					(uint8_t)(goal.drive_right * 100),
+					(uint8_t)goal.has_cube}
+				});
 			}
 		}
 	}
@@ -240,17 +255,30 @@ set<Lights::Output> examples(Lights::Output*){
 
 set<Lights::Goal> examples(Lights::Goal*){ 
 	return {
-		Lights::Goal{Lights::Camera_light::ON,false,0},
-		Lights::Goal{Lights::Camera_light::ON,true,0},
-		Lights::Goal{Lights::Camera_light::OFF,false,0},
-		Lights::Goal{Lights::Camera_light::OFF,true,0}
+		Lights::Goal{Lights::Camera_light::ON,false,0,0.0,0.0,false},
+		Lights::Goal{Lights::Camera_light::ON,true,0,0.0,0.0,false},
+		Lights::Goal{Lights::Camera_light::OFF,false,0,0.0,0.0,false},
+		Lights::Goal{Lights::Camera_light::OFF,true,0,0.0,0.0,false},
+		Lights::Goal{Lights::Camera_light::ON,false,0,0.0,0.0,true},
+		Lights::Goal{Lights::Camera_light::ON,true,0,0.0,0.0,true},
+		Lights::Goal{Lights::Camera_light::OFF,false,0,0.0,0.0,true},
+		Lights::Goal{Lights::Camera_light::OFF,true,0,0.0,0.0,true}
 	};
 }
 
 Lights::Output control(Lights::Status status, Lights::Goal goal){
 	Lights::Output out;
 	out.camera_light = goal.camera_light == Lights::Camera_light::ON;
-	out.blinky_light_info = {goal.climbing, status.autonomous, status.enabled, (uint8_t)static_cast<int>(status.alliance), (uint8_t)goal.lifter_height}; //encode_robot_status(status);
+	out.blinky_light_info = {
+		goal.climbing,
+		status.autonomous,
+		status.enabled,
+		(uint8_t)static_cast<int>(status.alliance),
+		(uint8_t)goal.lifter_height,
+		(uint8_t)(goal.drive_left * 100),
+		(uint8_t)(goal.drive_right * 100),
+		(uint8_t)goal.has_cube
+	}; //encode_robot_status(status);
 	return out;
 }
 
