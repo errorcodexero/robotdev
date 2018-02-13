@@ -110,6 +110,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		collector_mode = Collector_mode::EJECT;
 		eject_timer.set(5);
 	}
+	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
 	switch(collector_mode) {
 		case Collector_mode::DO_NOTHING:
@@ -143,12 +144,20 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		default: assert(0);
 	}
 
+	if(info.panel.climb) {
+		Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
+		if(!ready(status(info.status.lifter), prep_climb_goal))
+			goals.lifter = prep_climb_goal;
+		else
+			goals.lifter = Lifter::Goal::climb();
+	}
+
 	if(info.panel.floor) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
 	if(info.panel.exchange) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 	if(info.panel.switch_) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
 	if(info.panel.scale) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
-	if(info.panel.lifter == Panel::Lifter::UP) lifter_goal = Lifter::Goal::up();
-	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down();
+	if(info.panel.lifter == Panel::Lifter::UP) lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
+	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
 	goals.lifter = lifter_goal;
 

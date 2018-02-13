@@ -8,7 +8,8 @@ using namespace std;
 #define LIFTER_SHIFTER_ADDRESS 1
 
 #define CLIMB_POWER .60 //TODO tune
-#define MANUAL_LIFTER_POWER .60 //TODO tune
+#define MANUAL_LIFTER_LOW_POWER .60 //TODO tune
+#define MANUAL_LIFTER_HIGH_POWER .80 //TODO tune
 #define AUTO_LIFTER_POWER .60 //TODO tune
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
@@ -54,7 +55,11 @@ LifterController::Preset Lifter::Goal::preset_target()const{
     return preset_target_;
 }
 
-Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0){}
+bool Lifter::Goal::high_power()const{
+    return high_power_;
+}
+
+Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0),high_power_(false){}
 
 Lifter::Goal Lifter::Goal::climb(){
     Lifter::Goal a;
@@ -63,10 +68,11 @@ Lifter::Goal Lifter::Goal::climb(){
     return a;
 }
 
-Lifter::Goal Lifter::Goal::up(){
+Lifter::Goal Lifter::Goal::up(bool high_power = false){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::UP;
     a.gearing_ = Lifter::Goal::Gearing::HIGH;
+    a.high_power_ = high_power;
     return a;
 }
 
@@ -77,10 +83,11 @@ Lifter::Goal Lifter::Goal::stop(){
     return a;
 }
 
-Lifter::Goal Lifter::Goal::down(){
+Lifter::Goal Lifter::Goal::down(bool high_power = false){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::DOWN;
     a.gearing_ = Lifter::Goal::Gearing::HIGH;
+    a.high_power_ = high_power;
     return a;
 }
 
@@ -298,9 +305,9 @@ set<Lifter::Input> examples(Lifter::Input*){
 
 set<Lifter::Output> examples(Lifter::Output*){
     return {
-	{-MANUAL_LIFTER_POWER, Lifter::Output::Gearing::HIGH},
+	{-MANUAL_LIFTER_LOW_POWER, Lifter::Output::Gearing::HIGH},
 	{0.0, Lifter::Output::Gearing::HIGH}, 
-	{MANUAL_LIFTER_POWER, Lifter::Output::Gearing::HIGH},
+	{MANUAL_LIFTER_LOW_POWER, Lifter::Output::Gearing::HIGH},
 	{0.0, Lifter::Output::Gearing::LOW},
 	{CLIMB_POWER, Lifter::Output::Gearing::LOW},
 	    };
@@ -343,13 +350,13 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	break;
     case Lifter::Goal::Mode::UP:
 	if(s != Lifter::Status::TOP)
-		out.power = MANUAL_LIFTER_POWER;
+		out.power = goal.high_power() ? MANUAL_LIFTER_HIGH_POWER : MANUAL_LIFTER_LOW_POWER;
 	else
 		out.power = 0.0;
 	break;
     case Lifter::Goal::Mode::DOWN:
 	if(s != Lifter::Status::BOTTOM)
-		out.power = -MANUAL_LIFTER_POWER;
+		out.power = goal.high_power() ? -MANUAL_LIFTER_HIGH_POWER : -MANUAL_LIFTER_LOW_POWER;
 	else
 		out.power = 0.0;
 	break;

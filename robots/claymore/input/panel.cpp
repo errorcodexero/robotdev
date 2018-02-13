@@ -14,10 +14,10 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 	X(exchange)\
 	X(switch_)\
 	X(scale)\
-	X(prep_climb)\
 	X(collect_closed)\
 	X(collect_open)\
 	X(eject)\
+	X(drop)\
 	X(climb)\
 	X(wings)\
 	X(learn)
@@ -26,7 +26,7 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 	X(grabber_auto)\
 	X(intake_auto)\
 	X(wing_lock)\
-	X(climber_speed)
+	X(lifter_high_power)
 
 #define THREE_POS_SWITCHES \
 	X(grabber)\
@@ -188,10 +188,10 @@ Panel interpret_gamepad(Joystick_data d){
 	//TODO: Add in all of the new controls
 	p.auto_select=0;
 
-	p.prep_climb = d.button[Gamepad_button::LB];
+	p.wings = d.button[Gamepad_button::LB];
 	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
 
-	p.climber_speed = d.axis[Gamepad_axis::RTRIGGER] > .1;
+	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
 	p.wing_lock = d.button[Gamepad_button::START];
 
@@ -201,7 +201,7 @@ Panel interpret_gamepad(Joystick_data d){
 		p.collect_closed = d.button[Gamepad_button::A];
 		p.collect_open = d.button[Gamepad_button::B];
 		p.eject = d.button[Gamepad_button::X];	
-		p.wings = d.button[Gamepad_button::Y];	
+		p.drop = d.button[Gamepad_button::Y];	
 	
 		switch(pov_section(d.pov)){
 			case POV_section::CENTER:

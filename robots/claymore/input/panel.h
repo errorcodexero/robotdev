@@ -12,10 +12,10 @@ struct Panel{
 	bool exchange;
 	bool switch_;
 	bool scale;
-	bool prep_climb;
 	bool collect_closed;
 	bool collect_open;
 	bool eject;
+	bool drop;
 	bool climb;
 	bool wings;
 	bool learn;
@@ -23,7 +23,7 @@ struct Panel{
 	bool grabber_auto;
 	bool intake_auto;
 	bool wing_lock;
-	bool climber_speed;
+	bool lifter_high_power;
 	//3 position switches:
 	enum class Grabber{CLOSE,OFF,OPEN};
 	Grabber grabber;
