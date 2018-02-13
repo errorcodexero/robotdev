@@ -13,17 +13,19 @@ struct Teleop : Executive_impl<Teleop> {
 		Posedge_trigger trigger;
 		Countdown_timer timer;
 	};
-	/*
-	#define INTAKE_MODES X()
-	enum class Intake_mode{
+
+	#define COLLECTOR_MODES X(DO_NOTHING) X(GRABBING) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
+	enum class Collector_mode{
 		#define X(NAME) NAME,
-		INTAKE_MODES
+		COLLECTOR_MODES
 		#undef X
 	};
-	*/
+
 	#define TELEOP_ITEMS(X)\
 		X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges) \
 		X(Lifter::Goal,lifter_goal) \
+		X(Collector_mode, collector_mode) \
+		X(Countdown_timer, eject_timer) \
 		X(int,print_number)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 

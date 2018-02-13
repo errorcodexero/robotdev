@@ -41,12 +41,14 @@ struct Grabber{
 	
 	struct Input{
 		int ticks;
+		bool has_cube;
 		
 		Input();
 		Input(int);
 	};
 
 	struct Status_detail{
+		bool has_cube;
 		double angle;
 		double time, dt;
 		

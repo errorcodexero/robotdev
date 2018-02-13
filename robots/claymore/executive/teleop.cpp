@@ -33,6 +33,13 @@ ostream& operator<<(ostream& o,Teleop::Nudge const& a){
 	return o;
 }
 
+ostream& operator<<(ostream& o,Teleop::Collector_mode const& a){
+	#define X(NAME) if(a==Teleop::Collector_mode::NAME) return o<<""#NAME;
+	COLLECTOR_MODES
+	#undef X
+	assert(0);
+}
+
 Executive Teleop::next_mode(Next_mode_info info) {
 	if (info.autonomous_start) {
 		return Executive{Autonomous()};
@@ -43,7 +50,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),print_number(0){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),collector_mode(Collector_mode::DO_NOTHING),print_number(0){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	Toplevel::Goal goals;
@@ -97,17 +104,44 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		return Gear_shifter::Goal::AUTO;
 	}();
 
-	/*goals.intake_belts = [&]{
-		if(info.panel.intake) return Intake_belts::Goal::IN;
-		if(info.panel.eject) return Intake_belts::Goal::OUT;
-		return Intake_belts::Goal::OFF;
-	}();
-	
-	goals.intake_grabber = [&]{
-		if(info.panel.open) return Intake_grabber::Goal::open();
-		if(info.panel.close) return Intake_grabber::Goal::close();
-		return Intake_grabber::Goal::stop();
-	}();*/
+	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
+	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
+	if(info.panel.eject) {
+		collector_mode = Collector_mode::EJECT;
+		eject_timer.set(5);
+	}
+
+	switch(collector_mode) {
+		case Collector_mode::DO_NOTHING:
+			goals.grabber = Grabber::Goal::stop();
+			goals.intake = Intake::Goal::OFF;
+			break;
+		case Collector_mode::GRABBING:
+			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+			goals.intake = Intake::Goal::OFF;
+			break;
+		case Collector_mode::COLLECT_OPEN:
+			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+			goals.intake = Intake::Goal::IN;
+			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
+			break;
+		case Collector_mode::COLLECT_CLOSED:
+			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+			goals.intake = Intake::Goal::IN;
+			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
+			break;
+		case Collector_mode::EJECT:
+			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+			goals.intake = Intake::Goal::OUT;
+			eject_timer.update(info.in.now, info.in.robot_mode.enabled);
+			if(eject_timer.done()) collector_mode = Collector_mode::DO_NOTHING;
+			break;
+		case Collector_mode::DROP:
+			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+			goals.intake = Intake::Goal::OFF;
+			break;
+		default: assert(0);
+	}
 
 	if(info.panel.floor) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
 	if(info.panel.exchange) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
@@ -117,6 +151,18 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down();
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
 	goals.lifter = lifter_goal;
+
+	if(!info.panel.grabber_auto) {
+		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::stop();
+		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+	}
+
+	if(!info.panel.intake_auto) {
+		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::OFF;
+		if(info.panel.intake == Panel::Intake::IN) goals.intake = Intake::Goal::IN;
+		if(info.panel.intake == Panel::Intake::OUT) goals.intake = Intake::Goal::OUT;
+	}
 
 	{
 		goals.lights.climbing = false;//TODO

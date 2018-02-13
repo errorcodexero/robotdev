@@ -101,6 +101,7 @@ std::set<Grabber::Input> examples(Grabber::Input*){
 std::ostream& operator<<(std::ostream& o,Grabber::Input a){
 	o<<"(";
 	o<<"ticks:"<<a.ticks;
+	o<<"has_cube:"<<a.has_cube;
 	o<<")";
 	return o;
 }
@@ -112,6 +113,9 @@ std::set<Grabber::Status_detail> examples(Grabber::Status_detail*){
 std::ostream& operator<<(std::ostream& o,Grabber::Status_detail a){
 	o<<"(";
 	o<<"angle:"<<a.angle;
+	o<<"time:"<<a.time;
+	o<<"dt:"<<a.dt;
+	o<<"has_cube:"<<a.has_cube;
 	o<<")";
 	return o;
 }
@@ -126,7 +130,7 @@ bool operator<(Grabber::Status_detail a,Grabber::Status_detail b){
 }
 
 bool operator==(Grabber::Status_detail a,Grabber::Status_detail b){
-	return a.angle == b.angle;
+	return a.angle == b.angle && a.time == b.time && a.dt == b.dt && a.has_cube == b.has_cube;
 }
 
 bool operator!=(Grabber::Status_detail a, Grabber::Status_detail b){
@@ -151,7 +155,7 @@ bool operator<(Grabber::Input a,Grabber::Input b){
 }
 
 bool operator==(Grabber::Input a,Grabber::Input b){
-	return a.ticks == b.ticks;
+	return a.ticks == b.ticks && a.has_cube == b.has_cube;
 }
 
 bool operator!=(Grabber::Input a, Grabber::Input b){
@@ -207,6 +211,8 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 
 	last.dt = last.time - time;
 	last.time = time;
+
+	last.has_cube = input.has_cube;
 }
 
 Grabber::Status Grabber::Estimator::get()const{
