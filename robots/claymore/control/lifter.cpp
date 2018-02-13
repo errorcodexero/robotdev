@@ -329,25 +329,34 @@ set<Lifter::Goal> examples(Lifter::Goal*){
 
 Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal const& goal){
     Lifter::Status s = status(status_detail);
-    if(ready(s, goal) || s == Lifter::Status::ERROR){
+    if(s == Lifter::Status::ERROR){
 	return {0.0, goal.gearing()};
     }
 
     Lifter::Output out = {0.0, goal.gearing()};
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
-	out.power = CLIMB_POWER;
+	if(s != Lifter::Status::CLIMBED)
+		out.power = -CLIMB_POWER;
+	else
+		out.power = 0.0;
 	break;
     case Lifter::Goal::Mode::UP:
-	out.power = MANUAL_LIFTER_POWER;
+	if(s != Lifter::Status::TOP)
+		out.power = MANUAL_LIFTER_POWER;
+	else
+		out.power = 0.0;
+	break;
+    case Lifter::Goal::Mode::DOWN:
+	if(s != Lifter::Status::BOTTOM)
+		out.power = -MANUAL_LIFTER_POWER;
+	else
+		out.power = 0.0;
 	break;
     case Lifter::Goal::Mode::STOP:
 	Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);
 	out.power = 0.0;
-	break;
-    case Lifter::Goal::Mode::DOWN:
-	out.power = -MANUAL_LIFTER_POWER;
-	break;
+	break; 
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
 	Lifter::lifter_controller.updateHeightOnChange(goal.target(), status_detail.time);
 	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
