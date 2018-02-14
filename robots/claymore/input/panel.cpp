@@ -25,7 +25,7 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 #define TWO_POS_SWITCHES \
 	X(grabber_auto)\
 	X(intake_auto)\
-	X(wing_lock)\
+	X(climb_lock)\
 	X(lifter_high_power)
 
 #define THREE_POS_SWITCHES \
@@ -193,7 +193,7 @@ Panel interpret_gamepad(Joystick_data d){
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
-	p.wing_lock = d.button[Gamepad_button::START];
+	p.climb_lock = d.button[Gamepad_button::START];
 
 	bool alternate_operation = d.button[Gamepad_button::RB];
 

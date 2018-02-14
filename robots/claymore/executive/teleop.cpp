@@ -147,8 +147,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.climb) {
 		Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
 		if(!ready(status(info.status.lifter), prep_climb_goal))
-			goals.lifter = prep_climb_goal;
-		else
+			lifter_goal = prep_climb_goal;
+		else if(info.panel.climb_lock)
 			goals.lifter = Lifter::Goal::climb();
 	}
 
@@ -161,7 +161,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
 	goals.lifter = lifter_goal;
 
-	if(info.panel.wings && info.panel.wing_lock) wings_goal = Wings::Goal::UNLOCKED;
+	if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
 	goals.wings = wings_goal;
 
 	if(!info.panel.grabber_auto) {

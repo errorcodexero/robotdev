@@ -21,7 +21,7 @@ struct Lifter{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
 			#undef X
-		};//TODO: add modes for switch, scale, etc?
+		};
 		
 		private:
 		Goal();
@@ -60,12 +60,11 @@ struct Lifter{
 
 	struct Input{
 		bool bottom_hall_effect;
-		bool climbed_hall_effect;
 		bool top_hall_effect;
 		int ticks;
 	
 		Input();
-		Input(bool,bool,bool,int);
+		Input(bool,bool,int);
 	};
 
 	struct Status_detail{
@@ -76,7 +75,7 @@ struct Lifter{
 		double time, dt;
 	
 		Status_detail();
-		Status_detail(bool,bool,bool,double);
+		Status_detail(bool,bool,bool,double,double,double);
 	};
 
 	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR) X(CLIMBED)
@@ -98,12 +97,14 @@ struct Lifter{
 
 	struct Estimator{
 		Status_detail last;
+		Output::Gearing last_gearing;
+		double climb_goal;
 
 		void update(Time const&,Input const&,Output const&);
 		Status_detail get()const;
 		
 		Estimator();
-		Estimator(Lifter::Status_detail);
+		Estimator(Lifter::Status_detail, Output::Gearing, double);
 	};
 
 	Output_applicator output_applicator;
