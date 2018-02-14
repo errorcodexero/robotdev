@@ -2,7 +2,8 @@
 #define AUTO_DISTANCES_H
 
 #include "quick.h"
-#include "interface.h"
+#include "unittype.h"
+#include <iostream>
 
 //Distances are in inches
 #define AUTO_DISTANCES_ITEMS(X) \

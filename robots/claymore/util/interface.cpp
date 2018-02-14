@@ -1,9 +1,9 @@
 #include "interface.h"
+#include "util.h"
 #include <iostream>
 #include <cassert>
 #include <stdlib.h>
-#include<iomanip>
-#include "util.h"
+#include <iomanip>
 
 using namespace std;
 

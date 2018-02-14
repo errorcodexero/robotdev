@@ -1,20 +1,18 @@
-#ifndef COUNTUP_TIMER_H
-#define COUNTUP_TIMER_H
+#pragma once
 
-#include "interface.h"
+#include "unittype.h"
+#include <iostream>
 
 class Countup_timer{
-	Time start,latest;
+    Time start,latest;
 
-	public:
-	Countup_timer();
-	void update(Time,bool reset);
-	Time elapsed()const;
-	void out(std::ostream&)const;
+public:
+    Countup_timer();
+    void update(Time,bool reset);
+    Time elapsed()const;
+    void out(std::ostream&)const;
 
-	friend bool operator==(Countup_timer,Countup_timer);
+    friend bool operator==(Countup_timer,Countup_timer);
 };
 bool operator==(Countup_timer,Countup_timer);
 std::ostream& operator<<(std::ostream&,Countup_timer);
-
-#endif

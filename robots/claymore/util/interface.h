@@ -1,16 +1,16 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <iosfwd>
-#include <bitset>
-#include <set>
 #include "driver_station_interface.h"
 #include "maybe_inline.h"
 #include "checked_array.h"
 #include "params_parser.h"
 #include "quick.h"
+#include "unittype.h"
+#include <iosfwd>
+#include <bitset>
+#include <set>
 
-typedef double Time;//Seconds
 typedef bool Solenoid_output;
 
 using Pwm_output = double;
@@ -357,8 +357,6 @@ bool operator==(Digital_inputs const&,Digital_inputs const&);
 bool operator!=(Digital_inputs const&,Digital_inputs const&);
 std::ostream& operator<<(std::ostream&,Digital_inputs const&);
 
-typedef float Volt;
-typedef double Rad; //radians, clockwise
 
 struct Robot_inputs{
 	Robot_mode robot_mode;
