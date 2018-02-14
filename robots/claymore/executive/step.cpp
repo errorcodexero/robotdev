@@ -385,6 +385,52 @@ bool Wait::operator==(Wait const& b)const{
 	return wait_timer == b.wait_timer;
 }
 
+Start_lifter_in_background::Start_lifter_in_background(LifterController::Preset preset, double time){
+	Lifter::lifter_controller.backgroundMoveToHeight(preset, time);
+}
+
+Step::Status Start_lifter_in_background::done(Next_mode_info){
+	return Step::Status::FINISHED_SUCCESS;
+}
+
+Toplevel::Goal Start_lifter_in_background::run(Run_info info){
+        return run(info,{});
+}
+
+Toplevel::Goal Start_lifter_in_background::run(Run_info info,Toplevel::Goal goals){
+        return goals;
+}
+
+unique_ptr<Step_impl> Start_lifter_in_background::clone()const{
+        return unique_ptr<Step_impl>(new Start_lifter_in_background(*this));
+}
+
+bool Start_lifter_in_background::operator==(Start_lifter_in_background const& b)const{
+	return true;
+}
+
+Wait_for_lifter::Wait_for_lifter(){}
+
+Step::Status Wait_for_lifter::done(Next_mode_info info){
+        return ready(status(info.status.lifter), Lifter::Goal::background()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Wait_for_lifter::run(Run_info info){
+        return run(info,{});
+}
+
+Toplevel::Goal Wait_for_lifter::run(Run_info info,Toplevel::Goal goals){
+        return goals;
+}
+
+unique_ptr<Step_impl> Wait_for_lifter::clone()const{
+        return unique_ptr<Step_impl>(new Wait_for_lifter(*this));
+}
+
+bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
+        return true;
+}
+
 void Combo::display(std::ostream& o)const{
 	Step_impl_inner<Combo>::display(o);
 	o<<"(";

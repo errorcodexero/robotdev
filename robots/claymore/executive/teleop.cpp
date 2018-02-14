@@ -50,7 +50,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),collector_mode(Collector_mode::DO_NOTHING),print_number(0){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),print_number(0){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	Toplevel::Goal goals;
@@ -110,6 +110,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		collector_mode = Collector_mode::EJECT;
 		eject_timer.set(5);
 	}
+	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
 	switch(collector_mode) {
 		case Collector_mode::DO_NOTHING:
@@ -143,14 +144,25 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		default: assert(0);
 	}
 
+	if(info.panel.climb) {
+		Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
+		if(!ready(status(info.status.lifter), prep_climb_goal))
+			goals.lifter = prep_climb_goal;
+		else
+			goals.lifter = Lifter::Goal::climb();
+	}
+
 	if(info.panel.floor) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
 	if(info.panel.exchange) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 	if(info.panel.switch_) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
 	if(info.panel.scale) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
-	if(info.panel.lifter == Panel::Lifter::UP) lifter_goal = Lifter::Goal::up();
-	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down();
+	if(info.panel.lifter == Panel::Lifter::UP) lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
+	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
 	goals.lifter = lifter_goal;
+
+	if(info.panel.wings && info.panel.wing_lock) wings_goal = Wings::Goal::UNLOCKED;
+	goals.wings = wings_goal;
 
 	if(!info.panel.grabber_auto) {
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::stop();

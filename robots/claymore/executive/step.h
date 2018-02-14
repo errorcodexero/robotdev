@@ -209,7 +209,7 @@ struct Rotate: Step_impl_inner<Rotate>{//orients the robot to a certain angle re
 	bool operator==(Rotate const&)const;
 };
 
-struct Navx_rotate: Step_impl_inner<Navx_rotate>{//orients the robot to a certain angle relative to its starting orientation //TODO
+struct Navx_rotate: Step_impl_inner<Navx_rotate>{//orients the robot to a certain angle relative to its starting orientation
 	double target_angle;
 	bool init;
 
@@ -220,6 +220,26 @@ struct Navx_rotate: Step_impl_inner<Navx_rotate>{//orients the robot to a certai
 	Step::Status done(Next_mode_info);
 	std::unique_ptr<Step_impl> clone()const;
 	bool operator==(Navx_rotate const&)const;
+};
+
+struct Start_lifter_in_background: Step_impl_inner<Start_lifter_in_background>{//Starts moving the lifter to a height in the background
+	explicit Start_lifter_in_background(LifterController::Preset, double);
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Start_lifter_in_background const&)const;
+};
+
+struct Wait_for_lifter: Step_impl_inner<Wait_for_lifter>{//Wait for the lifter to reach its target height (when it's running in the background)
+	explicit Wait_for_lifter();
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Wait_for_lifter const&)const;
 };
 
 #endif

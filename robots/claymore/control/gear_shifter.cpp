@@ -3,17 +3,17 @@
 
 using namespace std;
 
-#define L_SHIFTER_SOLENOID 0
-#define R_SHIFTER_SOLENOID 1
+#define SHIFTER_SOLENOID_LOW 0
+#define SHIFTER_SOLENOID_HIGH 1
 
 Robot_outputs Gear_shifter::Output_applicator::operator()(Robot_outputs robot,Output out)const{
-	robot.solenoid[L_SHIFTER_SOLENOID]=out==Output::HIGH;
-	robot.solenoid[R_SHIFTER_SOLENOID]=out==Output::HIGH;
+	robot.solenoid[SHIFTER_SOLENOID_LOW] = out == Output::LOW;
+	robot.solenoid[SHIFTER_SOLENOID_HIGH] = out != Output::LOW;
 	return robot;
 }
 
 Gear_shifter::Output Gear_shifter::Output_applicator::operator()(Robot_outputs robot)const{
-	return robot.solenoid[L_SHIFTER_SOLENOID]?Output::HIGH:Output::LOW;
+	return robot.solenoid[SHIFTER_SOLENOID_LOW] ? Output::LOW : Output::HIGH;
 }
 
 Gear_shifter::Estimator::Estimator():l_tracker(),r_tracker(),last_current(0),last_output(Output::LOW),recommended(Output::LOW),no_shift(),print_count(0){}

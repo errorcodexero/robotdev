@@ -16,7 +16,7 @@ struct Lifter{
 			#undef X
 		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -30,6 +30,7 @@ struct Lifter{
 		double target_;
 		double tolerance_;
 		LifterController::Preset preset_target_;
+		bool high_power_;
 		
 		public:
 		Mode mode()const;
@@ -37,13 +38,15 @@ struct Lifter{
 		double target()const;
 		double tolerance()const;
 		LifterController::Preset preset_target()const;
+		bool high_power()const;
 
 		static Goal climb();
 		static Goal go_to_height(double);
 		static Goal go_to_preset(LifterController::Preset);
-		static Goal up();
-		static Goal down();
+		static Goal up(bool);
+		static Goal down(bool);
 		static Goal stop();
+		static Goal background();
 	};
 
 	struct Output{
