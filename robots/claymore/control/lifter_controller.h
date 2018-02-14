@@ -34,6 +34,11 @@ public:
     /// \param time the start time of this operation
     void moveToHeight(Preset preset, double time);
 
+    /// \brief move the lifter to a preset position in the background
+    /// \param preset the preset for the lifter height
+    /// \param time the start time of this operation
+    void backgroundMoveToHeight(Preset preset, double time);
+
     /// \brief this method is called each time the robot loop is run to update the lifer
     /// This method uses a PID controller to position the lifter to the desired location
     /// \param height the current height of the lifter
@@ -62,6 +67,10 @@ public:
     /// \returns true when the lifter has reached its desired height
     bool done();
 
+    /// \brief return true when in the lifter is running in the background
+    /// \returns true when the lifter is running in the background
+    bool runningInBackground();
+
     /// \brief returns the height assocaited with a preset
     /// \param preset the preset of interest
     double presetToHeight(Preset preset);
@@ -70,7 +79,8 @@ private:
     // Indicates the mode of the lifter
     enum class Mode {
 	IDLE,			// Doing nothing
-        HEIGHT			// Seeking a desired height
+        HEIGHT,			// Seeking a desired height
+	BACKGROUND              // Going to a height in the background
     };
 
     //

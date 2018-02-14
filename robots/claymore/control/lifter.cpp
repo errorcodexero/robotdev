@@ -108,6 +108,13 @@ Lifter::Goal Lifter::Goal::go_to_preset(LifterController::Preset preset){
     return a;
 }
 
+Lifter::Goal Lifter::Goal::background(){
+    Lifter::Goal a;
+    a.mode_ = Lifter::Goal::Mode::BACKGROUND;
+    a.gearing_ = Lifter::Goal::Gearing::HIGH;
+    return a;
+}
+
 Lifter::Output::Output(double p, Lifter::Output::Gearing g):power(p),gearing(g){}
 Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH){}
 
@@ -338,11 +345,15 @@ set<Lifter::Goal> examples(Lifter::Goal*){
 
 Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal const& goal){
     Lifter::Status s = status(status_detail);
-    if(s == Lifter::Status::ERROR){
-	return {0.0, goal.gearing()};
-    }
 
     Lifter::Output out = {0.0, goal.gearing()};
+    if(s == Lifter::Status::ERROR) return out;
+
+    if(Lifter::lifter_controller.runningInBackground() || goal.mode() == Lifter::Goal::Mode::BACKGROUND) {
+	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
+	return out;
+    }
+
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
 	if(s != Lifter::Status::CLIMBED)
@@ -374,9 +385,11 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	Lifter::lifter_controller.updateHeightOnChange(goal.preset_target(), status_detail.time);
 	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
 	break;
+    case Lifter::Goal::Mode::BACKGROUND:
+	break;
     default:
 	nyi
-	    }
+    }
     return out;
 }
 
@@ -412,6 +425,7 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
     case Lifter::Goal::Mode::GO_TO_PRESET:
+    case Lifter::Goal::Mode::BACKGROUND:
 	return Lifter::lifter_controller.done();
     default:
 	nyi

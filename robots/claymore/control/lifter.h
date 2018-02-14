@@ -16,7 +16,7 @@ struct Lifter{
 			#undef X
 		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -46,6 +46,7 @@ struct Lifter{
 		static Goal up(bool);
 		static Goal down(bool);
 		static Goal stop();
+		static Goal background();
 	};
 
 	struct Output{

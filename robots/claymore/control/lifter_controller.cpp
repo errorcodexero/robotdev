@@ -42,10 +42,15 @@ void LifterController::moveToHeight(Preset preset, double time) {
     moveToHeight(presetToHeight(preset), time);
 }
 
+void LifterController::backgroundMoveToHeight(Preset preset, double time) {
+    moveToHeight(presetToHeight(preset), time);
+    mMode = Mode::BACKGROUND;
+}
+
 void LifterController::update(double height, double time, double dt, double& out) {
     messageLogger &logger = messageLogger::get();
 	
-    if(mMode == Mode::HEIGHT) {
+    if(mMode == Mode::HEIGHT || mMode == Mode::BACKGROUND) {
 	if(std::fabs(mTarget - height) < mHeightThreshold)
 	    mMode = Mode::IDLE;
 
@@ -115,6 +120,10 @@ void LifterController::updateHeightOnChange(Preset preset, double time) {
 
 bool LifterController::done() {
     return mMode == Mode::IDLE;
+}
+
+bool LifterController::runningInBackground() {
+    return mMode == Mode::BACKGROUND;
 }
 
 double LifterController::presetToHeight(Preset preset) {
