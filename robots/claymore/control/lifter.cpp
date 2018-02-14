@@ -5,7 +5,8 @@ using namespace std;
 
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1
-#define LIFTER_SHIFTER_ADDRESS 1
+#define LIFTER_SHIFTER_LOW 2
+#define LIFTER_SHIFTER_HIGH 3
 
 #define CLIMB_POWER .60 //TODO tune
 #define MANUAL_LIFTER_LOW_POWER .60 //TODO tune
@@ -237,15 +238,16 @@ ostream& operator<<(ostream& o, Lifter const& a){
 Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Output const& out)const{
     r.pwm[LIFTER_ADDRESS_L] = out.power;
     r.pwm[LIFTER_ADDRESS_R] = out.power;
-    r.solenoid[LIFTER_SHIFTER_ADDRESS] = out.gearing == Lifter::Output::Gearing::HIGH;
+    r.solenoid[LIFTER_SHIFTER_LOW] = out.gearing == Lifter::Output::Gearing::LOW;
+    r.solenoid[LIFTER_SHIFTER_HIGH] = out.gearing != Lifter::Output::Gearing::LOW;
     return r;
 };
 
 Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)const{
     return {
 	r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
-	    r.solenoid[LIFTER_SHIFTER_ADDRESS] ? Lifter::Output::Gearing::HIGH : Lifter::Output::Gearing::LOW
-	    };
+	r.solenoid[LIFTER_SHIFTER_LOW] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH
+	   };
 }
 
 Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const& in)const{
