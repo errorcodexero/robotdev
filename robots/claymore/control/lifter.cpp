@@ -14,7 +14,6 @@ using namespace std;
 #define AUTO_LIFTER_POWER .60 //TODO tune
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
-#define CLIMBED_HALL_EFFECT_ADDRESS 2 //TODO MXP DIO 0
 #define TOP_HALL_EFFECT_ADDRESS 8
 #define ENCODER_ADDRESS 4 //TODO
 
@@ -118,14 +117,14 @@ Lifter::Goal Lifter::Goal::background(){
 Lifter::Output::Output(double p, Lifter::Output::Gearing g):power(p),gearing(g){}
 Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH){}
 
-Lifter::Input::Input(bool b, bool c, bool t, int e):bottom_hall_effect(b),climbed_hall_effect(c),top_hall_effect(t),ticks(e){}
-Lifter::Input::Input():Input(false,false,false,0){}
+Lifter::Input::Input(bool b, bool t, int e):bottom_hall_effect(b),top_hall_effect(t),ticks(e){}
+Lifter::Input::Input():Input(false,false,0){}
 
-Lifter::Status_detail::Status_detail(bool b,bool t,bool c,double h):at_bottom(b),at_top(t),at_climbed_height(c),height(h){}
-Lifter::Status_detail::Status_detail():Status_detail(false,false,false,0.0){}
+Lifter::Status_detail::Status_detail(bool b,bool t,bool c,double h,double ti,double dt):at_bottom(b),at_top(t),at_climbed_height(c),height(h),time(ti),dt(dt){}
+Lifter::Status_detail::Status_detail():Status_detail(false,false,false,0.0,0.0,0.0){}
 
-Lifter::Estimator::Estimator(Lifter::Status_detail s):last(s){}
-Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{}){}
+Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg):last(s),last_gearing(g),climb_goal(cg){}
+Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,0.0){}
 
 #define CMP(VAR)				\
     if(a.VAR < b.VAR) return true;		\
@@ -258,9 +257,8 @@ Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)cons
 }
 
 Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const& in)const{
-    r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] = in.bottom_hall_effect ? Digital_in::_0 : Digital_in::_1;
-    r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] = in.climbed_hall_effect ? Digital_in::_0 : Digital_in::_1;
-    r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] = in.top_hall_effect ? Digital_in::_0 : Digital_in::_1;//active low now I guess
+    r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] = in.bottom_hall_effect ? Digital_in::_0 : Digital_in::_1; //Active low
+    r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] = in.top_hall_effect ? Digital_in::_0 : Digital_in::_1;
     r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
     return r;
 }
@@ -268,13 +266,12 @@ Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input cons
 Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
     return {
 	r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] == Digital_in::_0,
-	    r.digital_io.in[CLIMBED_HALL_EFFECT_ADDRESS] == Digital_in::_0,
-	    r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_0,
-	    r.digital_io.encoder[ENCODER_ADDRESS]
-	    };
+	r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_0,
+	r.digital_io.encoder[ENCODER_ADDRESS]
+    };
 }
 
-void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const&){
+void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const& out){
     last.at_bottom = in.bottom_hall_effect;
     last.at_top = in.top_hall_effect;
 
@@ -290,6 +287,11 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     const double INCHES_PER_TICK = MAX_LIFTER_HEIGHT / (top_ticks - bottom_ticks); 
 
     last.height = in.ticks*INCHES_PER_TICK;
+
+    const double CLIMBING_DIFFERENCE = 100; //TODO: Tune this
+    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - CLIMBING_DIFFERENCE;
+    last_gearing = out.gearing;
+    last.at_climbed_height = last.height < climb_goal;
 	
     last.dt = last.time - now;
     last.time = now;
@@ -301,14 +303,10 @@ Lifter::Status_detail Lifter::Estimator::get()const{
 
 set<Lifter::Input> examples(Lifter::Input*){
     return {
-	{false,false,false,0},
-	{true,false,false,0},
-	{true,true,false,0},
-	{true,true,true,0},
-	{false,true,false,0},
-	{false,true,true,0},
-	{false,false,true,0},
-	{true,false,true,0}
+	{false,false,0},
+	{true,false,0},
+	{false,true,0},
+	{true,true,0},
     };
 }
 
@@ -324,14 +322,14 @@ set<Lifter::Output> examples(Lifter::Output*){
 
 set<Lifter::Status_detail> examples(Lifter::Status_detail*){
     return {
-	{false,false,false,0.0},
-	{false,false,true,0.0},
-	{true,false,false,0.0},
-	{true,false,true,0.0},
-	{false,true,false,0.0},
-	{false,true,true,0.0},
-	{true,true,false,0.0},
-	{true,true,true,0.0}
+	{false,false,false,0.0,0.0,0.0},
+	{false,false,true,0.0,0.0,0.0},
+	{true,false,false,0.0,0.0,0.0},
+	{true,false,true,0.0,0.0,0.0},
+	{false,true,false,0.0,0.0,0.0},
+	{false,true,true,0.0,0.0,0.0},
+	{true,true,false,0.0,0.0,0.0},
+	{true,true,true,0.0,0.0,0.0}
     };
 }
 

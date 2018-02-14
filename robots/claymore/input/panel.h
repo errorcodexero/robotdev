@@ -22,7 +22,7 @@ struct Panel{
 	//2 position swicthes:
 	bool grabber_auto;
 	bool intake_auto;
-	bool wing_lock;
+	bool climb_lock;
 	bool lifter_high_power;
 	//3 position switches:
 	enum class Grabber{CLOSE,OFF,OPEN};
