@@ -7,8 +7,8 @@ using namespace std;
 #define SHIFTER_SOLENOID_HIGH 1
 
 Robot_outputs Gear_shifter::Output_applicator::operator()(Robot_outputs robot,Output out)const{
-	robot.solenoid[SHIFTER_SOLENOID_LOW]= out == Output::LOW;
-	robot.solenoid[SHIFTER_SOLENOID_HIGH]= out != Output::LOW;
+	robot.solenoid[SHIFTER_SOLENOID_LOW] = out == Output::LOW;
+	robot.solenoid[SHIFTER_SOLENOID_HIGH] = out != Output::LOW;
 	return robot;
 }
 
