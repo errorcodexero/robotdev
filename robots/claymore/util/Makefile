@@ -50,7 +50,8 @@ SRC = \
 	type.cpp\
 	util.cpp\
 	visitable.cpp\
-	stall_monitor.cpp
+	stall_monitor.cpp\
+	side_decoder.cpp
 
 ifndef TESTS
 TESTS = \
@@ -71,6 +72,7 @@ TESTS = \
 	stall_monitor\
 	string_utils\
 	type\
+	side_decoder.cpp\
 	util
 endif
 
