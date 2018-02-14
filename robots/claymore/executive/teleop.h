@@ -24,6 +24,7 @@ struct Teleop : Executive_impl<Teleop> {
 	#define TELEOP_ITEMS(X)\
 		X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges) \
 		X(Lifter::Goal,lifter_goal) \
+		X(Wings::Goal,wings_goal) \
 		X(Collector_mode, collector_mode) \
 		X(Countdown_timer, eject_timer) \
 		X(int,print_number)

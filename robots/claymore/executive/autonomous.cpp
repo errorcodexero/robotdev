@@ -263,6 +263,40 @@ Executive get_auto_mode(Next_mode_info info)
 	    }
 	}
     };
+
+#elif AUTOMODE_TEST == 6
+   //
+   // AUTOMODE_TEST = 6, start the lifter in the background, drive forward 60 inches, wait until the lifter has reached its goal
+   //
+   logger.startMessage(messageLogger::messageType::info);
+   logger << "get_auto+mode - AUTOMODE_TEST == 6, start lifter, drive 60, wait for lifter" ;
+   logger.endMessage();
+
+   Executive auto_program
+   {
+	Chain
+	{
+	    vector<Step>
+	    {
+		Step
+		{
+		    Start_lifter_in_background{LifterController::Preset::SWITCH, info.in.now}
+		},
+		Step
+		{
+		    Navx_drive_straight{60.0}
+		},
+		Step
+		{
+		    Wait_for_lifter{}
+		}
+	    }
+	},
+	Executive
+	{
+	    Teleop()
+	}
+   };
     
 #elif AUTOMODE_TEST == 20
     //
@@ -283,7 +317,6 @@ Executive get_auto_mode(Next_mode_info info)
     logger.endMessage() ;
     
     Executive auto_program = opposide_switch ;
->>>>>>> master
 	
 #else
     //

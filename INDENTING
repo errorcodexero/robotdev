@@ -1,0 +1,21 @@
+
+
+C++ source code is uses and indent of four.  Tab widths are set to four and
+indentation can be expanded to spaces or tabs as long as tabs are assumed to
+be four characters wide.
+
+For emacs, the following works well in your .emacs file
+
+(setq c-default-style "linux")
+(setq c-basic-offset 4)
+(setq tab-width 4)
+(setq indent-tabs-mode t)
+
+
+For VIM the following works well for your VIMRC file
+set tabstop=4
+set shiftwidth=4
+
+
+For other editors there are always settings to achieve the same result.
+

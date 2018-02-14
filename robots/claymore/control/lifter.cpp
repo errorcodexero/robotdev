@@ -5,10 +5,12 @@ using namespace std;
 
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1
-#define LIFTER_SHIFTER_ADDRESS 1
+#define LIFTER_SHIFTER_LOW 2
+#define LIFTER_SHIFTER_HIGH 3
 
 #define CLIMB_POWER .60 //TODO tune
-#define MANUAL_LIFTER_POWER .60 //TODO tune
+#define MANUAL_LIFTER_LOW_POWER .60 //TODO tune
+#define MANUAL_LIFTER_HIGH_POWER .80 //TODO tune
 #define AUTO_LIFTER_POWER .60 //TODO tune
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
@@ -54,7 +56,11 @@ LifterController::Preset Lifter::Goal::preset_target()const{
     return preset_target_;
 }
 
-Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0){}
+bool Lifter::Goal::high_power()const{
+    return high_power_;
+}
+
+Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0),high_power_(false){}
 
 Lifter::Goal Lifter::Goal::climb(){
     Lifter::Goal a;
@@ -63,10 +69,11 @@ Lifter::Goal Lifter::Goal::climb(){
     return a;
 }
 
-Lifter::Goal Lifter::Goal::up(){
+Lifter::Goal Lifter::Goal::up(bool high_power = false){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::UP;
     a.gearing_ = Lifter::Goal::Gearing::HIGH;
+    a.high_power_ = high_power;
     return a;
 }
 
@@ -77,10 +84,11 @@ Lifter::Goal Lifter::Goal::stop(){
     return a;
 }
 
-Lifter::Goal Lifter::Goal::down(){
+Lifter::Goal Lifter::Goal::down(bool high_power = false){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::DOWN;
     a.gearing_ = Lifter::Goal::Gearing::HIGH;
+    a.high_power_ = high_power;
     return a;
 }
 
@@ -97,6 +105,13 @@ Lifter::Goal Lifter::Goal::go_to_preset(LifterController::Preset preset){
     a.mode_ = Lifter::Goal::Mode::GO_TO_PRESET;
     a.gearing_ = Lifter::Goal::Gearing::HIGH;
     a.preset_target_ = preset;
+    return a;
+}
+
+Lifter::Goal Lifter::Goal::background(){
+    Lifter::Goal a;
+    a.mode_ = Lifter::Goal::Mode::BACKGROUND;
+    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     return a;
 }
 
@@ -230,15 +245,16 @@ ostream& operator<<(ostream& o, Lifter const& a){
 Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Output const& out)const{
     r.pwm[LIFTER_ADDRESS_L] = out.power;
     r.pwm[LIFTER_ADDRESS_R] = out.power;
-    r.solenoid[LIFTER_SHIFTER_ADDRESS] = out.gearing == Lifter::Output::Gearing::HIGH;
+    r.solenoid[LIFTER_SHIFTER_LOW] = out.gearing == Lifter::Output::Gearing::LOW;
+    r.solenoid[LIFTER_SHIFTER_HIGH] = out.gearing != Lifter::Output::Gearing::LOW;
     return r;
 };
 
 Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)const{
     return {
 	r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
-	    r.solenoid[LIFTER_SHIFTER_ADDRESS] ? Lifter::Output::Gearing::HIGH : Lifter::Output::Gearing::LOW
-	    };
+	r.solenoid[LIFTER_SHIFTER_LOW] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH
+	   };
 }
 
 Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const& in)const{
@@ -298,9 +314,9 @@ set<Lifter::Input> examples(Lifter::Input*){
 
 set<Lifter::Output> examples(Lifter::Output*){
     return {
-	{-MANUAL_LIFTER_POWER, Lifter::Output::Gearing::HIGH},
+	{-MANUAL_LIFTER_LOW_POWER, Lifter::Output::Gearing::HIGH},
 	{0.0, Lifter::Output::Gearing::HIGH}, 
-	{MANUAL_LIFTER_POWER, Lifter::Output::Gearing::HIGH},
+	{MANUAL_LIFTER_LOW_POWER, Lifter::Output::Gearing::HIGH},
 	{0.0, Lifter::Output::Gearing::LOW},
 	{CLIMB_POWER, Lifter::Output::Gearing::LOW},
 	    };
@@ -329,11 +345,15 @@ set<Lifter::Goal> examples(Lifter::Goal*){
 
 Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal const& goal){
     Lifter::Status s = status(status_detail);
-    if(s == Lifter::Status::ERROR){
-	return {0.0, goal.gearing()};
-    }
 
     Lifter::Output out = {0.0, goal.gearing()};
+    if(s == Lifter::Status::ERROR) return out;
+
+    if(Lifter::lifter_controller.runningInBackground() || goal.mode() == Lifter::Goal::Mode::BACKGROUND) {
+	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
+	return out;
+    }
+
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
 	if(s != Lifter::Status::CLIMBED)
@@ -343,13 +363,13 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	break;
     case Lifter::Goal::Mode::UP:
 	if(s != Lifter::Status::TOP)
-		out.power = MANUAL_LIFTER_POWER;
+		out.power = goal.high_power() ? MANUAL_LIFTER_HIGH_POWER : MANUAL_LIFTER_LOW_POWER;
 	else
 		out.power = 0.0;
 	break;
     case Lifter::Goal::Mode::DOWN:
 	if(s != Lifter::Status::BOTTOM)
-		out.power = -MANUAL_LIFTER_POWER;
+		out.power = goal.high_power() ? -MANUAL_LIFTER_HIGH_POWER : -MANUAL_LIFTER_LOW_POWER;
 	else
 		out.power = 0.0;
 	break;
@@ -365,9 +385,11 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	Lifter::lifter_controller.updateHeightOnChange(goal.preset_target(), status_detail.time);
 	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
 	break;
+    case Lifter::Goal::Mode::BACKGROUND:
+	break;
     default:
 	nyi
-	    }
+    }
     return out;
 }
 
@@ -403,6 +425,7 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
     case Lifter::Goal::Mode::GO_TO_PRESET:
+    case Lifter::Goal::Mode::BACKGROUND:
 	return Lifter::lifter_controller.done();
     default:
 	nyi
