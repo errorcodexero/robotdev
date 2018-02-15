@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="CounterBase.h" />
+    <ClInclude Include="DriverStation.h" />
     <ClInclude Include="Encoder.h" />
     <ClInclude Include="I2C.h" />
     <ClInclude Include="LiveWindow\LiveWindowSendable.h" />
@@ -61,6 +62,7 @@
     <ClInclude Include="WPILib.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DriverStation.cpp" />
     <ClCompile Include="Encoder.cpp" />
     <ClCompile Include="I2C.cpp" />
     <ClCompile Include="RobotBase.cpp" />

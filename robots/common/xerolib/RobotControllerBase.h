@@ -2,22 +2,22 @@
 
 namespace xerolib
 {
-	class XeroRobotBase;
+    class XeroRobotBase;
 
-	class RobotControllerBase
+    class RobotControllerBase
+    {
+    public:
+	RobotControllerBase(XeroRobotBase &robot);
+	virtual ~RobotControllerBase();
+
+	virtual void executeOneLoop() = 0;
+
+	XeroRobotBase &getRobot()
 	{
-	public:
-		RobotControllerBase(XeroRobotBase &robot);
-		virtual ~RobotControllerBase();
+	    return m_robot;
+	}
 
-		virtual void executeOneLoop() = 0;
-
-		XeroRobotBase &getRobot()
-		{
-			return m_robot;
-		}
-
-	private:
-		XeroRobotBase &m_robot;
-	};
+    private:
+	XeroRobotBase &m_robot;
+    };
 }

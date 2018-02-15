@@ -37,6 +37,7 @@ SRC = \
 	MessageLogger.cpp\
 	MessageStreamDestination.cpp\
 	NavXAngleMeasurementDevice.cpp\
+	OperatorControllerBase.cpp\
 	ParamFileReader.cpp\
 	PIDCtrl.cpp\
 	RobotControllerBase.cpp\

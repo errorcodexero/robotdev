@@ -49,7 +49,8 @@ USERLIBS = -lstdc++fs
 SRC = \
 	Robot2018.cpp\
 	Robot2018Consts.cpp\
-	Robot2018Autonomous.cpp
+	Robot2018Autonomous.cpp\
+	Robot2018Operator.cpp
 
 include ../../../makefiles/compileapp.mk
 

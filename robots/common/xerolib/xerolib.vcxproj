@@ -79,6 +79,7 @@
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
     <ClCompile Include="NavXAngleMeasurementDevice.cpp" />
+    <ClCompile Include="OperatorControllerBase.cpp" />
     <ClCompile Include="ParamFileReader.cpp" />
     <ClCompile Include="PIDCtrl.cpp" />
     <ClCompile Include="RobotControllerBase.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="MessageLogger.h" />
     <ClInclude Include="MessageStreamDestination.h" />
     <ClInclude Include="NavXAngleMeasurementDevice.h" />
+    <ClInclude Include="OperatorControllerBase.h" />
     <ClInclude Include="ParamFileReader.h" />
     <ClInclude Include="PIDCtrl.h" />
     <ClInclude Include="RobotControllerBase.h" />
