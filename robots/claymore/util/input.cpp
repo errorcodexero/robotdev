@@ -1,7 +1,9 @@
 #include "input.h"
-#include<cassert>
-#include<set>
+#include "unittype.h"
 #include "interface.h"
+#include <cassert>
+#include <set>
+
 
 using namespace std;
 

@@ -1,15 +1,14 @@
-#ifndef POINT_H
-#define POINT_H
+#pragma once
 
-#include<iosfwd>
-#include "interface.h"
+#include "unittype.h"
+#include <iosfwd>
 
 struct Point{
-	double x,y;//feet
-	double theta;//radians
+    double x,y;//feet
+    double theta;//radians
 
-	Point();
-	Point(double,double,double);
+    Point();
+    Point(double,double,double);
 };
 
 std::ostream& operator<<(std::ostream&,Point const&);
@@ -20,4 +19,3 @@ bool approx_equal(Point,Point);
 
 Point shift_axes_clockwise(Point p,Rad theta);
 
-#endif
