@@ -69,102 +69,8 @@ struct Step_impl_inner:Step_impl{
 
 using Inch=double;
 
-class Drive:public Step_impl_inner<Drive>{//Drives straight a certain distance
-	Countdown_timer timer;
-	
-	public:
-	explicit Drive(double);
-
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(Drive const&)const;
-};
-
-class Drive_straight:public Step_impl_inner<Drive_straight>{//Drives straight a certain distance
-	Inch target_dist;
-	Drivebase::Distances initial_distances;
-	bool init;
-	Motion_profile motion_profile;
-	Countdown_timer in_range;	
-	Countdown_timer stall_timer;
-	
-	Drivebase::Distances get_distance_travelled(Drivebase::Distances);//TODO: do this better
-
-	public:
-	explicit Drive_straight(Inch);
-	explicit Drive_straight(Inch,double,double);
-
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(Drive_straight const&)const;
-};
-
-class MP_drive:public Step_impl_inner<MP_drive>{
-	Inch target_distance;
-	Settable_constant<Drivebase::Goal> drive_goal;
-	
-	public:
-	explicit MP_drive(Inch);
-
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(MP_drive const&)const;
-};
-
-class Navx_drive_straight:public Step_impl_inner<Navx_drive_straight>{
-	Inch target_distance;
-	//double angle_i;
-	//Settable_constant<Drivebase::Goal> drive_goal;
-	bool init;
-
-	public:
-	explicit Navx_drive_straight(Inch);
-
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(Navx_drive_straight const&)const;
-};
-
-class Ram:public Step_impl_inner<Ram>{//Drives straight a certain distance
-	Inch target_dist;
-	Drivebase::Distances initial_distances;
-	bool init;
-	Countdown_timer stall_timer;
-
-	Drivebase::Distances get_distance_travelled(Drivebase::Distances);//TODO: do this better
-
-	public:
-	explicit Ram(Inch);
-
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(Ram const&)const;
-};
-
-
-class Wait: public Step_impl_inner<Wait>{//Either stops all operation for a given period of time or continues to run the same goals for that time
-	Countdown_timer wait_timer;//seconds
-	public:
-	explicit Wait(Time);
-
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(Wait const&)const;
-};
-
-class Combo: public Step_impl_inner<Combo>{//Runs two steps at the same time
+//Run two steps simultaneously
+class Combo: public Step_impl_inner<Combo>{
 	Step step_a;
 	Step step_b;
 	public:
@@ -178,30 +84,75 @@ class Combo: public Step_impl_inner<Combo>{//Runs two steps at the same time
 	bool operator==(Combo const&)const;
 };
 
-struct Spin: Step_impl_inner<Spin>{
-	double left, right;
+//Wait for a specified amount of time
+class Wait: public Step_impl_inner<Wait>{
+	Countdown_timer wait_timer;
+	public:
+	explicit Wait(Time);
 
-	explicit Spin(double, double);
 	Toplevel::Goal run(Run_info,Toplevel::Goal);
 	Toplevel::Goal run(Run_info);
 	Step::Status done(Next_mode_info);
 	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(Spin const&)const;
+	bool operator==(Wait const&)const;
 };
 
-struct Rotate: Step_impl_inner<Rotate>{//orients the robot to a certain angle relative to its starting orientation
-	Rad target_angle;//radians,clockwise=positive
+//Drive straight a specified distance
+class Drive:public Step_impl_inner<Drive>{
+	Inch target_distance;
+	bool init;
+
+	public:
+	explicit Drive(Inch);
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Drive const&)const;
+};
+
+//Drive the motors at the specified powers for a specified amount of time
+class Drive_timed:public Step_impl_inner<Drive_timed>{
+	double left_power;
+	double right_power;
+	Countdown_timer timer;
+	
+	public:
+	explicit Drive_timed(double, double, double);
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Drive_timed const&)const;
+};
+
+//Drive the motors at the specified powers for the specified distances
+class Ram:public Step_impl_inner<Ram>{
+	double left_power;
+	double right_power;
+	Drivebase::Distances target_distances;
 	Drivebase::Distances initial_distances;
 	bool init;
-	Drivebase::Distances side_goals;
-	Motion_profile motion_profile;
-	Countdown_timer in_range;
 
-	Drivebase::Distances angle_to_distances(Rad);
-	Drivebase::Distances get_distance_travelled(Drivebase::Distances);
+	public:
+	explicit Ram(double, double, Inch, Inch);
 
-	explicit Rotate(Rad);
-	explicit Rotate(Rad,double,double);
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Ram const&)const;
+};
+
+//Rotate the robot by a specified angle
+struct Rotate: Step_impl_inner<Rotate>{
+	double target_angle;
+	bool init;
+
+	explicit Rotate(double);
+	
 	Toplevel::Goal run(Run_info,Toplevel::Goal);
 	Toplevel::Goal run(Run_info);
 	Step::Status done(Next_mode_info);
@@ -209,20 +160,8 @@ struct Rotate: Step_impl_inner<Rotate>{//orients the robot to a certain angle re
 	bool operator==(Rotate const&)const;
 };
 
-struct Navx_rotate: Step_impl_inner<Navx_rotate>{//orients the robot to a certain angle relative to its starting orientation
-	double target_angle;
-	bool init;
-
-	explicit Navx_rotate(double);
-	
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-	std::unique_ptr<Step_impl> clone()const;
-	bool operator==(Navx_rotate const&)const;
-};
-
-struct Start_lifter_in_background: Step_impl_inner<Start_lifter_in_background>{//Starts moving the lifter to a height in the background
+//Start moving the lifter to a specified preset in the background
+struct Start_lifter_in_background: Step_impl_inner<Start_lifter_in_background>{
 	explicit Start_lifter_in_background(LifterController::Preset, double);
 
 	Toplevel::Goal run(Run_info,Toplevel::Goal);
@@ -232,7 +171,8 @@ struct Start_lifter_in_background: Step_impl_inner<Start_lifter_in_background>{/
 	bool operator==(Start_lifter_in_background const&)const;
 };
 
-struct Wait_for_lifter: Step_impl_inner<Wait_for_lifter>{//Wait for the lifter to reach its target height (when it's running in the background)
+//Wait until the lifter has reached its goal
+struct Wait_for_lifter: Step_impl_inner<Wait_for_lifter>{
 	explicit Wait_for_lifter();
 
 	Toplevel::Goal run(Run_info,Toplevel::Goal);

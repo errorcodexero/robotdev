@@ -18,129 +18,22 @@ ostream& operator<<(ostream& o,Step const& a){
 	a.display(o);
 	return o;
 }
+//
 
-//This part stays in the CPP file.
+
+Step::Step(Step const& a):impl(a.get().clone()){}
+
+Step::Step(Step_impl const& a){
+	auto c=a.clone();
+	if(!c)nyi
+	impl=move(c);
+}
+
 Toplevel::Goal Step::run(Run_info info, Toplevel::Goal goals){
 	return impl->run(info,goals);
 }
 Toplevel::Goal Step::run(Run_info info){
 	return impl->run(info,{});
-}
-
-Spin::Spin(double l, double r):left(l),right(r){}
-
-Toplevel::Goal Spin::run(Run_info info){
-	return run(info,{});
-}
-
-Toplevel::Goal Spin::run(Run_info info,Toplevel::Goal goals){
-	goals.drive = Drivebase::Goal::absolute(left, right);
-	return goals;
-}
-
-Step::Status Spin::done(Next_mode_info info){
-	return Step::Status::UNFINISHED;
-	//return ready(info.status.drive, Drivebase::Goal::absolute(left, right)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
-}
-
-std::unique_ptr<Step_impl> Spin::clone()const{
-	return unique_ptr<Step_impl>(new Spin(*this));
-}
-
-bool Spin::operator==(Spin const& b)const{
-	return left == b.left && right == b.right;
-}
-
-const double RIGHT_SPEED_CORRECTION = /*-0.045; */ 0.0;// 0 is for comp bot. //left and right sides of the practice robot drive at different speeds given the same power, adjust this to make the robot drive straight
-
-Drivebase::Distances Rotate::angle_to_distances(Rad target_angle){
-	Inch side_goal = target_angle * 0.5 * Robot_constants::ROBOT_WIDTH;
-	return Drivebase::Distances{side_goal,-side_goal};
-}
-
-Drivebase::Distances Rotate::get_distance_travelled(Drivebase::Distances current){
-	return current - initial_distances;
-}
-
-Rotate::Rotate(Rad a):Rotate(a,0.02,0.5){}//from testing
-Rotate::Rotate(Rad a,double vel_modifier,double max):target_angle(a),initial_distances({0,0}),init(false),side_goals(angle_to_distances(a)){
-	motion_profile = {side_goals.l,vel_modifier,max};//from testing
-}
-
-Toplevel::Goal Rotate::run(Run_info info){
-	return run(info,{});
-}
-
-Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals){
-	if(!init){
-		initial_distances = info.status.drive.distances;
-		init = true;
-	}
-	Drivebase::Distances distance_travelled = get_distance_travelled(info.status.drive.distances);
-	
-	//ignoring right encoder because it's proven hard to get meaningful data from it
-	double power = motion_profile.target_speed(distance_travelled.l); 
-	double left = clip(target_to_out_power(power));//TODO: move .2 to the constructor of Rotate and set an instance variable
-	double right = -clip(target_to_out_power(power - RIGHT_SPEED_CORRECTION * power));
-	goals.drive = Drivebase::Goal::absolute(left,right);
-	return goals;
-}
-
-Step::Status Rotate::done(Next_mode_info info){
-	static const Inch TOLERANCE = 1.0;//inches
-	Drivebase::Distances distance_travelled = get_distance_travelled(info.status.drive.distances);
-	Drivebase::Distances distance_left = side_goals - distance_travelled;
-	if(fabs(distance_left.l) < TOLERANCE){
-		 in_range.update(info.in.now,info.in.robot_mode.enabled);
-	} else {
-		static const Time FINISH_TIME = .50;//seconds
-		in_range.set(FINISH_TIME);
-	}
-	return in_range.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
-
-std::unique_ptr<Step_impl> Rotate::clone()const{
-	return unique_ptr<Step_impl>(new Rotate(*this));
-}
-
-bool Rotate::operator==(Rotate const& b)const{
-	return target_angle == b.target_angle && initial_distances == b.initial_distances && side_goals == b.side_goals && motion_profile == b.motion_profile && in_range == b.in_range;
-}
-////
-
-Navx_rotate::Navx_rotate(double a):target_angle(a),init(false){}
-
-Toplevel::Goal Navx_rotate::run(Run_info info){
-	return run(info,{});
-}
-
-Toplevel::Goal Navx_rotate::run(Run_info info,Toplevel::Goal goals){
-	if(!init) {
-		Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now) ;
-		init = true;
-	}
-	goals.drive = Drivebase::Goal::rotate();
-	return goals;
-}
-
-Step::Status Navx_rotate::done(Next_mode_info info){
-	//drive_goal = Drivebase::Goal::rotate(info.status.drive.angle + target_angle);
-	return ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
-}
-
-std::unique_ptr<Step_impl> Navx_rotate::clone()const{
-	return unique_ptr<Step_impl>(new Navx_rotate(*this));
-}
-
-bool Navx_rotate::operator==(Navx_rotate const& b)const{
-	return target_angle == b.target_angle && init == b.init;
-}
-
-//Step::Step(Step_impl const& a):impl(a.clone().get()){}
-Step::Step(Step_impl const& a){
-	auto c=a.clone();
-	if(!c)nyi
-	impl=move(c);
 }
 
 Step::Status Step::done(Next_mode_info a){
@@ -161,275 +54,32 @@ bool Step::operator<(Step const& a)const{
 	return impl->operator<(a);
 }
 
+
 void Step_impl::display(ostream& o)const{
 	o<<"Step_impl";
 }
 
-Step_impl::~Step_impl(){}
+Step_impl const& Step::get()const{
+	assert(impl);
+	return *impl.get();
+}
+
+ostream& operator<<(ostream& o,Step_impl const& a){
+	a.display(o);
+	return o;
+}
 
 /*bool Step_impl::operator==(Step_impl const& a)const{
 	T const& b=dynamic_cast<T const&>(a.get());
 	return this->operator==(b);
 }*/
 
-Drive::Drive(double t){
-	timer.set(t);
-}
+Step_impl::~Step_impl(){}
 
-Step::Status Drive::done(Next_mode_info /*info*/){
-	return timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
 
-Toplevel::Goal Drive::run(Run_info info){
-	return run(info,{});
-}
-
-Toplevel::Goal Drive::run(Run_info info,Toplevel::Goal goals){
-	timer.update(info.in.now, info.in.robot_mode.enabled);
-	const double POWER = 0.4;
-	goals.drive = Drivebase::Goal::absolute(POWER,POWER);
-	return goals;
-}
-
-unique_ptr<Step_impl> Drive::clone()const{
-	return unique_ptr<Step_impl>(new Drive(*this));
-}
-
-bool Drive::operator==(Drive const& b)const{
-	return timer == b.timer;
-}
-
-Drive_straight::Drive_straight(Inch goal):Drive_straight(goal,0.02,0.5){}
-Drive_straight::Drive_straight(Inch goal,double vel_modifier,double max):target_dist(goal),initial_distances(Drivebase::Distances{0,0}),init(false),motion_profile(goal,vel_modifier,max){}//Motion profiling values from testing
-
-Drivebase::Distances Drive_straight::get_distance_travelled(Drivebase::Distances current){
-	return current - initial_distances;
-}
-
-Step::Status Drive_straight::done(Next_mode_info info){
-	static const Inch TOLERANCE = 3.0;//inches
-	Drivebase::Distances distance_travelled = get_distance_travelled(info.status.drive.distances);
-	Drivebase::Distances distance_left = Drivebase::Distances{target_dist,target_dist} - distance_travelled;
-	//ignoring right encoder because it's proven hard to get meaningful data from it
-	if(fabs(distance_left.l) < TOLERANCE){
-		in_range.update(info.in.now,info.in.robot_mode.enabled);
-	} else {
-		static const Time FINISH_TIME = .50;
-		in_range.set(FINISH_TIME);
-	}
-	
-	/*
-	if(info.status.drive.stall){
-		stall_timer.update(info.in.now,info.in.robot_mode.enabled);
-	} else{
-		static const Time STALL_TIME = 1.0;
-		stall_timer.set(STALL_TIME);
-	}
-	if(stall_timer.done()) return Step::Status::FINISHED_FAILURE;
-	*/
-	
-	//cout<<"stall:"<<info.status.drive.stall<<"\n";
-
-	return in_range.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
-
-Toplevel::Goal Drive_straight::run(Run_info info){
-	return run(info,{});
-}
-
-Toplevel::Goal Drive_straight::run(Run_info info,Toplevel::Goal goals){
-	if(!init){
-		initial_distances = info.status.drive.distances;
-		init = true;
-	}
-	Drivebase::Distances distance_travelled = get_distance_travelled(info.status.drive.distances);
-
-	double power = motion_profile.target_speed(distance_travelled.l); //ignoring right encoder because it's proven hard to get meaningful data from it
-
-	double left = clip(target_to_out_power(power));//TODO: move .11 to the constructor of Drive_straight and set an instance variable
-	double right = clip(target_to_out_power(power + power * RIGHT_SPEED_CORRECTION)); //right side would go faster than the left without error correction
-	goals.drive = Drivebase::Goal::absolute(left,right);
-	return goals;
-}
-
-unique_ptr<Step_impl> Drive_straight::clone()const{
-	return unique_ptr<Step_impl>(new Drive_straight(*this));
-}
-
-bool Drive_straight::operator==(Drive_straight const& b)const{
-	return target_dist == b.target_dist && initial_distances == b.initial_distances && init == b.init && motion_profile == b.motion_profile && in_range == b.in_range /*&& stall_timer == b.stall_timer*/;
-}
-
-MP_drive::MP_drive(Inch target):target_distance(target){}
-
-Step::Status MP_drive::done(Next_mode_info info){
-	drive_goal = Drivebase::Goal::distances(Drivebase::Distances(target_distance) + info.status.drive.distances);
-	return ready(info.status.drive, *drive_goal) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
-
-Toplevel::Goal MP_drive::run(Run_info info){
-	return run(info, {});
-}
-
-Toplevel::Goal MP_drive::run(Run_info info, Toplevel::Goal goals){
-	drive_goal = Drivebase::Goal::distances(Drivebase::Distances(target_distance) + info.status.drive.distances);
-	goals.drive = *drive_goal;
-	return goals;
-}
-
-unique_ptr<Step_impl> MP_drive::clone()const{
-	return unique_ptr<Step_impl>(new MP_drive(*this));
-}
-
-bool MP_drive::operator==(MP_drive const& a)const{
-	return target_distance==a.target_distance && drive_goal==a.drive_goal;
-}
-
-Navx_drive_straight::Navx_drive_straight(Inch target):target_distance(target),init(false){}
-
-Step::Status Navx_drive_straight::done(Next_mode_info info){
-	//drive_goal = Drivebase::Goal::drive_straight(Drivebase::Distances(target_distance) + info.status.drive.distances, info.status.drive.angle, angle_i);
-	return ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
-
-Toplevel::Goal Navx_drive_straight::run(Run_info info){
-	return run(info, {});
-}
-
-Toplevel::Goal Navx_drive_straight::run(Run_info info, Toplevel::Goal goals){
-	if(!init) {
-		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle, info.in.now);
-		init = true;
-	}
-	goals.drive = Drivebase::Goal::drive_straight();
-	//drive_goal = Drivebase::Goal::drive_straight(Drivebase::Distances(target_distance) + info.status.drive.distances, info.status.drive.angle, angle_i);
-	//angle_i += (total_angle_to_displacement((*drive_goal).angle()) - total_angle_to_displacement(info.status.drive.angle)) * info.status.drive.dt;
-	//goals.drive = Drivebase::Goal::drive_straight((*drive_goal).distances(), (*drive_goal).angle(), angle_i);
-	return goals;
-}
-
-unique_ptr<Step_impl> Navx_drive_straight::clone()const{
-	return unique_ptr<Step_impl>(new Navx_drive_straight(*this));
-}
-
-bool Navx_drive_straight::operator==(Navx_drive_straight const& a)const{
-	return target_distance == a.target_distance && init == a.init;
-}
-
-Ram::Ram(Inch goal):target_dist(goal),initial_distances(Drivebase::Distances{0,0}),init(false){}
-
-Drivebase::Distances Ram::get_distance_travelled(Drivebase::Distances current){
-	return current - initial_distances;
-}
-
-Step::Status Ram::done(Next_mode_info info){
-	static const Inch TOLERANCE = 0.0;//inches
-	Drivebase::Distances distance_travelled = get_distance_travelled(info.status.drive.distances);
-	//Drivebase::Distances distance_left = Drivebase::Distances{target_dist,target_dist} - distance_travelled;
-	//ignoring right encoder because it's proven hard to get meaningful data from it
-	return (fabs(distance_travelled.l) >= fabs(target_dist) - TOLERANCE) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
-
-Toplevel::Goal Ram::run(Run_info info){
-	return run(info,{});
-}
-
-Toplevel::Goal Ram::run(Run_info info,Toplevel::Goal goals){
-	if(!init){
-		initial_distances = info.status.drive.distances;
-		init = true;
-	}
-
-	static const double POWER = .5;
-	double p = copysign(POWER,target_dist);
-	
-	{
-		double left = p;
-		double right = p + p * RIGHT_SPEED_CORRECTION; //right side would go faster than the left without error correction
-		goals.drive = Drivebase::Goal::absolute(left,right);
-	}
-	return goals;
-}
-
-unique_ptr<Step_impl> Ram::clone()const{
-	return unique_ptr<Step_impl>(new Ram(*this));
-}
-
-bool Ram::operator==(Ram const& b)const{
-	return target_dist == b.target_dist && initial_distances == b.initial_distances && init == b.init /*&& stall_timer == b.stall_timer*/;
-}
-
-Wait::Wait(Time wait_time){
-	wait_timer.set(wait_time);
-}
-
-Step::Status Wait::done(Next_mode_info){
-	return wait_timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
-
-Toplevel::Goal Wait::run(Run_info info){
-	return run(info,{});
-}
-
-Toplevel::Goal Wait::run(Run_info info,Toplevel::Goal goals){
-	wait_timer.update(info.in.now,info.in.robot_mode.enabled);
-	return goals;
-}
-
-unique_ptr<Step_impl> Wait::clone()const{
-	return unique_ptr<Step_impl>(new Wait(*this));
-}
-
-bool Wait::operator==(Wait const& b)const{
-	return wait_timer == b.wait_timer;
-}
-
-Start_lifter_in_background::Start_lifter_in_background(LifterController::Preset preset, double time){
-	Lifter::lifter_controller.backgroundMoveToHeight(preset, time);
-}
-
-Step::Status Start_lifter_in_background::done(Next_mode_info){
-	return Step::Status::FINISHED_SUCCESS;
-}
-
-Toplevel::Goal Start_lifter_in_background::run(Run_info info){
-        return run(info,{});
-}
-
-Toplevel::Goal Start_lifter_in_background::run(Run_info info,Toplevel::Goal goals){
-        return goals;
-}
-
-unique_ptr<Step_impl> Start_lifter_in_background::clone()const{
-        return unique_ptr<Step_impl>(new Start_lifter_in_background(*this));
-}
-
-bool Start_lifter_in_background::operator==(Start_lifter_in_background const& b)const{
-	return true;
-}
-
-Wait_for_lifter::Wait_for_lifter(){}
-
-Step::Status Wait_for_lifter::done(Next_mode_info info){
-        return ready(status(info.status.lifter), Lifter::Goal::background()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-}
-
-Toplevel::Goal Wait_for_lifter::run(Run_info info){
-        return run(info,{});
-}
-
-Toplevel::Goal Wait_for_lifter::run(Run_info info,Toplevel::Goal goals){
-        return goals;
-}
-
-unique_ptr<Step_impl> Wait_for_lifter::clone()const{
-        return unique_ptr<Step_impl>(new Wait_for_lifter(*this));
-}
-
-bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
-        return true;
-}
+//
+// Combo: Run two steps simultaneously
+//
 
 void Combo::display(std::ostream& o)const{
 	Step_impl_inner<Combo>::display(o);
@@ -475,54 +125,226 @@ bool Combo::operator==(Combo const& b)const{
 	return step_a == b.step_a && step_b == b.step_b;
 }
 
-Step_impl const& Step::get()const{
-	assert(impl);
-	return *impl.get();
+//
+// Wait: Wait for a specified amount of time
+//
+
+Wait::Wait(Time wait_time){
+	wait_timer.set(wait_time);
 }
 
-Step::Step(Step const& a):impl(a.get().clone()){}
+Step::Status Wait::done(Next_mode_info){
+	return wait_timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
 
-/*
-to put in its own file:
-
-*/
-class Do_list:public Step_impl_inner<Do_list>{
-	vector<Step> steps;
-	size_t index;
-
-	public:
-	explicit Do_list(vector<Step>);
-
-	virtual Toplevel::Goal run(Run_info,Toplevel::Goal);
-	virtual Toplevel::Goal run(Run_info);
-	virtual Step::Status done(Next_mode_info);
-	//virtual unique_ptr<Step_impl> clone()const;
-	//virtual void display(ostream&)const;
-	bool operator==(Do_list const&)const;
-};
-
-Do_list::Do_list(vector<Step> v):steps(v),index(0){}
-
-Toplevel::Goal Do_list::run(Run_info info){
+Toplevel::Goal Wait::run(Run_info info){
 	return run(info,{});
 }
 
-Toplevel::Goal Do_list::run(Run_info,Toplevel::Goal){
-	nyi
+Toplevel::Goal Wait::run(Run_info info,Toplevel::Goal goals){
+	wait_timer.update(info.in.now,info.in.robot_mode.enabled);
+	return goals;
 }
 
-bool Do_list::operator==(Do_list const& a)const{
-	return steps==a.steps && index==a.index;
+unique_ptr<Step_impl> Wait::clone()const{
+	return unique_ptr<Step_impl>(new Wait(*this));
 }
 
-Step::Status Do_list::done(Next_mode_info){
-	nyi
+bool Wait::operator==(Wait const& b)const{
+	return wait_timer == b.wait_timer;
 }
 
-ostream& operator<<(ostream& o,Step_impl const& a){
-	a.display(o);
-	return o;
+//
+// Drive: Drive straight a specified distance
+//
+
+Drive::Drive(Inch target):target_distance(target),init(false){}
+
+Step::Status Drive::done(Next_mode_info info){
+	return ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
 }
+
+Toplevel::Goal Drive::run(Run_info info){
+	return run(info, {});
+}
+
+Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
+	if(!init) {
+		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle, info.in.now);
+		init = true;
+	}
+	goals.drive = Drivebase::Goal::drive_straight();
+	return goals;
+}
+
+unique_ptr<Step_impl> Drive::clone()const{
+	return unique_ptr<Step_impl>(new Drive(*this));
+}
+
+bool Drive::operator==(Drive const& a)const{
+	return target_distance == a.target_distance && init == a.init;
+}
+
+//
+// Drive_timed: Drive the motors at the specified powers for a specified amount of time
+//
+
+Drive_timed::Drive_timed(double l, double r, double t){
+	left_power = l;
+	right_power = r;
+	timer.set(t);
+}
+
+Step::Status Drive_timed::done(Next_mode_info /*info*/){
+	return timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Drive_timed::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Drive_timed::run(Run_info info,Toplevel::Goal goals){
+	timer.update(info.in.now, info.in.robot_mode.enabled);
+	goals.drive = Drivebase::Goal::absolute(left_power, right_power);
+	return goals;
+}
+
+unique_ptr<Step_impl> Drive_timed::clone()const{
+	return unique_ptr<Step_impl>(new Drive_timed(*this));
+}
+
+bool Drive_timed::operator==(Drive_timed const& b)const{
+	return left_power == b.left_power && right_power == b.right_power && timer == b.timer;
+}
+
+//
+// Ram: Drive the motors at the specified powers for the specified distances
+//
+
+Ram::Ram(double l_power, double r_power, Inch l_target, Inch r_target){
+	left_power = l_power;
+	right_power = r_power;
+	target_distances = Drivebase::Distances(l_target, r_target);
+	initial_distances = Drivebase::Distances(0.0, 0.0);
+	init = false;
+}
+
+Step::Status Ram::done(Next_mode_info info){
+	bool left_reached = (target_distances.l > initial_distances.l) ? (target_distances.l < info.status.drive.distances.l) : (target_distances.l > info.status.drive.distances.l);
+	bool right_reached = (target_distances.r > initial_distances.r) ? (target_distances.r < info.status.drive.distances.r) : (target_distances.r > info.status.drive.distances.r);
+	return (init && left_reached && right_reached) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Ram::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Ram::run(Run_info info,Toplevel::Goal goals){
+	if(!init){
+		initial_distances = info.status.drive.distances;
+		target_distances = target_distances + initial_distances;
+		init = true;
+	}
+
+	goals.drive = Drivebase::Goal::absolute(left_power, right_power);
+	return goals;
+}
+
+unique_ptr<Step_impl> Ram::clone()const{
+	return unique_ptr<Step_impl>(new Ram(*this));
+}
+
+bool Ram::operator==(Ram const& b)const{
+	return left_power == b.left_power && right_power == b.right_power && target_distances == b.target_distances && initial_distances == b.initial_distances && init == b.init;
+}
+
+//
+// Rotate: Rotate the robot by a specified angle
+//
+
+Rotate::Rotate(double a):target_angle(a),init(false){}
+
+Toplevel::Goal Rotate::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals){
+	if(!init) {
+		Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now) ;
+		init = true;
+	}
+
+	goals.drive = Drivebase::Goal::rotate();
+	return goals;
+}
+
+Step::Status Rotate::done(Next_mode_info info){
+	return ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
+}
+
+std::unique_ptr<Step_impl> Rotate::clone()const{
+	return unique_ptr<Step_impl>(new Rotate(*this));
+}
+
+bool Rotate::operator==(Rotate const& b)const{
+	return target_angle == b.target_angle && init == b.init;
+}
+
+//
+// Start_lifter_in_background: Start moving the lifter to a specified preset in the background
+//
+
+Start_lifter_in_background::Start_lifter_in_background(LifterController::Preset preset, double time){
+	Lifter::lifter_controller.backgroundMoveToHeight(preset, time);
+}
+
+Step::Status Start_lifter_in_background::done(Next_mode_info){
+	return Step::Status::FINISHED_SUCCESS;
+}
+
+Toplevel::Goal Start_lifter_in_background::run(Run_info info){
+        return run(info,{});
+}
+
+Toplevel::Goal Start_lifter_in_background::run(Run_info info,Toplevel::Goal goals){
+        return goals;
+}
+
+unique_ptr<Step_impl> Start_lifter_in_background::clone()const{
+        return unique_ptr<Step_impl>(new Start_lifter_in_background(*this));
+}
+
+bool Start_lifter_in_background::operator==(Start_lifter_in_background const& b)const{
+	return true;
+}
+
+//
+// Wait_for_lifter: Wait until the lifter has reached its goal
+//
+
+Wait_for_lifter::Wait_for_lifter(){}
+
+Step::Status Wait_for_lifter::done(Next_mode_info info){
+        return ready(status(info.status.lifter), Lifter::Goal::background()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Wait_for_lifter::run(Run_info info){
+        return run(info,{});
+}
+
+Toplevel::Goal Wait_for_lifter::run(Run_info info,Toplevel::Goal goals){
+        return goals;
+}
+
+unique_ptr<Step_impl> Wait_for_lifter::clone()const{
+        return unique_ptr<Step_impl>(new Wait_for_lifter(*this));
+}
+
+bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
+        return true;
+}
+
 #ifdef STEP_TEST
 void test_step(Step a){
 	PRINT(a);
@@ -567,9 +389,5 @@ int main(){
 	auto d=c.next_mode(example((Next_mode_info*)0));
 	PRINT(c.step);
 	PRINT(d);*/
-
-	Do_list dl{{}};
-	//PRINT(dl);
-	test_step(dl);
 }
 #endif

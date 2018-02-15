@@ -18,7 +18,7 @@ Executive same_switch
 	{
 	    Step
 	    {
-		Navx_drive_straight{128.0}
+		Drive{128.0}
 	    },
 		
             //
@@ -45,7 +45,7 @@ Executive opposite_switch
 	{
 	    Step
 	    {
-		Navx_drive_straight{52.0}
+		Drive{52.0}
 	    },
 	    Step
 	    {
@@ -53,7 +53,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Navx_rotate{-90.0}
+		Rotate{-90.0}
 	    },
 	    Step
 	    {
@@ -61,7 +61,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Navx_drive_straight{100.0}
+		Drive{100.0}
 	    },
 	    Step
 	    {
@@ -69,7 +69,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Navx_rotate{90.0}
+		Rotate{90.0}
 	    },
 	    Step
 	    {
@@ -77,7 +77,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Navx_drive_straight{56}
+		Drive{56}
 	    }
 	    //
 	    // TODO: add grabber step to spit out the cube
@@ -149,7 +149,7 @@ Executive get_auto_mode(Next_mode_info info)
 	{
 	    Step
 	    {
-		Navx_drive_straight{12.0}
+		Drive{12.0}
 	    },
 	    Executive
 	    {
@@ -172,7 +172,7 @@ Executive get_auto_mode(Next_mode_info info)
 	{
 	    Step
 	    {
-		Navx_drive_straight{120.0}
+		Drive{120.0}
 	    },
 	    Executive
 	    {
@@ -195,7 +195,7 @@ Executive get_auto_mode(Next_mode_info info)
 	{
 	    Step
 	    {
-		Navx_rotate{90.0}
+		Rotate{90.0}
 	    },
 	    Executive
 	    {
@@ -218,7 +218,7 @@ Executive get_auto_mode(Next_mode_info info)
 	{
 	    Step
 	    {
-		Navx_rotate{-90.0}
+		Rotate{-90.0}
 	    },
 	    Executive
 	    {
@@ -242,7 +242,7 @@ Executive get_auto_mode(Next_mode_info info)
 	    {
 		Step
 		{
-		    Navx_rotate{-90.0}
+		    Rotate{-90.0}
 		},
 		Step
 		{
@@ -250,7 +250,7 @@ Executive get_auto_mode(Next_mode_info info)
 		},
 		Step
 		{
-		    Navx_rotate{90.0}
+		    Rotate{90.0}
 		},
 		Step
 		{
@@ -284,7 +284,7 @@ Executive get_auto_mode(Next_mode_info info)
 		},
 		Step
 		{
-		    Navx_drive_straight{60.0}
+		    Drive{60.0}
 		},
 		Step
 		{
