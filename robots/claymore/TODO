@@ -1,3 +1,37 @@
+Robot Initialization On Power Up
+--------------------------------
+
+Note, we should run this as as the first autonomous step.  We should have
+a robot initialization auto step.
+
+Competition Bot
+  Starting State
+    We start with the lifter at the bottom and the grabber folded into the lifter holding cube
+
+  Steps
+    1. Drop grabber from lifter (may cause us to lose cube)
+    2. If Lower limit hall effect switch not active, assume hall effect switch broken (set hall
+	   effect broken flag in lifter controller)
+    3. Set the lifter lower limit encoder value as the base encoder value
+    4. Open grabber slightly
+    5. Turn on intake
+	6. Close Grabber until encoders stop moving
+	7. Stop intake
+    8. Store encoder value for grabber as the base encoder value
+  
+Practice Bot
+  Starting State
+    We start with the lifter at the bottom and the grabber holding a cube
+
+  Steps
+    1. If Lower limit hall effect switch not active, assume hall effect switch broken (set hall effect broken flag in lifter controller)
+    2. Set the lifter lower limit encoder value as the base encoder value
+    3. Close Grabber until encoders stop moving
+    4. Store encoder value for grabber as the base encoder value
+
+
+TODO List - Practice Bot for Scrimmage
+--------------------------------------
 
 Lifter
 ------
