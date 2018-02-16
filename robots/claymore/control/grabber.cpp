@@ -241,7 +241,7 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 			Grabber::grabber_controller.update(status.angle, status.time, status.dt, out);
 			break;
 		default:
-			nyi
+			assert(0);
 	}
 	return out;
 }
@@ -260,7 +260,7 @@ bool ready(Grabber::Status status,Grabber::Goal goal){
 		case Grabber::Goal::Mode::GO_TO_PRESET:
 			return Grabber::grabber_controller.done();
 		default:
-			nyi
+			assert(0);
 	}
 }
 
