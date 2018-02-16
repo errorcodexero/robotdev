@@ -11,7 +11,7 @@ using namespace std;
 #define CLIMB_POWER .60 //TODO tune
 #define MANUAL_LIFTER_LOW_POWER .60 //TODO tune
 #define MANUAL_LIFTER_HIGH_POWER .80 //TODO tune
-#define AUTO_LIFTER_POWER .60 //TODO tune
+#define CALIBRATE_POWER .20 //TODO tune
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
 #define TOP_HALL_EFFECT_ADDRESS 8
@@ -115,6 +115,13 @@ Lifter::Goal Lifter::Goal::background(){
     return a;
 }
 
+Lifter::Goal Lifter::Goal::calibrate(){
+    Lifter::Goal a;
+    a.mode_ = Lifter::Goal::Mode::CALIBRATE;
+    a.gearing_ = Lifter::Goal::Gearing::HIGH;
+    return a;
+}
+
 Lifter::Output::Output(double p, Lifter::Output::Gearing g):power(p),gearing(g){}
 Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH){}
 
@@ -124,8 +131,8 @@ Lifter::Input::Input():Input(false,false,0){}
 Lifter::Status_detail::Status_detail(bool b,bool t,bool c,double h,double ti,double dt):at_bottom(b),at_top(t),at_climbed_height(c),height(h),time(ti),dt(dt){}
 Lifter::Status_detail::Status_detail():Status_detail(false,false,false,0.0,0.0,0.0){}
 
-Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg):last(s),last_gearing(g),climb_goal(cg){}
-Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,0.0){}
+Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg, double eo):last(s),last_gearing(g),climb_goal(cg),encoder_offset(eo){}
+Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,0.0,0.0){}
 
 #define CMP(VAR)				\
     if(a.VAR < b.VAR) return true;		\
@@ -282,29 +289,22 @@ Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
 void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const& out){
     paramsInput* input_params = Lifter::lifter_controller.getParams();
 
+    if(in.top_hall_effect) encoder_offset = in.ticks;
+
     const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
     const double MOTOR_REVS_PER_LIFTER_REV = 100.0; //Gear ratio TODO: NEEDS CORRECT VALUE
     const double TICKS_PER_LIFTER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_LIFTER_REV;
     const double LIFTER_GEAR_DIAMETER = 6.0; //inches
     const double LIFTER_GEAR_CIRCUMFERENCE = LIFTER_GEAR_DIAMETER * PI;
     const double INCHES_PER_TICK = LIFTER_GEAR_CIRCUMFERENCE / TICKS_PER_LIFTER_REVOLUTION;
-    last.height = in.ticks * INCHES_PER_TICK;
+    last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK;
 
     last.at_bottom = in.bottom_hall_effect;
     last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);
 
-    if(last.at_top != last.at_bottom){ // != being used like xor
-	if(last.at_top){
-	    top_ticks = in.ticks;
-	} 
-	if(last.at_bottom){ 
-	    bottom_ticks = in.ticks;
-	}
-    }
-
     if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - input_params->getValue("lifter:climbing_difference", 100.0);
-    last_gearing = out.gearing;
     last.at_climbed_height = last.height < climb_goal;
+    last_gearing = out.gearing;
 	
     last.dt = last.time - now;
     last.time = now;
@@ -389,6 +389,9 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	break;
     case Lifter::Goal::Mode::BACKGROUND:
 	break;
+    case Lifter::Goal::Mode::CALIBRATE:
+	out.power = -CALIBRATE_POWER;
+	break;
     default:
 	nyi
     }
@@ -426,15 +429,15 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
     case Lifter::Goal::Mode::CLIMB:
 	return status == Lifter::Status::CLIMBED;
     case Lifter::Goal::Mode::UP:
-	//return status == Lifter::Status::TOP;
     case Lifter::Goal::Mode::DOWN:
-	//return status == Lifter::Status::BOTTOM;
     case Lifter::Goal::Mode::STOP:
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
     case Lifter::Goal::Mode::GO_TO_PRESET:
     case Lifter::Goal::Mode::BACKGROUND:
 	return Lifter::lifter_controller.done();
+    case Lifter::Goal::Mode::CALIBRATE:
+	return status == Lifter::Status::BOTTOM;
     default:
 	nyi
 	    }

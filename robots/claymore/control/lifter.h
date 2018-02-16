@@ -16,7 +16,7 @@ struct Lifter{
 			#undef X
 		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -47,6 +47,7 @@ struct Lifter{
 		static Goal down(bool);
 		static Goal stop();
 		static Goal background();
+		static Goal calibrate();
 	};
 
 	struct Output{
@@ -99,12 +100,13 @@ struct Lifter{
 		Status_detail last;
 		Output::Gearing last_gearing;
 		double climb_goal;
+		double encoder_offset;
 
 		void update(Time const&,Input const&,Output const&);
 		Status_detail get()const;
 		
 		Estimator();
-		Estimator(Lifter::Status_detail, Output::Gearing, double);
+		Estimator(Lifter::Status_detail, Output::Gearing, double, double);
 	};
 
 	Output_applicator output_applicator;
