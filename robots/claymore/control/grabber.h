@@ -1,8 +1,9 @@
 #ifndef	GRABBER_H
 #define GRABBER_H
 
-#include "../util/interface.h"
 #include <set>
+#include <list>
+#include "../util/interface.h"
 #include "../util/countdown_timer.h"
 #include "nop.h"
 #include "grabber_controller.h"
@@ -12,7 +13,7 @@ struct Grabber{
 
 	struct Goal{
 		public:
-		#define GRABBER_GOAL_MODES X(GO_TO_ANGLE) X(GO_TO_PRESET) X(OPEN) X(CLOSE) X(STOP)
+		#define GRABBER_GOAL_MODES X(GO_TO_ANGLE) X(GO_TO_PRESET) X(OPEN) X(CLOSE) X(STOP) X(CALIBRATE)
 		enum class Mode{
 			#define X(MODE) MODE,
 			GRABBER_GOAL_MODES
@@ -35,6 +36,7 @@ struct Grabber{
 		static Goal open();
 		static Goal close();
 		static Goal stop();
+		static Goal calibrate();
 	};
 
 	using Output = double;
@@ -72,6 +74,8 @@ struct Grabber{
 
 	struct Estimator{
 		Status_detail last;
+		double encoder_offset;
+		std::list<double> ticks_history;
 
 		void update(Time,Grabber::Input,Grabber::Output);
 		Status_detail get()const;

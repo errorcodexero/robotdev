@@ -121,6 +121,14 @@ bool GrabberController::done() {
     return mMode == Mode::IDLE;
 }
 
+void GrabberController::setDoneCalibrating(bool done) {
+    mDoneCalibrating = done;
+}
+
+bool GrabberController::getDoneCalibrating() {
+    return mDoneCalibrating;
+}
+
 double GrabberController::presetToAngle(Preset preset) {
     double closed_angle = mInputParams->getValue("grabber:angle:closed", 0.0);
     double open_angle = mInputParams->getValue("grabber:angle:open", 30.0);

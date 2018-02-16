@@ -11,7 +11,7 @@ using namespace std;
 #define LIMIT_SWITCH_ADDRESS 11
 
 #define MANUAL_GRABBER_POWER .60 //TODO tune
-#define AUTO_GRABBER_POWER .60 //TODO tune
+#define CALIBRATE_POWER .20 //TODO tune
 
 GrabberController Grabber::grabber_controller;
 
@@ -75,6 +75,12 @@ Grabber::Goal Grabber::Goal::go_to_preset(GrabberController::Preset preset){
 	Grabber::Goal a;
 	a.mode_ = Grabber::Goal::Mode::GO_TO_PRESET;
 	a.preset_target_ = preset;
+	return a;
+}
+
+Grabber::Goal Grabber::Goal::calibrate(){
+	Grabber::Goal a;
+	a.mode_ = Grabber::Goal::Mode::CALIBRATE;
 	return a;
 }
 
@@ -230,14 +236,25 @@ Grabber::Output Grabber::Output_applicator::operator()(Robot_outputs const& r)co
 	return r.pwm[GRABBER_ADDRESS];
 }
 
-void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output output){
+void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output out){
 	paramsInput* input_params = Grabber::grabber_controller.getParams();
+
+	const double OUTPUT_THRESHOLD = -0.05;
+	ticks_history.push_back(input.ticks);
+	if(ticks_history.size() > input_params->getValue("grabber:samples", 5))
+		ticks_history.pop_front();
+	if(out < OUTPUT_THRESHOLD && (ticks_history.back() - ticks_history.front()) < input_params->getValue("grabber:calibrate_threshold", 0.1)) {
+		encoder_offset = input.ticks;
+		Grabber::grabber_controller.setDoneCalibrating(true);
+	} else {
+		Grabber::grabber_controller.setDoneCalibrating(false);
+	}
 
 	const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
 	const double MOTOR_REVS_PER_GRABBER_REV = 196.0; //Gear ratio TODO: NEEDS CORRECT VALUE
 	const double TICKS_PER_GRABBER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_GRABBER_REV;
 	const double DEGREES_PER_TICK = 360.0 / TICKS_PER_GRABBER_REVOLUTION;
-	last.angle = DEGREES_PER_TICK * input.ticks;
+	last.angle = (input.ticks - encoder_offset) * DEGREES_PER_TICK;
 
 	last.has_cube = input.has_cube;
 	last.at_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
@@ -271,6 +288,9 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 			Grabber::grabber_controller.updateAngleOnChange(goal.preset_target(), status.time);
 			Grabber::grabber_controller.update(status.angle, status.time, status.dt, out);
 			break;
+		case Grabber::Goal::Mode::CALIBRATE:
+			out = -CALIBRATE_POWER;
+			break;
 		default:
 			assert(0);
 	}
@@ -291,6 +311,8 @@ bool ready(Grabber::Status status,Grabber::Goal goal){
 		case Grabber::Goal::Mode::GO_TO_ANGLE:
 		case Grabber::Goal::Mode::GO_TO_PRESET:
 			return Grabber::grabber_controller.done();
+		case Grabber::Goal::Mode::CALIBRATE:
+			return Grabber::grabber_controller.getDoneCalibrating();
 		default:
 			assert(0);
 	}

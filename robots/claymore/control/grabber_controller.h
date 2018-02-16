@@ -61,6 +61,14 @@ public:
     /// \returns true when the grabber has reached its desired angle
     bool done();
 
+    /// \brief sets mDoneCalibrating to the parameter
+    /// \param done whether the grabber has finished calibrating
+    void setDoneCalibrating(bool done);
+
+    /// \brief returns whether the grabber has finished calibrating
+    /// \returns true if the grabber has finished calibrating
+    bool getDoneCalibrating();
+
     /// \brief returns the angle associated with a preset
     /// \param preset the preset of interest
     double presetToAngle(Preset preset);
@@ -129,6 +137,10 @@ private:
     //
     double mDataDumpStartTime;
 
+    //
+    // Represents whether or not the grabber has finished calibration
+    //
+    bool mDoneCalibrating;
 };
 
 #endif
