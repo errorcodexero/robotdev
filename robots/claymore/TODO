@@ -1,3 +1,35 @@
+Master TODO List
+----------------
+1. Create Robot Initialization Code for power up (detail below)
+2. Lifter Manual Height
+   - Use Encoders to limit top and bottom travel
+   - Use Limit Switches to limit top and bottom travel
+3. Lifter Auto Height
+   - Go To Height
+     - Mapping from Encoder To Height
+	 - PID Control of lift motors
+   - Go To Preset
+     - Read presets from params.txt file
+4. Lifter switch to low gear
+5. Grabber Manual Open/Close
+   - Use Encoders to limit travel in and out
+6. Grabber Open/Close Preset
+   - Cube width
+   - Wider than cube width
+6. Grabber Intake Motors Manual
+   - Turn on in inward direction
+   - Turn on in outward direction (place)
+   - Turn on in outward direction (throw)
+   - Detect cube in back of grabber, stop intake
+7. Drivebase shift low/high gear
+8. Autonomous - cross line
+   - Create simple cross line (e.g. drive straight)
+9. Autonomous - score on switch
+   - detect field side in select auto mode
+   - step for robot initialization
+   - test lifter to height while running drivebase auto steps
+   - create spit out steps
+
 Robot Initialization On Power Up
 --------------------------------
 
@@ -28,37 +60,3 @@ Practice Bot
     2. Set the lifter lower limit encoder value as the base encoder value
     3. Close Grabber until encoders stop moving
     4. Store encoder value for grabber as the base encoder value
-
-
-TODO List - Practice Bot for Scrimmage
---------------------------------------
-
-Lifter
-------
-- Goto Height
-  o Mapping from encoder to height
-  o PID control for height
-- Presets get read from params.txt
-- OI/Gamepad up & down
-- Climbing
-  o Shift to low gear
-  
-Collector
----------
-- Go to angle
-  o Start with cube/calibrate
-  o Limit angle to max based on calibration
-- Make sure we can hang onto cube while lifting
-- place cube
-- spit cube
-- Collecting
-  o Detect cube at back, stop intake
-
-Drive Base
-----------
-- Shift Gears
-
-Autonomous
-----------
-- Detect field side
-- Score on switch
