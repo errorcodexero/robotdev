@@ -5,7 +5,9 @@ using namespace std;
 
 #define GRABBER_ADDRESS 2
 
-#define ENCODER_ADDRESS 0
+#define ENCODER_ADDRESS 3
+#define CUBE_SENSOR_ADDRESS 12
+#define LIMIT_SWITCH_ADDRESS 11
 
 #define MANUAL_GRABBER_POWER .60 //TODO tune
 #define AUTO_GRABBER_POWER .60 //TODO tune
@@ -75,11 +77,11 @@ Grabber::Goal Grabber::Goal::go_to_preset(GrabberController::Preset preset){
 	return a;
 }
 
-Grabber::Input::Input(int t):ticks(t){}
-Grabber::Input::Input():Input(0){}
+Grabber::Input::Input(int t, bool hc, bool ls):ticks(t),has_cube(hc),limit_switch(ls){}
+Grabber::Input::Input():Input(0, false, false){}
 
-Grabber::Status_detail::Status_detail(double a):angle(a){}
-Grabber::Status_detail::Status_detail():Status_detail(0.0){}
+Grabber::Status_detail::Status_detail(bool hc, bool al, double a, double t, double dt):has_cube(hc),at_limit(al),angle(a),time(t),dt(dt){}
+Grabber::Status_detail::Status_detail():Status_detail(false, false, 0.0, 0.0, 0.0){}
 
 Grabber::Estimator::Estimator():last(){}
 
@@ -93,8 +95,14 @@ std::set<Grabber::Output> examples(Grabber::Output*){
 
 std::set<Grabber::Input> examples(Grabber::Input*){
 	return {
-		{0},
-		{1}
+		{0, false, false},
+		{1, false, false},
+		{0, false, true},
+		{1, false, true},
+		{0, true, false},
+		{1, true, false},
+		{0, true, true},
+		{1, true, true}
 	};
 }
 
@@ -102,12 +110,18 @@ std::ostream& operator<<(std::ostream& o,Grabber::Input a){
 	o<<"(";
 	o<<"ticks:"<<a.ticks;
 	o<<"has_cube:"<<a.has_cube;
+	o<<"limit_switch:"<<a.limit_switch;
 	o<<")";
 	return o;
 }
 
 std::set<Grabber::Status_detail> examples(Grabber::Status_detail*){
-	return {{0.0}};
+	return {
+		{false, false, 0.0, 0.0, 0.0},
+		{false, true, 0.0, 0.0, 0.0},
+		{true, false, 0.0, 0.0, 0.0},
+		{true, true, 0.0, 0.0, 0.0}
+	};
 }
 
 std::ostream& operator<<(std::ostream& o,Grabber::Status_detail a){
@@ -130,7 +144,7 @@ bool operator<(Grabber::Status_detail a,Grabber::Status_detail b){
 }
 
 bool operator==(Grabber::Status_detail a,Grabber::Status_detail b){
-	return a.angle == b.angle && a.time == b.time && a.dt == b.dt && a.has_cube == b.has_cube;
+	return a.angle == b.angle && a.time == b.time && a.dt == b.dt && a.has_cube == b.has_cube && a.at_limit == b.at_limit;
 }
 
 bool operator!=(Grabber::Status_detail a, Grabber::Status_detail b){
@@ -155,7 +169,7 @@ bool operator<(Grabber::Input a,Grabber::Input b){
 }
 
 bool operator==(Grabber::Input a,Grabber::Input b){
-	return a.ticks == b.ticks && a.has_cube == b.has_cube;
+	return a.ticks == b.ticks && a.has_cube == b.has_cube && a.limit_switch == b.limit_switch;
 }
 
 bool operator!=(Grabber::Input a, Grabber::Input b){
@@ -186,12 +200,16 @@ bool operator!=(Grabber a, Grabber b){
 
 Grabber::Input Grabber::Input_reader::operator()(Robot_inputs const& r) const{
 	return {
-		r.digital_io.encoder[ENCODER_ADDRESS] ? *r.digital_io.encoder[ENCODER_ADDRESS] : 10000,
+		r.digital_io.encoder[ENCODER_ADDRESS] ? *r.digital_io.encoder[ENCODER_ADDRESS] : 10000,	
+		r.digital_io.in[CUBE_SENSOR_ADDRESS] == Digital_in::_0,
+		r.digital_io.in[LIMIT_SWITCH_ADDRESS] == Digital_in::_0
 	};
 }
 
 Robot_inputs Grabber::Input_reader::operator()(Robot_inputs r, Grabber::Input in) const{
 	r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
+	r.digital_io.in[CUBE_SENSOR_ADDRESS] = in.has_cube ? Digital_in::_0 : Digital_in::_1;
+	r.digital_io.in[LIMIT_SWITCH_ADDRESS] = in.limit_switch ? Digital_in::_0 : Digital_in::_1;
 	return r;
 }
 
@@ -213,6 +231,7 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 	last.time = time;
 
 	last.has_cube = input.has_cube;
+	last.at_limit = input.limit_switch;
 }
 
 Grabber::Status Grabber::Estimator::get()const{
@@ -224,6 +243,7 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 	switch(goal.mode()){
 		case Grabber::Goal::Mode::OPEN:
 			out = MANUAL_GRABBER_POWER;
+			if(status.at_limit) out = 0.0;
 			break;
 		case Grabber::Goal::Mode::STOP:
 			Grabber::grabber_controller.idle(status.angle, status.time, status.dt);

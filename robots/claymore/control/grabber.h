@@ -42,18 +42,20 @@ struct Grabber{
 	struct Input{
 		int ticks;
 		bool has_cube;
+		bool limit_switch;
 		
 		Input();
-		Input(int);
+		Input(int, bool, bool);
 	};
 
 	struct Status_detail{
 		bool has_cube;
+		bool at_limit;
 		double angle;
 		double time, dt;
 		
 		Status_detail();
-		Status_detail(double);
+		Status_detail(bool, bool, double, double, double);
 	};
 	
 	using Status = Status_detail;
