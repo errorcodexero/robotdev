@@ -5,8 +5,8 @@ using namespace std;
 
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1
-#define LIFTER_SHIFTER_LOW 2
-#define LIFTER_SHIFTER_HIGH 3
+#define LIFTER_SHIFTER_LOW 1
+#define LIFTER_SHIFTER_HIGH 4
 
 #define CLIMB_POWER .60 //TODO tune
 #define MANUAL_LIFTER_LOW_POWER .60 //TODO tune
