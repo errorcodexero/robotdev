@@ -28,11 +28,14 @@ lifter:imax                      1000.0
 
 lifter:threshold                 1.0
 
+lifter:climbing_difference       100.0
+
 lifter:height:floor              0.0
 lifter:height:exchange           3.0
 lifter:height:switch             19.0
 lifter:height:scale              72.0
 lifter:height:prep_climb         84.0
+lifter:height:top_limit          96.0
 
 
 grabber:p                        0.01

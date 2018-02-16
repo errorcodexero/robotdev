@@ -19,6 +19,10 @@ public:
     /// \brief set the params object used to extract parameters from the params file
     void setParams(paramsInput* input_params);
 
+    /// \brief get the params object used to extract parameters from the params file
+    /// \returns the params object
+    paramsInput* getParams();
+
     /// \brief move the grabber to a specific angle
     /// \param angle the angle in degrees for the grabber
     /// \param the start time of this operation

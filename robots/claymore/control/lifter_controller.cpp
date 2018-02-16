@@ -18,6 +18,10 @@ void LifterController::setParams(paramsInput* input_params) {
     mHeightThreshold = mInputParams->getValue("lifter:threshold", 1.0);
 }
 
+paramsInput* LifterController::getParams() {
+    return mInputParams;
+}
+
 void LifterController::moveToHeight(double height, double time) {
     mMode = Mode::HEIGHT;
     mTarget = height;

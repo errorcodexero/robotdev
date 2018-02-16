@@ -231,15 +231,19 @@ Grabber::Output Grabber::Output_applicator::operator()(Robot_outputs const& r)co
 }
 
 void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output output){
-	const double TICKS_PER_REVOLUTION = 200.0;
-	const double DEGREES_PER_TICK = 360.0 / TICKS_PER_REVOLUTION;
+	paramsInput* input_params = Grabber::grabber_controller.getParams();
+
+	const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
+	const double MOTOR_REVS_PER_GRABBER_REV = 196.0; //Gear ratio TODO: NEEDS CORRECT VALUE
+	const double TICKS_PER_GRABBER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_GRABBER_REV;
+	const double DEGREES_PER_TICK = 360.0 / TICKS_PER_GRABBER_REVOLUTION;
 	last.angle = DEGREES_PER_TICK * input.ticks;
+
+	last.has_cube = input.has_cube;
+	last.at_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
 
 	last.dt = last.time - time;
 	last.time = time;
-
-	last.has_cube = input.has_cube;
-	last.at_limit = input.limit_switch;
 }
 
 Grabber::Status Grabber::Estimator::get()const{
@@ -251,7 +255,6 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 	switch(goal.mode()){
 		case Grabber::Goal::Mode::OPEN:
 			out = MANUAL_GRABBER_POWER;
-			if(status.at_limit) out = 0.0;
 			break;
 		case Grabber::Goal::Mode::STOP:
 			Grabber::grabber_controller.idle(status.angle, status.time, status.dt);
@@ -271,6 +274,7 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 		default:
 			assert(0);
 	}
+	if(status.at_limit && out > 0.0) out = 0.0;
 	return out;
 }
 

@@ -280,8 +280,18 @@ Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
 }
 
 void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const& out){
+    paramsInput* input_params = Lifter::lifter_controller.getParams();
+
+    const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
+    const double MOTOR_REVS_PER_LIFTER_REV = 100.0; //Gear ratio TODO: NEEDS CORRECT VALUE
+    const double TICKS_PER_LIFTER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_LIFTER_REV;
+    const double LIFTER_GEAR_DIAMETER = 6.0; //inches
+    const double LIFTER_GEAR_CIRCUMFERENCE = LIFTER_GEAR_DIAMETER * PI;
+    const double INCHES_PER_TICK = LIFTER_GEAR_CIRCUMFERENCE / TICKS_PER_LIFTER_REVOLUTION;
+    last.height = in.ticks * INCHES_PER_TICK;
+
     last.at_bottom = in.bottom_hall_effect;
-    last.at_top = in.top_hall_effect;
+    last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);
 
     if(last.at_top != last.at_bottom){ // != being used like xor
 	if(last.at_top){
@@ -291,13 +301,8 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
 	    bottom_ticks = in.ticks;
 	}
     }
-    const double MAX_LIFTER_HEIGHT = 100;//inches //TODO arbitrary
-    const double INCHES_PER_TICK = MAX_LIFTER_HEIGHT / (top_ticks - bottom_ticks); 
 
-    last.height = in.ticks*INCHES_PER_TICK;
-
-    const double CLIMBING_DIFFERENCE = 100; //TODO: Tune this
-    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - CLIMBING_DIFFERENCE;
+    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - input_params->getValue("lifter:climbing_difference", 100.0);
     last_gearing = out.gearing;
     last.at_climbed_height = last.height < climb_goal;
 	
@@ -362,26 +367,13 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
-	if(s != Lifter::Status::CLIMBED)
-	    out.power = -CLIMB_POWER;
-	else
-	    out.power = 0.0;
+	out.power = -CLIMB_POWER;
 	break;
     case Lifter::Goal::Mode::UP:
-	if(s != Lifter::Status::TOP)
-	    out.power = goal.high_power() ? MANUAL_LIFTER_HIGH_POWER : MANUAL_LIFTER_LOW_POWER;
-	else {
-	    out.power = 0.0;
-	    std::cout << "Not going up\n";
-	}
+	out.power = goal.high_power() ? MANUAL_LIFTER_HIGH_POWER : MANUAL_LIFTER_LOW_POWER;
 	break;
     case Lifter::Goal::Mode::DOWN:
-	if(s != Lifter::Status::BOTTOM)
-	    out.power = goal.high_power() ? -MANUAL_LIFTER_HIGH_POWER : -MANUAL_LIFTER_LOW_POWER;
-	else {
-	    out.power = 0.0;
-	    std::cout << "Not going down\n";
-	}
+	out.power = goal.high_power() ? -MANUAL_LIFTER_HIGH_POWER : -MANUAL_LIFTER_LOW_POWER;
 	break;
     case Lifter::Goal::Mode::STOP:
 	Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);
@@ -400,6 +392,12 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     default:
 	nyi
     }
+
+    if((status_detail.at_top && out.power > 0.0) ||
+       (status_detail.at_bottom && out.power < 0.0) ||
+       (status_detail.at_climbed_height && out.power < 0.0))
+	out.power = 0.0;
+
     return out;
 }
 

@@ -18,6 +18,10 @@ void GrabberController::setParams(paramsInput* input_params) {
     mAngleThreshold = mInputParams->getValue("grabber:threshold", 1.0);
 }
 
+paramsInput* GrabberController::getParams() {
+    return mInputParams;
+}
+
 void GrabberController::moveToAngle(double angle, double time) {
     mMode = Mode::ANGLE;
     mTarget = angle;
