@@ -6,6 +6,7 @@ using namespace std;
 #define GRABBER_ADDRESS 2
 
 #define ENCODER_ADDRESS 3
+#define ENCODER_DIOS 6, 7
 #define CUBE_SENSOR_ADDRESS 12
 #define LIMIT_SWITCH_ADDRESS 11
 
@@ -215,6 +216,13 @@ Robot_inputs Grabber::Input_reader::operator()(Robot_inputs r, Grabber::Input in
 
 Robot_outputs Grabber::Output_applicator::operator()(Robot_outputs r, Grabber::Output o)const{
 	r.pwm[GRABBER_ADDRESS] = o;
+
+	auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
+		r.digital_io[a] = Digital_out::encoder(loc,1);
+		r.digital_io[b] = Digital_out::encoder(loc,0);
+	};
+	set_encoder(ENCODER_DIOS, ENCODER_ADDRESS);
+
 	return r;
 }
 

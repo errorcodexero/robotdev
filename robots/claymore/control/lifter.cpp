@@ -16,6 +16,7 @@ using namespace std;
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
 #define TOP_HALL_EFFECT_ADDRESS 8
 #define ENCODER_ADDRESS 2
+#define ENCODER_DIOS 4, 5
 
 LifterController Lifter::lifter_controller;
 
@@ -246,6 +247,13 @@ Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Out
     r.pwm[LIFTER_ADDRESS_R] = out.power;
     r.solenoid[LIFTER_SHIFTER_LOW] = out.gearing == Lifter::Output::Gearing::LOW;
     r.solenoid[LIFTER_SHIFTER_HIGH] = out.gearing != Lifter::Output::Gearing::LOW;
+
+    auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
+	r.digital_io[a] = Digital_out::encoder(loc,1);
+	r.digital_io[b] = Digital_out::encoder(loc,0);
+    };
+    set_encoder(ENCODER_DIOS, ENCODER_ADDRESS);
+
     return r;
 };
 
@@ -259,7 +267,7 @@ Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)cons
 Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const& in)const{
     r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] = in.bottom_hall_effect ? Digital_in::_0 : Digital_in::_1; //Active low
     r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] = in.top_hall_effect ? Digital_in::_0 : Digital_in::_1;
-    r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
+    r.digital_io.encoder[ENCODER_ADDRESS] = -in.ticks;
     return r;
 }
 
@@ -267,7 +275,7 @@ Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
     return {
 	r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] == Digital_in::_0,
 	r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_0,
-	r.digital_io.encoder[ENCODER_ADDRESS]
+	-r.digital_io.encoder[ENCODER_ADDRESS]
     };
 }
 
