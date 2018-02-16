@@ -12,8 +12,6 @@ namespace frc {
 
 		setRobotMode(RobotMode::Disabled);
 		m_hardware.init();
-
-
 	}
 
 	RobotBase::~RobotBase() {

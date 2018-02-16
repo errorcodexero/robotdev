@@ -35,7 +35,7 @@ namespace frc
 	void SampleRobot::OperatorControl() {
 	}
 
-	void SampleRobot::Controller()
+	void SampleRobot::InternalControl()
 	{
 		int ms;
 
@@ -56,6 +56,15 @@ namespace frc
 
 		m_running = false;
 		setRobotMode(RobotBase::RobotMode::Finished);
+	}
+
+	void SampleRobot::DriverStationControl()
+	{
+		setRobotMode(RobotBase::RobotMode::Disabled);
+
+		while (true)
+		{
+		}
 	}
 
 	bool SampleRobot::ProcessCmdLineArgs()
@@ -107,6 +116,10 @@ namespace frc
 
 				index++;
 			}
+			else if (args[index] == "--station")
+			{
+				m_station = true;
+			}
 			else
 			{
 				std::cout << "SampleRobot: invalid command line argument '";
@@ -144,7 +157,10 @@ namespace frc
 		//
 		// Start the thread that manages the competition
 		//
-		m_controller = std::thread(&SampleRobot::Controller, this);
+		if (m_station)
+			m_controller = std::thread(&SampleRobot::DriverStationControl, this);
+		else
+			m_controller = std::thread(&SampleRobot::InternalControl, this);
 
 		//
 		// If the main loop was not taken over, supply a main loop where
