@@ -30,8 +30,7 @@ CTRE=true
 #
 # Add flags to indicate the robot we are building
 #
-ADDCXXFLAGS = -DCLAYMORE -I../util -I. -I../control
-
+ADDCXXFLAGS = -DCLAYMORE -I../util -I. -I../control -DPRINT_TIME
 
 #
 # define the app lib

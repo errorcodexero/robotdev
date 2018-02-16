@@ -416,6 +416,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		elapsed = last - elapsed ;
 		std::cout << "    digital io inputs " << elapsed * 1000 << " msec" << std::endl ;
 		elapsed = last ;
+		std::cout << "dio: " << in.digital_io << "\n";
 #endif		
 		
 		in.talon_srx=talon_srx_controls.get();

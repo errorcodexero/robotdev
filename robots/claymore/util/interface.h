@@ -253,7 +253,7 @@ struct Robot_outputs{
 	static const unsigned RELAYS=4;
 	Checked_array<Relay_output,RELAYS> relay;
 	
-	static const unsigned DIGITAL_IOS=11;//there are actually 26 on the roboRIO if you count the MXP, but that varies depending on whether they're set as dios or pwm
+	static const unsigned DIGITAL_IOS=14;//there are actually 26 on the roboRIO if you count the MXP, but that varies depending on whether they're set as dios or pwm
 	Checked_array<Digital_out,DIGITAL_IOS> digital_io;
 	
 	static const unsigned TALON_SRX_OUTPUTS=TALON_SRXS;//FIXME: talon initializaitons

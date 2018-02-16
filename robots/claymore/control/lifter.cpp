@@ -15,7 +15,7 @@ using namespace std;
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
 #define TOP_HALL_EFFECT_ADDRESS 8
-#define ENCODER_ADDRESS 4 //TODO
+#define ENCODER_ADDRESS 2
 
 LifterController Lifter::lifter_controller;
 
@@ -355,21 +355,25 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
 	if(s != Lifter::Status::CLIMBED)
-		out.power = -CLIMB_POWER;
+	    out.power = -CLIMB_POWER;
 	else
-		out.power = 0.0;
+	    out.power = 0.0;
 	break;
     case Lifter::Goal::Mode::UP:
 	if(s != Lifter::Status::TOP)
-		out.power = goal.high_power() ? MANUAL_LIFTER_HIGH_POWER : MANUAL_LIFTER_LOW_POWER;
-	else
-		out.power = 0.0;
+	    out.power = goal.high_power() ? MANUAL_LIFTER_HIGH_POWER : MANUAL_LIFTER_LOW_POWER;
+	else {
+	    out.power = 0.0;
+	    std::cout << "Not going up\n";
+	}
 	break;
     case Lifter::Goal::Mode::DOWN:
 	if(s != Lifter::Status::BOTTOM)
-		out.power = goal.high_power() ? -MANUAL_LIFTER_HIGH_POWER : -MANUAL_LIFTER_LOW_POWER;
-	else
-		out.power = 0.0;
+	    out.power = goal.high_power() ? -MANUAL_LIFTER_HIGH_POWER : -MANUAL_LIFTER_LOW_POWER;
+	else {
+	    out.power = 0.0;
+	    std::cout << "Not going down\n";
+	}
 	break;
     case Lifter::Goal::Mode::STOP:
 	Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);
@@ -416,9 +420,9 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
     case Lifter::Goal::Mode::CLIMB:
 	return status == Lifter::Status::CLIMBED;
     case Lifter::Goal::Mode::UP:
-	return status == Lifter::Status::TOP;
+	//return status == Lifter::Status::TOP;
     case Lifter::Goal::Mode::DOWN:
-	return status == Lifter::Status::BOTTOM;
+	//return status == Lifter::Status::BOTTOM;
     case Lifter::Goal::Mode::STOP:
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:

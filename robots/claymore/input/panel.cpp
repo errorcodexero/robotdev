@@ -50,6 +50,10 @@ Panel::Panel():
 	#define X(BUTTON) BUTTON(false),
 	BUTTONS
 	#undef X
+	grabber(Panel::Grabber::OFF),
+	intake(Panel::Intake::OFF),
+	collector_mode(Panel::Collector_mode::FULL_AUTO),
+	lifter(Panel::Lifter::OFF),
 	auto_select(0)
 {}
 
@@ -239,6 +243,7 @@ Panel interpret_gamepad(Joystick_data d){
 			case POV_section::CENTER:
 				break;
 			case POV_section::UP:
+				p.intake = Panel::Intake::OUT;
 				break;
 			case POV_section::UP_LEFT:	
 				p.grabber = Panel::Grabber::CLOSE;
@@ -279,7 +284,7 @@ Panel interpret_gamepad(Joystick_data d){
 			p.collector_mode = Panel::Collector_mode::NO_AUTO;
 			break;
 		default:
-			assert(0);
+			break;
 	}
 
 	p.lifter = Panel::Lifter::OFF;
@@ -291,7 +296,7 @@ Panel interpret_gamepad(Joystick_data d){
 			p.lifter = Panel::Lifter::DOWN;
 			break;
 		default:
-			assert(0);
+			break;
 	}
 	
 	return p;
