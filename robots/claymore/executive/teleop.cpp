@@ -102,15 +102,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		if(info.driver_joystick.button[Gamepad_button::RB]) return Gear_shifter::Goal::LOW;
 		if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER]>.8) return Gear_shifter::Goal::HIGH;
 		return Gear_shifter::Goal::AUTO;
-	}();
-
-	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
-	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
-	if(info.panel.eject) {
-		collector_mode = Collector_mode::EJECT;
-		eject_timer.set(2);
-	}
-	if(info.panel.drop) collector_mode = Collector_mode::DROP;
+	}();	
 
 	switch(collector_mode) {
 		case Collector_mode::DO_NOTHING:
@@ -143,17 +135,38 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			break;
 		default: assert(0);
 	}
-	//std::cout << "Collector: " << collector_mode << endl;
+	std::cout << "Collector: " << collector_mode << endl;
 	//std::cout << "Intake: " << goals.intake << endl;
 	//std::cout << "Grabber: " << goals.grabber << endl;
 
-	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
-	if(info.panel.floor) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
-	if(info.panel.exchange) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-	if(info.panel.switch_) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
-	if(info.panel.scale) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
-	if(info.panel.lifter == Panel::Lifter::UP) lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
-	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
+	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
+		lifter_goal = Lifter::Goal::stop();
+		//collector_mode = Collector_mode::DO_NOTHING;
+	}
+	if(info.panel.floor) {
+		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
+		collector_mode = Collector_mode::DO_NOTHING;
+	}
+	if(info.panel.exchange) {
+		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+		collector_mode = Collector_mode::DO_NOTHING;
+	}
+	if(info.panel.switch_) {
+		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
+		collector_mode = Collector_mode::DO_NOTHING;
+	}
+	if(info.panel.scale) {
+		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
+		collector_mode = Collector_mode::DO_NOTHING;
+	}
+	if(info.panel.lifter == Panel::Lifter::UP) {
+		lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
+		collector_mode = Collector_mode::DO_NOTHING;
+	}
+	if(info.panel.lifter == Panel::Lifter::DOWN) {
+		lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
+		collector_mode = Collector_mode::DO_NOTHING;
+	}
 	goals.lifter = lifter_goal;
 
 	if(info.panel.climb) {
@@ -167,6 +180,14 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			goals.lifter = Lifter::Goal::climb();
 		}
 	}
+
+	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
+	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
+	if(info.panel.eject) {
+		collector_mode = Collector_mode::EJECT;
+		eject_timer.set(2);
+	}
+	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
 	//std::cout << "goal: " << goals.lifter << endl;
 
