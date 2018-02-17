@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
+const unsigned AUTO_SELECTOR_AXIS = 0;//TODO rework these constants
 
 #define BUTTONS \
 	X(floor)\
@@ -137,48 +137,66 @@ Panel interpret_oi(Joystick_data d){
 	}
 	{//set the auto mode number from the dial value
 		float auto_dial_value = d.axis[AUTO_SELECTOR_AXIS];
-		p.auto_select = interpret_20_turn_pot(auto_dial_value);
+		p.auto_select = interpret_10_turn_pot(auto_dial_value);
 	}
 	{//two position switches
 		p.grabber_auto = [&]{
-			float grabber_auto = d.axis[2];
+			float grabber_auto = d.axis[1];
 			return (grabber_auto < 0) ? false : true;
 		}();
-		p.intake_auto = d.button[11];
-		p.climb_lock = d.button[15];
-		p.lifter_high_power = d.button[16];
+		p.intake_auto = d.button[10];
+		p.climb_lock = d.button[14];
+		p.lifter_high_power = d.button[15];
 	}
 	{//three position switches
 		p.grabber = [&]{
-			float grabber = d.axis[3];
+			float grabber = d.axis[2];
 			static const float CLOSE=-1,OFF=0,OPEN=1;
 			if(set_button(grabber,CLOSE,OFF,OPEN)) return Panel::Grabber::OFF;
 			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::OPEN;
 			return Panel::Grabber::CLOSE;
 		}();
 		p.intake = [&]{
-			float intake = d.axis[5];
+			float intake = d.axis[4];
 			static const float IN=-1,OFF=0,OUT=1;
 			if(set_button(intake,IN,OFF,OUT)) return Panel::Intake::OFF;
 			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::OUT;
 			return Panel::Intake::IN;
 		}();
+		p.collector_mode = [&]{
+			float collector_mode = d.axis[5];
+			static const float NO_AUTO=-1,SEMI_AUTO=0,FULL_AUTO=1;
+			if(set_button(collector_mode,NO_AUTO,SEMI_AUTO,FULL_AUTO)) return Panel::Collector_mode::SEMI_AUTO;
+			if(set_button(collector_mode,SEMI_AUTO,FULL_AUTO,ARTIFICIAL_MAX)) return Panel::Collector_mode::FULL_AUTO;
+			return Panel::Collector_mode::NO_AUTO;
+		}();
+		p.lifter = [&]{
+			if(d.button[12]){
+				return Panel::Lifter::UP;
+			}
+			if(d.button[13]){
+				return Panel::Lifter::DOWN;
+			}
+			return Panel::Lifter::OFF;
+		}();
 	}	
 	{//buttons
-		p.floor = d.button[1];
-		p.exchange = d.button[2];
-		p.switch_ = d.button[3];
-		p.scale = d.button[4];
-		p.collect_closed = d.button[5];
+		p.floor = d.button[0];
+		p.exchange = d.button[1];
+		p.switch_ = d.button[2];
+		p.scale = d.button[3];
+		p.collect_closed = d.button[4];
 		p.collect_open = d.button[9];
 		p.eject = d.button[5];
-		p.drop = d.button[8];
+		p.drop = d.button[6];
 		p.climb = d.button[7];
-		p.wings = d.button[9];
-		p.learn = d.button[12];
+		p.wings = d.button[8];
+		p.learn = d.button[11];
 	}
 	{//Dials
 	}
+	cout<<"\n"<<d;
+	cout<<"\n"<<p<<"\n";
 	return p;
 }
 

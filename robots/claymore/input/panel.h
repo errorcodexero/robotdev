@@ -34,7 +34,7 @@ struct Panel{
 	enum class Lifter{DOWN,OFF,UP};
 	Lifter lifter;
 	//10 position switches:
-	int auto_select;//0-19
+	int auto_select;
 	//Dials:
 	
 	Panel();

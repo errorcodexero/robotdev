@@ -32,15 +32,13 @@ Joystick_data read_joystick(frc::DriverStation& ds,int port){
 	{
 		auto lim=ds.GetStickAxisCount(port);
 		assert(lim>=0);
-		unsigned axes=std::min((unsigned)JOY_AXES,(unsigned)lim);
-		for(unsigned i=0;i<axes;i++){
+		for(unsigned i=0;i<(unsigned)lim;i++){
 			r.axis[i]=ds.GetStickAxis(port,i);
 		}
 	}
 	auto lim=ds.GetStickButtonCount(port);
 	assert(lim>=0);
-	const auto buttons=std::min((unsigned)JOY_BUTTONS,(unsigned)lim);
-	for(unsigned i=0;i<buttons;i++){
+	for(unsigned i=0;i<(unsigned)lim;i++){
 		//if(buttons&(1<<i)) r.button[i]=1;
 		r.button[i]=ds.GetStickButton(port,i+1);
 	}
