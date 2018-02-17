@@ -34,7 +34,7 @@ Executive same_switch
             },
             Step
             {   
-                Drive{110.0} //ONLY FOR CORVALLIS - SHOULD BE 128
+                Drive{100.0} //ONLY FOR CORVALLIS - SHOULD BE 128
             },
             Step
             {   
@@ -109,7 +109,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Drive{56}
+		Drive{48} //ONLY FOR CORVALLIES - SHOULD BE 56
 	    },
 	    Step
 	    {
