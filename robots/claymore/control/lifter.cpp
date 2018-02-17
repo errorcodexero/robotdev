@@ -302,11 +302,12 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     const double LIFTER_GEAR_CIRCUMFERENCE = LIFTER_GEAR_DIAMETER * PI;
     const double INCHES_PER_TICK = LIFTER_GEAR_CIRCUMFERENCE / TICKS_PER_LIFTER_REVOLUTION;
     */
-    const double INCHES_PER_TICK_HIGH_GEAR = (1.0 / 575.82) * 12.0; //From Jeff
+    const double INCHES_PER_TICK_HIGH_GEAR = (1.0 / 11.4241); //From Jeff
     //const double INCHES_PER_TICK_LOW_GEAR = 4442.41 * 12.0; //From Jeff
-    last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR;
+    const double COLLECTOR_OFFSET = 11.375; //inches
+    last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR + COLLECTOR_OFFSET;
 
-    std::cout << "Ticks: " << in.ticks << "    Height: " << last.height << endl;
+    //std::cout << "Ticks: " << in.ticks << "    Height: " << last.height << endl;
 
     last.at_bottom = in.bottom_hall_effect;
     last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);
@@ -315,7 +316,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     last.at_climbed_height = last.height < climb_goal;
     last_gearing = out.gearing;
 	
-    last.dt = last.time - now;
+    last.dt = now - last.time;
     last.time = now;
 }
 
@@ -386,14 +387,14 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	break;
     case Lifter::Goal::Mode::STOP:
 	Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);
-	out.power = 0.0;
+	out.power = 0.1;
 	break; 
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
-	Lifter::lifter_controller.updateHeightOnChange(goal.target(), status_detail.time);
+	Lifter::lifter_controller.updateHeightOnChange(goal.target(), status_detail.height, status_detail.time);
 	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
 	break;
     case Lifter::Goal::Mode::GO_TO_PRESET:
-	Lifter::lifter_controller.updateHeightOnChange(goal.preset_target(), status_detail.time);
+	Lifter::lifter_controller.updateHeightOnChange(goal.preset_target(), status_detail.height, status_detail.time);
 	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
 	break;
     case Lifter::Goal::Mode::BACKGROUND:
@@ -404,15 +405,15 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	nyi
     }
 
-    std::cout << "power 1: " << out.power << " " << status_detail.at_top << " " << status_detail.at_bottom << " " << status_detail.at_climbed_height << endl;
+    //std::cout << "power 1: " << out.power << " " << status_detail.at_top << " " << status_detail.at_bottom << " " << status_detail.at_climbed_height << endl;
 
     if((status_detail.at_top && out.power > 0.0) ||
        (status_detail.at_bottom && out.power < 0.0) ||
        (status_detail.at_climbed_height && out.power < 0.0))
 	out.power = 0.0;
 
-    std::cout << "power 2: " << out.power << endl;
-
+    //std::cout << "power 2: " << out.power << endl;
+ 
     return out;
 }
 
