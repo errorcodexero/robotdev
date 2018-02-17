@@ -30,4 +30,6 @@ namespace Gamepad_axis{
 
 unsigned interpret_20_turn_pot(Volt);
 
+unsigned interpret_10_turn_pot(Volt);
+
 #endif

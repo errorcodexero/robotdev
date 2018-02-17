@@ -284,7 +284,7 @@ std::ostream& operator<<(std::ostream& o,Robot_outputs);
 
 //limitation of FRC coms//TODO look into this
 #define JOY_AXES 8
-#define JOY_BUTTONS 13
+#define JOY_BUTTONS 16
 
 struct Joystick_data{
   Joystick_data()
