@@ -34,7 +34,7 @@ Executive same_switch
             },
             Step
             {   
-                Drive{128.0}
+                Drive{110.0} //ONLY FOR CORVALLIS - SHOULD BE 128
             },
             Step
             {   
