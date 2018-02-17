@@ -183,6 +183,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		
 		Drivebase::drivebase_controller.setParams(&input_params);	
 		Lifter::lifter_controller.setParams(&input_params);	
+		Grabber::grabber_controller.setParams(&input_params);
 
 		/*
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){

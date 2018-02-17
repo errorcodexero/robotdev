@@ -130,6 +130,10 @@ bool LifterController::runningInBackground() {
     return mMode == Mode::BACKGROUND;
 }
 
+bool LifterController::calibrating() {
+    return mMode == Mode::CALIBRATING;
+}
+
 double LifterController::presetToHeight(Preset preset) {
     double floor_height = mInputParams->getValue("lifter:height:floor", 0.0);
     double exchange_height = mInputParams->getValue("lifter:height:exchange", 3.0);

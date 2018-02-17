@@ -75,6 +75,10 @@ public:
     /// \returns true when the lifter is running in the background
     bool runningInBackground();
 
+    /// \brief return true when the lifter is calibrating
+    /// \returns true when the lifter is calibrating
+    bool calibrating();
+
     /// \brief returns the height assocaited with a preset
     /// \param preset the preset of interest
     double presetToHeight(Preset preset);
@@ -84,7 +88,8 @@ private:
     enum class Mode {
 	IDLE,			// Doing nothing
         HEIGHT,			// Seeking a desired height
-	BACKGROUND              // Going to a height in the background
+	BACKGROUND,             // Going to a height in the background
+	CALIBRATING             // Calibrating the lifter 
     };
 
     //

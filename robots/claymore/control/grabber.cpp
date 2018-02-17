@@ -241,9 +241,10 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 
 	const double OUTPUT_THRESHOLD = -0.05;
 	ticks_history.push_back(input.ticks);
-	if(ticks_history.size() > input_params->getValue("grabber:samples", 5))
+	double samples = input_params->getValue("grabber:samples", 5);
+	if(ticks_history.size() > samples)
 		ticks_history.pop_front();
-	if(out < OUTPUT_THRESHOLD && (ticks_history.back() - ticks_history.front()) < input_params->getValue("grabber:calibrate_threshold", 0.1)) {
+	if(out < OUTPUT_THRESHOLD && ticks_history.size() >= samples && (ticks_history.back() - ticks_history.front()) < input_params->getValue("grabber:calibrate_threshold", 0.1)) {
 		encoder_offset = input.ticks;
 		Grabber::grabber_controller.setDoneCalibrating(true);
 	} else {

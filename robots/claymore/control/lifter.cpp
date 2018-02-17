@@ -250,8 +250,8 @@ ostream& operator<<(ostream& o, Lifter const& a){
 #undef CMP
 
 Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Output const& out)const{
-    r.pwm[LIFTER_ADDRESS_L] = out.power;
-    r.pwm[LIFTER_ADDRESS_R] = out.power;
+    r.pwm[LIFTER_ADDRESS_L] = -out.power;
+    r.pwm[LIFTER_ADDRESS_R] = -out.power;
     r.solenoid[LIFTER_SHIFTER_LOW] = out.gearing == Lifter::Output::Gearing::LOW;
     r.solenoid[LIFTER_SHIFTER_HIGH] = out.gearing != Lifter::Output::Gearing::LOW;
 
@@ -266,7 +266,7 @@ Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Out
 
 Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)const{
     return {
-	r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
+	-r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
 	r.solenoid[LIFTER_SHIFTER_LOW] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH
 	   };
 }
@@ -289,15 +289,21 @@ Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
 void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const& out){
     paramsInput* input_params = Lifter::lifter_controller.getParams();
 
-    if(in.top_hall_effect) encoder_offset = in.ticks;
+    if(Lifter::lifter_controller.calibrating()) encoder_offset = in.ticks;
 
+    /*
     const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
     const double MOTOR_REVS_PER_LIFTER_REV = 100.0; //Gear ratio TODO: NEEDS CORRECT VALUE
     const double TICKS_PER_LIFTER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_LIFTER_REV;
     const double LIFTER_GEAR_DIAMETER = 6.0; //inches
     const double LIFTER_GEAR_CIRCUMFERENCE = LIFTER_GEAR_DIAMETER * PI;
     const double INCHES_PER_TICK = LIFTER_GEAR_CIRCUMFERENCE / TICKS_PER_LIFTER_REVOLUTION;
-    last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK;
+    */
+    const double INCHES_PER_TICK_HIGH_GEAR = 575.82 * 12.0; //From Jeff
+    //const double INCHES_PER_TICK_LOW_GEAR = 4442.41 * 12.0; //From Jeff
+    last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR;
+
+    std::cout << "Ticks: " << in.ticks << "    Height: " << last.height << endl;
 
     last.at_bottom = in.bottom_hall_effect;
     last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);
@@ -390,16 +396,19 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     case Lifter::Goal::Mode::BACKGROUND:
 	break;
     case Lifter::Goal::Mode::CALIBRATE:
-	out.power = -CALIBRATE_POWER;
 	break;
     default:
 	nyi
     }
 
+    std::cout << "power 1: " << out.power << " " << status_detail.at_top << " " << status_detail.at_bottom << " " << status_detail.at_climbed_height << endl;
+
     if((status_detail.at_top && out.power > 0.0) ||
        (status_detail.at_bottom && out.power < 0.0) ||
        (status_detail.at_climbed_height && out.power < 0.0))
 	out.power = 0.0;
+
+    std::cout << "power 2: " << out.power << endl;
 
     return out;
 }
@@ -431,13 +440,12 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
     case Lifter::Goal::Mode::UP:
     case Lifter::Goal::Mode::DOWN:
     case Lifter::Goal::Mode::STOP:
+    case Lifter::Goal::Mode::CALIBRATE:
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
     case Lifter::Goal::Mode::GO_TO_PRESET:
     case Lifter::Goal::Mode::BACKGROUND:
 	return Lifter::lifter_controller.done();
-    case Lifter::Goal::Mode::CALIBRATE:
-	return status == Lifter::Status::BOTTOM;
     default:
 	nyi
 	    }
