@@ -17,13 +17,33 @@ Executive same_switch
 	vector<Step>
 	{
 	    Step
-	    {
-		Drive{128.0}
-	    },
-		
-            //
-	    // TODO: add grabber step to spit out the cube
-	    //
+            {   
+                Calibrate_lifter{}
+            },
+            Step
+            {   
+                Calibrate_grabber{}
+            },
+            Step
+            {   
+                Wait{1.0}
+            },
+            Step
+            {   
+                Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
+            },
+            Step
+            {   
+                Drive{128.0}
+            },
+            Step
+            {   
+                Wait_for_lifter{}
+            },
+            Step
+            {   
+                Eject{}
+            }
 	},
 	Executive
 	{
@@ -43,6 +63,14 @@ Executive opposite_switch
     {
 	vector<Step>
 	{
+	    Step
+	    {
+		Calibrate_grabber{}
+	    },
+	    Step
+	    {
+		Calibrate_lifter{}
+	    },
 	    Step
 	    {
 		Drive{52.0}
@@ -77,11 +105,20 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
+                Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
+	    },
+	    Step
+	    {
 		Drive{56}
+	    },
+	    Step
+	    {
+		Wait_for_lifter{}
+	    },
+	    Step
+	    {
+		Eject{}
 	    }
-	    //
-	    // TODO: add grabber step to spit out the cube
-	    //
 	},
 	Executive
 	{
@@ -121,6 +158,8 @@ Executive get_auto_mode(Next_mode_info info)
 	logger.endMessage() ;
 	return Executive{Teleop()};
     }
+
+Executive auto_null{Teleop{}};
 
 #if AUTOMODE_TEST == 0
     //
@@ -360,16 +399,32 @@ Executive get_auto_mode(Next_mode_info info)
 	    {
 		Step
 		{
+		    Calibrate_lifter{}
+		},
+		Step
+		{
 		    Calibrate_grabber{}
+		}/*,
+		Step
+		{
+		    Wait{1.0}
 		},
 		Step
 		{
-		    Wait{5.0}
+		    Start_lifter_in_background{LifterController::Preset::SWITCH, info.in.now}
 		},
 		Step
 		{
-		    Grabber_to_preset{GrabberController::Preset::OPEN, info.in.now}
-		}
+		    Drive{128.0}
+		},
+		Step
+		{
+		    Wait_for_lifter{}
+		},
+		Step
+		{
+		    Eject{}
+		}*/
 	    },
 	    Executive
 	    {
@@ -396,8 +451,18 @@ Executive get_auto_mode(Next_mode_info info)
     logger << "get_auto_mode - AUTOMODE_TEST == 21, switch opposite side" ;
     logger.endMessage() ;
     
-    Executive auto_program = opposide_switch ;
+    Executive auto_program = opposite_switch ;
 	
+#elif AUTOMODE_TEST == 22
+     //
+     // AUTOMODE_TEST = 22, decide between same side and opposite side for switch
+     //
+    logger.startMessage(messageLogger::messageType::info) ;
+    logger << "get_auto_mode - AUTOMODE_TEST == 22, decide switch side" ;
+    logger.endMessage() ;
+    
+    Executive auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
+
 #else
     //
     // If AUTOMODE_TEST was not defined, we revert to the default behavior which is
@@ -407,6 +472,8 @@ Executive get_auto_mode(Next_mode_info info)
     logger.startMessage(messageLogger::messageType::info) ;
     logger << "get_auto_mode - competition mode, selecting auto mode based on switch" ;
     logger.endMessage() ;
+
+    return info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
 	
     if(!info.panel.in_use) {
 	//
@@ -417,13 +484,16 @@ Executive get_auto_mode(Next_mode_info info)
 	logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
 	logger.endMessage() ;
 	
-	return auto_null;
+    	return info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
+	//return auto_null;
     }
 
     logger.startMessage(messageLogger::messageType::error) ;
     logger << "get_auto_mode - panel value is " << info.panel.auto_select ;
     logger.endMessage() ;
     
+    Executive auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
+
     switch(info.panel.auto_select){
     case 0: 
 	return auto_null;

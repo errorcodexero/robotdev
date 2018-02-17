@@ -136,8 +136,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		default: assert(0);
 	}
 	std::cout << "Collector: " << collector_mode << endl;
-	//std::cout << "Intake: " << goals.intake << endl;
-	//std::cout << "Grabber: " << goals.grabber << endl;
+	std::cout << info.panel.intake_auto << " Intake: " << goals.intake << endl;
+	std::cout << "Grabber: " << goals.grabber << endl;
 
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
 		lifter_goal = Lifter::Goal::stop();

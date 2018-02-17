@@ -779,7 +779,7 @@ ostream& operator<<(ostream& o,Digital_inputs const& a){
 }
 
 IMPL_STRUCT(DS_info::DS_info,DS_INFO_ITEMS)
-DS_info::DS_info():DS_info(false,Alliance::INVALID,0,false){}
+DS_info::DS_info():DS_info(false,Alliance::INVALID,0,false,false,false,false){}
 
 ostream& operator<<(ostream& o,DS_info const& d){
 	o<<"DS_info(";

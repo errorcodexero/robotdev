@@ -175,6 +175,7 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
 		init = true;
 	}
 	goals.drive = Drivebase::Goal::drive_straight();
+	goals.gear_shifter = Gear_shifter::Goal::LOW;
 	return goals;
 }
 
@@ -466,6 +467,37 @@ unique_ptr<Step_impl> Grabber_to_preset::clone()const{
 
 bool Grabber_to_preset::operator==(Grabber_to_preset const& b)const{
         return target_preset == b.target_preset && time == b.time && init == b.init;
+}
+
+//
+// Eject: Eject a cube
+//
+
+Eject::Eject(){
+	eject_timer.set(2);
+}
+
+Step::Status Eject::done(Next_mode_info info){
+	return eject_timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Eject::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals){
+	eject_timer.update(info.in.now, info.in.robot_mode.enabled);
+	goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+	goals.intake = Intake::Goal::OUT;
+	return goals;
+}
+
+unique_ptr<Step_impl> Eject::clone()const{
+	return unique_ptr<Step_impl>(new Eject(*this));
+}
+
+bool Eject::operator==(Eject const& b)const{
+	return eject_timer == b.eject_timer;
 }
 
 #ifdef STEP_TEST

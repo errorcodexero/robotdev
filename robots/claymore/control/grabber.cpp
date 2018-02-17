@@ -11,7 +11,7 @@ using namespace std;
 #define LIMIT_SWITCH_ADDRESS 11
 
 #define MANUAL_GRABBER_POWER .60 //TODO tune
-#define CALIBRATE_POWER .20 //TODO tune
+#define CALIBRATE_POWER .40 //TODO tune
 
 GrabberController Grabber::grabber_controller;
 

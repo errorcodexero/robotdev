@@ -238,4 +238,17 @@ struct Grabber_to_preset: Step_impl_inner<Grabber_to_preset>{
         bool operator==(Grabber_to_preset const&)const;
 };
 
+//Eject a cube
+struct Eject: Step_impl_inner<Eject>{
+	Countdown_timer eject_timer;
+
+	explicit Eject();
+	
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Eject const&)const;
+};
+
 #endif

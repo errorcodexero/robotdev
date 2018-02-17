@@ -195,8 +195,8 @@ Panel interpret_oi(Joystick_data d){
 	}
 	{//Dials
 	}
-	cout<<"\n"<<d;
-	cout<<"\n"<<p<<"\n";
+	//cout<<"\n"<<d;
+	//cout<<"\n"<<p<<"\n";
 	return p;
 }
 

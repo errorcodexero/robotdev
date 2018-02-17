@@ -81,7 +81,7 @@ void GrabberController::update(double angle, double time, double dt, double& out
     }
 
     if(mMode == Mode::IDLE) {
-	out = 0.0;
+	out = mInputParams->getValue("grabber:hold_power", -0.1);
 	mDataDumpMode = true;
 	mDataDumpStartTime = time;
     }

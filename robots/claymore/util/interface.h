@@ -325,7 +325,10 @@ struct DS_info{
 	#define DS_INFO_ITEMS(X) \
 		X(bool,connected) \
 		X(Alliance,alliance) \
-		X(int,location) 
+		X(int,location) \
+		X(bool,near_switch_left) \
+		X(bool,scale_left) \
+		X(bool,far_switch_left)
 	
 	STRUCT_MEMBERS(DS_INFO_ITEMS)
 
