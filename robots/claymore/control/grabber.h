@@ -52,12 +52,13 @@ struct Grabber{
 
 	struct Status_detail{
 		bool has_cube;
-		bool at_limit;
+		bool outer_limit;
+		bool inner_limit;
 		double angle;
 		double time, dt;
 		
 		Status_detail();
-		Status_detail(bool, bool, double, double, double);
+		Status_detail(bool, bool, bool, double, double, double);
 	};
 	
 	using Status = Status_detail;

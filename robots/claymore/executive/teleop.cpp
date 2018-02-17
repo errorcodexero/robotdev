@@ -108,7 +108,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
 	if(info.panel.eject) {
 		collector_mode = Collector_mode::EJECT;
-		eject_timer.set(5);
+		eject_timer.set(2);
 	}
 	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
@@ -143,32 +143,43 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			break;
 		default: assert(0);
 	}
+	//std::cout << "Collector: " << collector_mode << endl;
+	//std::cout << "Intake: " << goals.intake << endl;
+	//std::cout << "Grabber: " << goals.grabber << endl;
 
-	if(info.panel.climb) {
-		Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
-		if(!ready(status(info.status.lifter), prep_climb_goal))
-			lifter_goal = prep_climb_goal;
-		else if(info.panel.climb_lock)
-			goals.lifter = Lifter::Goal::climb();
-	}
-
+	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
 	if(info.panel.floor) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
 	if(info.panel.exchange) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 	if(info.panel.switch_) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
 	if(info.panel.scale) lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
 	if(info.panel.lifter == Panel::Lifter::UP) lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
 	if(info.panel.lifter == Panel::Lifter::DOWN) lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
-	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) lifter_goal = Lifter::Goal::stop();
 	goals.lifter = lifter_goal;
+
+	if(info.panel.climb) {
+		Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
+		if(!ready(status(info.status.lifter), prep_climb_goal)) {
+			std::cout << "NOT READY" << endl;
+			lifter_goal = prep_climb_goal;
+		}
+		else if(info.panel.climb_lock) {
+			std::cout << "CLIMBING" << endl;
+			goals.lifter = Lifter::Goal::climb();
+		}
+	}
+
+	//std::cout << "goal: " << goals.lifter << endl;
 
 	if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
 	goals.wings = wings_goal;
 
 	if(!info.panel.grabber_auto) {
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::stop();
-		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::open();//go_to_preset(GrabberController::Preset::OPEN);
+		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::close();//go_to_preset(GrabberController::Preset::CLOSED);
 	}
+
+	//std::cout << "Grabber: " << goals.grabber << endl;
 
 	if(!info.panel.intake_auto) {
 		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::OFF;

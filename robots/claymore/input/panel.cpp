@@ -226,6 +226,7 @@ Panel interpret_gamepad(Joystick_data d){
 
 	p.wings = d.button[Gamepad_button::LB];
 	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
+	//std::cout << "climb: " << p.climb << " " << d.axis[Gamepad_axis::LTRIGGER] << endl;
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
@@ -234,6 +235,9 @@ Panel interpret_gamepad(Joystick_data d){
 	bool alternate_operation = d.button[Gamepad_button::RB];
 
 	if(!alternate_operation) {
+		p.grabber_auto = true;
+		p.intake_auto = true;
+
 		p.collect_closed = d.button[Gamepad_button::A];
 		p.collect_open = d.button[Gamepad_button::B];
 		p.eject = d.button[Gamepad_button::X];	
@@ -266,8 +270,8 @@ Panel interpret_gamepad(Joystick_data d){
 				assert(0);
 		}	
 	} else {
-		p.grabber_auto = d.button[Gamepad_button::A];
-		p.intake_auto = d.button[Gamepad_button::B];
+		p.grabber_auto = false;
+		p.intake_auto = false;
 		
 		p.grabber = Panel::Grabber::OFF;
 		p.intake = Panel::Intake::OFF;
