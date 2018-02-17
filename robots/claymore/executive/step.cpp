@@ -408,6 +408,66 @@ bool Lifter_to_height::operator==(Lifter_to_height const& b)const{
 	return target_height == b.target_height && time == b.time && init == b.init;
 }
 
+//
+// Calibrate_grabber: Calibrate the grabber at the current angle
+//
+
+Calibrate_grabber::Calibrate_grabber(){
+	Grabber::grabber_controller.setDoneCalibrating(false);
+}
+
+Step::Status Calibrate_grabber::done(Next_mode_info info){
+	return ready(status(info.status.grabber), Grabber::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Calibrate_grabber::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Calibrate_grabber::run(Run_info info,Toplevel::Goal goals){
+	goals.grabber = Grabber::Goal::calibrate();
+	return goals;
+}
+
+unique_ptr<Step_impl> Calibrate_grabber::clone()const{
+	return unique_ptr<Step_impl>(new Calibrate_grabber(*this));
+}
+
+bool Calibrate_grabber::operator==(Calibrate_grabber const& b)const{
+	return true;
+}
+
+//
+// Grabber_to_preset: Move the grabber to a specified angle preset
+//
+
+Grabber_to_preset::Grabber_to_preset(GrabberController::Preset target_preset, double time):target_preset(target_preset),time(time),init(false){}
+
+Step::Status Grabber_to_preset::done(Next_mode_info info){
+        return ready(status(info.status.grabber), Grabber::Goal::go_to_preset(target_preset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Grabber_to_preset::run(Run_info info){
+        return run(info,{});
+}
+
+Toplevel::Goal Grabber_to_preset::run(Run_info info,Toplevel::Goal goals){
+        if(!init) {
+                Grabber::grabber_controller.moveToAngle(target_preset, time);
+                init = false;
+        }
+        goals.grabber = Grabber::Goal::go_to_preset(target_preset);
+        return goals;
+}
+
+unique_ptr<Step_impl> Grabber_to_preset::clone()const{
+        return unique_ptr<Step_impl>(new Grabber_to_preset(*this));
+}
+
+bool Grabber_to_preset::operator==(Grabber_to_preset const& b)const{
+        return target_preset == b.target_preset && time == b.time && init == b.init;
+}
+
 #ifdef STEP_TEST
 void test_step(Step a){
 	PRINT(a);

@@ -199,9 +199,9 @@ struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
 
 //Move the lifter to a sepecified height
 struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
-	bool init;
 	double target_height;
 	double time;
+	bool init;
 
 	explicit Lifter_to_height(double, double);
 	
@@ -210,6 +210,32 @@ struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
 	Step::Status done(Next_mode_info);
 	std::unique_ptr<Step_impl> clone()const;
 	bool operator==(Lifter_to_height const&)const;
+};
+
+//Calibrate the grabber at the current angle
+struct Calibrate_grabber: Step_impl_inner<Calibrate_grabber>{
+	explicit Calibrate_grabber();
+	
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Calibrate_grabber const&)const;
+};
+
+//Move the grabber to a sepecified angle preset
+struct Grabber_to_preset: Step_impl_inner<Grabber_to_preset>{
+        GrabberController::Preset target_preset;
+        double time;
+        bool init;
+
+        explicit Grabber_to_preset(GrabberController::Preset, double);
+
+        Toplevel::Goal run(Run_info,Toplevel::Goal);
+        Toplevel::Goal run(Run_info);
+        Step::Status done(Next_mode_info);
+        std::unique_ptr<Step_impl> clone()const;
+        bool operator==(Grabber_to_preset const&)const;
 };
 
 #endif

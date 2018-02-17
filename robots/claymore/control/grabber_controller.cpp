@@ -11,6 +11,7 @@ GrabberController::GrabberController() {
     mMaxChange = 6.0;
     mDataDumpMode = false;
     mDataDumpStartTime = 0.0;
+    mDoneCalibrating = true;
 }
 
 void GrabberController::setParams(paramsInput* input_params) {

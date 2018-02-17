@@ -9,7 +9,7 @@ using namespace std;
 #define LIFTER_SHIFTER_HIGH 4
 
 #define CLIMB_POWER .60 //TODO tune
-#define MANUAL_LIFTER_LOW_POWER .60 //TODO tune
+#define MANUAL_LIFTER_LOW_POWER .40 //TODO tune
 #define MANUAL_LIFTER_HIGH_POWER .80 //TODO tune
 #define CALIBRATE_POWER .20 //TODO tune
 
@@ -302,12 +302,12 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     const double LIFTER_GEAR_CIRCUMFERENCE = LIFTER_GEAR_DIAMETER * PI;
     const double INCHES_PER_TICK = LIFTER_GEAR_CIRCUMFERENCE / TICKS_PER_LIFTER_REVOLUTION;
     */
-    const double INCHES_PER_TICK_HIGH_GEAR = (1.0 / 11.4241); //From Jeff
+    const double INCHES_PER_TICK_HIGH_GEAR = .08327; //(1.0 / 11.4201); //From Jeff
     //const double INCHES_PER_TICK_LOW_GEAR = 4442.41 * 12.0; //From Jeff
     const double COLLECTOR_OFFSET = 11.375; //inches
     last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR + COLLECTOR_OFFSET;
 
-    //std::cout << "Ticks: " << in.ticks << "    Height: " << last.height << endl;
+    //cout << "Ticks: " << in.ticks << "    Height: " << last.height << endl;
 
     last.at_bottom = in.bottom_hall_effect;
     last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);

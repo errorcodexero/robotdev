@@ -11,7 +11,7 @@ using namespace std;
 #define LIMIT_SWITCH_ADDRESS 11
 
 #define MANUAL_GRABBER_POWER .60 //TODO tune
-#define CALIBRATE_POWER .20 //TODO tune
+#define CALIBRATE_POWER .10 //TODO tune
 
 GrabberController Grabber::grabber_controller;
 
@@ -87,8 +87,8 @@ Grabber::Goal Grabber::Goal::calibrate(){
 Grabber::Input::Input(int t, bool hc, bool ls):ticks(t),has_cube(hc),limit_switch(ls){}
 Grabber::Input::Input():Input(0, false, false){}
 
-Grabber::Status_detail::Status_detail(bool hc, bool al, double a, double t, double dt):has_cube(hc),at_limit(al),angle(a),time(t),dt(dt){}
-Grabber::Status_detail::Status_detail():Status_detail(false, false, 0.0, 0.0, 0.0){}
+Grabber::Status_detail::Status_detail(bool hc, bool ol, bool il, double a, double t, double dt):has_cube(hc),outer_limit(ol),inner_limit(il),angle(a),time(t),dt(dt){}
+Grabber::Status_detail::Status_detail():Status_detail(false, false, false, 0.0, 0.0, 0.0){}
 
 Grabber::Estimator::Estimator():last(){}
 
@@ -124,10 +124,10 @@ std::ostream& operator<<(std::ostream& o,Grabber::Input a){
 
 std::set<Grabber::Status_detail> examples(Grabber::Status_detail*){
 	return {
-		{false, false, 0.0, 0.0, 0.0},
-		{false, true, 0.0, 0.0, 0.0},
-		{true, false, 0.0, 0.0, 0.0},
-		{true, true, 0.0, 0.0, 0.0}
+		{false, false, false, 0.0, 0.0, 0.0},
+		{false, true, false, 0.0, 0.0, 0.0},
+		{true, false, false, 0.0, 0.0, 0.0},
+		{true, true, false, 0.0, 0.0, 0.0}
 	};
 }
 
@@ -151,7 +151,7 @@ bool operator<(Grabber::Status_detail a,Grabber::Status_detail b){
 }
 
 bool operator==(Grabber::Status_detail a,Grabber::Status_detail b){
-	return a.angle == b.angle && a.time == b.time && a.dt == b.dt && a.has_cube == b.has_cube && a.at_limit == b.at_limit;
+	return a.angle == b.angle && a.time == b.time && a.dt == b.dt && a.has_cube == b.has_cube && a.outer_limit == b.outer_limit && a.inner_limit == b.inner_limit;
 }
 
 bool operator!=(Grabber::Status_detail a, Grabber::Status_detail b){
@@ -242,26 +242,34 @@ Grabber::Output Grabber::Output_applicator::operator()(Robot_outputs const& r)co
 void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output out){
 	paramsInput* input_params = Grabber::grabber_controller.getParams();
 
-	const double OUTPUT_THRESHOLD = -0.05;
-	ticks_history.push_back(input.ticks);
-	double samples = input_params->getValue("grabber:samples", 5);
-	if(ticks_history.size() > samples)
-		ticks_history.pop_front();
-	if(out < OUTPUT_THRESHOLD && ticks_history.size() >= samples && (ticks_history.back() - ticks_history.front()) < input_params->getValue("grabber:calibrate_threshold", 0.1)) {
-		encoder_offset = input.ticks;
-		Grabber::grabber_controller.setDoneCalibrating(true);
-	} else {
-		Grabber::grabber_controller.setDoneCalibrating(false);
+	if(!Grabber::grabber_controller.getDoneCalibrating()) {
+		ticks_history.push_back(input.ticks);
+		std::cout << "CALIBRATING: " << ticks_history.back() - ticks_history.front() << std::endl;
+		double samples = input_params->getValue("grabber:samples", 5);
+		if(ticks_history.size() > samples)
+			ticks_history.pop_front();
+		if(ticks_history.size() >= samples && fabs(ticks_history.back() - ticks_history.front()) < input_params->getValue("grabber:calibrate_threshold", 0.1)) {
+			encoder_offset = input.ticks;
+			Grabber::grabber_controller.setDoneCalibrating(true);
+			std::cout << "DONE CALIBRATING" << std::endl;
+		}	
 	}
 
+	/*
 	const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
 	const double MOTOR_REVS_PER_GRABBER_REV = 196.0; //Gear ratio TODO: NEEDS CORRECT VALUE
 	const double TICKS_PER_GRABBER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_GRABBER_REV;
 	const double DEGREES_PER_TICK = 360.0 / TICKS_PER_GRABBER_REVOLUTION;
+	*/
+	const double DEGREES_PER_TICK = 90.0 / 144.0;
 	last.angle = (input.ticks - encoder_offset) * DEGREES_PER_TICK;
 
 	last.has_cube = input.has_cube;
-	last.at_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
+
+	last.outer_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
+	last.inner_limit = last.angle < input_params->getValue("grabber:angle:closed", 0.0);
+
+	std::cout << "Ticks: " << input.ticks << " Angle: " << last.angle << " Inner Limit: " << last.inner_limit << " Outer Limit: " << last.outer_limit << endl;
 
 	last.dt = time - last.time;
 	last.time = time;
@@ -272,6 +280,8 @@ Grabber::Status Grabber::Estimator::get()const{
 }
 
 Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
+	paramsInput* input_params = Grabber::grabber_controller.getParams();
+
 	Grabber::Output out = 0.0;
 	switch(goal.mode()){
 		case Grabber::Goal::Mode::OPEN:
@@ -279,7 +289,7 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 			break;
 		case Grabber::Goal::Mode::STOP:
 			Grabber::grabber_controller.idle(status.angle, status.time, status.dt);
-			out = 0.0;
+			out = input_params->getValue("grabber:hold_power", -0.1);
 			break;
 		case Grabber::Goal::Mode::CLOSE:
 			out = -MANUAL_GRABBER_POWER;
@@ -298,7 +308,11 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 		default:
 			assert(0);
 	}
-	if(status.at_limit && out > 0.0) out = 0.0;
+	if(((status.outer_limit && out > 0.0) ||
+	    (status.inner_limit && out < 0.0)) &&
+	   Grabber::grabber_controller.getDoneCalibrating())
+	    out = 0.0;
+	std::cout << "Grabber: " << out << std::endl;
 	return out;
 }
 

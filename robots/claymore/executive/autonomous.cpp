@@ -344,6 +344,40 @@ Executive get_auto_mode(Next_mode_info info)
 	}
     };
 
+#elif AUTOMODE_TEST == 8
+    //
+    // AUTOMODE_TEST = 8, calibrate the grabber, move it to the open position
+    //
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "get_auto_mode - AUTOMODE_TEST == 8, calibrate the grabber, move it to the open position" ;
+    logger.endMessage();
+
+    Executive auto_program
+    {
+	Chain
+	{
+	    vector<Step>
+	    {
+		Step
+		{
+		    Calibrate_grabber{}
+		},
+		Step
+		{
+		    Wait{5.0}
+		},
+		Step
+		{
+		    Grabber_to_preset{GrabberController::Preset::OPEN, info.in.now}
+		}
+	    },
+	    Executive
+	    {
+		Teleop()
+	    }
+	}
+    };
+
 #elif AUTOMODE_TEST == 20
     //
     // AUTOMODE_TEST = 20, run the auto program for switch same side
