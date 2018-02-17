@@ -298,6 +298,52 @@ Executive get_auto_mode(Next_mode_info info)
 	}
    };
     
+#elif AUTOMODE_TEST == 7
+    //
+    // AUTOMODE_TEST = 7, calibrate the lifter, move the lifter up 43.5 inches
+    //
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "get_auto+mode - AUTOMODE_TEST == 7, calibrate the lifter, move the lifter up 43.5 inches" ;
+    logger.endMessage();
+
+    Executive auto_program
+    {
+ 	Chain
+ 	{
+ 	    vector<Step>
+ 	    {
+ 		Step
+ 		{
+		    Calibrate_lifter{}
+		},
+		Step
+		{
+		    Lifter_to_height{24, info.in.now}
+		},
+		Step
+		{
+		    Wait{2.0}
+		},
+		Step
+		{
+		    Lifter_to_height{43.5, info.in.now}
+		},
+		Step
+		{
+		    Wait{2.0}
+		},
+		Step
+		{
+		    Lifter_to_height{24, info.in.now}
+		}
+	    },
+	    Executive
+	    {
+	        Teleop()
+	    }
+	}
+    };
+
 #elif AUTOMODE_TEST == 20
     //
     // AUTOMODE_TEST = 20, run the auto program for switch same side

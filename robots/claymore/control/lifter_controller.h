@@ -30,18 +30,21 @@ public:
 
     /// \brief move the lifter to a specific height
     /// \param height the height in inches for the lifter
+    /// \param current_height the current lifter height
     /// \param the start time of this operation
-    void moveToHeight(double height, double time);
+    void moveToHeight(double height, double current_height, double time);
 
     /// \brief move the lifter to a preset position
     /// \param preset the preset for the lifter height
+    /// \param current_height the current lifter height
     /// \param time the start time of this operation
-    void moveToHeight(Preset preset, double time);
+    void moveToHeight(Preset preset, double current_height, double time);
 
     /// \brief move the lifter to a preset position in the background
     /// \param preset the preset for the lifter height
+    /// \param current_height the current lifter height
     /// \param time the start time of this operation
-    void backgroundMoveToHeight(Preset preset, double time);
+    void backgroundMoveToHeight(Preset preset, double current_height, double time);
 
     /// \brief put the lifter into calibration mode
     void calibrate();
@@ -63,12 +66,12 @@ public:
     /// \brief this method updates the height target internally when a new target is required
     /// \param height the new requeste height in inches
     /// \param time the start time of the new request
-    void updateHeightOnChange(double height, double time);
+    void updateHeightOnChange(double height, double current_height, double time);
     
     /// \brief this method updates the height target internally when a new target is required
     /// \param preset the preset we need to hit
     /// \param time the start time of the new request
-    void updateHeightOnChange(Preset preset, double time);
+    void updateHeightOnChange(Preset preset, double current_height, double time);
 
     /// \brief returns true when the lifter has reached its desired height
     /// \returns true when the lifter has reached its desired height

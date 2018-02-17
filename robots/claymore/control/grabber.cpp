@@ -263,7 +263,7 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 	last.has_cube = input.has_cube;
 	last.at_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
 
-	last.dt = last.time - time;
+	last.dt = time - last.time;
 	last.time = time;
 }
 

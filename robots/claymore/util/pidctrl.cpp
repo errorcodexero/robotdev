@@ -40,7 +40,7 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 	
 	double iOut = PIDConsts.i * integral;
 	
-	double output = pOut + iOut + dOut;
+	double output = pOut + iOut + dOut + PIDConsts.f;
 
 #ifdef PRINT_PID_INTERNALS
 	std::cout << "integral " << integral ;

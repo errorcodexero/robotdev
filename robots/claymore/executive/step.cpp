@@ -295,9 +295,7 @@ bool Rotate::operator==(Rotate const& b)const{
 // Start_lifter_in_background: Start moving the lifter to a specified preset in the background
 //
 
-Start_lifter_in_background::Start_lifter_in_background(LifterController::Preset preset, double time){
-	Lifter::lifter_controller.backgroundMoveToHeight(preset, time);
-}
+Start_lifter_in_background::Start_lifter_in_background(LifterController::Preset preset, double time):preset(preset),time(time),init(false){}
 
 Step::Status Start_lifter_in_background::done(Next_mode_info){
 	return Step::Status::FINISHED_SUCCESS;
@@ -308,6 +306,10 @@ Toplevel::Goal Start_lifter_in_background::run(Run_info info){
 }
 
 Toplevel::Goal Start_lifter_in_background::run(Run_info info,Toplevel::Goal goals){
+	if(!init) {
+		Lifter::lifter_controller.backgroundMoveToHeight(preset, info.status.lifter.height, time);
+		init = false;
+	}
         return goals;
 }
 
@@ -316,7 +318,7 @@ unique_ptr<Step_impl> Start_lifter_in_background::clone()const{
 }
 
 bool Start_lifter_in_background::operator==(Start_lifter_in_background const& b)const{
-	return true;
+	return preset == b.preset && time == b.time && init == b.init;
 }
 
 //
@@ -334,6 +336,7 @@ Toplevel::Goal Wait_for_lifter::run(Run_info info){
 }
 
 Toplevel::Goal Wait_for_lifter::run(Run_info info,Toplevel::Goal goals){
+	goals.lifter = Lifter::Goal::background();
         return goals;
 }
 
@@ -343,6 +346,66 @@ unique_ptr<Step_impl> Wait_for_lifter::clone()const{
 
 bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
         return true;
+}
+
+//
+// Calibrate_lifter: Calibrate the lifter at the current height
+//
+
+Calibrate_lifter::Calibrate_lifter(){
+	Lifter::lifter_controller.calibrate();
+}
+
+Step::Status Calibrate_lifter::done(Next_mode_info info){
+	return ready(status(info.status.lifter), Lifter::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Calibrate_lifter::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals){
+	goals.lifter = Lifter::Goal::calibrate();
+	return goals;
+}
+
+unique_ptr<Step_impl> Calibrate_lifter::clone()const{
+	return unique_ptr<Step_impl>(new Calibrate_lifter(*this));
+}
+
+bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const{
+	return true;
+}
+
+//
+// Lifter_to_height: Move the lifter to a specified height
+//
+
+Lifter_to_height::Lifter_to_height(double target_height, double time):target_height(target_height),time(time),init(false){}
+
+Step::Status Lifter_to_height::done(Next_mode_info info){
+	return ready(status(info.status.lifter), Lifter::Goal::go_to_height(target_height)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Lifter_to_height::run(Run_info info){
+	return run(info,{});
+}
+
+Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals){
+	if(!init) {
+		Lifter::lifter_controller.moveToHeight(target_height, info.status.lifter.height, time);
+		init = false;
+	}
+	goals.lifter = Lifter::Goal::go_to_height(target_height);
+	return goals;
+}
+
+unique_ptr<Step_impl> Lifter_to_height::clone()const{
+	return unique_ptr<Step_impl>(new Lifter_to_height(*this));
+}
+
+bool Lifter_to_height::operator==(Lifter_to_height const& b)const{
+	return target_height == b.target_height && time == b.time && init == b.init;
 }
 
 #ifdef STEP_TEST

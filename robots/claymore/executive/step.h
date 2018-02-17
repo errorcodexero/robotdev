@@ -162,6 +162,10 @@ struct Rotate: Step_impl_inner<Rotate>{
 
 //Start moving the lifter to a specified preset in the background
 struct Start_lifter_in_background: Step_impl_inner<Start_lifter_in_background>{
+	LifterController::Preset preset;
+	double time;
+	bool init;
+
 	explicit Start_lifter_in_background(LifterController::Preset, double);
 
 	Toplevel::Goal run(Run_info,Toplevel::Goal);
@@ -180,6 +184,32 @@ struct Wait_for_lifter: Step_impl_inner<Wait_for_lifter>{
 	Step::Status done(Next_mode_info);
 	std::unique_ptr<Step_impl> clone()const;
 	bool operator==(Wait_for_lifter const&)const;
+};
+
+//Calibrate the lifter at the current height
+struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
+	explicit Calibrate_lifter();
+	
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Calibrate_lifter const&)const;
+};
+
+//Move the lifter to a sepecified height
+struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
+	bool init;
+	double target_height;
+	double time;
+
+	explicit Lifter_to_height(double, double);
+	
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Lifter_to_height const&)const;
 };
 
 #endif
