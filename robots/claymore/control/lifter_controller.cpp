@@ -28,7 +28,7 @@ void LifterController::moveToHeight(double height, double current_height, double
     mStartTime = time ;
 
     double p, i, d, f, imax;
-    if(current_height > height) {
+    if(current_height < height) {
 	p = mInputParams->getValue("lifter:up:p", 0.01);
 	i = mInputParams->getValue("lifter:up:i", 0.0);
 	d = mInputParams->getValue("lifter:up:d", 0.0);

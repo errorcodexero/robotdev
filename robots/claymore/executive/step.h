@@ -199,9 +199,9 @@ struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
 
 //Move the lifter to a sepecified height
 struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
-	bool init;
 	double target_height;
 	double time;
+	bool init;
 
 	explicit Lifter_to_height(double, double);
 	
