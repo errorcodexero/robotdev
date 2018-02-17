@@ -206,11 +206,14 @@ bool operator!=(Grabber a, Grabber b){
 #undef CMP
 
 Grabber::Input Grabber::Input_reader::operator()(Robot_inputs const& r) const{
-	return {
-		r.digital_io.encoder[ENCODER_ADDRESS] ? *r.digital_io.encoder[ENCODER_ADDRESS] : 10000,	
+	int enc_val = 9999;
+	if(r.digital_io.encoder[ENCODER_ADDRESS])
+		enc_val = *(r.digital_io.encoder[ENCODER_ADDRESS]);
+	return Grabber::Input(
+		enc_val,
 		r.digital_io.in[CUBE_SENSOR_ADDRESS] == Digital_in::_0,
 		r.digital_io.in[LIMIT_SWITCH_ADDRESS] == Digital_in::_0
-	};
+	);
 }
 
 Robot_inputs Grabber::Input_reader::operator()(Robot_inputs r, Grabber::Input in) const{

@@ -43,6 +43,9 @@ public:
     /// \param time the start time of this operation
     void backgroundMoveToHeight(Preset preset, double time);
 
+    /// \brief put the lifter into calibration mode
+    void calibrate();
+
     /// \brief this method is called each time the robot loop is run to update the lifer
     /// This method uses a PID controller to position the lifter to the desired location
     /// \param height the current height of the lifter

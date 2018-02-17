@@ -20,8 +20,6 @@ using namespace std;
 
 LifterController Lifter::lifter_controller;
 
-int bottom_ticks = 0, top_ticks = 100;//arbitrary
-
 ostream& operator<<(ostream& o, Lifter::Goal::Gearing a){
 #define X(GEARING) if(a==Lifter::Goal::Gearing::GEARING) return o<<""#GEARING;
     LIFTER_GEARING_MODES
@@ -279,11 +277,16 @@ Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input cons
 }
 
 Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
-    return {
+    int enc_val = 9999;
+    if(r.digital_io.encoder[ENCODER_ADDRESS])
+	enc_val = *(r.digital_io.encoder[ENCODER_ADDRESS]);
+    enc_val = -enc_val;
+    Lifter::Input result = Lifter::Input(
 	r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] == Digital_in::_0,
 	r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_0,
-	-r.digital_io.encoder[ENCODER_ADDRESS]
-    };
+	enc_val
+    );
+    return result;
 }
 
 void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const& out){
@@ -299,7 +302,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     const double LIFTER_GEAR_CIRCUMFERENCE = LIFTER_GEAR_DIAMETER * PI;
     const double INCHES_PER_TICK = LIFTER_GEAR_CIRCUMFERENCE / TICKS_PER_LIFTER_REVOLUTION;
     */
-    const double INCHES_PER_TICK_HIGH_GEAR = 575.82 * 12.0; //From Jeff
+    const double INCHES_PER_TICK_HIGH_GEAR = (1.0 / 575.82) * 12.0; //From Jeff
     //const double INCHES_PER_TICK_LOW_GEAR = 4442.41 * 12.0; //From Jeff
     last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR;
 

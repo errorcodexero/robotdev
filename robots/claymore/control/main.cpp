@@ -22,6 +22,7 @@ Main::Main(Executive start):
 Main::Main():Main(Executive{Teleop()}){}//start in teleop because it is safer (it starts autonomous if it needs to anyway)
 
 Robot_outputs Main::operator()(const Robot_inputs in,ostream& /*print_stream*/){
+	
 	print_count++;
 	static const unsigned MAIN_JOYSTICK_PORT = 0, GUNNER_JOYSTICK_PORT = 1;
 

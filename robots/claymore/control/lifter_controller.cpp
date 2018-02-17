@@ -51,6 +51,10 @@ void LifterController::backgroundMoveToHeight(Preset preset, double time) {
     mMode = Mode::BACKGROUND;
 }
 
+void LifterController::calibrate() {
+    mMode = Mode::CALIBRATING;
+}
+
 void LifterController::update(double height, double time, double dt, double& out) {
     messageLogger &logger = messageLogger::get();
 	
