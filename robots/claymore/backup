@@ -30,7 +30,7 @@ if [ ! -d "backups" ]; then
 	mkdir backups
 fi
 
-if [ $backup_params ]; then
+if $backup_params; then
 	params_n=$(find backups -type f -name params_\* | wc -l)
 	scp lvuser@roborio-1425-frc.local:params.txt ./backups/params_$(($params_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
 	if [ $? -eq 0 ]; then
