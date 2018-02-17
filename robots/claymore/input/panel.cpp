@@ -130,7 +130,7 @@ bool get_in_use(Joystick_data d){
 
 Panel interpret_oi(Joystick_data d){
 	Panel p;
-	//static const float ARTIFICIAL_MAX = 1.5;
+	static const float ARTIFICIAL_MAX = 1.5;
 	{
 		p.in_use=get_in_use(d);
 		if(!p.in_use) return p;
@@ -140,10 +140,42 @@ Panel interpret_oi(Joystick_data d){
 		p.auto_select = interpret_20_turn_pot(auto_dial_value);
 	}
 	{//two position switches
+		p.grabber_auto = [&]{
+			float grabber_auto = d.axis[2];
+			return (grabber_auto < 0) ? false : true;
+		}();
+		p.intake_auto = d.button[11];
+		p.climb_lock = d.button[15];
+		p.lifter_high_power = d.button[16];
 	}
 	{//three position switches
+		p.grabber = [&]{
+			float grabber = d.axis[3];
+			static const float CLOSE=-1,OFF=0,OPEN=1;
+			if(set_button(grabber,CLOSE,OFF,OPEN)) return Panel::Grabber::OFF;
+			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::OPEN;
+			return Panel::Grabber::CLOSE;
+		}();
+		p.intake = [&]{
+			float intake = d.axis[5];
+			static const float IN=-1,OFF=0,OUT=1;
+			if(set_button(intake,IN,OFF,OUT)) return Panel::Intake::OFF;
+			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::OUT;
+			return Panel::Intake::IN;
+		}();
 	}	
 	{//buttons
+		p.floor = d.button[1];
+		p.exchange = d.button[2];
+		p.switch_ = d.button[3];
+		p.scale = d.button[4];
+		p.collect_closed = d.button[5];
+		p.collect_open = d.button[9];
+		p.eject = d.button[5];
+		p.drop = d.button[8];
+		p.climb = d.button[7];
+		p.wings = d.button[9];
+		p.learn = d.button[12];
 	}
 	{//Dials
 	}
