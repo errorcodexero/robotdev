@@ -86,7 +86,10 @@ double paramsInput::getValue(const std::string &paramName, double defaultValue)
 {
     auto it = mParamsMap.find(paramName) ;
     if (it == mParamsMap.end())
+	{
+		std::cout << "Parameter '" << paramName << "' not found - using default value" << std::endl ;
 		return defaultValue ;
+	}
     
     return it->second ;
 }
