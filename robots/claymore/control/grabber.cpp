@@ -1,4 +1,6 @@
 #include "grabber.h"
+#include "subsystems.h"
+#include "message_logger.h"
 #include <cmath>
 
 using namespace std;
@@ -265,6 +267,10 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 	last.angle = (input.ticks - encoder_offset) * DEGREES_PER_TICK;
 
 	last.has_cube = input.has_cube;
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+	logger << "Has Cube: " << input.has_cube << "\n";
+	logger.endMessage();
 
 	last.outer_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
 	last.inner_limit = last.angle < input_params->getValue("grabber:angle:closed", 0.0);

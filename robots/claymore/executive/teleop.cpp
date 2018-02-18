@@ -139,6 +139,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	//std::cout << "Intake: " << goals.intake << endl;
 	//std::cout << "Grabber: " << goals.grabber << endl;
 
+	if(info.status.grabber.has_cube) collector_mode = Collector_mode::DO_NOTHING;
+
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
 		lifter_goal = Lifter::Goal::stop();
 		//collector_mode = Collector_mode::DO_NOTHING;
