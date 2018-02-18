@@ -126,7 +126,14 @@ Executive opposite_switch
 	}
     }
 };
-	
+
+//
+// Auto mode that does nothing
+//
+Executive auto_null
+{
+	Teleop()
+};
 
 Executive make_test_step(auto a){
     return
@@ -158,8 +165,6 @@ Executive get_auto_mode(Next_mode_info info)
 	logger.endMessage() ;
 	return Executive{Teleop()};
     }
-
-Executive auto_null{Teleop{}};
 
 #if AUTOMODE_TEST == 0
     //
@@ -467,13 +472,11 @@ Executive auto_null{Teleop{}};
     //
     // If AUTOMODE_TEST was not defined, we revert to the default behavior which is
     // to run the with the panel
-    //
-    
+    //    
+
     logger.startMessage(messageLogger::messageType::info) ;
     logger << "get_auto_mode - competition mode, selecting auto mode based on switch" ;
     logger.endMessage() ;
-
-    return info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
 	
     if(!info.panel.in_use) {
 	//
@@ -484,20 +487,20 @@ Executive auto_null{Teleop{}};
 	logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
 	logger.endMessage() ;
 	
-    	return info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
-	//return auto_null;
+	return auto_null;
     }
 
     logger.startMessage(messageLogger::messageType::error) ;
     logger << "get_auto_mode - panel value is " << info.panel.auto_select ;
     logger.endMessage() ;
     
-    Executive auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
-
     switch(info.panel.auto_select){
     case 0: 
-	return auto_null;
+	Executive auto_program = auto_null;
+	break;
     case 1:
+	Executive auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
+	break;
     case 2: 
     case 3:
     case 4: 
