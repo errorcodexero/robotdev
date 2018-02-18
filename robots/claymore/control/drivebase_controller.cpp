@@ -36,18 +36,20 @@ void DrivebaseController::setParams(paramsInput* input_params) {
     mPidResetThreshold = mInputParams->getValue("drivebase:distance:reset_threshold", .1);
 }
 
-void DrivebaseController::initDistance(double distance, double angle, double time) {
+void DrivebaseController::initDistance(double distance, double angle, double time, bool end_on_stall) {
 
     mMode = Mode::DISTANCE;
     mTarget = distance;
     mTargetCorrectionAngle = angle;
     mResetPid = false;
     mDistanceHistory.clear();
-	mTargetStartTime = time ;
+    mTargetStartTime = time ;
 
-	mCurrentCycle = 0 ;
-	mLastLeftVoltage = 0.0 ;
-	mLastRightVoltage = 0.0 ;
+    mCurrentCycle = 0 ;
+    mLastLeftVoltage = 0.0 ;
+    mLastRightVoltage = 0.0 ;
+
+    mEndOnStall = end_on_stall;
 
     double p = mInputParams->getValue("drivebase:distance:p", 0.015);
     double i = mInputParams->getValue("drivebase:distance:i", 0.1);
@@ -136,17 +138,24 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 				mDistanceHistory.pop_front();
 
 			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
-			if (!mResetPid && mDistanceHistory.size() == mNsamples && (mDistanceHistory.back() - mDistanceHistory.front()) < mPidResetThreshold) {
-				logger << "SWITCHED PID CONSTANTS\n";
+			if (mDistanceHistory.size() == mNsamples && (mDistanceHistory.back() - mDistanceHistory.front()) < mPidResetThreshold) {
+				if(!mResetPid) {
+					logger << "SWITCHED PID CONSTANTS\n";
 
-				double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
-				double i = mInputParams->getValue("drivebase:distance:reset:i", 0.15);
-				double d = mInputParams->getValue("drivebase:distance:reset:d", 0.0);
-				double f = mInputParams->getValue("drivebase:distance:reset:f", 0.0);
-				double imax = mInputParams->getValue("drivebase:distance:reset:imax", 10.0);
-				mDistPid.Init(p, i, d, f, -0.6, 0.6, imax);
+					double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
+					double i = mInputParams->getValue("drivebase:distance:reset:i", 0.15);
+					double d = mInputParams->getValue("drivebase:distance:reset:d", 0.0);
+					double f = mInputParams->getValue("drivebase:distance:reset:f", 0.0);
+					double imax = mInputParams->getValue("drivebase:distance:reset:imax", 10.0);
+					mDistPid.Init(p, i, d, f, -0.6, 0.6, imax);
 
-				mResetPid = true;
+					mResetPid = true;
+					mDistanceHistory.clear();
+				} else {
+					logger << "STALLED\n";
+
+					mStalled = true;
+				}
 			}
 
 			double base = mDistPid.getOutput(mTarget, avg_dist, dt);
@@ -234,5 +243,5 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 }
 
 bool DrivebaseController::done() {
-    return mMode == Mode::IDLE;
+    return mMode == Mode::IDLE || (mMode == Mode::DISTANCE && mEndOnStall && mStalled);
 }

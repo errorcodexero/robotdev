@@ -158,7 +158,7 @@ bool Wait::operator==(Wait const& b)const{
 // Drive: Drive straight a specified distance
 //
 
-Drive::Drive(Inch target):target_distance(target),init(false){}
+Drive::Drive(Inch target, bool end_on_stall):target_distance(target),end_on_stall(end_on_stall),init(false){}
 
 Step::Status Drive::done(Next_mode_info info){
 	return ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
@@ -171,7 +171,7 @@ Toplevel::Goal Drive::run(Run_info info){
 Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
 	if(!init) {
 		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle, info.in.now);
+		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle, info.in.now, end_on_stall);
 		init = true;
 	}
 	goals.drive = Drivebase::Goal::drive_straight();

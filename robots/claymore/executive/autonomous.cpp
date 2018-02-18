@@ -13,21 +13,21 @@ Executive calibrate_only
 {
     Chain
     {
-		vector<Step>
-		{
-			Step
-			{   
-				Calibrate_lifter{}
-			},
-			Step
-			{   
-				Calibrate_grabber{}
-			},
-		},
-	    Executive
-		{
-			Teleop()
-		}
+	vector<Step>
+	{
+	    Step
+	    {
+		Calibrate_lifter{}
+	    },
+	    Step
+	    {   
+		Calibrate_grabber{}
+	    }
+	},
+	Executive
+	{
+	    Teleop()
+	}
     }
 };
 
@@ -35,21 +35,21 @@ Executive same_scale
 {
     Chain
     {
-		vector<Step>
-		{
-			Step
-			{   
-				Calibrate_lifter{}
-			},
-			Step
-			{   
-				Calibrate_grabber{}
-			},
-		},
-	    Executive
-		{
-			Teleop()
-		}
+	vector<Step>
+	{
+	    Step
+	    {   
+		Calibrate_lifter{}
+	    },
+	    Step
+	    {   
+		Calibrate_grabber{}
+	    },
+	},
+	Executive
+	{
+	    Teleop()
+	}
     }
 };
 
@@ -57,21 +57,21 @@ Executive opposite_scale
 {
     Chain
     {
-		vector<Step>
-		{
-			Step
-			{   
-				Calibrate_lifter{}
-			},
-			Step
-			{   
-				Calibrate_grabber{}
-			},
-		},
-	    Executive
-		{
-			Teleop()
-		}
+	vector<Step>
+	{
+	    Step
+	    {   
+		Calibrate_lifter{}
+	    },
+	    Step
+	    {   
+		Calibrate_grabber{}
+	    },
+	},
+	Executive
+	{
+	    Teleop()
+	}
     }
 };
 
@@ -83,8 +83,8 @@ Executive same_switch
 {
     Chain
     {
-		vector<Step>
-		{
+	vector<Step>
+	{
 			Step
 			{   
 				Calibrate_lifter{}
@@ -97,20 +97,20 @@ Executive same_switch
 			{   
 				Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
 			},
-            Step
+          		Step
 			{   
-				Drive{100.0} //ONLY FOR CORVALLIS - SHOULD BE 128
+				Drive{128.0, true}
 			},
-            Step
+			Step
 			{   
 				Wait_for_lifter{}
 			},
-            Step
+			Step
 			{   
 				Eject{}
 			}
 		},
-	    Executive
+		Executive
 		{
 			Teleop()
 		}
@@ -136,56 +136,56 @@ Executive opposite_switch
 			{
 				Calibrate_lifter{}
 			},
-	        Step
+		        Step
 			{
 				Drive{52.0}
 			},
-	        Step
+		        Step
 			{
 				Wait{1.0}
 			},
-	        Step
+		        Step
 			{
 				Rotate{-90.0}
 			},
-	        Step
+		        Step
 			{
 				Wait{1.0}
 			},
-	        Step
+		        Step
 			{
 				Drive{100.0}
 			},
-	        Step
+		        Step
 			{
 				Wait{1.0}
 			},
-	        Step
+		        Step
 			{
 				Rotate{90.0}
 			},
-	        Step
+		        Step
 			{
 				Wait{1.0}
 			},
 			Step
 			{
-                Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
+        		        Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
 			},
-	        Step
+		        Step
 			{
-				Drive{48} //ONLY FOR CORVALLIES - SHOULD BE 56
+				Drive{56}
 			},
-	        Step
+		        Step
 			{
 				Wait_for_lifter{}
 			},
-	        Step
+	        	Step
 			{
 				Eject{}
 			}
 	    },
-		Executive
+	    Executive
 		{
 			Teleop()
 		}
