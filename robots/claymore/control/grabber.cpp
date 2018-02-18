@@ -269,7 +269,7 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 	last.outer_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
 	last.inner_limit = last.angle < input_params->getValue("grabber:angle:closed", 0.0);
 
-	std::cout << "Ticks: " << input.ticks << " Angle: " << last.angle << " Inner Limit: " << last.inner_limit << " Outer Limit: " << last.outer_limit << " Has Cube: " << last.has_cube << endl;
+	//std::cout << "Ticks: " << input.ticks << " Angle: " << last.angle << " Inner Limit: " << last.inner_limit << " Outer Limit: " << last.outer_limit << " Has Cube: " << last.has_cube << endl;
 
 	last.dt = time - last.time;
 	last.time = time;

@@ -50,7 +50,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_prep_climb(false),print_number(0){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_prep_climb(false),climbing(false),print_number(0){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	Toplevel::Goal goals;
@@ -135,9 +135,9 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			break;
 		default: assert(0);
 	}
-	std::cout << "Collector: " << collector_mode << endl;
-	std::cout << "Intake: " << goals.intake << endl;
-	std::cout << "Grabber: " << goals.grabber << endl;
+	//std::cout << "Collector: " << collector_mode << endl;
+	//std::cout << "Intake: " << goals.intake << endl;
+	//std::cout << "Grabber: " << goals.grabber << endl;
 
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
 		lifter_goal = Lifter::Goal::stop();
@@ -146,35 +146,50 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.floor) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.exchange) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.switch_) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.scale) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.lifter == Panel::Lifter::UP) {
 		lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.lifter == Panel::Lifter::DOWN) {
 		lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	goals.lifter = lifter_goal;
 
+	Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
+	if(started_prep_climb && ready(status(info.status.lifter), prep_climb_goal))
+		goals.lifter = Lifter::Goal::low_gear();
 	if(info.panel.climb) {
-		Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
 		if(!started_prep_climb || !ready(status(info.status.lifter), prep_climb_goal)) {
 			std::cout << "NOT READY" << endl;
 			lifter_goal = prep_climb_goal;
 			started_prep_climb = true;
+			climbing = true;
 		} else {
 			if(info.panel.climb_lock) {
 				std::cout << "CLIMBING" << endl;
@@ -183,6 +198,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			}
 		}
 	}
+	if(climbing) goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
 
 	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
