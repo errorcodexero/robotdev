@@ -31,6 +31,8 @@ struct Checked_array{
 
 	iterator begin(){ return inner.begin(); }
 	iterator end(){ return inner.end(); }
+
+	size_t size() const { return inner.size() ; }
 };
 
 template<typename T,size_t LEN>
