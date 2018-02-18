@@ -136,7 +136,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		default: assert(0);
 	}
 	std::cout << "Collector: " << collector_mode << endl;
-	std::cout << info.panel.intake_auto << " Intake: " << goals.intake << endl;
+	std::cout << "Intake: " << goals.intake << endl;
 	std::cout << "Grabber: " << goals.grabber << endl;
 
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
@@ -179,6 +179,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			if(info.panel.climb_lock) {
 				std::cout << "CLIMBING" << endl;
 				goals.lifter = Lifter::Goal::climb();
+				goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
 			}
 		}
 	}
@@ -191,13 +192,11 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
-	//std::cout << "goal: " << goals.lifter << endl;
-
+	//TODO: Change back to do wings stuff - done for Corvallies
 	if(calibrate_trigger(info.panel.wings)) {
 		Lifter::lifter_controller.calibrate();
 		Grabber::grabber_controller.setDoneCalibrating(false);
 	}
-
 	if(info.panel.wings) {
 		goals.lifter = Lifter::Goal::calibrate();
 		goals.grabber = Grabber::Goal::calibrate();
@@ -211,8 +210,6 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::open();//go_to_preset(GrabberController::Preset::OPEN);
 		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::close();//go_to_preset(GrabberController::Preset::CLOSED);
 	}
-
-	//std::cout << "Grabber: " << goals.grabber << endl;
 
 	if(!info.panel.intake_auto) {
 		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::OFF;
