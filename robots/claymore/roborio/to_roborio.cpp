@@ -7,13 +7,15 @@
 #include "navx_control.h"
 #include "i2c_control.h"
 #include "params_parser.h"
+#include "subsystems.h"
+#include "params_parser.h"
+#include "message_logger.h"
+
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
 
-#include "params_parser.h"
-#include "message_logger.h"
 
 using namespace std;
 
@@ -136,10 +138,15 @@ public:
 To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
 		messageLogger &logger = messageLogger::get();
-		logger.enable(messageLogger::messageType::error);
-		logger.enable(messageLogger::messageType::warning);
-		logger.enable(messageLogger::messageType::info);
-		logger.enable(messageLogger::messageType::debug);
+		logger.enableType(messageLogger::messageType::error);
+		logger.enableType(messageLogger::messageType::warning);
+		logger.enableType(messageLogger::messageType::info);
+		logger.enableType(messageLogger::messageType::debug);
+
+		//
+		// Decide what subsystems you want to see
+		//
+		logger.enableSubsystem(SUBSYSTEM_ALL) ;
 
 		power = new frc::PowerDistributionPanel();
 
@@ -287,7 +294,18 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			}else{
 				current[x] = -9001;
 			}
-		}		
+		}
+
+		messageLogger &logger = messageLogger::get();
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_PDPCURRENTS) ;
+		logger << "PDP Currents: " ;
+		for(size_t i = 0 ; i < current.size() ; i++)
+		{
+			if (i != 0)
+				logger << ", " ;
+			logger << i << "=" << current[i] ;
+		}
+		logger.endMessage() ;
 		return current;
 	}
 	int set_solenoid(unsigned i,Solenoid_output v){

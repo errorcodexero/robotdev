@@ -10,12 +10,13 @@ messageLogger::messageLogger()
     //Initialize maps
     mCurrentMessage = "";
 	mInMessage = false ;
+	mSubsystemsEnabled = 0 ;
 }
 
 messageLogger &messageLogger::get()
 {
     if (mTheOneLogger == nullptr)
-	mTheOneLogger = new messageLogger() ;
+		mTheOneLogger = new messageLogger() ;
 
     return *mTheOneLogger ;
 }
@@ -29,7 +30,7 @@ void messageLogger::disableType(const messageType &type)
 {
     auto it = std::find(mEnabledModes.begin(), mEnabledModes.end(), type) ;
     if (it != mEnabledModes.end())
-	mEnabledModes.erase(it) ;
+		mEnabledModes.erase(it) ;
 }
 
 void messageLogger::enableSubsystem(uint64_t sys)
@@ -51,7 +52,7 @@ bool messageLogger::isMessageTypeEnabled(const messageType &type)
 bool messageLogger::isSubsystemEnabled(uint64_t subs)
 {
     if (subs == 0)
-	return true ;
+		return true ;
     
     return (mSubsystemsEnabled & subs) != 0 ;
 }
@@ -78,8 +79,8 @@ void messageLogger::endMessage()
     mInMessage = false;
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
     {
-	for(auto dest_p : m_destinations)
-	    dest_p->displayMessage(mCurrentType, mCurrentSubsystem, mCurrentMessage) ;
+		for(auto dest_p : m_destinations)
+			dest_p->displayMessage(mCurrentType, mCurrentSubsystem, mCurrentMessage) ;
     }
     mCurrentMessage = "";
 }
@@ -88,7 +89,7 @@ messageLogger& messageLogger::operator<<(const std::string &value)
 {
     assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
-	mCurrentMessage.append(value);
+		mCurrentMessage.append(value);
     return *this;
 }
 
@@ -96,7 +97,7 @@ messageLogger& messageLogger::operator<<(const char *value_p)
 {
     assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
-	mCurrentMessage.append(std::string(value_p));
+		mCurrentMessage.append(std::string(value_p));
     return *this;
 }
 
@@ -104,15 +105,24 @@ messageLogger& messageLogger::operator<<(int value)
 {
     assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
-	mCurrentMessage.append(std::to_string(value));
+		mCurrentMessage.append(std::to_string(value));
     return *this;
 }
+
+messageLogger& messageLogger::operator<<(size_t value)
+{
+    assert(mInMessage);
+    if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
+		mCurrentMessage.append(std::to_string(value));
+    return *this;
+}
+
 
 messageLogger& messageLogger::operator<<(double value)
 {
     assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
-	mCurrentMessage.append(std::to_string(value));
+		mCurrentMessage.append(std::to_string(value));
     return *this;
 }
 #ifdef MESSAGE_LOGGER_TEST

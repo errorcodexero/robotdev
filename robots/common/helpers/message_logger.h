@@ -79,6 +79,12 @@ public:
     /// \param value the integer to output
     /// \returns a copy of the message logger
     messageLogger &operator<<(int value) ;
+
+	/// \brief operator overload the output an integer value
+    /// \param value the integer to output
+    /// \returns a copy of the message logger
+    messageLogger &operator<<(size_t value) ;
+
 	
     /// \brief operator overload the output a floating point value
     /// \param value the floating point number to output
