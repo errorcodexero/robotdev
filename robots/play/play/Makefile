@@ -15,7 +15,7 @@ DEPLOYADD = params
 #
 # Add flags to get to the xerolib header file
 #
-COMMON=xerolib
+COMMON=xerolib misc
 
 #
 # Tell the make system we need to the WPI libraries

@@ -42,7 +42,6 @@ SRC = \
 	PIDCtrl.cpp\
 	RobotControllerBase.cpp\
 	SubsystemBase.cpp\
-	TcpClientSocket.cpp\
 	TrapezoidSpeedProfile.cpp\
 	XeroRobotBase.cpp
 
