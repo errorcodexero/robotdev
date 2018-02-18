@@ -1,8 +1,10 @@
 #include "panel.h"
-#include <iostream>
-#include <stdlib.h> 
 #include "util.h"
 #include "../util/util.h"
+#include "../subsystems.h"
+#include "message_logger.h"
+#include <iostream>
+#include <stdlib.h> 
 #include <cmath>
 
 using namespace std;
@@ -195,8 +197,14 @@ Panel interpret_oi(Joystick_data d){
 	}
 	{//Dials
 	}
-	//cout<<"\n"<<d;
-	//cout<<"\n"<<p<<"\n";
+	
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_PANEL);
+	logger << "Panel:\n";
+	logger << d << "\n";
+	logger << p << "\n";
+	logger.endMessage();
+	
 	return p;
 }
 
@@ -239,12 +247,10 @@ Panel interpret_gamepad(Joystick_data d){
 	p.in_use = get_in_use(d);
 	if(!p.in_use) return p;
 	
-	//TODO: Add in all of the new controls
 	p.auto_select=0;
 
 	p.wings = d.button[Gamepad_button::LB];
 	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
-	//std::cout << "climb: " << p.climb << " " << d.axis[Gamepad_axis::LTRIGGER] << endl;
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 

@@ -1,5 +1,7 @@
 #include "lifter.h"
 #include "util.h"
+#include "subsystems.h"
+#include "message_logger.h"
 
 using namespace std;
 
@@ -292,6 +294,11 @@ Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
 }
 
 void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const& out){
+    messageLogger &logger = messageLogger::get();
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+
+    logger << "Lifter:\n";
+
     paramsInput* input_params = Lifter::lifter_controller.getParams();
 
     if(Lifter::lifter_controller.calibrating()) encoder_offset = in.ticks;
@@ -309,8 +316,6 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     const double COLLECTOR_OFFSET = 11.375; //inches
     last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR + COLLECTOR_OFFSET;
 
-    cout << "Ticks: " << in.ticks << "    Height: " << last.height << endl;
-
     last.at_bottom = in.bottom_hall_effect;
     last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);
 
@@ -320,6 +325,11 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
 	
     last.dt = now - last.time;
     last.time = now;
+
+    logger << "Limit Switches: Top: " << in.top_hall_effect << "   Bottom: " << in.bottom_hall_effect << "\n";
+    logger << "Ticks: " << in.ticks << "    Height: " << last.height << "\n";
+
+    logger.endMessage();
 }
 
 Lifter::Status_detail Lifter::Estimator::get()const{

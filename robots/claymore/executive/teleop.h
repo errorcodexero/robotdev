@@ -28,9 +28,8 @@ struct Teleop : Executive_impl<Teleop> {
 		X(Collector_mode, collector_mode) \
 		X(Countdown_timer, eject_timer) \
 		X(bool, started_prep_climb) \
-		X(Posedge_trigger, calibrate_trigger) \
-		X(bool,climbing) \
-		X(int,print_number)
+		X(bool, climbing) \
+		X(Posedge_trigger, calibrate_trigger)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 
 	Executive next_mode(Next_mode_info);
