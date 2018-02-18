@@ -5,6 +5,7 @@
 #include "pidctrl.h"
 #include "params_parser.h"
 #include "UdpBroadcastSender.h"
+#include "subsystems.h"
 
 /// \brief The DrivebaseController class contains the intelligence for the drivebase.
 /// This class contains the algorithms to drive specific distances or to rotate to

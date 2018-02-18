@@ -16,7 +16,7 @@ COMMON=helpers
 #
 # Add flags to indicate the robot we are building
 #
-ADDCXXFLAGS = -DCLAYMORE  -I../control -I../util -I../input
+ADDCXXFLAGS = -DCLAYMORE  -I../control -I../util -I../input -I..
 
 ifdef AUTOMODE_TEST
 $(info AUTOMODE_TEST defined, building version of robot code to test auto mode)

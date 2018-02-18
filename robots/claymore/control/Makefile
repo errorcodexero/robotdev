@@ -15,7 +15,7 @@ COMMON=helpers
 #
 # Add flags to indicate the robot we are building
 #
-ADDCXXFLAGS = -DCLAYMORE -I../util -I../executive -I../input -I.
+ADDCXXFLAGS = -DCLAYMORE -I../util -I../executive -I../input -I. -I..
 
 #
 # define the source code files

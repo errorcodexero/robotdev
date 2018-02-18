@@ -10,7 +10,8 @@
 #include "subsystems.h"
 #include "params_parser.h"
 #include "message_logger.h"
-
+#include "message_dest_dated_file.h"
+#include "message_dest_stream.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -147,6 +148,15 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		// Decide what subsystems you want to see
 		//
 		logger.enableSubsystem(SUBSYSTEM_ALL) ;
+
+		std::shared_ptr<messageLoggerDest> dest_p ;
+
+		dest_p = std::make_shared<messageDestStream>(std::cout) ;
+		logger.addDestination(dest_p) ;
+
+		std::string flashdrive(".") ;
+		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
+		logger.addDestination(dest_p) ;
 
 		power = new frc::PowerDistributionPanel();
 
