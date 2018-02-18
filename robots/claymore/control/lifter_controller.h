@@ -13,6 +13,7 @@ public:
     enum class Preset {
 	FLOOR,				///< Move the lifter to the floor
 	EXCHANGE,			///< Move the lifter to the exchange
+	DROP_GRABBER,                   ///< Move the lifter to a point where the grabber drops down
 	SWITCH,				///< Move the lifter to the height of the switch
         SCALE,				///< Move the lifter to the height of the scale
 	PREP_CLIMB			///< Move the lifter to the climb position

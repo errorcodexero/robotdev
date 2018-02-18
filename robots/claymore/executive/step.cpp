@@ -500,6 +500,33 @@ bool Eject::operator==(Eject const& b)const{
 	return eject_timer == b.eject_timer;
 }
 
+//
+// Drop_grabber: Drop the grabber down at the beginning of the match
+//
+Drop_grabber::Drop_grabber(){}
+
+Step::Status Drop_grabber::done(Next_mode_info info){
+        return ready(status(info.status.lifter), Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+}
+
+Toplevel::Goal Drop_grabber::run(Run_info info){
+        return run(info,{});
+}
+
+Toplevel::Goal Drop_grabber::run(Run_info info,Toplevel::Goal goals){
+	goals.lifter = Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER);
+        goals.grabber = Grabber::Goal::stop();
+        return goals;
+}
+
+unique_ptr<Step_impl> Drop_grabber::clone()const{
+        return unique_ptr<Step_impl>(new Drop_grabber(*this));
+}
+
+bool Drop_grabber::operator==(Drop_grabber const& b)const{
+        return true;
+}
+
 #ifdef STEP_TEST
 void test_step(Step a){
 	PRINT(a);

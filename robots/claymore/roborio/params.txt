@@ -36,6 +36,7 @@ lifter:climbing_difference         100.0
 
 lifter:height:floor                0.0
 lifter:height:exchange             3.0
+lifter:height:drop_grabber         6.0
 lifter:height:switch               19.0
 lifter:height:scale                72.0
 lifter:height:prep_climb           84.0

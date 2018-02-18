@@ -251,4 +251,15 @@ struct Eject: Step_impl_inner<Eject>{
 	bool operator==(Eject const&)const;
 };
 
+//Drop the grabber down at the beginning of the match
+struct Drop_grabber: Step_impl_inner<Drop_grabber>{
+	explicit Drop_grabber();
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Drop_grabber const&)const;
+};
+
 #endif
