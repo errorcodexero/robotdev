@@ -522,7 +522,7 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 		case Drivebase::Goal::Mode::ROTATE:
-		   	Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, status.now, out.l, out.r) ;
+		   	Drivebase::drivebase_controller.update(status.distances.l, status.distances.r, status.angle, status.dt, status.now, out.l, out.r, out.high_gear) ;
 			break;
 		default:
 			nyi

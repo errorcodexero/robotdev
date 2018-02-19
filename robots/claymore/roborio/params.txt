@@ -31,6 +31,10 @@ drivebase:distance:reset:d               0
 drivebase:distance:reset:f               0
 drivebase:distance:reset:imax            10
 
+drivebase:distance:low_gear_threshold    36.0
+drivebase:distance:high_gear_threshold   120.0
+drivebase:distance:shift_v_threshold     0.01
+
 drivebase:shifter:shift_separation_time  2.0
 drivebase:shifter:turn_multiplier        1.2
 drivebase:shifter:slow_threshold         5.0
