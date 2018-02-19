@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define AUTOMODE_TEST 3
+#define AUTOMODE_TEST 5
 
 //
 // An auto mode program that justs performs calibration

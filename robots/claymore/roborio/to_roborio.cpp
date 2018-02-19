@@ -148,8 +148,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		// Decide what subsystems you want to see
 		//
 		//logger.enableSubsystem(SUBSYSTEM_ALL) ;
-
-		//logger.disableSubsystem(SUBSYSTEM_PDPCURRENTS) ;
+		
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
 
 		std::shared_ptr<messageLoggerDest> dest_p ;
