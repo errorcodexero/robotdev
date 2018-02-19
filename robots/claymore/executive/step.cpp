@@ -624,7 +624,7 @@ bool Grabber_to_preset::operator==(Grabber_to_preset const& b)const{
 //
 
 Eject::Eject(){
-    eject_timer.set(2.0);
+    eject_timer.set(1.0);
 }
 
 Step::Status Eject::done(Next_mode_info info){

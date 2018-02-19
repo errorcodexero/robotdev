@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define AUTOMODE_TEST 21
+#define AUTOMODE_TEST 20
 
 //
 // An auto mode program that justs performs calibration
@@ -201,7 +201,7 @@ Executive same_switch
 	    },
 	    Step
 	    {   
-		Drive{128.0, true}
+		Drive{105.0, true}
 	    },
 	    Step
 	    {   
@@ -651,10 +651,10 @@ Executive get_auto_mode(Next_mode_info info)
 
 #elif AUTOMODE_TEST == 23
 	//
-	// AUTOMODE_TEST = 22, decide between same side and opposite side for switch
+	// AUTOMODE_TEST = 23, Run the auto program for the near scale
 	//
     logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 22, decide switch side" ;
+    logger << "get_auto_mode - AUTOMODE_TEST == 23, near scale" ;
     logger.endMessage() ;
     
     Executive auto_program = same_scale ;

@@ -149,7 +149,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//
 		//logger.enableSubsystem(SUBSYSTEM_ALL) ;
 		
-		//logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
+		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
