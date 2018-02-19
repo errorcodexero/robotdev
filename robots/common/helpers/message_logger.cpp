@@ -60,7 +60,10 @@ bool messageLogger::isSubsystemEnabled(uint64_t subs)
 void messageLogger::startMessage(const messageType &type)
 {
     if (mInMessage)
-	assert(false) ;
+	{
+		mCurrentMessage += "FAILED TO CALL ENDMESSAGE" ;
+		endMessage() ;
+	}
     mCurrentType = type;
     mInMessage = true;
     mCurrentSubsystem = 0 ;
@@ -68,10 +71,11 @@ void messageLogger::startMessage(const messageType &type)
 
 void messageLogger::startMessage(const messageType &type, uint64_t sub)
 {
-    if (mInMessage) {
-	std::cout << "subsystem :" << sub << "\n";
-	assert(false) ;
-    }
+    if (mInMessage)
+	{
+		mCurrentMessage += "FAILED TO CALL ENDMESSAGE - " ;
+		endMessage() ;
+	}
 
     mCurrentType = type;
     mInMessage = true;
