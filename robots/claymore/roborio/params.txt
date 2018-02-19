@@ -33,14 +33,14 @@ drivebase:distance:reset:d               0
 drivebase:distance:reset:f               0
 drivebase:distance:reset:imax            10
 
-drivebase:distance:low_gear_threshold    36.0
+drivebase:distance:low_gear_threshold    72.0
 drivebase:distance:high_gear_threshold   120.0
 drivebase:distance:shift_v_threshold     0.01
 
 drivebase:shifter:shift_separation_time  2.0
 drivebase:shifter:turn_multiplier        1.2
 drivebase:shifter:slow_threshold         5.0
-drivebase;shifter:fast_threshold         5.0
+drivebase:shifter:fast_threshold         5.0
 
 
 lifter:up:p                              0.1
@@ -62,9 +62,13 @@ lifter:climbing_difference               100.0
 lifter:climb_power                       0.6
 lifter:manual_power:low                  0.4
 lifter:manual_power:high                 0.8
+lifter:slowdown_power                    0.2
 
 lifter:hold_power:low_gear               0.0
 lifter:hold_power:high_gear              0.1
+
+lifter:collector_offset                  11.375
+lifter:slowdown_range                    6.0
 
 lifter:height:floor                      10.375
 lifter:height:exchange                   14.5
@@ -83,7 +87,7 @@ grabber:imax                             20.0
 
 grabber:threshold                        1.0
 
-grabber:hold_power                       -0.3
+grabber:hold_power                       -0.2
 
 grabber:samples                          5
 grabber:calibrate_threshold              0.1
