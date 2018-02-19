@@ -1,11 +1,12 @@
 #ifndef DRIVEBASE_CONTROLLER_H
 #define DRIVEBASE_CONTROLLER_H
 
-#include <list>
 #include "pidctrl.h"
 #include "params_parser.h"
 #include "UdpBroadcastSender.h"
 #include "subsystems.h"
+#include <list>
+#include <string>
 
 /// \brief The DrivebaseController class contains the intelligence for the drivebase.
 /// This class contains the algorithms to drive specific distances or to rotate to
@@ -200,6 +201,10 @@ private:
     //
     double mLastLeftVoltage ;
     double mLastRightVoltage ;
+
+    static std::string AngleTargetName ;
+    static std::string AngleActualName ;
+    static std::string AngleVelocityName ;
 };
 
 #endif

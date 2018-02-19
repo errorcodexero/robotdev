@@ -13,6 +13,11 @@ TARGET=control.a
 COMMON=helpers
 
 #
+# Tell the make system we want WPILIB headers
+#
+WPILIB=true
+
+#
 # Add flags to indicate the robot we are building
 #
 ADDCXXFLAGS = -DCLAYMORE -I../util -I../executive -I../input -I. -I..
