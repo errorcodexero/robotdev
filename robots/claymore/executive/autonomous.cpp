@@ -19,12 +19,20 @@ Executive calibrate_only
 	{
 	    Step
 	    {
+		StartAuto{}
+	    },
+	    Step
+	    {
 		Calibrate_lifter{}
 	    },
 	    Step
 	    {   
 		Calibrate_grabber{}
-	    }
+	    },
+	    Step
+	    {
+		EndAuto()
+	    },
 	},
 	Executive
 	{
@@ -40,6 +48,10 @@ Executive same_scale
 	vector<Step>
 	{
 	    Step
+	    {
+		StartAuto{}
+	    },
+	    Step
 	    {   
 		Calibrate_lifter{}
 	    },
@@ -47,31 +59,34 @@ Executive same_scale
 	    {   
 		Calibrate_grabber{}
 	    },
-			Step
-			{   
-				Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
-			},
-			Step
-			{
-				Drive{300, false}
-			},
-		        Step
-			{
-				Rotate{-90.0}
-			},
-			Step
-			{
-				Drive{9, false}
-			},
-			Step
-			{
-				Lifter_to_height{82.0, 0.0}
-			},
-			Step
-			{
-				Eject()
-			}
-			
+	    Step
+	    {   
+		Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
+	    },
+	    Step
+	    {
+		Drive{300, false}
+	    },
+	    Step
+	    {
+		Rotate{-90.0}
+	    },
+	    Step
+	    {
+		Drive{9, false}
+	    },
+	    Step
+	    {
+		Lifter_to_height{82.0, 0.0}
+	    },
+	    Step
+	    {
+		Eject{}
+	    },	
+	    Step
+	    {
+		EndAuto()
+	    }
 	},
 	Executive
 	{
@@ -87,6 +102,10 @@ Executive opposite_scale
 	vector<Step>
 	{
 	    Step
+	    {
+		StartAuto{}
+	    },
+	    Step
 	    {   
 		Calibrate_lifter{}
 	    },
@@ -94,6 +113,10 @@ Executive opposite_scale
 	    {   
 		Calibrate_grabber{}
 	    },
+	    Step
+	    {
+		EndAuto()
+	    }
 	},
 	Executive
 	{
@@ -112,35 +135,43 @@ Executive same_switch
     {
 	vector<Step>
 	{
-			Step
-			{   
-				Calibrate_lifter{}
-			},
-			Step
-			{   
-				Calibrate_grabber{}
-			},
-			Step
-			{   
-				Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
-			},
-          		Step
-			{   
-				Drive{128.0, false, true}
-			},
-			Step
-			{   
-				Wait_for_lifter{}
-			},
-			Step
-			{   
-				Eject{}
-			}
-		},
-		Executive
-		{
-			Teleop()
-		}
+	    Step
+	    {
+		StartAuto{}
+	    },
+	    Step
+	    {   
+		Calibrate_lifter{}
+	    },
+	    Step
+	    {   
+		Calibrate_grabber{}
+	    },
+	    Step
+	    {   
+		Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
+	    },
+	    Step
+	    {   
+		Drive{128.0, false, true}
+	    },
+	    Step
+	    {   
+		Wait_for_lifter{}
+	    },
+	    Step
+	    {   
+		Eject{}
+	    },
+	    Step
+	    {
+		EndAuto()
+	    }
+	},
+	Executive
+	{
+	    Teleop()
+        }
     }
 };
 
@@ -153,53 +184,61 @@ Executive opposite_switch
 {
     Chain
     {
-		vector<Step>
-		{
-			Step
-			{
-				Calibrate_grabber{}
-			},
-			Step
-			{
-				Calibrate_lifter{}
-			},
-		        Step
-			{
-				Drive{52.0, false}
-			},
-		        Step
-			{
-				Rotate{-90.0}
-			},
-		        Step
-			{
-				Drive{100.0, false}
-			},
-		        Step
-			{
-				Rotate{90.0}
-			},
-			Step
-			{
-        		        Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
-			},
-		        Step
-			{
-				Drive{56, false, true}
-			},
-		        Step
-			{
-				Wait_for_lifter{}
-			},
-	        	Step
-			{
-				Eject{}
-			}
+	vector<Step>
+	{
+	    Step
+	    {
+		StartAuto{}
 	    },
-	    Executive
-		{
-			Teleop()
-		}
+	    Step
+	    {
+		Calibrate_grabber{}
+	    },
+	    Step
+	    {
+		Calibrate_lifter{}
+	    },
+	    Step
+	    {
+		Drive{52.0, false}
+	    },
+	    Step
+	    {
+		Rotate{-90.0}
+	    },
+	    Step
+	    {
+		Drive{100.0, false}
+	    },
+	    Step
+	    {
+		Rotate{90.0}
+	    },
+	    Step
+	    {
+		Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
+	    },
+	    Step
+	    {
+		Drive{56, false, true}
+	    },
+	    Step
+	    {
+		Wait_for_lifter{}
+	    },
+	    Step
+	    {
+		Eject{}
+	    },
+	    Step
+	    {
+		EndAuto()
+	    }
+	},
+	Executive
+	{
+	    Teleop()
+	}
     }
 };
 
@@ -237,10 +276,10 @@ Executive get_auto_mode(Next_mode_info info)
     
     if(!info.autonomous)
     {
-		logger.startMessage(messageLogger::messageType::info) ;
-		logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
-		logger.endMessage() ;
-		return Executive{Teleop()};
+	logger.startMessage(messageLogger::messageType::info) ;
+	logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
+	logger.endMessage() ;
+	return Executive{Teleop()};
     }
 
 #if AUTOMODE_TEST == 0
