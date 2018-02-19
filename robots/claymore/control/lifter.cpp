@@ -316,7 +316,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     const double COLLECTOR_OFFSET = 11.375; //inches
     last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR + COLLECTOR_OFFSET;
 
-    last.at_bottom = in.bottom_hall_effect;
+    last.at_bottom = in.bottom_hall_effect || last.height < COLLECTOR_OFFSET + .75;
     last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);
 
     if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - input_params->getValue("lifter:climbing_difference", 100.0);
