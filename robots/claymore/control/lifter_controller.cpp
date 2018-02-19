@@ -60,8 +60,8 @@ void LifterController::backgroundMoveToHeight(Preset preset, double current_heig
     mMode = Mode::BACKGROUND;
 }
 
-void LifterController::calibrate() {
-    mMode = Mode::CALIBRATING;
+void LifterController::setCalibrate(bool calibrate) {
+    mCalibrating = calibrate;
 }
 
 void LifterController::update(double height, double time, double dt, double& out) {
@@ -144,7 +144,7 @@ bool LifterController::runningInBackground() {
 }
 
 bool LifterController::calibrating() {
-    return mMode == Mode::CALIBRATING;
+    return mCalibrating;
 }
 
 double LifterController::presetToHeight(Preset preset) {

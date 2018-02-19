@@ -354,7 +354,7 @@ bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
 //
 
 Calibrate_lifter::Calibrate_lifter(){
-	Lifter::lifter_controller.calibrate();
+	Lifter::lifter_controller.setCalibrate(true);
 }
 
 Step::Status Calibrate_lifter::done(Next_mode_info info){

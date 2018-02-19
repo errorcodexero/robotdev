@@ -47,8 +47,9 @@ public:
     /// \param time the start time of this operation
     void backgroundMoveToHeight(Preset preset, double current_height, double time);
 
-    /// \brief put the lifter into calibration mode
-    void calibrate();
+    /// \brief put the lifter into either calibration mode or idle mode, depending on the parameter
+    /// \param calibrate true to put the lifter into calibration mode, false to put it into idle
+    void setCalibrate(bool calibrate);
 
     /// \brief this method is called each time the robot loop is run to update the lifer
     /// This method uses a PID controller to position the lifter to the desired location
@@ -95,8 +96,7 @@ private:
     enum class Mode {
 	IDLE,			// Doing nothing
         HEIGHT,			// Seeking a desired height
-	BACKGROUND,             // Going to a height in the background
-	CALIBRATING             // Calibrating the lifter 
+	BACKGROUND              // Going to a height in the background
     };
 
     //
@@ -156,6 +156,10 @@ private:
     //
     double mDataDumpStartTime;
 
+    //
+    // Represents whether or not the lifter is calibrating
+    //
+    bool mCalibrating;
 };
 
 #endif

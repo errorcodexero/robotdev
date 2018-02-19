@@ -218,8 +218,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 
 	//TODO: Change back to do wings stuff - done for Corvallis
 	if(calibrate_trigger(info.panel.wings)) {
-		Lifter::lifter_controller.calibrate();
+		Lifter::lifter_controller.setCalibrate(true);
 		Grabber::grabber_controller.setDoneCalibrating(false);
+	} else {
+		Lifter::lifter_controller.setCalibrate(false);	
 	}
 	if(info.panel.wings) {
 		goals.lifter = Lifter::Goal::calibrate();
