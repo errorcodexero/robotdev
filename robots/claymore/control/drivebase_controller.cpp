@@ -24,6 +24,7 @@ DrivebaseController::DrivebaseController() {
     mDistanceThreshold = 0.0;
     mAngleThreshold = 0.0;
     mAngleVThreshold = 0.0;
+    mLastDistance = 0.0;
     mLastAngle = 0.0;
     mNsamples = 5;
     mResetPid = false;
@@ -34,6 +35,7 @@ DrivebaseController::DrivebaseController() {
     mCurrentCycle = 0 ;
     mLastLeftVoltage = 0.0 ;
     mLastRightVoltage = 0.0 ;
+    mHighGear = false;
 
 #ifdef TUNING
     frc::SmartDashboard::SetPersistent(AngleTargetName) ;
@@ -58,6 +60,10 @@ void DrivebaseController::setParams(paramsInput* input_params) {
     mPidResetThreshold = mInputParams->getValue("drivebase:reset_threshold", .1);
 }
 
+paramsInput* DrivebaseController::getParams() {
+    return mInputParams;
+}
+
 void DrivebaseController::initDistance(double distance, double angle, double time, bool end_on_stall) {
 
     mMode = Mode::DISTANCE;
@@ -72,6 +78,8 @@ void DrivebaseController::initDistance(double distance, double angle, double tim
     mLastRightVoltage = 0.0 ;
 
     mEndOnStall = end_on_stall;
+
+    mHighGear = false;
 
     double p = mInputParams->getValue("drivebase:distance:p", 0.015);
     double i = mInputParams->getValue("drivebase:distance:i", 0.1);
@@ -151,44 +159,44 @@ void DrivebaseController::idle(double distances_l, double distances_r, double an
 }
 
 void DrivebaseController::update(double distances_l, double distances_r, double angle, double dt, double time,
-								 double& out_l, double& out_r)
+				 double& out_l, double& out_r, bool& out_high_gear)
 {
     messageLogger &logger = messageLogger::get();
 
 
     if ((mCurrentCycle % mCycleInterval) == 0)
     {
-		if (mMode == Mode::DISTANCE) {
-			double avg_dist = (distances_l + distances_r) / 2.0;
-			if ((mTarget - avg_dist) < mDistanceThreshold)
-				mMode = Mode::IDLE;
+	double avg_dist = (distances_l + distances_r) / 2.0;
+	if (mMode == Mode::DISTANCE) {
+	    if ((mTarget - avg_dist) < mDistanceThreshold)
+		mMode = Mode::IDLE;
 
-			mDistanceHistory.push_back(avg_dist);
-			if (mDistanceHistory.size() > mNsamples)
-				mDistanceHistory.pop_front();
+	    mDistanceHistory.push_back(avg_dist);
+	    if (mDistanceHistory.size() > mNsamples)
+		mDistanceHistory.pop_front();
 
-			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
-			if (mDistanceHistory.size() == mNsamples && (mDistanceHistory.back() - mDistanceHistory.front()) < mPidResetThreshold) {
-				if(!mResetPid) {
-					logger << "SWITCHED PID CONSTANTS\n";
+	    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
+	    if (mDistanceHistory.size() == mNsamples && (mDistanceHistory.back() - mDistanceHistory.front()) < mPidResetThreshold) {
+		if(!mResetPid) {
+		    logger << "SWITCHED PID CONSTANTS\n";
 
-					double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
-					double i = mInputParams->getValue("drivebase:distance:reset:i", 0.15);
-					double d = mInputParams->getValue("drivebase:distance:reset:d", 0.0);
-					double f = mInputParams->getValue("drivebase:distance:reset:f", 0.0);
-					double imax = mInputParams->getValue("drivebase:distance:reset:imax", 10.0);
-					mDistPid.Init(p, i, d, f, -0.6, 0.6, imax);
+		    double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
+		    double i = mInputParams->getValue("drivebase:distance:reset:i", 0.15);
+		    double d = mInputParams->getValue("drivebase:distance:reset:d", 0.0);
+		    double f = mInputParams->getValue("drivebase:distance:reset:f", 0.0);
+		    double imax = mInputParams->getValue("drivebase:distance:reset:imax", 10.0);
+		    mDistPid.Init(p, i, d, f, -0.6, 0.6, imax);
 
-					mResetPid = true;
-					mDistanceHistory.clear();
-				} else {
-					logger << "STALLED\n";
+		    mResetPid = true;
+		    mDistanceHistory.clear();
+		} else {
+		    logger << "STALLED\n";
 
-					mStalled = true;
-				}
-			}
+		    mStalled = true;
+		}
+	    }
 
-			double base = mDistPid.getOutput(mTarget, avg_dist, dt);
+	    double base = mDistPid.getOutput(mTarget, avg_dist, dt);
 
 #ifdef LIMIT_VOLTAGE_CHANGE
 			double chg = std::fabs(base - mLastVoltage);
@@ -201,54 +209,67 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			}
 #endif
 
-			mLastVoltage = base;
-			double offset = mStraightnessPid.getOutput(mTargetCorrectionAngle, angle, dt);
-			out_l = base - offset;
-			out_r = base + offset;
+	    mLastVoltage = base;
+	    double offset = mStraightnessPid.getOutput(mTargetCorrectionAngle, angle, dt);
+	    out_l = base - offset;
+	    out_r = base + offset;
 
-			logger << "update(DISTANCE)";
-			logger << ", dt " << dt;
-			logger << ", angle " << angle;
-			logger << ", target " << mTarget;
-			logger << ", distance " << avg_dist;
-			logger << ", ldist " << distances_l;
-			logger << ", rdist " << distances_r;
-			logger << ", base " << base;
-			logger << ", offset " << offset;
-			logger << ", l " << out_l;
-			logger << ", r " << out_r;
-			if (mMode == Mode::IDLE) {
-				logger << ", Success " ;
-				logger << (time - mTargetStartTime) ;
-				logger << " seconds" ;
-#ifdef TUNING
-				SmartDashboard::PutNumber(AngleTimeName, time - mTargetStartTime) ;
-#endif
-			}
-			logger.endMessage();
+	    double low_gear_threshold = mInputParams->getValue("drivebase:distance:low_gear_threshold", 36.0);
+	    double high_gear_threshold = mInputParams->getValue("drivebase:distance:high_gear_threshold", 120.0);
+	    double velocity_threshold = mInputParams->getValue("drivebase:distance:shift_v_threshold", 0.01);
+
+	    double remaining_distance = fabs(mTarget - avg_dist);
+	    double velocity = (avg_dist - mLastDistance) / dt;
+	    if(fabs(velocity) > velocity_threshold) {
+		if(remaining_distance < low_gear_threshold)
+		    mHighGear = false;
+		if(remaining_distance > high_gear_threshold) 
+		    mHighGear = true;
+	    }
+	    out_high_gear = mHighGear;
+
+	    logger << "update(DISTANCE)";
+	    logger << ", dt " << dt;
+	    logger << ", angle " << angle;
+	    logger << ", target " << mTarget;
+	    logger << ", distance " << avg_dist;
+	    logger << ", ldist " << distances_l;
+	    logger << ", rdist " << distances_r;
+	    logger << ", base " << base;
+	    logger << ", offset " << offset;
+	    logger << ", l " << out_l;
+	    logger << ", r " << out_r;
+	    logger << ", velocity " << velocity;
+	    logger << ", high_gear " << out_high_gear;
+	    if (mMode == Mode::IDLE) {
+		logger << ", Success " ;
+		logger << (time - mTargetStartTime) ;
+		logger << " seconds" ;
+	    }
+	    logger.endMessage();
 
 
-		}
-		else if (mMode == Mode::ANGLE) {
-			double angular_v = (angle - mLastAngle) / dt;
-			if (fabs(mTarget - angle) < mAngleThreshold && fabs(angular_v) < mAngleVThreshold) {
-				mMode = Mode::IDLE;
-			}
+	}
+	else if (mMode == Mode::ANGLE) {
+	    double angular_v = (angle - mLastAngle) / dt;
+	    if (fabs(mTarget - angle) < mAngleThreshold && fabs(angular_v) < mAngleVThreshold) {
+		mMode = Mode::IDLE;
+	    }
 
-			double base = mAnglePid.getOutput(mTarget, angle, dt);
-			out_l = base;
-			out_r = -base;
+	    double base = mAnglePid.getOutput(mTarget, angle, dt);
+	    out_l = base;
+	    out_r = -base;
 
-			messageLogger &logger = messageLogger::get();
-			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
-			logger << "update(ANGLE)";
-			logger << ", time " << time;
-			logger << ", target " << mTarget;
-			logger << ", angle " << angle;
-			logger << ", angular_v " << angular_v;
-			logger << ", base " << base;
-			logger << ", l " << out_l;
-			logger << ", r " << out_r;
+	    messageLogger &logger = messageLogger::get();
+	    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
+	    logger << "update(ANGLE)";
+	    logger << ", time " << time;
+	    logger << ", target " << mTarget;
+	    logger << ", angle " << angle;
+	    logger << ", angular_v " << angular_v;
+	    logger << ", base " << base;
+	    logger << ", l " << out_l;
+	    logger << ", r " << out_r;
 	    
 			if (mMode == Mode::IDLE) {
 				logger << ", Success " ;
@@ -264,16 +285,17 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 #endif
 		}
 	
-		if (mMode == Mode::IDLE) {
-			out_l = 0.0;
-			out_r = 0.0;
-			mDataDumpMode = true;
-			mDataDumpStartTime = time;
-		}
-
-		mLastAngle = angle;
-		mLastLeftVoltage = out_l ;
-		mLastRightVoltage = out_r ;
+	if (mMode == Mode::IDLE) {
+	    out_l = 0.0;
+	    out_r = 0.0;
+	    mDataDumpMode = true;
+	    mDataDumpStartTime = time;
+	}
+	
+	mLastDistance = avg_dist;
+	mLastAngle = angle;
+	mLastLeftVoltage = out_l ;
+	mLastRightVoltage = out_r ;
     }
     else
     {

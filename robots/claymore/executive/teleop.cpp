@@ -94,19 +94,14 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			return power;
 		}());
 
-		//
-		// const Talon_srx_output::Speed_mode DRIVE_SPEED_MODE = info.driver_joystick.button[Gamepad_button::A] ?  Talon_srx_output::Speed_mode::COAST : Talon_srx_output::Speed_mode::BRAKE;
-		//
-		// TODO - how are we using the DRIVE_SPEED_MODE ???
-		//
-		goals.drive = Drivebase::Goal::absolute(left,right);
-	}
+		Drivebase::Goal::Gear gear_shifter = [&]{
+			if(info.driver_joystick.button[Gamepad_button::RB]) return Drivebase::Goal::Gear::LOW;
+			if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER] > .8) return Drivebase::Goal::Gear::HIGH;
+			return Drivebase::Goal::Gear::AUTO;
+		}();
 
-	goals.gear_shifter=[&]{
-		if(info.driver_joystick.button[Gamepad_button::RB]) return Gear_shifter::Goal::LOW;
-		if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER]>.8) return Gear_shifter::Goal::HIGH;
-		return Gear_shifter::Goal::AUTO;
-	}();	
+		goals.drive = Drivebase::Goal::absolute(left, right, gear_shifter);
+	}
 
 	switch(collector_mode) {
 		case Collector_mode::DO_NOTHING:

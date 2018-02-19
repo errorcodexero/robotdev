@@ -232,7 +232,7 @@ bool EndAuto::operator==(EndAuto const& b)const{
 // Drive: Drive straight a specified distance
 //
 
-Drive::Drive(Inch target, bool high_gear, bool end_on_stall):target_distance(target),high_gear(high_gear),end_on_stall(end_on_stall),init(false){}
+Drive::Drive(Inch target, bool end_on_stall):target_distance(target),end_on_stall(end_on_stall),init(false){}
 
 Step::Status Drive::done(Next_mode_info info){
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
@@ -257,7 +257,6 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
 	init = true;
     }
     goals.drive = Drivebase::Goal::drive_straight();
-    goals.gear_shifter = high_gear ? Gear_shifter::Goal::HIGH : Gear_shifter::Goal::LOW;
     return goals;
 }
 
@@ -266,7 +265,7 @@ unique_ptr<Step_impl> Drive::clone()const{
 }
 
 bool Drive::operator==(Drive const& a)const{
-    return target_distance == a.target_distance && init == a.init;
+    return target_distance == a.target_distance && end_on_stall == a.end_on_stall && init == a.init;
 }
 
 //

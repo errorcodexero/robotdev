@@ -66,7 +66,7 @@ Executive same_scale
 	    },
 	    Step
 	    {
-		Drive{300, false}
+		Drive{300}
 	    },
 	    Step
 	    {
@@ -74,7 +74,7 @@ Executive same_scale
 	    },
 	    Step
 	    {
-		Drive{9, false}
+		Drive{9}
 	    },
 	    Step
 	    {
@@ -205,7 +205,7 @@ Executive same_switch
 	    },
 	    Step
 	    {   
-		Drive{128.0, false, true}
+		Drive{128.0, true}
 	    },
 	    Step
 	    {   
@@ -256,7 +256,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Drive{40.0, false}
+		Drive{52.0}
 	    },
 	    Step
 	    {
@@ -264,7 +264,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Drive{100.0, false}
+		Drive{100.0}
 	    },
 	    Step
 	    {
@@ -276,7 +276,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Drive{68, false, true}
+		Drive{56, true}
 	    },
 	    Step
 	    {
@@ -362,7 +362,7 @@ Executive get_auto_mode(Next_mode_info info)
 		{
 			Step
 			{
-				Drive{12.0, false}
+				Drive{12.0}
 			},
 				Executive
 				{
@@ -385,7 +385,7 @@ Executive get_auto_mode(Next_mode_info info)
 		{
 			Step
 			{
-				Drive{120.0, false}
+				Drive{120.0}
 			},
 				Executive
 				{
@@ -509,7 +509,7 @@ Executive get_auto_mode(Next_mode_info info)
 				},
 					Step
 					{
-						Drive{60.0, false}
+						Drive{60.0}
 					},
 						Step
 						{

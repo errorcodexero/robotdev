@@ -123,12 +123,11 @@ public:
 //Drive straight a specified distance
 class Drive:public Step_impl_inner<Drive>{
     Inch target_distance;
-    bool high_gear;
     bool end_on_stall;
     bool init;
 
 public:
-    explicit Drive(Inch, bool, bool end_on_stall=false);
+    explicit Drive(Inch, bool end_on_stall=false);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
