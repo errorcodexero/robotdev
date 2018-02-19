@@ -3,6 +3,8 @@ drivebase:distance:i                     0.0
 drivebase:distance:d                     0.0
 drivebase:distance:f                     0.0
 drivebase:distance:imax                  10.0
+drivebase:distance:vmax                  0.8
+drivebase:distance:vmin                  -0.8
 
 drivebase:angleCorrection:p              -0.02
 drivebase:angleCorrection:i              0.0
@@ -10,16 +12,16 @@ drivebase:angleCorrection:d              0.0
 drivebase:angleCorrection:f              0.0
 drivebase:angleCorrection:imax           1000.0
 
-drivebase:angle:p                        0.0075
-drivebase:angle:i                        0.015
-drivebase:angle:d                        0.0
+drivebase:angle:p                        0.0055
+drivebase:angle:i                        0.005
+drivebase:angle:d                        0.000015
 drivebase:angle:f                        0.0
-drivebase:angle:imax                     20.0
-drivebase:angle:minv                     -0.3
-drivebase:angle:maxv                     0.3
+drivebase:angle:imax                     30.0
+drivebase:angle:minv                     -0.8
+drivebase:angle:maxv                     0.8
 
 drivebase:straight:threshold             1.0
-drivebase:angle:threshold                4.0
+drivebase:angle:threshold                5.0
 drivebase:angle:v_threshold              10.0
 
 drivebase:reset_threshold                0.1

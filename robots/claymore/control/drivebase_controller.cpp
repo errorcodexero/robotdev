@@ -221,10 +221,14 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 	    double remaining_distance = fabs(mTarget - avg_dist);
 	    double velocity = (avg_dist - mLastDistance) / dt;
 	    if(fabs(velocity) > velocity_threshold) {
-		if(remaining_distance < low_gear_threshold)
+		if(remaining_distance < low_gear_threshold) { 
+		    if(mHighGear) logger << "SHIFTED INTO LOW GEAR\n";
 		    mHighGear = false;
-		if(remaining_distance > high_gear_threshold) 
+		}
+		if(remaining_distance > high_gear_threshold) {
+		    if(!mHighGear) logger << "SHIFTED INTO HIGH GEAR\n";
 		    mHighGear = true;
+		}
 	    }
 	    out_high_gear = mHighGear;
 

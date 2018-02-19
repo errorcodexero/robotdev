@@ -2,6 +2,7 @@
 #include "util.h"
 #include "subsystems.h"
 #include "message_logger.h"
+#include <cmath>
 
 using namespace std;
 
@@ -130,8 +131,8 @@ Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH){}
 Lifter::Input::Input(bool b, bool t, int e):bottom_hall_effect(b),top_hall_effect(t),ticks(e){}
 Lifter::Input::Input():Input(false,false,0){}
 
-Lifter::Status_detail::Status_detail(bool b,bool t,bool c,double h,double ti,double dt):at_bottom(b),at_top(t),at_climbed_height(c),height(h),time(ti),dt(dt){}
-Lifter::Status_detail::Status_detail():Status_detail(false,false,false,0.0,0.0,0.0){}
+Lifter::Status_detail::Status_detail(bool b,bool t,bool c,bool usr,bool lsr,double h,double ti,double dt):at_bottom(b),at_top(t),at_climbed_height(c),upper_slowdown_range(usr),lower_slowdown_range(lsr),height(h),time(ti),dt(dt){}
+Lifter::Status_detail::Status_detail():Status_detail(false,false,false,false,false,0.0,0.0,0.0){}
 
 Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg, double eo):last(s),last_gearing(g),climb_goal(cg),encoder_offset(eo){}
 Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,0.0,0.0){}
@@ -316,8 +317,15 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     const double COLLECTOR_OFFSET = 11.375; //inches
     last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR + COLLECTOR_OFFSET;
 
-    last.at_bottom = in.bottom_hall_effect || last.height < COLLECTOR_OFFSET + .75;
-    last.at_top = in.top_hall_effect || last.height > input_params->getValue("lifter:height:top_limit", 96.0);
+    double top_limit = input_params->getValue("lifter:height:top_limit", 96.0);
+    double bottom_limit = input_params->getValue("lifter:collector_offset", 11.375) + 0.75;
+
+    last.at_bottom = in.bottom_hall_effect || last.height < bottom_limit;
+    last.at_top = in.top_hall_effect || last.height > top_limit;
+
+    double slowdown_range = input_params->getValue("lifter:slowdown_range", 6.0);
+    last.upper_slowdown_range = last.height > (top_limit - slowdown_range);
+    last.lower_slowdown_range = last.height < (bottom_limit + slowdown_range);
 
     if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - input_params->getValue("lifter:climbing_difference", 100.0);
     last.at_climbed_height = last.height < climb_goal;
@@ -327,6 +335,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     last.time = now;
 
     logger << "Limit Switches: Top: " << in.top_hall_effect << "   Bottom: " << in.bottom_hall_effect << "\n";
+    logger << "Upper slowdown range: " << last.upper_slowdown_range << "   Lower slowdown range: " << last.lower_slowdown_range << "\n";
     logger << "Ticks: " << in.ticks << "    Height: " << last.height;
 
     logger.endMessage();
@@ -354,14 +363,14 @@ set<Lifter::Output> examples(Lifter::Output*){
 
 set<Lifter::Status_detail> examples(Lifter::Status_detail*){
     return {
-	{false,false,false,0.0,0.0,0.0},
-	{false,false,true,0.0,0.0,0.0},
-	{true,false,false,0.0,0.0,0.0},
-	{true,false,true,0.0,0.0,0.0},
-	{false,true,false,0.0,0.0,0.0},
-	{false,true,true,0.0,0.0,0.0},
-	{true,true,false,0.0,0.0,0.0},
-	{true,true,true,0.0,0.0,0.0}
+	{false,false,false,false,false,0.0,0.0,0.0},
+	{false,false,true,false,false,0.0,0.0,0.0},
+	{true,false,false,false,false,0.0,0.0,0.0},
+	{true,false,true,false,false,0.0,0.0,0.0},
+	{false,true,false,false,false,0.0,0.0,0.0},
+	{false,true,true,false,false,0.0,0.0,0.0},
+	{true,true,false,false,false,0.0,0.0,0.0},
+	{true,true,true,false,false,0.0,0.0,0.0}
     };
 }
 
@@ -422,6 +431,10 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
     logger << "Lifter status: " << status_detail.at_top << " " << status_detail.at_bottom << " " << out.power << "\n";
+
+    if((status_detail.upper_slowdown_range && out.power > 0.0) ||
+       (status_detail.lower_slowdown_range && out.power < 0.0))
+	out.power = copysign(min(fabs(out.power), input_params->getValue("lifter:slowdown_power", 0.2)), out.power);
 
     if((status_detail.at_top && out.power > 0.0) ||
        (status_detail.at_bottom && out.power < 0.0) ||

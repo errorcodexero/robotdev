@@ -43,7 +43,7 @@ void LifterController::moveToHeight(double height, double current_height, double
 	imax = mInputParams->getValue("lifter:down:imax", 1000.0);
     }
 	
-    mHeightPID.Init(p, i, d, f, -0.4, 0.4, imax);
+    mHeightPID.Init(p, i, d, f, -0.8, 0.8, imax);
 
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);

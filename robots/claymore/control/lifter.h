@@ -73,11 +73,13 @@ struct Lifter{
 		bool at_bottom;
 		bool at_top;
 		bool at_climbed_height;
+		bool upper_slowdown_range;
+		bool lower_slowdown_range;
 		double height;
 		double time, dt;
 	
 		Status_detail();
-		Status_detail(bool,bool,bool,double,double,double);
+		Status_detail(bool,bool,bool,bool,bool,double,double,double);
 	};
 
 	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR) X(CLIMBED)

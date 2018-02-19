@@ -13,7 +13,7 @@ using namespace std;
 #define LIMIT_SWITCH_ADDRESS 11
 
 #define MANUAL_GRABBER_POWER .60 	//TODO tune
-#define CALIBRATE_POWER .80 	   //TODO tune
+#define CALIBRATE_POWER .40 	   //TODO tune
 
 GrabberController Grabber::grabber_controller;
 
@@ -300,40 +300,58 @@ Grabber::Status Grabber::Estimator::get()const{
 }
 
 Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+	logger << "Grabber goal: ";
+
 	paramsInput* input_params = Grabber::grabber_controller.getParams();
 
 	Grabber::Output out = 0.0;
 	switch(goal.mode()){
 		case Grabber::Goal::Mode::OPEN:
 			out = MANUAL_GRABBER_POWER;
+			logger << "OPEN\n";
 			break;
 		case Grabber::Goal::Mode::STOP:
 			Grabber::grabber_controller.idle(status.angle, status.time, status.dt);
 			out = input_params->getValue("grabber:hold_power", -0.1);
+			logger << "STOP\n";
 			break;
 		case Grabber::Goal::Mode::CLOSE:
 			out = -MANUAL_GRABBER_POWER;
+			logger << "CLOSE\n";
 			break;
 		case Grabber::Goal::Mode::GO_TO_ANGLE:
+			logger.endMessage();
 			Grabber::grabber_controller.updateAngleOnChange(goal.target(), status.time);
 			Grabber::grabber_controller.update(status.angle, status.time, status.dt, out);
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+			logger << "GO_TO_ANGLE\n";
 			break;
 		case Grabber::Goal::Mode::GO_TO_PRESET:	
+			logger.endMessage();
 			Grabber::grabber_controller.updateAngleOnChange(goal.preset_target(), status.time);
 			Grabber::grabber_controller.update(status.angle, status.time, status.dt, out);
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+			logger << "GO_TO_PRESET\n";
 			break;
 		case Grabber::Goal::Mode::CALIBRATE:
 			out = -CALIBRATE_POWER;
+			logger << "CALIBRATE\n";
 			break;
 		default:
 			assert(0);
 	}
 	if(((status.outer_limit && out > 0.0) ||
 	    (status.inner_limit && out < 0.0)) &&
-	   Grabber::grabber_controller.getDoneCalibrating())
+	   Grabber::grabber_controller.getDoneCalibrating() && !status.has_cube)
 	{
 	    out = 0.0;
 	}
+
+	logger << "Grabber out: " << out << "\n";
+	logger.endMessage();
+
 	return out;
 }
 

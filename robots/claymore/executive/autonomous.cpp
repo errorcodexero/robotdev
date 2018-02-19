@@ -66,15 +66,11 @@ Executive same_scale
 	    },
 	    Step
 	    {
-		Drive{300}
+		Drive{296}
 	    },
 	    Step
 	    {
 		Rotate{-90.0}
-	    },
-	    Step
-	    {
-		Drive{9}
 	    },
 	    Step
 	    {
@@ -251,6 +247,10 @@ Executive opposite_switch
 		Calibrate_lifter{}
 	    },
 	    Step
+	    {
+		Wait{0.5}
+	    },
+	    Step
 	    {   
 		Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
 	    },
@@ -362,7 +362,7 @@ Executive get_auto_mode(Next_mode_info info)
 		{
 			Step
 			{
-				Drive{12.0}
+				Drive{300.0}
 			},
 				Executive
 				{
