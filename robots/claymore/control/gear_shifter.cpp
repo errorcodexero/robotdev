@@ -39,6 +39,7 @@ void Gear_shifter::Estimator::update(Time now,Input in,Output out){
 	if(!no_shift.done()){
 		recommended=out;
 		logger << "no_shift\n";
+		logger.endMessage();
 		return;
 	}
 
@@ -55,6 +56,7 @@ void Gear_shifter::Estimator::update(Time now,Input in,Output out){
 	if(speeds.l>speeds.r*TURN_THRESHOLD || speeds.r>speeds.l*TURN_THRESHOLD){
 		recommended=out;
 		logger << "turning\n";
+		logger.endMessage();
 		return;
 	}
 
@@ -65,11 +67,13 @@ void Gear_shifter::Estimator::update(Time now,Input in,Output out){
 	if(mean_speed<LOW_SPEED_THRESHOLD){
 		recommended=Output::LOW;
 		logger << "speed low\n";
+		logger.endMessage();
 		return;
 	}
 	if(mean_speed>HIGH_SPEED_THRESHOLD){
 		recommended=Output::HIGH;
 		logger << "speed high\n";
+		logger.endMessage();
 		return;
 	}
 

@@ -245,6 +245,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.lights.climbing = false;//TODO
 		goals.lights.lifter_height = (int)(info.status.lifter.height / 3);
 	}
+
+	logger.endMessage();
 	
 	return goals;
 }

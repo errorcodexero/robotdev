@@ -33,7 +33,7 @@ void DrivebaseController::setParams(paramsInput* input_params) {
     mAngleThreshold = mInputParams->getValue("drivebase:angle:threshold", 1.0);
     mAngleVThreshold = mInputParams->getValue("drivebase:angle:v_threshold", .1);
     mNsamples = mInputParams->getValue("drivebase:samples", 5);
-    mPidResetThreshold = mInputParams->getValue("drivebase:distance:reset_threshold", .1);
+    mPidResetThreshold = mInputParams->getValue("drivebase:reset_threshold", .1);
 }
 
 void DrivebaseController::initDistance(double distance, double angle, double time, bool end_on_stall) {

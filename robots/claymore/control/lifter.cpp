@@ -327,7 +327,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     last.time = now;
 
     logger << "Limit Switches: Top: " << in.top_hall_effect << "   Bottom: " << in.bottom_hall_effect << "\n";
-    logger << "Ticks: " << in.ticks << "    Height: " << last.height << "\n";
+    logger << "Ticks: " << in.ticks << "    Height: " << last.height;
 
     logger.endMessage();
 }
@@ -419,10 +419,17 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	nyi
     }
 
+    messageLogger &logger = messageLogger::get();
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+    logger << "Lifter status: " << status_detail.at_top << " " << status_detail.at_bottom << " " << out.power << "\n";
+
     if((status_detail.at_top && out.power > 0.0) ||
        (status_detail.at_bottom && out.power < 0.0) ||
        (status_detail.at_climbed_height && out.power < 0.0))
 	out.power = 0.0;
+
+    logger << "After: " << out.power << "\n";
+    logger.endMessage();
 
     return out;
 }

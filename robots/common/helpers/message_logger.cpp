@@ -59,7 +59,8 @@ bool messageLogger::isSubsystemEnabled(uint64_t subs)
 
 void messageLogger::startMessage(const messageType &type)
 {
-    assert(!mInMessage);
+    if (mInMessage)
+	assert(false) ;
     mCurrentType = type;
     mInMessage = true;
     mCurrentSubsystem = 0 ;
@@ -67,7 +68,11 @@ void messageLogger::startMessage(const messageType &type)
 
 void messageLogger::startMessage(const messageType &type, uint64_t sub)
 {
-    assert(!mInMessage);
+    if (mInMessage) {
+	std::cout << "subsystem :" << sub << "\n";
+	assert(false) ;
+    }
+
     mCurrentType = type;
     mInMessage = true;
     mCurrentSubsystem = sub ;
