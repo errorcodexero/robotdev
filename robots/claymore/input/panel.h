@@ -1,8 +1,10 @@
 #ifndef PANEL_H
 #define PANEL_H 
 
+#include "message_logger.h"
 #include "../util/maybe.h"
 #include "../util/interface.h"
+#include <sstream>
 
 struct Panel{
 	static const unsigned PORT = 2;
@@ -49,5 +51,25 @@ Panel interpret_gamepad(Joystick_data);
 
 Joystick_data driver_station_input_rand();
 Panel rand(Panel*);
+
+inline messageLogger &operator<<(messageLogger &logger, const Panel &panel)
+{
+	std::stringstream strm ;
+
+	strm << panel ;
+	logger << strm.str() ;
+
+	return logger ;
+}
+
+inline messageLogger &operator<<(messageLogger &logger, const Joystick_data &stick)
+{
+	std::stringstream strm ;
+
+	strm << stick ;
+	logger << strm.str() ;
+
+	return logger ;
+}
 
 #endif

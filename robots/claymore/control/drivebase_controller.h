@@ -29,7 +29,7 @@ public:
     /// \param dist the absolute distance to drive to
     /// \param angle the angle to maintain while driving
     /// \param the time when this was requested
-    void initDistance(double dist, double angle, double time);
+    void initDistance(double dist, double angle, double time, bool end_on_stall);
 
     /// \brief rotate to the given angle
     /// \param angle the angle to rotate to
@@ -134,6 +134,16 @@ private:
     // The number of samples to keep to determine if the robot is stalled
     //
     size_t mNsamples;
+
+    //
+    // True if the drivebase is stalled
+    //
+    bool mStalled;
+
+    //
+    // If true, act as though the drivebase has finished when it stalls
+    //
+    bool mEndOnStall;
 
     //
     // If true, ther PID controller for distance has been reset from the long distance

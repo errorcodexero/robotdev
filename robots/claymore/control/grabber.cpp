@@ -1,4 +1,6 @@
 #include "grabber.h"
+#include "subsystems.h"
+#include "message_logger.h"
 #include <cmath>
 
 using namespace std;
@@ -240,18 +242,23 @@ Grabber::Output Grabber::Output_applicator::operator()(Robot_outputs const& r)co
 }
 
 void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output out){
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+
+	logger<<"Grabber:\n";
+
 	paramsInput* input_params = Grabber::grabber_controller.getParams();
 
 	if(!Grabber::grabber_controller.getDoneCalibrating()) {
 		ticks_history.push_back(input.ticks);
-		std::cout << "CALIBRATING: " << ticks_history.back() - ticks_history.front() << std::endl;
+		logger << "CALIBRATING: " << ticks_history.back() - ticks_history.front() << "\n";
 		double samples = input_params->getValue("grabber:samples", 5);
 		if(ticks_history.size() > samples)
 			ticks_history.pop_front();
 		if(ticks_history.size() >= samples && fabs(ticks_history.back() - ticks_history.front()) < input_params->getValue("grabber:calibrate_threshold", 0.1)) {
 			encoder_offset = input.ticks;
 			Grabber::grabber_controller.setDoneCalibrating(true);
-			std::cout << "DONE CALIBRATING" << std::endl;
+			logger << "DONE CALIBRATING" << "\n";
 		}	
 	}
 
@@ -269,10 +276,13 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 	last.outer_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
 	last.inner_limit = last.angle < input_params->getValue("grabber:angle:closed", 0.0);
 
-	std::cout << "Ticks: " << input.ticks << " Angle: " << last.angle << " Inner Limit: " << last.inner_limit << " Outer Limit: " << last.outer_limit << " Has Cube: " << last.has_cube << endl;
-
 	last.dt = time - last.time;
 	last.time = time;
+
+	logger << "Ticks: " << input.ticks << " Angle: " << last.angle << "\n";
+	logger << "Inner Limit: " << last.inner_limit << " Outer Limit: " << last.outer_limit << " Has Cube: " << last.has_cube << "\n";
+
+	logger.endMessage();
 }
 
 Grabber::Status Grabber::Estimator::get()const{
@@ -312,7 +322,7 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 	    (status.inner_limit && out < 0.0)) &&
 	   Grabber::grabber_controller.getDoneCalibrating())
 	    out = 0.0;
-	std::cout << "Grabber: " << out << std::endl;
+
 	return out;
 }
 

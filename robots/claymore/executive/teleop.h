@@ -2,9 +2,11 @@
 #define TELEOP_H
 
 #include "executive.h"
+#include "message_logger.h"
 #include "../util/posedge_trigger_debounce.h"
 #include "../util/posedge_toggle.h"
 #include "../util/quick.h"
+#include <sstream>
 
 struct Teleop : Executive_impl<Teleop> {
 	enum Nudges{FORWARD,BACKWARD,CLOCKWISE,COUNTERCLOCKWISE,NUDGES};
@@ -28,8 +30,8 @@ struct Teleop : Executive_impl<Teleop> {
 		X(Collector_mode, collector_mode) \
 		X(Countdown_timer, eject_timer) \
 		X(bool, started_prep_climb) \
-		X(Posedge_trigger, calibrate_trigger) \
-		X(int,print_number)
+		X(bool, climbing) \
+		X(Posedge_trigger, calibrate_trigger)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 
 	Executive next_mode(Next_mode_info);
@@ -48,4 +50,35 @@ bool operator<(Teleop::Nudge const&,Teleop::Nudge const&);
 bool operator==(Teleop::Nudge const&,Teleop::Nudge const&);
 double set_drive_speed(double,double,double);
 
+inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode mode)
+{
+	#define COLLECTOR_MODES X(DO_NOTHING) X(GRABBING) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
+	
+	switch(mode)
+	{
+	case Teleop::Collector_mode::DO_NOTHING:
+		logger << "DO_NOTHING" ;
+		break ;
+	case Teleop::Collector_mode::GRABBING:
+		logger << "GRABBING" ;
+		break ;
+	case Teleop::Collector_mode::COLLECT_OPEN:
+		logger << "COLLECT_OPEN" ;
+		break ;
+	case Teleop::Collector_mode::COLLECT_CLOSED:
+		logger << "COLLECT_CLOSED" ;
+		break ;
+	case Teleop::Collector_mode::EJECT:
+		logger << "EJECT" ;
+		break ;
+	case Teleop::Collector_mode::DROP:
+		logger << "DROP" ;
+		break ;
+	default:
+		assert(false) ;
+		break ;
+	}
+
+	return logger ;
+}
 #endif

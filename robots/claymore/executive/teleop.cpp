@@ -50,9 +50,13 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_prep_climb(false),print_number(0){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_prep_climb(false),climbing(false){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TELEOP);
+	logger << "Teleop:\n";
+
 	Toplevel::Goal goals;
 	
 	bool enabled = info.in.robot_mode.enabled;
@@ -135,9 +139,11 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			break;
 		default: assert(0);
 	}
-	std::cout << "Collector: " << collector_mode << endl;
-	std::cout << "Intake: " << goals.intake << endl;
-	std::cout << "Grabber: " << goals.grabber << endl;
+	logger << "Collector: " << collector_mode << "\n";
+	logger << "Intake: " << goals.intake << "\n";
+	logger << "Grabber: " << goals.grabber << "\n";
+
+	if(info.status.grabber.has_cube) collector_mode = Collector_mode::DO_NOTHING;
 
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
 		lifter_goal = Lifter::Goal::stop();
@@ -146,43 +152,61 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.floor) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.exchange) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.switch_) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.scale) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.lifter == Panel::Lifter::UP) {
 		lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	if(info.panel.lifter == Panel::Lifter::DOWN) {
 		lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 		collector_mode = Collector_mode::DO_NOTHING;
+		climbing = false;
+		started_prep_climb = false;
 	}
 	goals.lifter = lifter_goal;
 
+	Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
+	if(started_prep_climb && ready(status(info.status.lifter), prep_climb_goal))
+		goals.lifter = Lifter::Goal::low_gear();
 	if(info.panel.climb) {
-		Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
 		if(!started_prep_climb || !ready(status(info.status.lifter), prep_climb_goal)) {
-			std::cout << "NOT READY" << endl;
+			logger << "PREPARING TO CLIMB\n";
+
 			lifter_goal = prep_climb_goal;
 			started_prep_climb = true;
+			climbing = true;
 		} else {
 			if(info.panel.climb_lock) {
-				std::cout << "CLIMBING" << endl;
+				logger << "CLIMBING\n";
+
 				goals.lifter = Lifter::Goal::climb();
 				goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
 			}
 		}
 	}
+	if(climbing) goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
 
 	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
@@ -192,7 +216,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
-	//TODO: Change back to do wings stuff - done for Corvallies
+	//TODO: Change back to do wings stuff - done for Corvallis
 	if(calibrate_trigger(info.panel.wings)) {
 		Lifter::lifter_controller.calibrate();
 		Grabber::grabber_controller.setDoneCalibrating(false);
@@ -207,8 +231,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 
 	if(!info.panel.grabber_auto) {
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::stop();
-		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::open();//go_to_preset(GrabberController::Preset::OPEN);
-		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::close();//go_to_preset(GrabberController::Preset::CLOSED);
+		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::open();
+		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::close();
 	}
 
 	if(!info.panel.intake_auto) {
@@ -221,20 +245,6 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.lights.climbing = false;//TODO
 		goals.lights.lifter_height = (int)(info.status.lifter.height / 3);
 	}
-	
-	#ifdef PRINT_OUTS
-	if(info.in.ds_info.connected && (print_number%10)==0){
-		cout<<"\nencoders:"<<info.status.drive<<"\n";
-		if(info.in.camera.enabled){
-			cout<<"size: "<<info.in.camera.blocks.size()<<" blocks: "<<info.in.camera.blocks<<"\n";
-			/*for (vector<Pixy::Block>::const_iterator it=info.in.camera.blocks.begin();it!=info.in.camera.blocks.end();it++){
-				cout<<"\tarea: "<<(it->width * it->height)<<"\n";
-			}*/
-		}
-		cout<<"\n";
-	}
-	print_number++;
-	#endif
 	
 	return goals;
 }

@@ -1,58 +1,82 @@
-drivebase:distance:p                 0.0166
-drivebase:distance:i                 0.0
-drivebase:distance:d                 0.0
-drivebase:distance:f                 0.0
-drivebase:distance:imax              10.0
+drivebase:distance:p               0.03
+drivebase:distance:i               0.0
+drivebase:distance:d               0.0
+drivebase:distance:f               0.0
+drivebase:distance:imax            10.0
 
-drivebase:angleCorrection:p          -0.02
-drivebase:angleCorrection:i          0.0
-drivebase:angleCorrection:d          0.0
-drivebase:angleCorrection:f          0.0
-drivebase:angleCorrection:imax       1000.0
+drivebase:angleCorrection:p        -0.02
+drivebase:angleCorrection:i        0.0
+drivebase:angleCorrection:d        0.0
+drivebase:angleCorrection:f        0.0
+drivebase:angleCorrection:imax     1000.0
 
-drivebase:angle:p                    0.00665
-drivebase:angle:i                    0.0
-drivebase:angle:d                    0.0
-drivebase:angle:f                    0.0
-drivebase:angle:imax                 1000.0
+drivebase:angle:p                  0.0075
+drivebase:angle:i                  0.015
+drivebase:angle:d                  0.0
+drivebase:angle:f                  0.0
+drivebase:angle:imax               20.0
+drivebase:angle:minv		   -0.3
+drivebase:angle:maxv		   0.3
 
-drivebase:straight:threshold         1.0
-drivebase:angle:threshold            1.0
-drivebase:angle:v_threshold          0.1
+drivebase:straight:threshold       1.0
+drivebase:angle:threshold          4.0
+drivebase:angle:v_threshold        10.0
 
-drivebase:samples                    5
-drivebase:distance:reset_threshold   0.1
+drivebase:reset_threshold          0.1
+drivebase:samples                  5
+
+drivebase:distance:reset:p 	   0
+drivebase:distance:reset:i         0.02
+drivebase:distance:reset:d         0
+drivebase:distance:reset:f         0
+drivebase:distance:reset:imax      10
 
 
-lifter:p                           0.01
-lifter:i                           0.0
-lifter:d                           0.0
-lifter:f                           0.0
-lifter:imax                        1000.0
+lifter:up:p                        0.1
+lifter:up:i                        0.0166
+lifter:up:d                        0.0
+lifter:up:f                        0.1
+lifter:up:imax                     6.0
+
+lifter:down:p                      0.025
+lifter:down:i                      0.0166                     
+lifter:down:d                      0.0
+lifter:down:f                      0.1
+lifter:down:imax                   6.0
 
 lifter:threshold                   1.0
 
 lifter:climbing_difference         100.0
 
-lifter:height:floor                0.0
-lifter:height:exchange             3.0
-lifter:height:switch               19.0
-lifter:height:scale                72.0
-lifter:height:prep_climb           84.0
-lifter:height:top_limit            96.0
+lifter:climb_power                 0.6
+lifter:manual_power:low            0.4
+lifter:manual_power:high           0.8
+
+lifter:hold_power:low_gear         0.0
+lifter:hold_power:high_gear        0.1
+
+lifter:height:floor                10.375
+lifter:height:exchange             14.5
+lifter:height:drop_grabber         17.5
+lifter:height:switch               36.0
+lifter:height:scale                82.0
+lifter:height:prep_climb           75.5
+lifter:height:top_limit            89.9
 
 
 grabber:p                          0.01
 grabber:i                          0.0
 grabber:d                          0.0
-grabber:f                          0.0
-grabber:imax                       0.0
+grabber:f                          -0.2
+grabber:imax                       20.0
 
 grabber:threshold                  1.0
+
+grabber:hold_power                 -0.3
 
 grabber:samples                    5
 grabber:calibrate_threshold        0.1
 
-grabber:angle:closed               0.0
-grabber:angle:open                 30.0
+grabber:angle:closed               -10.0
+grabber:angle:open                 45.0
 grabber:angle:stowed               90.0

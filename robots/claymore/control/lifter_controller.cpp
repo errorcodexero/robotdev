@@ -150,6 +150,7 @@ bool LifterController::calibrating() {
 double LifterController::presetToHeight(Preset preset) {
     double floor_height = mInputParams->getValue("lifter:height:floor", 0.0);
     double exchange_height = mInputParams->getValue("lifter:height:exchange", 3.0);
+    double drop_grabber_height = mInputParams->getValue("lifter:height:drop_grabber", 6.0);
     double switch_height = mInputParams->getValue("lifter:height:switch", 19.0);
     double scale_height = mInputParams->getValue("lifter:height:scale", 72.0);
     double prep_climb_height = mInputParams->getValue("lifter:height:prep_climb", 84.0);
@@ -157,6 +158,7 @@ double LifterController::presetToHeight(Preset preset) {
     switch(preset) {
     case Preset::FLOOR: return floor_height;
     case Preset::EXCHANGE: return exchange_height;
+    case Preset::DROP_GRABBER: return drop_grabber_height;
     case Preset::SWITCH: return switch_height;
     case Preset::SCALE: return scale_height;
     case Preset::PREP_CLIMB: return prep_climb_height;
