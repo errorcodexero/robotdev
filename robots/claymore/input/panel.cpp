@@ -22,7 +22,7 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 	X(drop)\
 	X(climb)\
 	X(wings)\
-	X(learn)
+	X(calibrate)
 
 #define TWO_POS_SWITCHES \
 	X(grabber_auto)\
@@ -193,7 +193,7 @@ Panel interpret_oi(Joystick_data d){
 		p.drop = d.button[6];
 		p.climb = d.button[7];
 		p.wings = d.button[8];
-		p.learn = d.button[11];
+		p.calibrate = d.button[11];
 	}
 	{//Dials
 	}
@@ -249,12 +249,13 @@ Panel interpret_gamepad(Joystick_data d){
 	
 	p.auto_select=0;
 
-	p.wings = d.button[Gamepad_button::LB];
+	p.calibrate = d.button[Gamepad_button::LB];
 	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
 	p.climb_lock = d.button[Gamepad_button::START];
+	p.wings = d.button[Gamepad_button::BACK];
 
 	bool alternate_operation = d.button[Gamepad_button::RB];
 

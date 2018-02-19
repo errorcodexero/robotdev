@@ -100,11 +100,12 @@ class Wait: public Step_impl_inner<Wait>{
 //Drive straight a specified distance
 class Drive:public Step_impl_inner<Drive>{
 	Inch target_distance;
+	bool high_gear;
 	bool end_on_stall;
 	bool init;
 
 	public:
-	explicit Drive(Inch, bool end_on_stall=false);
+	explicit Drive(Inch, bool, bool end_on_stall=false);
 
 	Toplevel::Goal run(Run_info,Toplevel::Goal);
 	Toplevel::Goal run(Run_info);
@@ -211,6 +212,11 @@ struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
 	Step::Status done(Next_mode_info);
 	std::unique_ptr<Step_impl> clone()const;
 	bool operator==(Lifter_to_height const&)const;
+};
+
+//Move the lifter to a specified preset
+struct Lifter_to_preset: Lifter_to_height{
+	explicit Lifter_to_preset(LifterController::Preset, double);
 };
 
 //Calibrate the grabber at the current angle

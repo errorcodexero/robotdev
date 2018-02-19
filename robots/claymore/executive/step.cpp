@@ -158,7 +158,7 @@ bool Wait::operator==(Wait const& b)const{
 // Drive: Drive straight a specified distance
 //
 
-Drive::Drive(Inch target, bool end_on_stall):target_distance(target),end_on_stall(end_on_stall),init(false){}
+Drive::Drive(Inch target, bool high_gear, bool end_on_stall):target_distance(target),high_gear(high_gear),end_on_stall(end_on_stall),init(false){}
 
 Step::Status Drive::done(Next_mode_info info){
 	return ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
@@ -175,7 +175,7 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
 		init = true;
 	}
 	goals.drive = Drivebase::Goal::drive_straight();
-	goals.gear_shifter = Gear_shifter::Goal::LOW;
+	goals.gear_shifter = high_gear ? Gear_shifter::Goal::HIGH : Gear_shifter::Goal::LOW;
 	return goals;
 }
 
@@ -408,6 +408,12 @@ unique_ptr<Step_impl> Lifter_to_height::clone()const{
 bool Lifter_to_height::operator==(Lifter_to_height const& b)const{
 	return target_height == b.target_height && time == b.time && init == b.init;
 }
+
+//
+// Lifter_to_preset: Move the lifter to a specified preset
+//
+
+Lifter_to_preset::Lifter_to_preset(LifterController::Preset target_preset, double time):Lifter_to_height(Lifter::lifter_controller.presetToHeight(target_preset), time){}
 
 //
 // Calibrate_grabber: Calibrate the grabber at the current angle

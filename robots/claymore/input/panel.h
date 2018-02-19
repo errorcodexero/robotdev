@@ -20,7 +20,7 @@ struct Panel{
 	bool drop;
 	bool climb;
 	bool wings;
-	bool learn;
+	bool calibrate;
 	//2 position swicthes:
 	bool grabber_auto;
 	bool intake_auto;

@@ -143,7 +143,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	logger << "Intake: " << goals.intake << "\n";
 	logger << "Grabber: " << goals.grabber << "\n";
 
-	if(info.status.grabber.has_cube) collector_mode = Collector_mode::DO_NOTHING;
+	if(info.status.grabber.has_cube) {
+		collector_mode = Collector_mode::DO_NOTHING;
+		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+	}
 
 	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
 		lifter_goal = Lifter::Goal::stop();
@@ -216,20 +219,19 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
-	//TODO: Change back to do wings stuff - done for Corvallis
-	if(calibrate_trigger(info.panel.wings)) {
+	if(calibrate_trigger(info.panel.calibrate)) {
 		Lifter::lifter_controller.setCalibrate(true);
 		Grabber::grabber_controller.setDoneCalibrating(false);
 	} else {
 		Lifter::lifter_controller.setCalibrate(false);	
 	}
-	if(info.panel.wings) {
+	if(info.panel.calibrate) {
 		goals.lifter = Lifter::Goal::calibrate();
 		goals.grabber = Grabber::Goal::calibrate();
 	}
 
-	//if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
-	//goals.wings = wings_goal;
+	if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
+	goals.wings = wings_goal;
 
 	if(!info.panel.grabber_auto) {
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::stop();
