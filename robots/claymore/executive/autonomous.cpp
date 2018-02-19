@@ -6,6 +6,8 @@
 
 using namespace std;
 
+#define AUTOMODE_TEST 3
+
 //
 // An auto mode program that justs performs calibration
 //
@@ -45,6 +47,31 @@ Executive same_scale
 	    {   
 		Calibrate_grabber{}
 	    },
+			Step
+			{   
+				Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
+			},
+			Step
+			{
+				Drive{300}
+			},
+		        Step
+			{
+				Rotate{-90.0}
+			},
+			Step
+			{
+				Drive{9}
+			},
+			Step
+			{
+				Lifter_to_height{82.0, 0.0}
+			},
+			Step
+			{
+				Eject()
+			}
+			
 	},
 	Executive
 	{
@@ -142,15 +169,7 @@ Executive opposite_switch
 			},
 		        Step
 			{
-				Wait{1.0}
-			},
-		        Step
-			{
 				Rotate{-90.0}
-			},
-		        Step
-			{
-				Wait{1.0}
 			},
 		        Step
 			{
@@ -158,15 +177,7 @@ Executive opposite_switch
 			},
 		        Step
 			{
-				Wait{1.0}
-			},
-		        Step
-			{
 				Rotate{90.0}
-			},
-		        Step
-			{
-				Wait{1.0}
 			},
 			Step
 			{
@@ -174,7 +185,7 @@ Executive opposite_switch
 			},
 		        Step
 			{
-				Drive{56}
+				Drive{56, true}
 			},
 		        Step
 			{
@@ -534,6 +545,16 @@ Executive get_auto_mode(Next_mode_info info)
     
     Executive auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
 
+#elif AUTOMODE_TEST == 23
+	//
+	// AUTOMODE_TEST = 22, decide between same side and opposite side for switch
+	//
+    logger.startMessage(messageLogger::messageType::info) ;
+    logger << "get_auto_mode - AUTOMODE_TEST == 22, decide switch side" ;
+    logger.endMessage() ;
+    
+    Executive auto_program = same_scale ;
+
 #else
 	Executive auto_program = calibrate_only ;
 	
@@ -555,7 +576,7 @@ Executive get_auto_mode(Next_mode_info info)
 		logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
 		logger.endMessage() ;
 	
-		return calibrate_only ;
+		return opposite_switch ;
     }
 
     logger.startMessage(messageLogger::messageType::error) ;
