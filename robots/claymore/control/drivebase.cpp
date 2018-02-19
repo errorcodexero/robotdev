@@ -25,6 +25,9 @@ using namespace std;
 #define R_MOTOR_LOC_1 3
 #define R_MOTOR_LOC_2 4
 #define R_MOTOR_LOC_3 5
+
+#define SHIFTER_SOLENOID_LOW 0
+#define SHIFTER_SOLENOID_HIGH 3
 #endif
 
 
@@ -85,15 +88,6 @@ int inches_to_ticks(const double inches){
 #define R_ENCODER_LOC 1
 
 Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const{
-	auto set=[&](unsigned index,Digital_in value){
-		all.digital_io.in[index]=value;
-	};
-	auto encoder=[&](unsigned a,unsigned b,Encoder_info e){
-		set(a,e.first);
-		set(b,e.second);
-	};
-	encoder(L_ENCODER_PORTS,in.left);
-	encoder(R_ENCODER_PORTS,in.right);
 	all.digital_io.encoder[L_ENCODER_LOC] = -inches_to_ticks(in.distances.l);
 	all.digital_io.encoder[R_ENCODER_LOC] = inches_to_ticks(in.distances.r);
 	all.navx.angle = in.angle;
@@ -101,12 +95,7 @@ Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const
 }
 
 Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)const{
-	auto encoder_info=[&](unsigned a, unsigned b){
-		return make_pair(in.digital_io.in[a],in.digital_io.in[b]);
-	};
 	return Drivebase::Input{
-		encoder_info(L_ENCODER_PORTS),
-		encoder_info(R_ENCODER_PORTS),
 		{
 			-ticks_to_inches(encoderconv(in.digital_io.encoder[L_ENCODER_LOC])),
 			ticks_to_inches(encoderconv(in.digital_io.encoder[R_ENCODER_LOC]))
@@ -234,6 +223,7 @@ set<Drivebase::Status> examples(Drivebase::Status*){
 		{0.0,0.0},
 		{0,0},
 		0.0,
+		false,
 		0.0,
 		0.0
 	}};
@@ -255,15 +245,23 @@ std::ostream& operator<<(std::ostream& o, Drivebase::Goal::Mode a){
 	nyi
 }
 
-Drivebase::Goal::Goal():mode_(Drivebase::Goal::Mode::ABSOLUTE),distances_({0,0}),angle_(0),left_(0),right_(0){}
+std::ostream& operator<<(std::ostream& o, Drivebase::Goal::Gear a) {
+	switch(a) {
+	case Drivebase::Goal::Gear::LOW:
+		return o << "LOW";
+	case Drivebase::Goal::Gear::HIGH:
+		return o << "HIGH";
+	case Drivebase::Goal::Gear::AUTO:
+		return o << "AUTO";
+	default:
+		assert(false);
+	}
+}
+
+Drivebase::Goal::Goal():mode_(Drivebase::Goal::Mode::ABSOLUTE),left_(0),right_(0),gear_(Gear::AUTO){}
 
 Drivebase::Goal::Mode Drivebase::Goal::mode()const{
 	return mode_;
-}
-
-Drivebase::Distances Drivebase::Goal::distances()const{
-	assert(mode_ == Drivebase::Goal::Mode::DRIVE_STRAIGHT);
-	return distances_;
 }
 
 double Drivebase::Goal::right()const{
@@ -276,16 +274,17 @@ double Drivebase::Goal::left()const{
 	return left_;
 }
 
-double Drivebase::Goal::angle()const{
-	assert(mode_ == Drivebase::Goal::Mode::ROTATE || mode_ == Drivebase::Goal::Mode::DRIVE_STRAIGHT);
-	return angle_;
+Drivebase::Goal::Gear Drivebase::Goal::gear()const{
+	assert(mode_ == Drivebase::Goal::Mode::ABSOLUTE);
+	return gear_;
 }
 
-Drivebase::Goal Drivebase::Goal::absolute(double left,double right){
+Drivebase::Goal Drivebase::Goal::absolute(double left, double right, Gear gear){
 	Drivebase::Goal a;
 	a.mode_ = Drivebase::Goal::Mode::ABSOLUTE;
 	a.left_ = left;
 	a.right_ = right;
+	a.gear_ = gear;
 	return a;
 }
 
@@ -309,7 +308,7 @@ ostream& operator<<(ostream& o,Drivebase::Goal const& a){
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 			break;
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			o<<a.left()<<" "<<a.right();
+			o << a.left() << " " << a.right() << a.gear();
 			break;
 		default: 
 			nyi
@@ -326,6 +325,7 @@ bool operator==(Drivebase::Goal const& a,Drivebase::Goal const& b){
 		case Drivebase::Goal::Mode::ABSOLUTE:
 			X(left())
 			X(right())
+			X(gear())
 			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 		case Drivebase::Goal::Mode::ROTATE:
@@ -346,6 +346,7 @@ bool operator<(Drivebase::Goal const& a,Drivebase::Goal const& b){
 		case Drivebase::Goal::Mode::ABSOLUTE:
 			CMP(left())
 			CMP(right())
+			CMP(gear())
 			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 		case Drivebase::Goal::Mode::ROTATE:
@@ -360,20 +361,18 @@ CMP_OPS(Drivebase::Output,DRIVEBASE_OUTPUT)
 
 set<Drivebase::Output> examples(Drivebase::Output*){
 	return {
-		Drivebase::Output{0,0,false},
-		Drivebase::Output{1,1,false}
+		Drivebase::Output{0,0,false,false},
+		Drivebase::Output{1,1,false,false}
 	};
 }
 
 set<Drivebase::Input> examples(Drivebase::Input*){
-	auto d=Digital_in::_0;
-	auto p=make_pair(d,d);
 	return {Drivebase::Input{
-		p,p,{0,0},0.0
+		{0,0},0.0
 	}};
 }
 
-Drivebase::Estimator::Estimator():last({{0,0},{0,0},0.0,0.0,0.0}){}
+Drivebase::Estimator::Estimator():last({{0,0},{0,0},0.0,false,0.0,0.0}){}
 
 Drivebase::Status_detail Drivebase::Estimator::get()const{
 	return last;
@@ -410,6 +409,8 @@ double get_output(Drivebase::Output out,Drivebase::Motor m){
 }
 
 void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output out){
+	paramsInput* input_params = Drivebase::drivebase_controller.getParams();
+
 	last.distances = in.distances;
 	last.angle = in.angle;
 
@@ -419,6 +420,27 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 		last.speeds.l = (last.distances.l-in.distances.l)/POLL_TIME;
 		last.speeds.r = (last.distances.r-in.distances.r)/POLL_TIME;
 		speed_timer.set(POLL_TIME);
+	}
+
+	if(last_shifter_output != out.high_gear) {
+		double shift_separation_time = input_params->getValue("drivebase:shifter:shift_separation_time", 2.0);
+		shift_timer.set(shift_separation_time);
+	}
+	shift_timer.update(now, true);
+	last_shifter_output = out.high_gear;
+
+	double turn_multiplier = input_params->getValue("drivebase:shifter:turn_multiplier", 1.2);
+	bool turning = (last.speeds.r > last.speeds.l * turn_multiplier) || (last.speeds.l > last.speeds.r * turn_multiplier);
+
+	if(shift_timer.done() && !turning) {
+		double slow_shift_threshold = input_params->getValue("drivebase:shifter:slow_threshold", 5.0);
+		double fast_shift_threshold = input_params->getValue("drivebase:shifter:fast_threshold", 5.0);
+		
+		double speed_average = (last.speeds.l + last.speeds.r) / 2.0;
+		if(speed_average < slow_shift_threshold)
+			last.high_gear_recommended = false;
+		if(speed_average > fast_shift_threshold)
+			last.high_gear_recommended = true;
 	}
 
 	last.dt = now - last.now;
@@ -442,15 +464,15 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;
 #endif
 
+	robot.solenoid[SHIFTER_SOLENOID_LOW] = !b.high_gear;
+	robot.solenoid[SHIFTER_SOLENOID_HIGH] = b.high_gear;
+
 	auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 		robot.digital_io[a] = Digital_out::encoder(loc,1);
 		robot.digital_io[b] = Digital_out::encoder(loc,0);
 	};
-	
 	set_encoder(L_ENCODER_PORTS,L_ENCODER_LOC);
 	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);
-
-	robot.navx.zero_yaw = b.zero_yaw;
 
 	return robot;
 }
@@ -460,7 +482,7 @@ Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)c
 	return Drivebase::Output{	
 		robot.talon_srx[L_MOTOR_LOC_1].power_level,
 		-robot.talon_srx[R_MOTOR_LOC_1].power_level,
-		robot.navx.zero_yaw
+		robot.solenoid[SHIFTER_SOLENOID_HIGH]
 	};
 }
 
@@ -489,7 +511,13 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			out = Drivebase::Output{goal.left(),goal.right(),false};
+			out = Drivebase::Output{goal.left(), goal.right(), false};
+
+			if(goal.gear() == Drivebase::Goal::Gear::AUTO)
+				out.high_gear = status.high_gear_recommended;
+			else
+				out.high_gear = goal.gear() == Drivebase::Goal::Gear::HIGH;
+	
 			Drivebase::drivebase_controller.idle(status.distances.l, status.distances.r, status.angle, status.dt, status.now) ;
 			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:

@@ -22,6 +22,10 @@ public:
     /// \param pi_p pointer to the parameter input reader
     void setParams(paramsInput *pi_p);
 
+    /// \brief get the params object used to extract parameters from the params file
+    /// \returns the params object
+    paramsInput* getParams();
+
     /// \brief initialize the drive controller to drive a fixed distance value.
     /// It is assumed that the update method below will be called within the robot
     /// loop to drive this fixed distance.  This method initializes the internal state

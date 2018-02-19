@@ -43,6 +43,10 @@ void DrivebaseController::setParams(paramsInput* input_params) {
     mPidResetThreshold = mInputParams->getValue("drivebase:reset_threshold", .1);
 }
 
+paramsInput* DrivebaseController::getParams() {
+    return mInputParams;
+}
+
 void DrivebaseController::initDistance(double distance, double angle, double time, bool end_on_stall) {
 
     mMode = Mode::DISTANCE;
