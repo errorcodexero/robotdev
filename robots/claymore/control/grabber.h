@@ -1,12 +1,14 @@
 #ifndef	GRABBER_H
 #define GRABBER_H
 
-#include <set>
-#include <list>
+#include "message_logger.h"
 #include "../util/interface.h"
 #include "../util/countdown_timer.h"
 #include "nop.h"
 #include "grabber_controller.h"
+#include <set>
+#include <list>
+#include <sstream>
 
 struct Grabber{
 	static GrabberController grabber_controller;
@@ -117,5 +119,15 @@ bool operator!=(Grabber,Grabber);
 Grabber::Output control(Grabber::Status,Grabber::Goal);
 Grabber::Status status(Grabber::Status);
 bool ready(Grabber::Status,Grabber::Goal);
+
+inline messageLogger &operator<<(messageLogger &logger, const Grabber::Goal &goal)
+{
+	std::stringstream strm ;
+
+	strm << goal ;
+	logger << strm.str() ;
+	return logger ;
+}
+
 
 #endif

@@ -149,6 +149,8 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//
 		logger.enableSubsystem(SUBSYSTEM_ALL) ;
 
+		logger.disableSubsystem(SUBSYSTEM_PDPCURRENTS) ;
+
 		std::shared_ptr<messageLoggerDest> dest_p ;
 
 		dest_p = std::make_shared<messageDestStream>(std::cout) ;
