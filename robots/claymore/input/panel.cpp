@@ -7,7 +7,7 @@
 
 using namespace std;
 
-const unsigned AUTO_SELECTOR_AXIS = 0;//TODO rework these constants
+const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 
 #define BUTTONS \
 	X(floor)\
@@ -141,7 +141,7 @@ Panel interpret_oi(Joystick_data d){
 	}
 	{//two position switches
 		p.grabber_auto = [&]{
-			float grabber_auto = d.axis[1];
+			float grabber_auto = d.axis[5];
 			return (grabber_auto < 0) ? false : true;
 		}();
 		p.intake_auto = d.button[10];
@@ -164,7 +164,7 @@ Panel interpret_oi(Joystick_data d){
 			return Panel::Intake::IN;
 		}();
 		p.collector_mode = [&]{
-			float collector_mode = d.axis[5];
+			float collector_mode = d.axis[3];
 			static const float NO_AUTO=-1,SEMI_AUTO=0,FULL_AUTO=1;
 			if(set_button(collector_mode,NO_AUTO,SEMI_AUTO,FULL_AUTO)) return Panel::Collector_mode::SEMI_AUTO;
 			if(set_button(collector_mode,SEMI_AUTO,FULL_AUTO,ARTIFICIAL_MAX)) return Panel::Collector_mode::FULL_AUTO;
