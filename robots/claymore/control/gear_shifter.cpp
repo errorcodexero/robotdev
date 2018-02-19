@@ -72,13 +72,15 @@ void Gear_shifter::Estimator::update(Time now,Input in,Output out){
 	}
 	if(mean_speed>HIGH_SPEED_THRESHOLD){
 		recommended=Output::HIGH;
-		logger << "speed high\n";
+		recommended=Output::LOW ;
+		logger << "speed high (temporary low)\n";
 		logger.endMessage();
 		return;
 	}
 
 	logger << "none\n";
 	recommended=out;
+
 
 	logger.endMessage();
 }

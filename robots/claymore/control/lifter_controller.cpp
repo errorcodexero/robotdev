@@ -1,5 +1,6 @@
 #include "lifter_controller.h"
 #include "message_logger.h"
+#include "../subsystems.h"
 #include <cmath>
 
 LifterController::LifterController() {
@@ -45,7 +46,7 @@ void LifterController::moveToHeight(double height, double current_height, double
     mHeightPID.Init(p, i, d, f, -0.4, 0.4, imax);
 
     messageLogger &logger = messageLogger::get();
-    logger.startMessage(messageLogger::messageType::debug);
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
     logger << "moveToHeight, height = " << height;
     logger << ", pid " << p << " " << i << " " << d << " " << f << " " << imax;
     logger.endMessage();
@@ -82,7 +83,7 @@ void LifterController::update(double height, double time, double dt, double& out
 	}
 	mLastVoltage = out;
 
-	logger.startMessage(messageLogger::messageType::debug);
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 	logger << "lifter:update(HEIGHT)";
 	logger << ", time " << time;
 	logger << ", dt "<< dt;
@@ -107,7 +108,7 @@ void LifterController::update(double height, double time, double dt, double& out
 void LifterController::idle(double height, double time, double dt) {
     if (mDataDumpMode) {
 	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug);
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 	logger << "IDLE: dt " << dt;
 	logger << ", time " << time;
 	logger << ", height " << height;

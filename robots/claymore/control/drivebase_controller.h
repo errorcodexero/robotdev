@@ -202,9 +202,15 @@ private:
     double mLastLeftVoltage ;
     double mLastRightVoltage ;
 
+#ifdef TUNING
     static std::string AngleTargetName ;
     static std::string AngleActualName ;
     static std::string AngleVelocityName ;
+    static std::string AnglePName ;
+    static std::string AngleIName ;
+    static std::string AngleDName ;
+	static std::string AngleTimeName ;
+#endif
 };
 
 #endif

@@ -149,7 +149,10 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//
 		//logger.enableSubsystem(SUBSYSTEM_ALL) ;
 		
+		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
+		// logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		// logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
 
 		std::shared_ptr<messageLoggerDest> dest_p ;
 
@@ -467,7 +470,20 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		}
 		logger.endMessage() ;
 		
-
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DIGITALIO) ;
+		logger << "Encoders:" ;
+		for(size_t i = 0 ; i < in.digital_io.encoder.size() ; i++)
+		{
+			if (i != 0)
+				logger << ", " ;
+			logger << " " << i << " " ;
+			if (in.digital_io.encoder[i])
+				logger << *in.digital_io.encoder[i] ;
+			else
+				logger << "N/A" ;
+		}
+		logger.endMessage() ;
+		
 #ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;

@@ -20,7 +20,7 @@ WPILIB=true
 #
 # Add flags to indicate the robot we are building
 #
-ADDCXXFLAGS = -DCLAYMORE -I../util -I../executive -I../input -I. -I..
+ADDCXXFLAGS = -DTUNING -DCLAYMORE -I../util -I../executive -I../input -I. -I..
 
 #
 # define the source code files

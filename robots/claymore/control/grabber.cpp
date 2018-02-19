@@ -12,8 +12,8 @@ using namespace std;
 #define CUBE_SENSOR_ADDRESS 12
 #define LIMIT_SWITCH_ADDRESS 11
 
-#define MANUAL_GRABBER_POWER .60 //TODO tune
-#define CALIBRATE_POWER .40 //TODO tune
+#define MANUAL_GRABBER_POWER .60 	//TODO tune
+#define CALIBRATE_POWER .80 	   //TODO tune
 
 GrabberController Grabber::grabber_controller;
 
@@ -251,11 +251,21 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
 
 	if(!Grabber::grabber_controller.getDoneCalibrating()) {
 		ticks_history.push_back(input.ticks);
-		logger << "CALIBRATING: " << ticks_history.back() - ticks_history.front() << "\n";
-		double samples = input_params->getValue("grabber:samples", 5);
+		logger << "CALIBRATING:" ;
+		for(const auto &v : ticks_history)
+			logger << " " << v ;
+		
+		size_t samples = static_cast<int>(input_params->getValue("grabber:samples", 5.0) + 0.5) ;
 		if(ticks_history.size() > samples)
 			ticks_history.pop_front();
-		if(ticks_history.size() >= samples && fabs(ticks_history.back() - ticks_history.front()) < input_params->getValue("grabber:calibrate_threshold", 0.1)) {
+
+		double delta = ticks_history.back() - ticks_history.front() ;
+		double thresh = input_params->getValue("grabber:calibrate_threshold", 0.1) ;
+		logger << ", samples " << samples ;
+		logger << ", delta " << delta ;
+		logger << ", thresh " << thresh ;
+		
+		if (ticks_history.size() == samples && fabs(delta) < thresh) {
 			encoder_offset = input.ticks;
 			Grabber::grabber_controller.setDoneCalibrating(true);
 			logger << "DONE CALIBRATING" << "\n";
@@ -321,8 +331,9 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 	if(((status.outer_limit && out > 0.0) ||
 	    (status.inner_limit && out < 0.0)) &&
 	   Grabber::grabber_controller.getDoneCalibrating())
+	{
 	    out = 0.0;
-
+	}
 	return out;
 }
 

@@ -11,7 +11,7 @@ GrabberController::GrabberController() {
     mMaxChange = 6.0;
     mDataDumpMode = false;
     mDataDumpStartTime = 0.0;
-    mDoneCalibrating = true;
+    mDoneCalibrating = false;
 }
 
 void GrabberController::setParams(paramsInput* input_params) {
@@ -51,53 +51,53 @@ void GrabberController::update(double angle, double time, double dt, double& out
     messageLogger &logger = messageLogger::get();
 	
     if(mMode == Mode::ANGLE) {
-	if(std::fabs(mTarget - angle) < mAngleThreshold)
-	    mMode = Mode::IDLE;
+		if(std::fabs(mTarget - angle) < mAngleThreshold)
+			mMode = Mode::IDLE;
 
-	out = mAnglePID.getOutput(mTarget, angle, dt);
+		out = mAnglePID.getOutput(mTarget, angle, dt);
 
-	double chg = std::fabs(out - mLastVoltage);
-	if (chg > mMaxChange * dt) {
-	    if (out > mLastVoltage)
-		out = mLastVoltage + mMaxChange * dt;
-	    else
-		out = mLastVoltage - mMaxChange * dt;
-	}
-	mLastVoltage = out;
+		double chg = std::fabs(out - mLastVoltage);
+		if (chg > mMaxChange * dt) {
+			if (out > mLastVoltage)
+				out = mLastVoltage + mMaxChange * dt;
+			else
+				out = mLastVoltage - mMaxChange * dt;
+		}
+		mLastVoltage = out;
 
-	logger.startMessage(messageLogger::messageType::debug);
-	logger << "grabber:update(ANGLE)";
-	logger << ", time " << time;
-	logger << ", dt "<< dt;
-	logger << ", target " << mTarget;
-	logger << ", angle " << angle;
-	logger << ", out " << out;
-	if (mMode == Mode::IDLE)
-	{
-	    double elapsed= time - mStartTime ;
-	    logger << ", SUCCESS , " << elapsed << " seconds" ;
-	}
-	logger.endMessage();
+		logger.startMessage(messageLogger::messageType::debug);
+		logger << "grabber:update(ANGLE)";
+		logger << ", time " << time;
+		logger << ", dt "<< dt;
+		logger << ", target " << mTarget;
+		logger << ", angle " << angle;
+		logger << ", out " << out;
+		if (mMode == Mode::IDLE)
+		{
+			double elapsed= time - mStartTime ;
+			logger << ", SUCCESS , " << elapsed << " seconds" ;
+		}
+		logger.endMessage();
     }
 
     if(mMode == Mode::IDLE) {
-	out = mInputParams->getValue("grabber:hold_power", -0.1);
-	mDataDumpMode = true;
-	mDataDumpStartTime = time;
+		out = mInputParams->getValue("grabber:hold_power", -0.1);
+		mDataDumpMode = true;
+		mDataDumpStartTime = time;
     }
 }
 
 void GrabberController::idle(double angle, double time, double dt) {
     if (mDataDumpMode) {
-	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug);
-	logger << "IDLE: dt " << dt;
-	logger << ", time " << time;
-	logger << ", angle " << angle;
-	logger.endMessage();
+		messageLogger &logger = messageLogger::get();
+		logger.startMessage(messageLogger::messageType::debug);
+		logger << "IDLE: dt " << dt;
+		logger << ", time " << time;
+		logger << ", angle " << angle;
+		logger.endMessage();
 
-	if (time - mDataDumpStartTime > 5.0)
-	    mDataDumpMode = false;
+		if (time - mDataDumpStartTime > 5.0)
+			mDataDumpMode = false;
     }
 }
 
@@ -109,8 +109,8 @@ void GrabberController::updateAngleOnChange(double angle, double time) {
     // not initialize for the new angle
     //
     if (std::fabs(angle - mLastTarget) > mAngleThreshold) {
-	moveToAngle(angle, time);
-	mLastTarget = angle;
+		moveToAngle(angle, time);
+		mLastTarget = angle;
     }
 }
 

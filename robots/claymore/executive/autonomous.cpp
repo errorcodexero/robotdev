@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define AUTOMODE_TEST 5
+#define AUTOMODE_TEST 23
 
 //
 // An auto mode program that justs performs calibration
@@ -41,6 +41,7 @@ Executive calibrate_only
     }
 };
 
+#ifndef OLD
 Executive same_scale
 {
     Chain
@@ -94,7 +95,58 @@ Executive same_scale
 	}
     }
 };
+#else
 
+Executive same_scale
+{
+    Chain
+    {
+	vector<Step>
+	{
+	    Step
+	    {
+		StartAuto{}
+	    },
+	    Step
+	    {   
+		Calibrate_lifter{}
+	    },
+	    Step
+	    {   
+		Calibrate_grabber{}
+	    },
+	    Step
+	    {   
+		Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
+	    },
+	    Step
+	    {
+		Drive{260, false}
+	    },
+	    Step
+	    {
+		Rotate{-45.0}
+	    },
+	    Step
+	    {
+		Lifter_to_height{82.0, 0.0}
+	    },
+	    Step
+	    {
+		Eject{}
+	    },	
+	    Step
+	    {
+		EndAuto()
+	    }
+	},
+	Executive
+	{
+	    Teleop()
+	}
+    }
+};
+#endif
 Executive opposite_scale
 {
     Chain
@@ -199,8 +251,12 @@ Executive opposite_switch
 		Calibrate_lifter{}
 	    },
 	    Step
+	    {   
+		Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
+	    },
+	    Step
 	    {
-		Drive{52.0, false}
+		Drive{40.0, false}
 	    },
 	    Step
 	    {
@@ -220,7 +276,7 @@ Executive opposite_switch
 	    },
 	    Step
 	    {
-		Drive{56, false, true}
+		Drive{68, false, true}
 	    },
 	    Step
 	    {
@@ -289,11 +345,8 @@ Executive get_auto_mode(Next_mode_info info)
     logger.startMessage(messageLogger::messageType::info) ;
     logger << "get_auto_mode - AUTOMODE_TEST == 0, do nothing" ;
     logger.endMessage() ;
-    
-    const Executive auto_program
-    {
-		Teleop{}
-    };
+
+	Executive auto_program = calibrate_only ;
 	
 #elif AUTOMODE_TEST == 1
     //
@@ -404,23 +457,35 @@ Executive get_auto_mode(Next_mode_info info)
 				{
 					Rotate{-90.0}
 				},
-					Step
-					{
-						Wait{2.0}
-					},
-						Step
-						{
-							Rotate{90.0}
-						},
-							Step
-							{
-								Wait{2.0}
-							},
-								},
-				Executive
+				Step
 				{
-					Teleop()
-						}
+					Wait{2.0}
+				},
+				Step
+				{
+					Rotate{90.0}
+				},
+				Step
+				{
+					Wait{2.0}
+				},
+				Step
+				{
+					Rotate{-45.0}
+				},
+				Step
+				{
+					Wait{2.0}
+				},
+				Step
+				{
+					Rotate{45.0}
+				},
+			},
+			Executive
+			{
+				Teleop()
+			}
 		}
     };
 
