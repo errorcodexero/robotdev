@@ -629,7 +629,6 @@ Eject::Eject(){
 
 Step::Status Eject::done(Next_mode_info info){
     Step::Status ret = Step::Status::UNFINISHED ;
-    const char *reason_p ;
     bool reason_sensor = true ;
 
     if (sensor_ok && !info.status.grabber.has_cube)
