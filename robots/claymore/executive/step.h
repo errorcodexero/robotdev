@@ -270,6 +270,7 @@ struct Grabber_to_preset: Step_impl_inner<Grabber_to_preset>{
 //Eject a cube
 struct Eject: Step_impl_inner<Eject>{
     Countdown_timer eject_timer;
+    bool sensor_ok ;
 
     explicit Eject();
 	
