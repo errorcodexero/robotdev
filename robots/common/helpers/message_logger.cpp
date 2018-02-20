@@ -84,7 +84,6 @@ void messageLogger::startMessage(const messageType &type, uint64_t sub)
 
 void messageLogger::endMessage()
 {
-    assert(mInMessage);
     mInMessage = false;
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
     {
@@ -96,7 +95,6 @@ void messageLogger::endMessage()
 
 messageLogger& messageLogger::operator<<(const std::string &value)
 {
-    assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
 		mCurrentMessage.append(value);
     return *this;
@@ -104,7 +102,6 @@ messageLogger& messageLogger::operator<<(const std::string &value)
 
 messageLogger& messageLogger::operator<<(const char *value_p)
 {
-    assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
 		mCurrentMessage.append(std::string(value_p));
     return *this;
@@ -112,7 +109,6 @@ messageLogger& messageLogger::operator<<(const char *value_p)
 
 messageLogger& messageLogger::operator<<(int value)
 {
-    assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
 		mCurrentMessage.append(std::to_string(value));
     return *this;
@@ -120,7 +116,6 @@ messageLogger& messageLogger::operator<<(int value)
 
 messageLogger& messageLogger::operator<<(size_t value)
 {
-    assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
 		mCurrentMessage.append(std::to_string(value));
     return *this;
@@ -129,7 +124,6 @@ messageLogger& messageLogger::operator<<(size_t value)
 
 messageLogger& messageLogger::operator<<(double value)
 {
-    assert(mInMessage);
     if (isMessageTypeEnabled(mCurrentType) && isSubsystemEnabled(mCurrentSubsystem))
 		mCurrentMessage.append(std::to_string(value));
     return *this;
@@ -160,8 +154,7 @@ void test_logger()
     logger << "This is an info message";
     logger.endMessage(ss);
     assert(ss.str() == "This is an info message");
-
-
+	
     ss = std::stringstream();;
 
     logger.startMessage(messageLogger::messageType::warning);

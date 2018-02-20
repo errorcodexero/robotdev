@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define AUTOMODE_TEST 20
+#define AUTOMODE_TEST 2
 
 //
 // An auto mode program that justs performs calibration
@@ -15,29 +15,29 @@ Executive calibrate_only
 {
     Chain
     {
-	vector<Step>
-	{
-	    Step
-	    {
-		StartAuto{}
-	    },
-	    Step
-	    {
-		Calibrate_lifter{}
-	    },
-	    Step
-	    {   
-		Calibrate_grabber{}
-	    },
-	    Step
-	    {
-		EndAuto()
-	    },
-	},
-	Executive
-	{
-	    Teleop()
-	}
+		vector<Step>
+		{
+			Step
+			{
+				StartAuto{}
+			},
+				Step
+				{
+					Calibrate_lifter{}
+				},
+					Step
+					{   
+						Calibrate_grabber{}
+					},
+						Step
+						{
+							EndAuto()
+								},
+							},
+			Executive
+			{
+				Teleop()
+					}
     }
 };
 
@@ -46,49 +46,49 @@ Executive same_scale
 {
     Chain
     {
-	vector<Step>
-	{
-	    Step
-	    {
-		StartAuto{}
-	    },
-	    Step
-	    {   
-		Calibrate_lifter{}
-	    },
-	    Step
-	    {   
-		Calibrate_grabber{}
-	    },
-	    Step
-	    {   
-		Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
-	    },
-	    Step
-	    {
-		Drive{296}
-	    },
-	    Step
-	    {
-		Rotate{-90.0}
-	    },
-	    Step
-	    {
-		Lifter_to_height{82.0, 0.0}
-	    },
-	    Step
-	    {
-		Eject{}
-	    },	
-	    Step
-	    {
-		EndAuto()
-	    }
-	},
-	Executive
-	{
-	    Teleop()
-	}
+		vector<Step>
+		{
+			Step
+			{
+				StartAuto{}
+			},
+				Step
+				{   
+					Calibrate_lifter{}
+				},
+					Step
+					{   
+						Calibrate_grabber{}
+					},
+						Step
+						{   
+							Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
+						},
+							Step
+							{
+								Drive{296}
+							},
+								Step
+								{
+									Rotate{-90.0}
+								},
+									Step
+									{
+										Lifter_to_height{82.0, 0.0}
+									},
+										Step
+										{
+											Eject{}
+										},	
+											Step
+											{
+												EndAuto()
+													}
+		},
+			Executive
+			{
+				Teleop()
+					}
     }
 };
 #else
@@ -97,49 +97,49 @@ Executive same_scale
 {
     Chain
     {
-	vector<Step>
-	{
-	    Step
-	    {
-		StartAuto{}
-	    },
-	    Step
-	    {   
-		Calibrate_lifter{}
-	    },
-	    Step
-	    {   
-		Calibrate_grabber{}
-	    },
-	    Step
-	    {   
-		Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
-	    },
-	    Step
-	    {
-		Drive{260, false}
-	    },
-	    Step
-	    {
-		Rotate{-45.0}
-	    },
-	    Step
-	    {
-		Lifter_to_height{82.0, 0.0}
-	    },
-	    Step
-	    {
-		Eject{}
-	    },	
-	    Step
-	    {
-		EndAuto()
-	    }
-	},
-	Executive
-	{
-	    Teleop()
-	}
+		vector<Step>
+		{
+			Step
+			{
+				StartAuto{}
+			},
+				Step
+				{   
+					Calibrate_lifter{}
+				},
+					Step
+					{   
+						Calibrate_grabber{}
+					},
+						Step
+						{   
+							Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
+						},
+							Step
+							{
+								Drive{260, false}
+							},
+								Step
+								{
+									Rotate{-45.0}
+								},
+									Step
+									{
+										Lifter_to_height{82.0, 0.0}
+									},
+										Step
+										{
+											Eject{}
+										},	
+											Step
+											{
+												EndAuto()
+													}
+		},
+			Executive
+			{
+				Teleop()
+					}
     }
 };
 #endif
@@ -147,29 +147,29 @@ Executive opposite_scale
 {
     Chain
     {
-	vector<Step>
-	{
-	    Step
-	    {
-		StartAuto{}
-	    },
-	    Step
-	    {   
-		Calibrate_lifter{}
-	    },
-	    Step
-	    {   
-		Calibrate_grabber{}
-	    },
-	    Step
-	    {
-		EndAuto()
-	    }
-	},
-	Executive
-	{
-	    Teleop()
-	}
+		vector<Step>
+		{
+			Step
+			{
+				StartAuto{}
+			},
+				Step
+				{   
+					Calibrate_lifter{}
+				},
+					Step
+					{   
+						Calibrate_grabber{}
+					},
+						Step
+						{
+							EndAuto()
+								}
+		},
+			Executive
+			{
+				Teleop()
+					}
     }
 };
 
@@ -181,45 +181,45 @@ Executive same_switch
 {
     Chain
     {
-	vector<Step>
-	{
-	    Step
-	    {
-		StartAuto{}
-	    },
-	    Step
-	    {   
-		Calibrate_lifter{}
-	    },
-	    Step
-	    {   
-		Calibrate_grabber{}
-	    },
-	    Step
-	    {   
-		Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
-	    },
-	    Step
-	    {   
-		Drive{105.0, true}
-	    },
-	    Step
-	    {   
-		Wait_for_lifter{}
-	    },
-	    Step
-	    {   
-		Eject{}
-	    },
-	    Step
-	    {
-		EndAuto()
-	    }
-	},
-	Executive
-	{
-	    Teleop()
-        }
+		vector<Step>
+		{
+			Step
+			{
+				StartAuto{}
+			},
+				Step
+				{   
+					Calibrate_lifter{}
+				},
+					Step
+					{   
+						Calibrate_grabber{}
+					},
+						Step
+						{   
+							Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
+						},
+							Step
+							{   
+								Drive{105.0, true}
+							},
+								Step
+								{   
+									Wait_for_lifter{}
+								},
+									Step
+									{   
+										Eject{}
+									},
+										Step
+										{
+											EndAuto()
+												}
+		},
+			Executive
+			{
+				Teleop()
+					}
     }
 };
 
@@ -232,69 +232,69 @@ Executive opposite_switch
 {
     Chain
     {
-	vector<Step>
-	{
-	    Step
-	    {
-		StartAuto{}
-	    },
-	    Step
-	    {
-		Calibrate_grabber{}
-	    },
-	    Step
-	    {
-		Calibrate_lifter{}
-	    },
-	    Step
-	    {
-		Wait{0.5}
-	    },
-	    Step
-	    {   
-		Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
-	    },
-	    Step
-	    {
-		Drive{52.0}
-	    },
-	    Step
-	    {
-		Rotate{-90.0}
-	    },
-	    Step
-	    {
-		Drive{100.0}
-	    },
-	    Step
-	    {
-		Rotate{90.0}
-	    },
-	    Step
-	    {
-		Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
-	    },
-	    Step
-	    {
-		Drive{56, true}
-	    },
-	    Step
-	    {
-		Wait_for_lifter{}
-	    },
-	    Step
-	    {
-		Eject{}
-	    },
-	    Step
-	    {
-		EndAuto()
-	    }
-	},
-	Executive
-	{
-	    Teleop()
-	}
+		vector<Step>
+		{
+			Step
+			{
+				StartAuto{}
+			},
+				Step
+				{
+					Calibrate_grabber{}
+				},
+					Step
+					{
+						Calibrate_lifter{}
+					},
+						Step
+						{
+							Wait{0.5}
+						},
+							Step
+							{   
+								Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
+							},
+								Step
+								{
+									Drive{52.0}
+								},
+									Step
+									{
+										Rotate{-90.0}
+									},
+										Step
+										{
+											Drive{100.0}
+										},
+											Step
+											{
+												Rotate{90.0}
+											},
+												Step
+												{
+													Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
+												},
+													Step
+													{
+														Drive{56, true}
+													},
+														Step
+														{
+															Wait_for_lifter{}
+														},
+															Step
+															{
+																Eject{}
+															},
+																Step
+																{
+																	EndAuto()
+																		}
+		},
+			Executive
+			{
+				Teleop()
+					}
     }
 };
 
@@ -304,24 +304,24 @@ Executive opposite_switch
 Executive auto_null
 {
 	Teleop()
-};
+		};
 
 Executive make_test_step(auto a){
     return
-	Executive
+		Executive
     {
 	    Chain
 		{
 			Step
 			{
 				a
-			},
-			Executive
-			{
-				Teleop
+					},
+				Executive
 				{
+					Teleop
+					{
+					}
 				}
-			}
 	    }
 	};
 }
@@ -332,10 +332,10 @@ Executive get_auto_mode(Next_mode_info info)
     
     if(!info.autonomous)
     {
-	logger.startMessage(messageLogger::messageType::info) ;
-	logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
-	logger.endMessage() ;
-	return Executive{Teleop()};
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
+		logger.endMessage() ;
+		return Executive{Teleop()};
     }
 
 #if AUTOMODE_TEST == 0
@@ -385,7 +385,7 @@ Executive get_auto_mode(Next_mode_info info)
 		{
 			Step
 			{
-				Drive{120.0}
+				Drive{180.0}
 			},
 				Executive
 				{
@@ -457,35 +457,35 @@ Executive get_auto_mode(Next_mode_info info)
 				{
 					Rotate{-90.0}
 				},
-				Step
+					Step
+					{
+						Wait{2.0}
+					},
+						Step
+						{
+							Rotate{90.0}
+						},
+							Step
+							{
+								Wait{2.0}
+							},
+								Step
+								{
+									Rotate{-45.0}
+								},
+									Step
+									{
+										Wait{2.0}
+									},
+										Step
+										{
+											Rotate{45.0}
+										},
+											},
+				Executive
 				{
-					Wait{2.0}
-				},
-				Step
-				{
-					Rotate{90.0}
-				},
-				Step
-				{
-					Wait{2.0}
-				},
-				Step
-				{
-					Rotate{-45.0}
-				},
-				Step
-				{
-					Wait{2.0}
-				},
-				Step
-				{
-					Rotate{45.0}
-				},
-			},
-			Executive
-			{
-				Teleop()
-			}
+					Teleop()
+						}
 		}
     };
 
@@ -660,6 +660,8 @@ Executive get_auto_mode(Next_mode_info info)
     Executive auto_program = same_scale ;
 
 #else
+
+#error BBBBB
 	Executive auto_program = calibrate_only ;
 	
     //

@@ -120,7 +120,7 @@ bool set_button(const float AXIS_VALUE, const float LOWER_VALUE, const float TES
 	return (AXIS_VALUE > min && AXIS_VALUE < max);
 }
 
-bool get_in_use(Joystick_data d){
+bool get_in_use(Joystick_data d) {
 	for(int i = 0; i < JOY_AXES; i++) {
 		if(d.axis[i] != 0) return true;
 	}
@@ -135,7 +135,10 @@ Panel interpret_oi(Joystick_data d){
 	static const float ARTIFICIAL_MAX = 1.5;
 	{
 		p.in_use=get_in_use(d);
-		if(!p.in_use) return p;
+		if(!p.in_use)
+		{
+			return p;
+		}
 	}
 	{//set the auto mode number from the dial value
 		float auto_dial_value = d.axis[AUTO_SELECTOR_AXIS];
