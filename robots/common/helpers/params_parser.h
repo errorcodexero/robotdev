@@ -6,11 +6,16 @@
 
 
 class paramsInput {
-	
-public:
+
+private:
     /// \brief create a new params parsing object
     paramsInput();
+	
+public:
 
+    /// \brief get the one single params object
+    static paramsInput *get();
+    
     /// \brief read the input file containing parameters
     /// \param filename the name of the file to read
     bool readFile(const std::string &filename);
@@ -37,4 +42,6 @@ private:
 
     // the name of the file read
     std::string mFilename;
+
+    static paramsInput *mSingleObject ;
 };

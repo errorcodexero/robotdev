@@ -8,303 +8,115 @@ using namespace std;
 
 #define AUTOMODE_TEST 5
 
-//
-// An auto mode program that justs performs calibration
-//
-Executive calibrate_only
-{
-    Chain
-    {
-		vector<Step>
-		{
-			Step
-			{
-				StartAuto{}
-			},
-				Step
-				{
-					Calibrate_lifter{}
-				},
-					Step
-					{   
-						Calibrate_grabber{}
-					},
-						Step
-						{
-							EndAuto()
-								},
-							},
-			Executive
-			{
-				Teleop()
-					}
-    }
-};
-
-#ifndef OLD
-Executive same_scale
-{
-    Chain
-    {
-		vector<Step>
-		{
-			Step
-			{
-				StartAuto{}
-			},
-				Step
-				{   
-					Calibrate_lifter{}
-				},
-					Step
-					{   
-						Calibrate_grabber{}
-					},
-						Step
-						{   
-							Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
-						},
-							Step
-							{
-								Drive{296}
-							},
-								Step
-								{
-									Rotate{-90.0}
-								},
-									Step
-									{
-										Lifter_to_height{82.0, 0.0}
-									},
-										Step
-										{
-											Eject{}
-										},	
-											Step
-											{
-												EndAuto()
-													}
-		},
-			Executive
-			{
-				Teleop()
-					}
-    }
-};
-#else
-
-Executive same_scale
-{
-    Chain
-    {
-		vector<Step>
-		{
-			Step
-			{
-				StartAuto{}
-			},
-				Step
-				{   
-					Calibrate_lifter{}
-				},
-					Step
-					{   
-						Calibrate_grabber{}
-					},
-						Step
-						{   
-							Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
-						},
-							Step
-							{
-								Drive{260, false}
-							},
-								Step
-								{
-									Rotate{-45.0}
-								},
-									Step
-									{
-										Lifter_to_height{82.0, 0.0}
-									},
-										Step
-										{
-											Eject{}
-										},	
-											Step
-											{
-												EndAuto()
-													}
-		},
-			Executive
-			{
-				Teleop()
-					}
-    }
-};
-#endif
-Executive opposite_scale
-{
-    Chain
-    {
-		vector<Step>
-		{
-			Step
-			{
-				StartAuto{}
-			},
-				Step
-				{   
-					Calibrate_lifter{}
-				},
-					Step
-					{   
-						Calibrate_grabber{}
-					},
-						Step
-						{
-							EndAuto()
-								}
-		},
-			Executive
-			{
-				Teleop()
-					}
-    }
-};
+Executive teleopex{Teleop()} ;
 
 //
-// An auto mode program that drives straight to score on the
-// switch on the same side as the robot
+// Commonly used steps
 //
-Executive same_switch
+Step startAuto = Step(StartAuto()) ;
+Step endAuto = Step(EndAuto()) ;
+Step calibrateLifter = Step(Calibrate_lifter()) ;
+Step calibrateGrabber = Step(Calibrate_grabber()) ;
+Step rotate90pos = Step(Rotate(90.0)) ;
+Step rotate90neg = Step(Rotate(-90.0)) ;
+Step startLifterFloor = Step(Background_lifter_to_preset(LifterController::Preset::FLOOR, 0.0)) ;
+Step startLifterExch = Step(Background_lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)) ;
+Step startLifterSwitch = Step(Background_lifter_to_preset(LifterController::Preset::SWITCH, 0.0)) ;
+Step startLifterScale = Step(Background_lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
+Step lifterToFloor = Step(Lifter_to_preset(LifterController::Preset::FLOOR, 0.0)) ;
+Step lifterToExch = Step(Lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)) ;
+Step lifterToSwitch = Step(Lifter_to_preset(LifterController::Preset::SWITCH, 0.0)) ;
+Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
+Step waitForLifter = Step(Wait_for_lifter()) ;
+Step eject = Step(Eject()) ;
+
+////////////////////   Calibrate Only Auto Program /////////////////////////////////
+
+vector<Step> calibrate_only_steps =
 {
-    Chain
-    {
-		vector<Step>
-		{
-			Step
-			{
-				StartAuto{}
-			},
-				Step
-				{   
-					Calibrate_lifter{}
-				},
-					Step
-					{   
-						Calibrate_grabber{}
-					},
-						Step
-						{   
-							Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
-						},
-							Step
-							{   
-								Drive{105.0, true}
-							},
-								Step
-								{   
-									Wait_for_lifter{}
-								},
-									Step
-									{   
-										Eject{}
-									},
-										Step
-										{
-											EndAuto()
-												}
-		},
-			Executive
-			{
-				Teleop()
-					}
-    }
+    startAuto,
+    calibrateLifter,
+    calibrateGrabber,
+    endAuto
+} ;
+
+Chain calibrate_only_chain(calibrate_only_steps, teleopex) ;
+
+Executive calibrate_only(calibrate_only_chain) ;
+
+////////////////////   Same Scale Auto Program /////////////////////////////////
+
+vector<Step> same_scale_steps =
+{
+    startAuto,
+    calibrateLifter,
+    calibrateGrabber,
+    startLifterExch,
+    Step(Drive_param("auto:same_scale:segment1", 296, false)),
+    rotate90neg,
+    lifterToScale,
+    eject,
+    endAuto,
+} ;
+
+Chain same_scale_chain(same_scale_steps, teleopex) ;
+Executive same_scale(same_scale_chain) ;
+
+
+////////////////////   Opposite Scale Auto Program /////////////////////////////////
+
+vector<Step> opposite_scale_steps =
+{
+    startAuto,
+    calibrateLifter,
+    calibrateGrabber,
+    startLifterExch,
+    // TODO
+    endAuto,
+} ;
+
+Chain opposite_scale_chain(opposite_scale_steps, teleopex) ;
+Executive opposite_scale(opposite_scale_chain) ;
+
+////////////////////   Same Switch Auto Program /////////////////////////////////
+
+vector<Step> same_switch_steps =
+{
+    startAuto,
+    calibrateLifter,
+    calibrateGrabber,
+    startLifterSwitch,
+    Step(Drive_param("auto:same_switch:segment1", 105, true))
+    waitForLifter,
+    eject,
+    endAuto
+} ;
+
+Chain same_switch_chain(same_switch_steps, teleopex) ;
+Executive same_switch(same_switch_chain) ;
+
+////////////////////   Opposite Switch Auto Program /////////////////////////////////
+
+vector<Step> opposite_switch_steps =
+{
+    startAuto,
+    calibrateLifter,
+    calibrateGrabber,
+    startLifterExch,
+    Step(Drive_param("auto:opposite_switch:segment1", 52.0, false))
+    rotate90neg,
+    Step(Drive_param("auto:opposite_switch:segment2", 100.0, false))
+    rotate90pos,
+    startLifterSwitch,
+    Step(Drive_param("auto:opposite_switch:segment2", 56.0, false))
+    waitForLifter,
+    eject,
+    endAuto,
 };
 
-//
-// An auto mode program that drives straight, turns left, drives straight, turns right
-// drives straight and deposits a cube on the switch on the opposite side from the starting
-// side of the robot
-//
-Executive opposite_switch
-{
-    Chain
-    {
-		vector<Step>
-		{
-			Step
-			{
-				StartAuto{}
-			},
-				Step
-				{
-					Calibrate_grabber{}
-				},
-					Step
-					{
-						Calibrate_lifter{}
-					},
-						Step
-						{
-							Wait{0.5}
-						},
-							Step
-							{   
-								Start_lifter_in_background{LifterController::Preset::EXCHANGE, 0.0}
-							},
-								Step
-								{
-									Drive{52.0}
-								},
-									Step
-									{
-										Rotate{-90.0}
-									},
-										Step
-										{
-											Drive{100.0}
-										},
-											Step
-											{
-												Rotate{90.0}
-											},
-												Step
-												{
-													Start_lifter_in_background{LifterController::Preset::SWITCH, 0.0}
-												},
-													Step
-													{
-														Drive{56, true}
-													},
-														Step
-														{
-															Wait_for_lifter{}
-														},
-															Step
-															{
-																Eject{}
-															},
-																Step
-																{
-																	EndAuto()
-																		}
-		},
-			Executive
-			{
-				Teleop()
-					}
-    }
-};
+Chain opposite_switch_chain(opposite_switch_steps, teleopex) ;
+Executive opposite_switch(opposite_switch_chain) ;
 
-//
-// Auto mode that does nothing
-//
-Executive auto_null
-{
-	Teleop()
-		};
 
 Executive make_test_step(auto a){
     return
@@ -493,7 +305,7 @@ Executive get_auto_mode(Next_mode_info info)
 			{
 				Step
 				{
-					Start_lifter_in_background{LifterController::Preset::SWITCH, info.in.now}
+					Background_lifter_to_preset{LifterController::Preset::SWITCH, info.in.now}
 				},
 					Step
 					{
@@ -585,7 +397,7 @@ Executive get_auto_mode(Next_mode_info info)
 					   },
 					   Step
 					   {
-					   Start_lifter_in_background{LifterController::Preset::SWITCH, info.in.now}
+					   Background_lifter_to_preset{LifterController::Preset::SWITCH, info.in.now}
 					   },
 					   Step
 					   {

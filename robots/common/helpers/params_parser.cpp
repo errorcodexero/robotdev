@@ -3,8 +3,18 @@
 #include <string>
 #include <iostream>
 
+paramsInput *paramsInput::mSingleObject = nullptr ;
+
 paramsInput::paramsInput()
 {
+}
+
+paramsInput *paramsInput::get()
+{
+    if (mSingleObject == nullptr)
+	mSingleObject = new paramsInput() ;
+
+    return mSingleObject ;
 }
 
 bool paramsInput::readFile(const std::string &filename)
