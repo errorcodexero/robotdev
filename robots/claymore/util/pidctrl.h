@@ -31,7 +31,14 @@ public:
 	/// \param target the target value we are trying to reach
 	/// \param current the current value for system
 	/// \param the time that has passed since the last time this was called
-	double getOutput(double target, double current, double timeDifference);
+	double getOutput(double target, double current, double timeDifference,
+					 double *pv = nullptr, double *iv=nullptr, double *dv=nullptr, double *fv=nullptr);
+
+	/// \brief return the internally stored sum
+	double getInternalSum() const
+	{
+		return integral ;
+	}
 
 private:
 	double calcError(double target, double current) ;
