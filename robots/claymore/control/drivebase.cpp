@@ -26,7 +26,7 @@ using namespace std;
 #define R_MOTOR_LOC_2 4
 #define R_MOTOR_LOC_3 5
 
-#define SHIFTER_SOLENOID_LOW 0
+#define SHIFTER_SOLENOID 0
 #endif
 
 
@@ -463,7 +463,7 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;
 #endif
 
-	robot.solenoid[SHIFTER_SOLENOID_LOW] = !b.high_gear;
+	robot.solenoid[SHIFTER_SOLENOID] = !b.high_gear;
 
 	auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 		robot.digital_io[a] = Digital_out::encoder(loc,1);
@@ -480,7 +480,7 @@ Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)c
 	return Drivebase::Output{	
 		robot.talon_srx[L_MOTOR_LOC_1].power_level,
 		-robot.talon_srx[R_MOTOR_LOC_1].power_level,
-		!robot.solenoid[SHIFTER_SOLENOID_LOW]
+		!robot.solenoid[SHIFTER_SOLENOID]
 	};
 }
 

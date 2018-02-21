@@ -8,8 +8,7 @@ using namespace std;
 
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1
-#define LIFTER_SHIFTER_LOW 1
-#define LIFTER_SHIFTER_HIGH 4
+#define LIFTER_SHIFTER 1
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
 #define TOP_HALL_EFFECT_ADDRESS 8
@@ -255,8 +254,7 @@ ostream& operator<<(ostream& o, Lifter const& a){
 Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Output const& out)const{
     r.pwm[LIFTER_ADDRESS_L] = -out.power;
     r.pwm[LIFTER_ADDRESS_R] = -out.power;
-    r.solenoid[LIFTER_SHIFTER_LOW] = out.gearing == Lifter::Output::Gearing::LOW;
-    r.solenoid[LIFTER_SHIFTER_HIGH] = out.gearing != Lifter::Output::Gearing::LOW;
+    r.solenoid[LIFTER_SHIFTER] = out.gearing == Lifter::Output::Gearing::LOW;
 
     auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 	r.digital_io[a] = Digital_out::encoder(loc,1);
@@ -270,7 +268,7 @@ Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Out
 Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)const{
     return {
 	-r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
-	r.solenoid[LIFTER_SHIFTER_LOW] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH
+	r.solenoid[LIFTER_SHIFTER] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH
 	   };
 }
 
