@@ -16,7 +16,7 @@ struct Lifter{
 			#undef X
 		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE) X(LOW_GEAR)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE) X(LOW_GEAR) X(LOCK)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -49,15 +49,17 @@ struct Lifter{
 		static Goal background();
 		static Goal calibrate();
 		static Goal low_gear();
+		static Goal lock();
 	};
 
 	struct Output{
 		double power;//pwm value, positive is up
 		using Gearing = Lifter::Goal::Gearing;
 		Gearing gearing;
+		bool lock;
 		
 		Output();
-		Output(double,Gearing);
+		Output(double,Gearing,bool);
 	};
 
 	struct Input{

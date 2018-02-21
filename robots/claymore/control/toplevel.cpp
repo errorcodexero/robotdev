@@ -101,7 +101,7 @@ Toplevel::Output::Output():
 	drive(0.0,0.0,false),
 	grabber(0.0),
 	intake(Intake::Output::OFF),
-	lifter({0.0,Lifter::Output::Gearing::HIGH}),
+	lifter({0.0,Lifter::Output::Gearing::HIGH,false}),
 	lights(),
 	wings(Wings::Output::LOCKED)
 {}

@@ -6,9 +6,9 @@
 #include "drivebase.h"
 #include "grabber.h"
 #include "intake.h"
-#include "nop.h"
 #include "lifter.h"
 #include "lights.h"
+#include "nop.h"
 #include "wings.h"
 
 #define TOPLEVEL_ITEMS \
@@ -18,8 +18,8 @@
 	X(Intake,intake,Intake::Goal::OFF)\
 	X(Lifter,lifter,Lifter::Goal::stop())\
 	X(Lights,lights,)\
-	X(Wings,wings,Wings::Goal::LOCKED)\
-	
+	X(Wings,wings,Wings::Goal::LOCKED)
+
 class Toplevel{
 	public:
 
