@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define AUTOMODE_TEST 2
+#define AUTOMODE_TEST 5
 
 //
 // An auto mode program that justs performs calibration
@@ -385,7 +385,7 @@ Executive get_auto_mode(Next_mode_info info)
 		{
 			Step
 			{
-				Drive{180.0}
+				Drive{240.0}
 			},
 				Executive
 				{
@@ -469,19 +469,7 @@ Executive get_auto_mode(Next_mode_info info)
 							{
 								Wait{2.0}
 							},
-								Step
-								{
-									Rotate{-45.0}
 								},
-									Step
-									{
-										Wait{2.0}
-									},
-										Step
-										{
-											Rotate{45.0}
-										},
-											},
 				Executive
 				{
 					Teleop()
