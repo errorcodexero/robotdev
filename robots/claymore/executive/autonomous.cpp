@@ -8,6 +8,15 @@ using namespace std;
 
 #define AUTOMODE_TEST 5
 
+//
+// Automodes defined in seperate files
+//
+extern Executive calibrate_only ;
+extern Executive right_scale_right ;
+extern Executive right_scale_left ;
+extern Executive center_switch_right ;
+extern Executive center_switch_left ;
+
 Executive teleopex{Teleop()} ;
 
 //
@@ -29,93 +38,6 @@ Step lifterToSwitch = Step(Lifter_to_preset(LifterController::Preset::SWITCH, 0.
 Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
 Step waitForLifter = Step(Wait_for_lifter()) ;
 Step eject = Step(Eject()) ;
-
-////////////////////   Calibrate Only Auto Program /////////////////////////////////
-
-vector<Step> calibrate_only_steps =
-{
-    startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    endAuto
-} ;
-
-Chain calibrate_only_chain(calibrate_only_steps, teleopex) ;
-
-Executive calibrate_only(calibrate_only_chain) ;
-
-////////////////////   Same Scale Auto Program /////////////////////////////////
-
-vector<Step> same_scale_steps =
-{
-    startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterExch,
-    Step(Drive_param("auto:same_scale:segment1", 296, false)),
-    rotate90neg,
-    lifterToScale,
-    eject,
-    endAuto,
-} ;
-
-Chain same_scale_chain(same_scale_steps, teleopex) ;
-Executive same_scale(same_scale_chain) ;
-
-
-////////////////////   Opposite Scale Auto Program /////////////////////////////////
-
-vector<Step> opposite_scale_steps =
-{
-    startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterExch,
-    // TODO
-    endAuto,
-} ;
-
-Chain opposite_scale_chain(opposite_scale_steps, teleopex) ;
-Executive opposite_scale(opposite_scale_chain) ;
-
-////////////////////   Same Switch Auto Program /////////////////////////////////
-
-vector<Step> same_switch_steps =
-{
-    startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterSwitch,
-    Step(Drive_param("auto:same_switch:segment1", 105, true))
-    waitForLifter,
-    eject,
-    endAuto
-} ;
-
-Chain same_switch_chain(same_switch_steps, teleopex) ;
-Executive same_switch(same_switch_chain) ;
-
-////////////////////   Opposite Switch Auto Program /////////////////////////////////
-
-vector<Step> opposite_switch_steps =
-{
-    startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterExch,
-    Step(Drive_param("auto:opposite_switch:segment1", 52.0, false))
-    rotate90neg,
-    Step(Drive_param("auto:opposite_switch:segment2", 100.0, false))
-    rotate90pos,
-    startLifterSwitch,
-    Step(Drive_param("auto:opposite_switch:segment2", 56.0, false))
-    waitForLifter,
-    eject,
-    endAuto,
-};
-
-Chain opposite_switch_chain(opposite_switch_steps, teleopex) ;
-Executive opposite_switch(opposite_switch_chain) ;
 
 
 Executive make_test_step(auto a){
