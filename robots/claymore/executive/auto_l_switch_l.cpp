@@ -6,21 +6,20 @@ using namespace std ;
 ///////////////////////////////////////////////////////////////////////////////////////
 //
 // Start: Left
-// Action: Score on left scale
+// Action: Score on left switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> left_scale_left_steps =
+static vector<Step> left_switch_left_steps =
 {
     startAuto,
     calibrateLifter,
     calibrateGrabber,
-    startLifterExch,
-    Step(Drive_param("auto:l_scale_l:segment1", 306, false)),
-    rotate90pos,
-    lifterToScale,
+    startLifterSwitch,
+    // TODO
+    waitForLifter,
     eject,
-    endAuto,
+    endAuto
 } ;
 
-static Chain left_scale_left_chain(left_scale_left_steps, teleopex) ;
-Executive left_scale_left(left_scale_left_chain) ;
+static Chain left_switch_left_chain(left_switch_left_steps, teleopex) ;
+Executive left_switch_right(left_switch_left_chain) ;

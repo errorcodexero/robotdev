@@ -18,6 +18,8 @@ extern Executive left_scale_right ;
 extern Executive left_scale_left ;
 extern Executive center_switch_right ;
 extern Executive center_switch_left ;
+extern Executive left_switch_left ;
+extern Executive right_switch_right ;
 
 Executive teleopex{Teleop()} ;
 

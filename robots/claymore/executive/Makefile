@@ -46,7 +46,9 @@ SRC = \
 	auto_l_scale_r.cpp\
 	auto_l_scale_l.cpp\
 	auto_c_switch_r.cpp\
-	auto_c_switch_l.cpp
+	auto_c_switch_l.cpp\
+	auto_l_switch_l.cpp\
+	auto_r_switch_r.cpp
 
 ifndef TESTS
 TESTS = \
