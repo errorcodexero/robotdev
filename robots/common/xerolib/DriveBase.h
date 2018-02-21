@@ -10,6 +10,7 @@
 #include "AngleMeasurementDevice.h"
 #include <list>
 #include <memory>
+#include <cmath>
 
 class AHRS;
 

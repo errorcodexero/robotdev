@@ -76,6 +76,7 @@
     <ClCompile Include="DataUDPDestination.cpp" />
     <ClCompile Include="DriveBase.cpp" />
     <ClCompile Include="EncoderAngleMeasurementDevice.cpp" />
+    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
     <ClCompile Include="NavXAngleMeasurementDevice.cpp" />
@@ -105,6 +106,7 @@
     <ClInclude Include="DataUdpDestination.h" />
     <ClInclude Include="DriveBase.h" />
     <ClInclude Include="EncoderAngleMeasurementDevice.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="MessageDestination.h" />
     <ClInclude Include="MessageLogger.h" />
     <ClInclude Include="MessageStreamDestination.h" />

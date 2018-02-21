@@ -4,7 +4,7 @@
 
 namespace xerolib
 {
-    fs::path FileManager::FlashDriveName("/media/sda1") ;
+	std::string FileManager::FlashDriveName("/media/sda1") ;
 
     FileManager::FileManager()
     {
@@ -16,7 +16,7 @@ namespace xerolib
 
 		m_includetime = false ;
     
-		if (fs::exists(FlashDriveName) && fs::is_directory(FlashDriveName))
+		if (exists(FlashDriveName) && is_directory(FlashDriveName))
 		{
 			m_basedir = FlashDriveName ;
 			m_includetime = true ;
@@ -29,20 +29,20 @@ namespace xerolib
 
     std::string FileManager::makeFileName(const char *basename_p)
     {
-		fs::path filename = m_basedir / basename_p ;
+		std::string filename = m_basedir + "/" + basename_p ;
 	
 		if (m_includetime)
 		{
-			fs::path tfilename = filename ;
+			std::string tfilename = filename ;
 			time_t rawtime ;
 			struct tm *timeinfo ;
 
 			std::string ext ;
 
-			if (tfilename.has_extension())
+			if (has_extension(tfilename))
 			{
-				ext = tfilename.extension() ;
-				tfilename = tfilename.replace_extension("") ;
+				ext = extension(tfilename) ;
+				tfilename = replace_extension(tfilename, "") ;
 			}
 	    
 			time(&rawtime) ;
@@ -50,11 +50,19 @@ namespace xerolib
 			strftime(&m_buffer[0], m_buffer.size(), "-%m-%d-%y-%H-%M-%S", timeinfo) ;
 
 			filename = FlashDriveName ;
-			filename /= tfilename ;
+			filename += "/" + tfilename ;
 			filename += &m_buffer[0];
 			filename += ext ;
 		}
 		
-		return filename.generic_string() ;
+		return filename;
     }
+
+	bool FileManager::exists(const std::string &name)
+	{
+	}
+
+	bool FileManager::is_directory(const std::string &name)
+	{
+	}
 }

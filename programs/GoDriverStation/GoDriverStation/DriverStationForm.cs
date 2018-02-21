@@ -12,10 +12,13 @@ namespace GoDriverStation
 {
     public partial class DriverStationForm : Form
     {
+        private JoystickManager m_joysticks;
+
         public DriverStationForm()
         {
             InitializeComponent();
 
+            m_joysticks = new JoystickManager();
         }
 
         protected override void OnLoad(EventArgs e)

@@ -1,26 +1,31 @@
 #pragma once
 
-#include <experimental/filesystem>
 #include <string>
-
-namespace fs = std::experimental::filesystem ;
+#include <array>
 
 namespace xerolib
 {
-    class FileManager
-    {
-    public:
-	FileManager() ;
-	virtual ~FileManager() ;
+	class FileManager
+	{
+	public:
+		FileManager();
+		virtual ~FileManager();
 
-	std::string makeFileName(const char *basename_p) ;
+		std::string makeFileName(const char *basename_p);
 
-    public:
-	static fs::path FlashDriveName ;
+	protected:
+		static bool exists(const std::string &name);
+		static bool is_directory(const std::string &name);
+		static bool has_extension(const std::string &name);
+		static std::string extension(const std::string &name);
+		static std::string replace_extension(const std::string &name, const std::string &ext);
 
-    private:
-	fs::path m_basedir ;
-	bool m_includetime ;
-	std::array<char, 64> m_buffer ;
-    } ;
+	public:
+		static std::string FlashDriveName;
+
+	private:
+		std::string m_basedir;
+		bool m_includetime;
+		std::array<char, 64> m_buffer;
+	};
 }
