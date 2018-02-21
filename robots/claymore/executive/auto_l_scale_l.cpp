@@ -9,18 +9,18 @@ using namespace std ;
 // Action: Score on right scale
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> right_scale_right_steps =
+static vector<Step> left_scale_left_steps =
 {
     startAuto,
     calibrateLifter,
     calibrateGrabber,
     startLifterExch,
-    Step(Drive_param("auto:r_scale_r:segment1", 306, false)),
-    rotate90neg,
+    Step(Drive_param("auto:l_scale_l:segment1", 306, false)),
+    rotate90pos,
     lifterToScale,
     eject,
     endAuto,
 } ;
 
-static Chain right_scale_right_chain(right_scale_right_steps, teleopex) ;
-Executive right_scale_right(right_scale_right_chain) ;
+static Chain left_scale_left_chain(left_scale_left_steps, teleopex) ;
+Executive left_scale_left(left_scale_left_chain) ;

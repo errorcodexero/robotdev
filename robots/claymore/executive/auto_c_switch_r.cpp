@@ -9,7 +9,7 @@ using namespace std ;
 // Action: Score on right switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-vector<Step> center_switch_right_steps =
+static vector<Step> center_switch_right_steps =
 {
     startAuto,
     calibrateLifter,
@@ -21,5 +21,5 @@ vector<Step> center_switch_right_steps =
     endAuto
 } ;
 
-Chain center_switch_right_chain(center_switch_right_steps, teleopex) ;
+static Chain center_switch_right_chain(center_switch_right_steps, teleopex) ;
 Executive center_switch_right(center_switch_right_chain) ;

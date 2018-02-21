@@ -43,6 +43,8 @@ SRC = \
 	auto_calibonly.cpp\
 	auto_r_scale_r.cpp\
 	auto_r_scale_l.cpp\
+	auto_l_scale_r.cpp\
+	auto_l_scale_l.cpp\
 	auto_c_switch_r.cpp\
 	auto_c_switch_l.cpp
 

@@ -5,7 +5,7 @@ using namespace std ;
 
 ////////////////////   Opposite Switch Auto Program /////////////////////////////////
 
-vector<Step> center_switch_left_steps
+static vector<Step> center_switch_left_steps
 {
     startAuto,
     calibrateLifter,
@@ -22,5 +22,5 @@ vector<Step> center_switch_left_steps
     endAuto,
 };
 
-Chain center_switch_left_chain(center_switch_left_steps, teleopex) ;
+static Chain center_switch_left_chain(center_switch_left_steps, teleopex) ;
 Executive center_switch_left(center_switch_left_chain) ;
