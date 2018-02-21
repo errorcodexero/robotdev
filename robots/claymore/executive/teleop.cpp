@@ -50,7 +50,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),climbing(false){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),climbing(false),high_gear(false){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	messageLogger &logger = messageLogger::get();
@@ -94,11 +94,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			return power;
 		}());
 
-		Drivebase::Goal::Gear gear_shifter = [&]{
-			if(info.driver_joystick.button[Gamepad_button::RB]) return Drivebase::Goal::Gear::LOW;
-			if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER] > .8) return Drivebase::Goal::Gear::HIGH;
-			return Drivebase::Goal::Gear::AUTO;
-		}();
+		if(info.driver_joystick.button[Gamepad_button::RB]) high_gear = false;
+		if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER] > .8) high_gear = true;
+
+		Drivebase::Goal::Gear gear_shifter = high_gear ? Drivebase::Goal::Gear::HIGH : Drivebase::Goal::Gear::LOW;
 
 		goals.drive = Drivebase::Goal::absolute(left, right, gear_shifter);
 	}
@@ -198,8 +197,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 	if(climbing) {
 		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
-		if(ready(status(info.status.lifter), Lifter::Goal::climb()))
+		if(goals.lifter == Lifter::Goal::climb() && ready(status(info.status.lifter), Lifter::Goal::climb())) {
+			logger << "LOCKING\n";
 			goals.lifter = Lifter::Goal::lock();
+		}
 	}
 
 	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;

@@ -408,7 +408,7 @@ double get_output(Drivebase::Output out,Drivebase::Motor m){
 }
 
 void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output out){
-	paramsInput* input_params = Drivebase::drivebase_controller.getParams();
+	//paramsInput* input_params = Drivebase::drivebase_controller.getParams();
 
 	last.distances = in.distances;
 	last.angle = in.angle;
@@ -421,7 +421,7 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 		speed_timer.set(POLL_TIME);
 	}
 
-	if(last_shifter_output != out.high_gear) {
+	/*if(last_shifter_output != out.high_gear) {
 		double shift_separation_time = input_params->getValue("drivebase:shifter:shift_separation_time", 2.0);
 		shift_timer.set(shift_separation_time);
 	}
@@ -440,7 +440,8 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 			last.high_gear_recommended = false;
 		if(speed_average > fast_shift_threshold)
 			last.high_gear_recommended = true;
-	}
+	}*/
+	last.high_gear_recommended = false;
 
 	last.dt = now - last.now;
 	last.now = now;
