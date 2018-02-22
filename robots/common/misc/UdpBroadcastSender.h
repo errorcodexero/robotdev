@@ -2,8 +2,9 @@
 
 #include "UdpSocket.h"
 #include <string.h>
+#include <vector>
 
-namespace bwgnet
+namespace xeromisc
 {
 	class UdpBroadcastSender : public UdpSocket
 	{
@@ -62,10 +63,15 @@ namespace bwgnet
 			return destroySocket();
 		}
 
-		bool send(const std::string &msg)
+		bool send(const std::vector<uint8_t> &data)
 		{
-			ssize_t ret = ::sendto(getSocket(), msg.c_str(), msg.length(), 0, (struct sockaddr *)&m_saddr, sizeof(m_saddr));
-			if (ret == -1 || static_cast<size_t>(ret) != msg.length())
+			return send(data, 0, data.size());
+		}
+
+		bool send(const std::vector<uint8_t> &data, size_t start, size_t count)
+		{
+			ssize_t ret = ::sendto(getSocket(), &data[start], count, 0, (struct sockaddr *)&m_saddr, sizeof(m_saddr));
+			if (ret == -1 || static_cast<size_t>(ret) != count)
 			{
 				int err = errno;
 				std::cout << "cannot send broadcast packet - error " << err << std::endl;

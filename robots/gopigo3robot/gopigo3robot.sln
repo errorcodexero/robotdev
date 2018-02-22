@@ -7,6 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3hw", "..\gopigo3\gop
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3frc", "..\gopigo3\gopigo3frc\GoPiGoFRC.vcxproj", "{3DF61047-9F8A-41F1-8F95-AE23CBD3B0D2}"
 	ProjectSection(ProjectDependencies) = postProject
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A} = {66703D9D-9374-4E83-BE4A-0C0FD915D59A}
 		{2539C1FD-38D5-4E85-BECF-41104DAB0285} = {2539C1FD-38D5-4E85-BECF-41104DAB0285}
 	EndProjectSection
 EndProject
@@ -25,6 +26,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3robot", "gopigo3robo
 	ProjectSection(ProjectDependencies) = postProject
 		{D209EB32-4734-4437-BC69-30F2B01616BA} = {D209EB32-4734-4437-BC69-30F2B01616BA}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3imisc", "..\common\misc\gopigo3imisc.vcxproj", "{66703D9D-9374-4E83-BE4A-0C0FD915D59A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +83,18 @@ Global
 		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Release|ARM.Build.0 = Release|ARM
 		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Release|x64.ActiveCfg = Release|ARM
 		{736F5F78-16E3-45A0-A2E9-F484F5F0E105}.Release|x86.ActiveCfg = Release|ARM
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Debug|ARM.ActiveCfg = Debug|ARM
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Debug|ARM.Build.0 = Debug|ARM
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Debug|x64.ActiveCfg = Debug|x64
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Debug|x64.Build.0 = Debug|x64
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Debug|x86.ActiveCfg = Debug|x86
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Debug|x86.Build.0 = Debug|x86
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|ARM.ActiveCfg = Release|ARM
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|ARM.Build.0 = Release|ARM
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|x64.ActiveCfg = Release|x64
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|x64.Build.0 = Release|x64
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|x86.ActiveCfg = Release|x86
+		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

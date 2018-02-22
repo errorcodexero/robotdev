@@ -85,7 +85,6 @@
     <ClCompile Include="PIDCtrl.cpp" />
     <ClCompile Include="RobotControllerBase.cpp" />
     <ClCompile Include="SubsystemBase.cpp" />
-    <ClCompile Include="TcpClientSocket.cpp" />
     <ClCompile Include="TrapezoidSpeedProfile.cpp" />
     <ClCompile Include="XeroRobotBase.cpp" />
   </ItemGroup>
@@ -117,21 +116,17 @@
     <ClInclude Include="RobotControllerBase.h" />
     <ClInclude Include="Speedometer.h" />
     <ClInclude Include="SubsystemBase.h" />
-    <ClInclude Include="TcpClientSocket.h" />
     <ClInclude Include="TrapezoidSpeedProfile.h" />
-    <ClInclude Include="UdpBroadcastReceiver.h" />
-    <ClInclude Include="UdpBroadcastSender.h" />
-    <ClInclude Include="UdpSocket.h" />
     <ClInclude Include="XeroRobotBase.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../gopigo3frc;../gopigo3navx;../gopigo3hw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../gopigo3imisc;../gopigo3frc;../gopigo3navx;../gopigo3hw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../gopigo3frc;../gopigo3navx;../gopigo3hw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../gopigo3imisc;../gopigo3frc;../gopigo3navx;../gopigo3hw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

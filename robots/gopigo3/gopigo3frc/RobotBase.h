@@ -5,9 +5,11 @@
 #include <exception>
 #include <iostream>
 #include "GoPiGo3Robot.h"
+#include "DriverStation.h"
 
 #define START_ROBOT_CLASS(_ClassName_)                                               \
   int main(int ac, char **av) {                                                      \
+	frc::DriverStation::initialize() ;												 \
     _ClassName_ *robot = new _ClassName_();                                          \
 	while (ac-- > 0) robot->addArg(*av++) ;			         						 \
 	try {									         								 \

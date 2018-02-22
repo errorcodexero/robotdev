@@ -16,7 +16,7 @@ namespace xerolib
 
 		virtual void startDataSet(const std::vector<std::string> &names)
 		{
-			m_socket.write("new\n");
+			m_socket.write("new\n", 4);
 			m_seq_no = 0;
 		}
 
@@ -29,7 +29,7 @@ namespace xerolib
 		}
 
 	private:
-		TcpClientSocket m_socket;
+		xeromisc::TcpClientSocket m_socket;
 		size_t m_seq_no;
 	};
 }

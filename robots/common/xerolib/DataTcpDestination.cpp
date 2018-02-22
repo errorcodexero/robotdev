@@ -31,6 +31,6 @@ namespace xerolib
 
 			line += std::to_string(value);
 		}
-		m_socket.write(line);
+		m_socket.write(line.c_str(), line.length());
 	}
 }

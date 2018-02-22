@@ -54,7 +54,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../gopigo3hw;../gopigo3frc;../gopigo3navx;../xerolib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../gopigo3imisc;../gopigo3hw;../gopigo3frc;../gopigo3navx;../xerolib</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG</PreprocessorDefinitions>
       <CppAdditionalWarning>no-psabi;%(CppAdditionalWarning)</CppAdditionalWarning>
     </ClCompile>
@@ -65,7 +65,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>../gopigo3hw;../gopigo3frc;../gopigo3navx;../xerolib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../gopigo3imisc;../gopigo3hw;../gopigo3frc;../gopigo3navx;../xerolib</AdditionalIncludeDirectories>
       <CppAdditionalWarning>no-psabi;%(CppAdditionalWarning)</CppAdditionalWarning>
     </ClCompile>
     <Link>

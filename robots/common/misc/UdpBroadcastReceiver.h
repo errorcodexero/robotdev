@@ -4,19 +4,13 @@
 #include <vector>
 #include <string.h>
 
-namespace bwgnet
+namespace xeromisc
 {
 	class UdpBroadcastReceiver : public UdpSocket
 	{
 	public:
 		UdpBroadcastReceiver()
 		{
-			m_buffer.resize(256);
-		}
-
-		UdpBroadcastReceiver(size_t size)
-		{
-			m_buffer.resize(size);
 		}
 
 		virtual ~UdpBroadcastReceiver()
@@ -49,19 +43,20 @@ namespace bwgnet
 			return open(empty, port);
 		}
 
-		bool receive(std::string &msg)
+		int receive(std::vector<uint8_t> &data)
 		{
 			struct sockaddr_in srcaddr;
 			size_t len = sizeof(srcaddr);
 			int flags = 0;
 			ssize_t count;
 
-			count = recvfrom(getSocket(), &m_buffer[0], m_buffer.size(), flags, (sockaddr *)&srcaddr, &len);
+			std::cout << "Waiting For Packet" << std::endl;
+			count = recvfrom(getSocket(), &data[0], data.size(), flags, (sockaddr *)&srcaddr, &len);
+			std::cout << "RECEIVED" << std::endl;
 			if (count == -1)
-				return false;
+				return -1;
 
-			msg = std::string(&m_buffer[0], count);
-			return true;
+			return count;
 		}
 
 	protected:
@@ -94,6 +89,5 @@ namespace bwgnet
 
 	private:
 		struct sockaddr_in m_saddr;
-		std::vector<char> m_buffer;
 	};
 }

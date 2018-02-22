@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-namespace bwgnet
+namespace xeromisc
 {
 	class UdpSocket
 	{
