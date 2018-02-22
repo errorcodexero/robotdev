@@ -51,7 +51,7 @@ TESTS = \
 	output\
 	perf_tracker\
 	string_utils\
-	type\
+	type
 endif
 
 ifndef COMPLEXTESTS

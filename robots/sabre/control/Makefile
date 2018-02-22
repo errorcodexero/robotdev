@@ -35,7 +35,7 @@ SRC = \
 ifndef TESTS
 TESTS = \
 	motor_check\
-	tilt_presets\
+	tilt_presets
 endif
 
 ifndef COMPLEXTESTS
