@@ -72,8 +72,6 @@
     <ClCompile Include="DataDashboardDestination.cpp" />
     <ClCompile Include="DataFileDestination.cpp" />
     <ClCompile Include="DataLogger.cpp" />
-    <ClCompile Include="DataTcpDestination.cpp" />
-    <ClCompile Include="DataUDPDestination.cpp" />
     <ClCompile Include="DriveBase.cpp" />
     <ClCompile Include="EncoderAngleMeasurementDevice.cpp" />
     <ClCompile Include="FileManager.cpp" />
@@ -101,8 +99,6 @@
     <ClInclude Include="DataDestination.h" />
     <ClInclude Include="DataFileDestination.h" />
     <ClInclude Include="DataLogger.h" />
-    <ClInclude Include="DataTcpDestination.h" />
-    <ClInclude Include="DataUdpDestination.h" />
     <ClInclude Include="DriveBase.h" />
     <ClInclude Include="EncoderAngleMeasurementDevice.h" />
     <ClInclude Include="FileManager.h" />

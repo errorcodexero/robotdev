@@ -2,8 +2,6 @@
 #include "RobotControllerBase.h"
 #include "SubsystemBase.h"
 #include "Timer.h"
-#include "DataUdpDestination.h"
-#include "DataTcpDestination.h"
 #include "DataDashboardDestination.h"
 #include "ParamFileReader.h"
 #include <iostream>
@@ -64,18 +62,6 @@ namespace xerolib
 
 		m_time_col = m_data.createColumn("time");
 		m_mode_col = m_data.createColumn("mode");
-    }
-
-    void XeroRobotBase::setupUdpLogger(int port)
-    {
-		std::shared_ptr<DataDestination> dest_p = std::make_shared<DataUdpDestination>(port);
-		m_data.addDestination(dest_p);
-    }
-
-    void XeroRobotBase::setupTcpLogger(const std::string &addr, uint16_t port)
-    {
-		std::shared_ptr<DataDestination> dest_p = std::make_shared<DataTcpDestination>(addr, port);
-		m_data.addDestination(dest_p);
     }
 
     void XeroRobotBase::setupSmartDashboardLogger()

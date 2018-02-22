@@ -82,15 +82,6 @@ namespace xerolib
 	/// @brief setup for output message on the console
 	virtual void setupConsoleLogger();
 
-	/// @brief setup the UDP logger for the robot
-	/// @param port the port number to broadcast data to
-	virtual void setupUdpLogger(int port);
-
-	/// @brief setup the TCP logger for the robot
-	/// @param addr the address of the machine to connect to
-	/// @param port the port number to connect to 
-	virtual void setupTcpLogger(const std::string &addr, uint16_t port);
-
 	/// @brief setup the logger to send data to the FRC smart dashboard
 	virtual void setupSmartDashboardLogger() ;
 

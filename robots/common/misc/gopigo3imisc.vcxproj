@@ -71,8 +71,8 @@
     <ClInclude Include="TcpClientSocket.h" />
     <ClInclude Include="TcpServerSocket.h" />
     <ClInclude Include="TcpSocket.h" />
-    <ClInclude Include="UdpBroadcastReceiver.h" />
-    <ClInclude Include="UdpBroadcastSender.h" />
+    <ClInclude Include="UdpReceiver.h" />
+    <ClInclude Include="UdpSender.h" />
     <ClInclude Include="UdpSocket.h" />
   </ItemGroup>
   <ItemGroup>

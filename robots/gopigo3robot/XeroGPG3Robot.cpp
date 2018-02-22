@@ -207,7 +207,6 @@ void XeroGPG3Robot::RobotInit()
 
 	setupLoggers("robot.log", "robot.csv");
 	setupConsoleLogger();
-	setupTcpLogger("192.168.1.85", 8888);
 
 	readParams();
 	extractParams();

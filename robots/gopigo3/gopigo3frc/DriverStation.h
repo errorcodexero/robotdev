@@ -1,7 +1,7 @@
 #pragma once
 
-#include "UdpBroadcastSender.h"
-#include "UdpBroadcastReceiver.h"
+#include "UdpSender.h"
+#include "UdpReceiver.h"
 #include <cstdint>
 #include <thread>
 
