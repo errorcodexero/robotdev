@@ -1,4 +1,4 @@
-#
+
 # makefile for the executive library
 #
 
@@ -18,29 +18,37 @@ COMMON=helpers
 #
 ADDCXXFLAGS = -DCLAYMORE  -I../control -I../util -I../input -I..
 
-ifdef AUTOMODE_TEST
-$(info AUTOMODE_TEST defined, building version of robot code to test auto mode)
-#
-# This allows make to be called with AUTOMODE_TEST=N on the command line and
-# This library will be built to run this automode
-#
-ADDCXXFLAGS += -DAUTOMODE_TEST=$(AUTOMODE_TEST)
-BLEH=$(shell touch autonomous.cpp)
+ifdef AUTOMODE
+ifeq ($(CONFIG),release)
+$(info Warning: configuration is release, AUTOMODE is ignored)
+else
+ADDCXXFLAGS += -DAUTOMODE=$(AUTOMODE)
+endif
 endif
 
+ifdef AUTOMODE_TEST
+$(info AUTOMODE_TEST is no longer supported)
+$(info use AUTOMODE=number on the make file for automodes)
+$(info see the function get_auto_mode in the file autonomous.cpp for more details)
+$(error aboring make)
+endif
 
 #
 # define our source code
 #
-SRC = \
-	autonomous.cpp\
-	chain.cpp\
-	executive.cpp\
-	step.cpp\
-	teleop.cpp\
-	test.cpp\
-	timed.cpp\
-	auto_calibonly.cpp\
+
+DEBUG_AUTOMODES = \
+	auto_rotate_pos90.cpp\
+	auto_rotate_neg90.cpp\
+	auto_rotate_both.cpp\
+	auto_drive_straight_300.cpp\
+	auto_drive_straight_120.cpp\
+	auto_drive_straight_12.cpp\
+	auto_lifter_test.cpp\
+	auto_lifter_move.cpp\
+	auto_grabber_test.cpp
+
+COMPETITION_AUTOMODES = \
 	auto_r_scale_r.cpp\
 	auto_r_scale_l.cpp\
 	auto_l_scale_r.cpp\
@@ -52,6 +60,18 @@ SRC = \
 	auto_two_cube_right.cpp\
 	auto_two_cube_left.cpp
 
+
+SRC = \
+	autonomous.cpp\
+	chain.cpp\
+	executive.cpp\
+	step.cpp\
+	teleop.cpp\
+	test.cpp\
+	timed.cpp\
+	auto_calibonly.cpp\
+	$(DEBUG_AUTOMODES)\
+	$(COMPETITION_AUTOMODES)
 
 ifndef TESTS
 TESTS = \

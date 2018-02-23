@@ -6,11 +6,19 @@
 
 using namespace std;
 
-#define AUTOMODE_TEST 5
 
 //
 // Automodes defined in seperate files
 //
+extern Executive drive_straight_120 ;
+extern Executive drive_straight_12 ;
+extern Executive drive_straight_300 ;
+extern Executive rotate_pos90 ;
+extern Executive rotate_neg90 ;
+extern Executive rotate_both ;
+extern Executive lifter_test;
+extern Executive lifter_move ;
+extern Executive grabber_test ;
 extern Executive calibrate_only ;
 extern Executive right_scale_right ;
 extern Executive right_scale_left ;
@@ -21,6 +29,9 @@ extern Executive center_switch_left ;
 extern Executive left_switch_left ;
 extern Executive right_switch_right ;
 
+//
+// Executive used to end each automode step
+//
 Executive teleopex{Teleop()} ;
 
 //
@@ -43,355 +54,45 @@ Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCALE, 0.0)
 Step waitForLifter = Step(Wait_for_lifter()) ;
 Step eject = Step(Eject()) ;
 
-
-Executive make_test_step(auto a){
-    return
-		Executive
-    {
-	    Chain
-		{
-			Step
-			{
-				a
-					},
-				Executive
-				{
-					Teleop
-					{
-					}
-				}
-	    }
-	};
-}
+//
+// Ok we have done multiple things here trying to get something that works well
+// for all cases and I think this is it. At the bottom of this function there is a
+// big switch statement that sets the automode based on a variable named automode.
+// This variable is set differently depending on whether or not the 'C' preprocessor
+// variable AUTOMODE is set.  If AUTOMODE is set, the the variable automode is set to
+// the value of AUTOMODE.  In this, with the AUTOMODE variable on the make command line
+// you can force the auto mode to any mode you want.
+//
+// e.g. make CONFIG=debug AUTOMODE=102
+//
+// If AUTOMODE is not set (or if you are not building for configuration debug), then the
+// value of automode is set based on the switch on the panel.  This switch only has 10
+// positions so only the first 10 automodes in the switch statement are accessible.
+//
 
 Executive get_auto_mode(Next_mode_info info)
 {
+    Executive auto_program = calibrate_only ;
     messageLogger &logger = messageLogger::get() ;
+    int automode = 0 ;
     
     if(!info.autonomous)
     {
-		logger.startMessage(messageLogger::messageType::info) ;
-		logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
-		logger.endMessage() ;
-		return Executive{Teleop()};
+	logger.startMessage(messageLogger::messageType::info) ;
+	logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
+	logger.endMessage() ;
+	return Executive{Teleop()};
     }
 
-#if AUTOMODE_TEST == 0
-    //
-    // AUTOMODE_TEST == 0, null automode test program
-    //
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 0, do nothing" ;
-    logger.endMessage() ;
-
-	Executive auto_program = calibrate_only ;
-	
-#elif AUTOMODE_TEST == 1
-    //
-    // AUTOMODE_TEST == 1, drive straight 12 inches
-    //
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 1, drive 12 inches" ;
-    logger.endMessage() ;
+#if defined(AUTOMODE) && defined(DEBUG)
+    automode = AUTOMODE ;
     
-    Executive auto_program
-    {
-		Chain
-		{
-			Step
-			{
-				Drive{300.0}
-			},
-				Executive
-				{
-					Teleop()
-						}
-		}
-    } ;
-
-#elif AUTOMODE_TEST == 2
-    //
-    // AUTOMODE_TEST == 2, drive straight 10 feet
-    //
     logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 2, drive 10 ft" ;
+    logger << "running in AUTOMODE test mode, test = " << AUTOMODE ;
     logger.endMessage() ;
-    
-    Executive auto_program
-    {
-		Chain
-		{
-			Step
-			{
-				Drive{240.0}
-			},
-				Executive
-				{
-					Teleop()
-						}
-		}
-    } ;
-
-#elif AUTOMODE_TEST == 3
-    //
-    // AUTOMODE_TEST = 3, rotate 90 degrees
-    //
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 3, rotate 90" ;
-    logger.endMessage() ;
-    
-    Executive auto_program
-    {
-		Chain
-		{
-			Step
-			{
-				Rotate{90.0}
-			},
-				Executive
-				{
-					Teleop()
-						}
-		}
-    };
-
-#elif AUTOMODE_TEST == 4
-    //
-    // AUTOMODE_TEST = 4, rotate -90 degrees
-    //
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 4, rotate -90" ;
-    logger.endMessage() ;
-    
-    Executive auto_program
-    {
-		Chain
-		{
-			Step
-			{
-				Rotate{-90.0}
-			},
-				Executive
-				{
-					Teleop()
-						}
-		}
-    };
-#elif AUTOMODE_TEST == 5
-    //
-    // AUTOMODE_TEST = 5, rotate 90 degress, wait 2 seconds, rotate -90 degrees
-    //
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 5, rotate 90, wait 2 secs, rotate -90" ;
-    logger.endMessage() ;
-    
-    Executive auto_program
-    {
-		Chain
-		{	
-			vector<Step>
-			{
-				Step
-				{
-					Rotate{-90.0}
-				},
-					Step
-					{
-						Wait{2.0}
-					},
-						Step
-						{
-							Rotate{90.0}
-						},
-							Step
-							{
-								Wait{2.0}
-							},
-								},
-				Executive
-				{
-					Teleop()
-						}
-		}
-    };
-
-#elif AUTOMODE_TEST == 6
-	//
-	// AUTOMODE_TEST = 6, start the lifter in the background, drive forward 60 inches, wait until the lifter has reached its goal
-	//
-	logger.startMessage(messageLogger::messageType::info);
-	logger << "get_auto+mode - AUTOMODE_TEST == 6, start lifter, drive 60, wait for lifter" ;
-	logger.endMessage();
-
-	Executive auto_program
-	{
-		Chain
-		{
-			vector<Step>
-			{
-				Step
-				{
-					Background_lifter_to_preset{LifterController::Preset::SWITCH, info.in.now}
-				},
-					Step
-					{
-						Drive{60.0}
-					},
-						Step
-						{
-							Wait_for_lifter{}
-						}
-			}
-		},
-			Executive
-			{
-				Teleop()
-					}
-	};
-    
-#elif AUTOMODE_TEST == 7
-    //
-    // AUTOMODE_TEST = 7, calibrate the lifter, move the lifter up 43.5 inches
-    //
-    logger.startMessage(messageLogger::messageType::info);
-    logger << "get_auto+mode - AUTOMODE_TEST == 7, calibrate the lifter, move the lifter up 43.5 inches" ;
-    logger.endMessage();
-
-    Executive auto_program
-    {
-		Chain
-		{
-			vector<Step>
-			{
-				Step
-				{
-					Calibrate_lifter{}
-				},
-					Step
-					{
-						Lifter_to_height{24, info.in.now}
-					},
-						Step
-						{
-							Wait{2.0}
-						},
-							Step
-							{
-								Lifter_to_height{43.5, info.in.now}
-							},
-								Step
-								{
-									Wait{2.0}
-								},
-									Step
-									{
-										Lifter_to_height{24, info.in.now}
-									}
-			},
-				Executive
-				{
-					Teleop()
-						}
-		}
-    };
-
-#elif AUTOMODE_TEST == 8
-    //
-    // AUTOMODE_TEST = 8, calibrate the grabber, move it to the open position
-    //
-    logger.startMessage(messageLogger::messageType::info);
-    logger << "get_auto_mode - AUTOMODE_TEST == 8, calibrate the grabber, move it to the open position" ;
-    logger.endMessage();
-
-    Executive auto_program
-    {
-		Chain
-		{
-			vector<Step>
-			{
-				Step
-				{
-					Calibrate_lifter{}
-				},
-					Step
-					{
-						Calibrate_grabber{}
-					}/*,
-					   Step
-					   {
-					   Wait{1.0}
-					   },
-					   Step
-					   {
-					   Background_lifter_to_preset{LifterController::Preset::SWITCH, info.in.now}
-					   },
-					   Step
-					   {
-					   Drive{128.0}
-					   },
-					   Step
-					   {
-					   Wait_for_lifter{}
-					   },
-					   Step
-					   {
-					   Eject{}
-					   }*/
-			},
-				Executive
-				{
-					Teleop()
-						}
-		}
-    };
-
-#elif AUTOMODE_TEST == 20
-    //
-    // AUTOMODE_TEST = 20, run the auto program for switch same side
-    //
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 20, switch same side" ;
-    logger.endMessage() ;
-    
-    Executive auto_program = same_switch ;
-	
-#elif AUTOMODE_TEST == 21
-    //
-    // AUTOMODE_TEST = 21, run the auto program for switch same side
-    //
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 21, switch opposite side" ;
-    logger.endMessage() ;
-    
-    Executive auto_program = opposite_switch ;
-	
-#elif AUTOMODE_TEST == 22
-	//
-	// AUTOMODE_TEST = 22, decide between same side and opposite side for switch
-	//
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 22, decide switch side" ;
-    logger.endMessage() ;
-    
-    Executive auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
-
-#elif AUTOMODE_TEST == 23
-	//
-	// AUTOMODE_TEST = 23, Run the auto program for the near scale
-	//
-    logger.startMessage(messageLogger::messageType::info) ;
-    logger << "get_auto_mode - AUTOMODE_TEST == 23, near scale" ;
-    logger.endMessage() ;
-    
-    Executive auto_program = same_scale ;
-
 #else
-
-#error BBBBB
-	Executive auto_program = calibrate_only ;
-	
     //
-    // If AUTOMODE_TEST was not defined, we revert to the default behavior which is
+    // If AUTOMODE was not defined, we revert to the default behavior which is
     // to run the with the panel
     //    
 
@@ -400,54 +101,163 @@ Executive get_auto_mode(Next_mode_info info)
     logger.endMessage() ;
 	
     if(!info.panel.in_use) {
-		//
-		// No panel was detected.  May be a problem with the driver station, log this fact
-		// and do nothing during autonomous
-		//
-		logger.startMessage(messageLogger::messageType::error) ;
-		logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
-		logger.endMessage() ;
+	//
+	// No panel was detected.  May be a problem with the driver station, log this fact
+	// and do nothing during autonomous
+	//
+	logger.startMessage(messageLogger::messageType::error) ;
+	logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
+	logger.endMessage() ;
 	
-		return opposite_switch ;
+	return calibrate_only ;
     }
 
     logger.startMessage(messageLogger::messageType::error) ;
     logger << "get_auto_mode - panel value is " << info.panel.auto_select ;
     logger.endMessage() ;
+
+    automode = info.panel.auto_select ;
+#endif
     
-    switch(info.panel.auto_select){
+    switch(automode)
+    {
     case 0:
-		auto_program = calibrate_only ;
-		break; 
+	auto_program = calibrate_only ;
+	break; 
     case 1: 
-		auto_program = auto_null;
-		break;
+	break;
     case 2:
-		auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
-		break;
+	auto_program = info.in.ds_info.near_switch_left ? center_switch_left : center_switch_right ;
+	break;
     case 3:
-		auto_program = info.in.ds_info.scale_left ? opposite_scale : same_scale ;
-		break;
-    case 4: 
+	auto_program = info.in.ds_info.scale_left ? right_scale_left : right_scale_right ;
+	break;
+    case 4:
+	auto_program = info.in.ds_info.scale_left ? left_scale_left : left_scale_right ;
+	break ;
     case 5: 
     case 6:
     case 7: 
     case 8: 
     case 9: 
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 15:
-    case 16:
-    case 17:
-    case 18:
-    case 19:
+	break ;
+	
+    case 100:
+	//
+	// calibrate only
+	//
+	auto_program = calibrate_only ;
+	break ;
+
+    case 101:
+	//
+	// drive straight for 120 inches (10 feet)
+	//
+	auto_program = drive_straight_120 ;
+	break ;
+	
+    case 102:
+	//
+	// drive straight for 12 inches (1 foot)
+	//
+	auto_program = drive_straight_12 ;
+	break ;
+	
+    case 103:
+	//
+	// drive straight for 12 inches (1 foot)
+	//
+	auto_program = drive_straight_300 ;
+	break ;
+
+    case 104:
+	//
+	// Rotate 90 degrees
+	//
+	auto_program = rotate_pos90 ;
+	break ;
+	
+    case 105:
+	//
+	// Rotate 90 degrees
+	//
+	auto_program = rotate_neg90 ;
+	break ;
+
+    case 106:
+	//
+	// Rotate 90 degrees
+	//
+	auto_program = rotate_both ;
+	break ;
+
+    case 107:
+	//
+	// Start lifter in brackground, drive 60 inches, wait for lifter
+	//
+	auto_program = lifter_test ;
+	break ;
+	
+    case 108:
+	//
+	// Calibrate the lifter, move to 24 inches, 43.5 inches, 24 inches
+	//
+	auto_program = lifter_move ;
+	break ;
+
+    case 109:
+	//
+	// Test the grabber
+	//
+	auto_program = grabber_test ;
+	break;
+
+    case 120:
+	//
+	// Competition auto program, start in center, score on right side of switch
+	//
+	auto_program = center_switch_right ;
+	break ;
+
+    case 121:
+	//
+	// Competition auto program, start in center, score on left side of switch
+	//
+	auto_program = center_switch_left ;
+	break ;
+
+    case 122:
+	//
+	// Competition auto program, start on right side, score on right scale
+	//
+	auto_program = right_scale_right ;
+	break ;
+	
+    case 123:
+	//
+	// Competition auto program, start on left side, score scale on left sdie
+	//
+	auto_program = left_scale_left ;
+	break ;
+
+    case 124:
+	//
+	// Compeition auto program, start on right side, score left scale
+	//
+	auto_program = right_scale_left ;
+	break ;
+	
+    case 125:
+	//
+	// Compeition auto program, start on left side, score right scale
+	//
+	auto_program = left_scale_right ;
+	break ;
+
     default:
-		return auto_null;
+	auto_program = calibrate_only ;
+	break ;
     }
-#endif
 	
     return auto_program ;
 }

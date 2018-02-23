@@ -274,10 +274,12 @@ bool Drive::operator==(Drive const& a)const{
 //
 Drive_param::Drive_param(const char *param_p, double defval, bool end_stall)
 {
+#ifdef NOTYET
     mParam = param_p ;
     mDefaultValue = defval ;
     mEndOnStall = end_stall ;
     mInited = false ;
+#endif
 }
 
 Step::Status Drive_param::done(Next_mode_info info)
