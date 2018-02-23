@@ -253,7 +253,7 @@ struct Robot_outputs{
 	static const unsigned RELAYS=4;
 	Checked_array<Relay_output,RELAYS> relay;
 	
-	static const unsigned DIGITAL_IOS=11;//there are actually 26 on the roboRIO if you count the MXP, but that varies depending on whether they're set as dios or pwm
+	static const unsigned DIGITAL_IOS=14;//there are actually 26 on the roboRIO if you count the MXP, but that varies depending on whether they're set as dios or pwm
 	Checked_array<Digital_out,DIGITAL_IOS> digital_io;
 	
 	static const unsigned TALON_SRX_OUTPUTS=TALON_SRXS;//FIXME: talon initializaitons
@@ -284,7 +284,7 @@ std::ostream& operator<<(std::ostream& o,Robot_outputs);
 
 //limitation of FRC coms//TODO look into this
 #define JOY_AXES 8
-#define JOY_BUTTONS 13
+#define JOY_BUTTONS 16
 
 struct Joystick_data{
   Joystick_data()
@@ -325,7 +325,10 @@ struct DS_info{
 	#define DS_INFO_ITEMS(X) \
 		X(bool,connected) \
 		X(Alliance,alliance) \
-		X(int,location) 
+		X(int,location) \
+		X(bool,near_switch_left) \
+		X(bool,scale_left) \
+		X(bool,far_switch_left)
 	
 	STRUCT_MEMBERS(DS_INFO_ITEMS)
 

@@ -3,8 +3,18 @@
 #include <string>
 #include <iostream>
 
+paramsInput *paramsInput::mSingleObject = nullptr ;
+
 paramsInput::paramsInput()
 {
+}
+
+paramsInput *paramsInput::get()
+{
+    if (mSingleObject == nullptr)
+	mSingleObject = new paramsInput() ;
+
+    return mSingleObject ;
 }
 
 bool paramsInput::readFile(const std::string &filename)
@@ -86,7 +96,10 @@ double paramsInput::getValue(const std::string &paramName, double defaultValue)
 {
     auto it = mParamsMap.find(paramName) ;
     if (it == mParamsMap.end())
+	{
+		std::cout << "Parameter '" << paramName << "' not found - using default value" << std::endl ;
 		return defaultValue ;
+	}
     
     return it->second ;
 }

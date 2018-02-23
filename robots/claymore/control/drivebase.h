@@ -31,8 +31,6 @@ struct Drivebase{
     enum Motor { LEFT1,LEFT2,LEFT3, RIGHT1,RIGHT2,RIGHT3, MOTORS };
 #endif
 
-    typedef std::pair<Digital_in,Digital_in> Encoder_info;
-
 #define ENCODER_TICKS(X)			\
     X(double,l)					\
     X(double,r)
@@ -55,9 +53,6 @@ struct Drivebase{
     };
 
 #define DRIVEBASE_INPUT(X)				\
-    X(SINGLE_ARG(std::array<double,MOTORS>),current)	\
-    X(Encoder_info,left)				\
-    X(Encoder_info,right)				\
     X(Distances,distances)				\
     X(double,angle) 
     DECLARE_STRUCT(Input,DRIVEBASE_INPUT)
@@ -71,7 +66,7 @@ struct Drivebase{
 #define DRIVEBASE_OUTPUT(X)			\
     X(double,l)					\
     X(double,r)					\
-    X(bool,zero_yaw)
+    X(bool,high_gear)                           
     DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
 #define SPEEDS_ITEMS(X)				\
@@ -80,27 +75,24 @@ struct Drivebase{
     DECLARE_STRUCT(Speeds,SPEEDS_ITEMS) //consider renaming to Velocities
 
 #define DRIVEBASE_STATUS(X)					\
-    X(SINGLE_ARG(std::array<Motor_check::Status,MOTORS>),motor)	\
-    X(bool,stall)						\
     X(Speeds,speeds)						\
     X(Distances,distances)					\
-    X(Output,last_output)					\
-    X(Time,dt)							\
-    X(Time,now)							\
     X(double,angle)						\
-    X(double,prev_angle)
+    X(bool,high_gear_recommended)                               \
+    X(Time,now)							\
+    X(Time,dt)							
     DECLARE_STRUCT(Status,DRIVEBASE_STATUS) //time is all in seconds
 
     typedef Status Status_detail;
 
     struct Estimator{
-	std::array<Motor_check,MOTORS> motor_check;
 	Status_detail last;
 	Countdown_timer speed_timer;
-	Stall_monitor stall_monitor;
+	Countdown_timer shift_timer;
+	bool last_shifter_output;
 
-	void update(Time,Input,Output);//TODO: update
-	Status_detail get()const;//TODO: may need updating
+	void update(Time,Input,Output);
+	Status_detail get()const;
 	Estimator();
     };
     Estimator estimator;
@@ -114,38 +106,37 @@ struct Drivebase{
     struct Goal{
 #define DRIVEBASE_GOAL_MODES			\
 	X(ABSOLUTE)				\
-	X(DISTANCES)				\
 	X(DRIVE_STRAIGHT)			\
 	X(ROTATE)
 #define X(name) name,
 	enum class Mode{DRIVEBASE_GOAL_MODES};
 #undef X 
 
+	enum class Gear {
+	    LOW,
+	    HIGH,
+	    AUTO
+	};
+
     private:
 	Mode mode_;
 
-	Distances distances_;//used for controlling all drive motors on the robot 
-	double angle_;//degrees
-	double angle_i_;//integral of angle error
 	double left_,right_;
+	Gear gear_;
 
     public:
 	Goal();	
 
 	Mode mode()const;
-		
-	Distances distances()const;
-
-	Rad angle()const;
-	double angle_i()const;
 	
 	double right()const;
 	double left()const;
+
+	Gear gear()const;
 		
-	static Goal distances(Distances);
-	static Goal absolute(double,double);
-	static Goal drive_straight(/*Distances,double,double*/);
-	static Goal rotate(/*Rad*/);
+	static Goal absolute(double,double,Gear gear=Gear::AUTO);
+	static Goal drive_straight();
+	static Goal rotate();
     };
 };
 
@@ -173,8 +164,6 @@ Drivebase::Distances ticks_to_inches(const Drivebase::Encoder_ticks);
 Drivebase::Encoder_ticks inches_to_ticks(const Drivebase::Distances);
 
 int encoderconv(Maybe_inline<Encoder_output>);
-
-double total_angle_to_displacement(double);
 
 CMP1(Drivebase::Encoder_ticks)
 CMP1(Drivebase::Speeds)

@@ -16,7 +16,7 @@ struct Lifter{
 			#undef X
 		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE) X(LOW_GEAR) X(LOCK)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -47,15 +47,19 @@ struct Lifter{
 		static Goal down(bool);
 		static Goal stop();
 		static Goal background();
+		static Goal calibrate();
+		static Goal low_gear();
+		static Goal lock();
 	};
 
 	struct Output{
 		double power;//pwm value, positive is up
 		using Gearing = Lifter::Goal::Gearing;
 		Gearing gearing;
+		bool lock;
 		
 		Output();
-		Output(double,Gearing);
+		Output(double,Gearing,bool);
 	};
 
 	struct Input{
@@ -71,11 +75,13 @@ struct Lifter{
 		bool at_bottom;
 		bool at_top;
 		bool at_climbed_height;
+		bool upper_slowdown_range;
+		bool lower_slowdown_range;
 		double height;
 		double time, dt;
 	
 		Status_detail();
-		Status_detail(bool,bool,bool,double,double,double);
+		Status_detail(bool,bool,bool,bool,bool,double,double,double);
 	};
 
 	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR) X(CLIMBED)
@@ -99,12 +105,13 @@ struct Lifter{
 		Status_detail last;
 		Output::Gearing last_gearing;
 		double climb_goal;
+		double encoder_offset;
 
 		void update(Time const&,Input const&,Output const&);
 		Status_detail get()const;
 		
 		Estimator();
-		Estimator(Lifter::Status_detail, Output::Gearing, double);
+		Estimator(Lifter::Status_detail, Output::Gearing, double, double);
 	};
 
 	Output_applicator output_applicator;

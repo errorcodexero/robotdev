@@ -13,6 +13,7 @@ public:
     enum class Preset {
 	FLOOR,				///< Move the lifter to the floor
 	EXCHANGE,			///< Move the lifter to the exchange
+	DROP_GRABBER,                   ///< Move the lifter to a point where the grabber drops down
 	SWITCH,				///< Move the lifter to the height of the switch
         SCALE,				///< Move the lifter to the height of the scale
 	PREP_CLIMB			///< Move the lifter to the climb position
@@ -24,20 +25,31 @@ public:
     /// \brief set the params object used to extract parameters from the params file
     void setParams(paramsInput* input_params);
 
+    /// \brief get the params object used to extract parameters from the params file
+    /// \returns the params object
+    paramsInput* getParams();
+
     /// \brief move the lifter to a specific height
     /// \param height the height in inches for the lifter
+    /// \param current_height the current lifter height
     /// \param the start time of this operation
-    void moveToHeight(double height, double time);
+    void moveToHeight(double height, double current_height, double time);
 
     /// \brief move the lifter to a preset position
     /// \param preset the preset for the lifter height
+    /// \param current_height the current lifter height
     /// \param time the start time of this operation
-    void moveToHeight(Preset preset, double time);
+    void moveToHeight(Preset preset, double current_height, double time);
 
     /// \brief move the lifter to a preset position in the background
     /// \param preset the preset for the lifter height
+    /// \param current_height the current lifter height
     /// \param time the start time of this operation
-    void backgroundMoveToHeight(Preset preset, double time);
+    void backgroundMoveToHeight(Preset preset, double current_height, double time);
+
+    /// \brief put the lifter into either calibration mode or idle mode, depending on the parameter
+    /// \param calibrate true to put the lifter into calibration mode, false to put it into idle
+    void setCalibrate(bool calibrate);
 
     /// \brief this method is called each time the robot loop is run to update the lifer
     /// This method uses a PID controller to position the lifter to the desired location
@@ -56,12 +68,12 @@ public:
     /// \brief this method updates the height target internally when a new target is required
     /// \param height the new requeste height in inches
     /// \param time the start time of the new request
-    void updateHeightOnChange(double height, double time);
+    void updateHeightOnChange(double height, double current_height, double time);
     
     /// \brief this method updates the height target internally when a new target is required
     /// \param preset the preset we need to hit
     /// \param time the start time of the new request
-    void updateHeightOnChange(Preset preset, double time);
+    void updateHeightOnChange(Preset preset, double current_height, double time);
 
     /// \brief returns true when the lifter has reached its desired height
     /// \returns true when the lifter has reached its desired height
@@ -70,6 +82,10 @@ public:
     /// \brief return true when in the lifter is running in the background
     /// \returns true when the lifter is running in the background
     bool runningInBackground();
+
+    /// \brief return true when the lifter is calibrating
+    /// \returns true when the lifter is calibrating
+    bool calibrating();
 
     /// \brief returns the height assocaited with a preset
     /// \param preset the preset of interest
@@ -140,6 +156,10 @@ private:
     //
     double mDataDumpStartTime;
 
+    //
+    // Represents whether or not the lifter is calibrating
+    //
+    bool mCalibrating;
 };
 
 #endif

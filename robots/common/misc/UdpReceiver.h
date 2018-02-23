@@ -44,9 +44,7 @@ namespace xeromisc
 			int flags = 0;
 			ssize_t count;
 
-			std::cout << "Waiting For Packet, size is " << data.size() << std::endl;
 			count = recvfrom(getSocket(), &data[0], data.size(), flags, (sockaddr *)&srcaddr, &len);
-			std::cout << "RECEIVED" << std::endl;
 			if (count == -1)
 				return -1;
 
@@ -56,12 +54,10 @@ namespace xeromisc
 	protected:
 		bool bind(const std::string &addr, uint16_t port)
 		{
-			std::cout << "Binding socket to address '" << addr << "'" << std::endl;
 			memset(&m_saddr, 0, sizeof(m_saddr));
 			m_saddr.sin_family = AF_INET;
 			if (addr.length() == 0)
 			{
-				std::cout << "Binding to address INADDR_ANY" << std::endl;
 				m_saddr.sin_addr.s_addr = INADDR_ANY;
 			}
 			else

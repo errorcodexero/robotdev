@@ -1,14 +1,19 @@
 #include "grabber.h"
+#include "subsystems.h"
+#include "message_logger.h"
 #include <cmath>
 
 using namespace std;
 
 #define GRABBER_ADDRESS 2
 
-#define ENCODER_ADDRESS 0
+#define ENCODER_ADDRESS 3
+#define ENCODER_DIOS 6, 7
+#define CUBE_SENSOR_ADDRESS 12
+#define LIMIT_SWITCH_ADDRESS 11
 
-#define MANUAL_GRABBER_POWER .60 //TODO tune
-#define AUTO_GRABBER_POWER .60 //TODO tune
+#define MANUAL_GRABBER_POWER .60 	//TODO tune
+#define CALIBRATE_POWER .40 	   //TODO tune
 
 GrabberController Grabber::grabber_controller;
 
@@ -75,11 +80,17 @@ Grabber::Goal Grabber::Goal::go_to_preset(GrabberController::Preset preset){
 	return a;
 }
 
-Grabber::Input::Input(int t):ticks(t){}
-Grabber::Input::Input():Input(0){}
+Grabber::Goal Grabber::Goal::calibrate(){
+	Grabber::Goal a;
+	a.mode_ = Grabber::Goal::Mode::CALIBRATE;
+	return a;
+}
 
-Grabber::Status_detail::Status_detail(double a):angle(a){}
-Grabber::Status_detail::Status_detail():Status_detail(0.0){}
+Grabber::Input::Input(int t, bool hc, bool ls):ticks(t),has_cube(hc),limit_switch(ls){}
+Grabber::Input::Input():Input(0, false, false){}
+
+Grabber::Status_detail::Status_detail(bool hc, bool ol, bool il, double a, double t, double dt):has_cube(hc),outer_limit(ol),inner_limit(il),angle(a),time(t),dt(dt){}
+Grabber::Status_detail::Status_detail():Status_detail(false, false, false, 0.0, 0.0, 0.0){}
 
 Grabber::Estimator::Estimator():last(){}
 
@@ -93,8 +104,14 @@ std::set<Grabber::Output> examples(Grabber::Output*){
 
 std::set<Grabber::Input> examples(Grabber::Input*){
 	return {
-		{0},
-		{1}
+		{0, false, false},
+		{1, false, false},
+		{0, false, true},
+		{1, false, true},
+		{0, true, false},
+		{1, true, false},
+		{0, true, true},
+		{1, true, true}
 	};
 }
 
@@ -102,12 +119,18 @@ std::ostream& operator<<(std::ostream& o,Grabber::Input a){
 	o<<"(";
 	o<<"ticks:"<<a.ticks;
 	o<<"has_cube:"<<a.has_cube;
+	o<<"limit_switch:"<<a.limit_switch;
 	o<<")";
 	return o;
 }
 
 std::set<Grabber::Status_detail> examples(Grabber::Status_detail*){
-	return {{0.0}};
+	return {
+		{false, false, false, 0.0, 0.0, 0.0},
+		{false, true, false, 0.0, 0.0, 0.0},
+		{true, false, false, 0.0, 0.0, 0.0},
+		{true, true, false, 0.0, 0.0, 0.0}
+	};
 }
 
 std::ostream& operator<<(std::ostream& o,Grabber::Status_detail a){
@@ -130,7 +153,7 @@ bool operator<(Grabber::Status_detail a,Grabber::Status_detail b){
 }
 
 bool operator==(Grabber::Status_detail a,Grabber::Status_detail b){
-	return a.angle == b.angle && a.time == b.time && a.dt == b.dt && a.has_cube == b.has_cube;
+	return a.angle == b.angle && a.time == b.time && a.dt == b.dt && a.has_cube == b.has_cube && a.outer_limit == b.outer_limit && a.inner_limit == b.inner_limit;
 }
 
 bool operator!=(Grabber::Status_detail a, Grabber::Status_detail b){
@@ -155,7 +178,7 @@ bool operator<(Grabber::Input a,Grabber::Input b){
 }
 
 bool operator==(Grabber::Input a,Grabber::Input b){
-	return a.ticks == b.ticks && a.has_cube == b.has_cube;
+	return a.ticks == b.ticks && a.has_cube == b.has_cube && a.limit_switch == b.limit_switch;
 }
 
 bool operator!=(Grabber::Input a, Grabber::Input b){
@@ -185,18 +208,32 @@ bool operator!=(Grabber a, Grabber b){
 #undef CMP
 
 Grabber::Input Grabber::Input_reader::operator()(Robot_inputs const& r) const{
-	return {
-		r.digital_io.encoder[ENCODER_ADDRESS] ? *r.digital_io.encoder[ENCODER_ADDRESS] : 10000,
-	};
+	int enc_val = 9999;
+	if(r.digital_io.encoder[ENCODER_ADDRESS])
+		enc_val = *(r.digital_io.encoder[ENCODER_ADDRESS]);
+	return Grabber::Input(
+		enc_val,
+		r.digital_io.in[CUBE_SENSOR_ADDRESS] == Digital_in::_0,
+		r.digital_io.in[LIMIT_SWITCH_ADDRESS] == Digital_in::_0
+	);
 }
 
 Robot_inputs Grabber::Input_reader::operator()(Robot_inputs r, Grabber::Input in) const{
 	r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
+	r.digital_io.in[CUBE_SENSOR_ADDRESS] = in.has_cube ? Digital_in::_0 : Digital_in::_1;
+	r.digital_io.in[LIMIT_SWITCH_ADDRESS] = in.limit_switch ? Digital_in::_0 : Digital_in::_1;
 	return r;
 }
 
 Robot_outputs Grabber::Output_applicator::operator()(Robot_outputs r, Grabber::Output o)const{
 	r.pwm[GRABBER_ADDRESS] = o;
+
+	auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
+		r.digital_io[a] = Digital_out::encoder(loc,1);
+		r.digital_io[b] = Digital_out::encoder(loc,0);
+	};
+	set_encoder(ENCODER_DIOS, ENCODER_ADDRESS);
+
 	return r;
 }
 
@@ -204,15 +241,58 @@ Grabber::Output Grabber::Output_applicator::operator()(Robot_outputs const& r)co
 	return r.pwm[GRABBER_ADDRESS];
 }
 
-void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output output){
-	const double TICKS_PER_REVOLUTION = 200.0;
-	const double DEGREES_PER_TICK = 360.0 / TICKS_PER_REVOLUTION;
-	last.angle = DEGREES_PER_TICK * input.ticks;
+void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output out){
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
 
-	last.dt = last.time - time;
-	last.time = time;
+	logger<<"Grabber:\n";
+
+	paramsInput* input_params = Grabber::grabber_controller.getParams();
+
+	if(!Grabber::grabber_controller.getDoneCalibrating()) {
+		ticks_history.push_back(input.ticks);
+		logger << "CALIBRATING:" ;
+		for(const auto &v : ticks_history)
+			logger << " " << v ;
+		
+		size_t samples = static_cast<int>(input_params->getValue("grabber:samples", 5.0) + 0.5) ;
+		if(ticks_history.size() > samples)
+			ticks_history.pop_front();
+
+		double delta = ticks_history.back() - ticks_history.front() ;
+		double thresh = input_params->getValue("grabber:calibrate_threshold", 0.1) ;
+		logger << ", samples " << samples ;
+		logger << ", delta " << delta ;
+		logger << ", thresh " << thresh ;
+		
+		if (ticks_history.size() == samples && fabs(delta) < thresh) {
+			encoder_offset = input.ticks;
+			Grabber::grabber_controller.setDoneCalibrating(true);
+			logger << "DONE CALIBRATING" << "\n";
+		}	
+	}
+
+	/*
+	const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
+	const double MOTOR_REVS_PER_GRABBER_REV = 196.0; //Gear ratio TODO: NEEDS CORRECT VALUE
+	const double TICKS_PER_GRABBER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_GRABBER_REV;
+	const double DEGREES_PER_TICK = 360.0 / TICKS_PER_GRABBER_REVOLUTION;
+	*/
+	const double DEGREES_PER_TICK = 90.0 / 144.0;
+	last.angle = (input.ticks - encoder_offset) * DEGREES_PER_TICK;
 
 	last.has_cube = input.has_cube;
+
+	last.outer_limit = input.limit_switch || last.angle > input_params->getValue("grabber:angle:stowed", 90.0);
+	last.inner_limit = last.angle < input_params->getValue("grabber:angle:closed", 0.0);
+
+	last.dt = time - last.time;
+	last.time = time;
+
+	logger << "Ticks: " << input.ticks << " Angle: " << last.angle << "\n";
+	logger << "Inner Limit: " << last.inner_limit << " Outer Limit: " << last.outer_limit << " Has Cube: " << last.has_cube << "\n";
+
+	logger.endMessage();
 }
 
 Grabber::Status Grabber::Estimator::get()const{
@@ -220,29 +300,58 @@ Grabber::Status Grabber::Estimator::get()const{
 }
 
 Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+	logger << "Grabber goal: ";
+
+	paramsInput* input_params = Grabber::grabber_controller.getParams();
+
 	Grabber::Output out = 0.0;
 	switch(goal.mode()){
 		case Grabber::Goal::Mode::OPEN:
 			out = MANUAL_GRABBER_POWER;
+			logger << "OPEN\n";
 			break;
 		case Grabber::Goal::Mode::STOP:
 			Grabber::grabber_controller.idle(status.angle, status.time, status.dt);
-			out = 0.0;
+			out = input_params->getValue("grabber:hold_power", -0.1);
+			logger << "STOP\n";
 			break;
 		case Grabber::Goal::Mode::CLOSE:
 			out = -MANUAL_GRABBER_POWER;
+			logger << "CLOSE\n";
 			break;
 		case Grabber::Goal::Mode::GO_TO_ANGLE:
+			logger.endMessage();
 			Grabber::grabber_controller.updateAngleOnChange(goal.target(), status.time);
 			Grabber::grabber_controller.update(status.angle, status.time, status.dt, out);
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+			logger << "GO_TO_ANGLE\n";
 			break;
 		case Grabber::Goal::Mode::GO_TO_PRESET:	
+			logger.endMessage();
 			Grabber::grabber_controller.updateAngleOnChange(goal.preset_target(), status.time);
 			Grabber::grabber_controller.update(status.angle, status.time, status.dt, out);
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+			logger << "GO_TO_PRESET\n";
+			break;
+		case Grabber::Goal::Mode::CALIBRATE:
+			out = -CALIBRATE_POWER;
+			logger << "CALIBRATE\n";
 			break;
 		default:
-			nyi
+			assert(0);
 	}
+	if(((status.outer_limit && out > 0.0) ||
+	    (status.inner_limit && out < 0.0)) &&
+	   Grabber::grabber_controller.getDoneCalibrating() && !status.has_cube)
+	{
+	    out = 0.0;
+	}
+
+	logger << "Grabber out: " << out << "\n";
+	logger.endMessage();
+
 	return out;
 }
 
@@ -259,8 +368,10 @@ bool ready(Grabber::Status status,Grabber::Goal goal){
 		case Grabber::Goal::Mode::GO_TO_ANGLE:
 		case Grabber::Goal::Mode::GO_TO_PRESET:
 			return Grabber::grabber_controller.done();
+		case Grabber::Goal::Mode::CALIBRATE:
+			return Grabber::grabber_controller.getDoneCalibrating();
 		default:
-			nyi
+			assert(0);
 	}
 }
 

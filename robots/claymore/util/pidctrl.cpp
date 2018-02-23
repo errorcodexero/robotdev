@@ -24,7 +24,7 @@ void PIDCtrl::Init(double p, double i, double d, double f, double floor, double 
 	integral = 0;
 }
 
-double PIDCtrl::getOutput(double target, double current, double timeDifference)
+double PIDCtrl::getOutput(double target, double current, double timeDifference, double *pv, double *iv, double *dv, double *fv)
 {
 	double error = calcError(target, current) ;
 	double pOut = PIDConsts.p*error;
@@ -39,8 +39,20 @@ double PIDCtrl::getOutput(double target, double current, double timeDifference)
 		integral = -PIDConsts.integralCeil;
 	
 	double iOut = PIDConsts.i * integral;
+
+	if (pv != nullptr)
+		*pv = pOut ;
+
+	if (iv != nullptr)
+		*iv = iOut ;
+
+	if (dv != nullptr)
+		*dv = dOut ;
+
+	if (fv != nullptr)
+		*fv = PIDConsts.f ;
 	
-	double output = pOut + iOut + dOut;
+	double output = pOut + iOut + dOut + PIDConsts.f;
 
 #ifdef PRINT_PID_INTERNALS
 	std::cout << "integral " << integral ;

@@ -1,8 +1,10 @@
 #include "panel.h"
-#include <iostream>
-#include <stdlib.h> 
 #include "util.h"
 #include "../util/util.h"
+#include "../subsystems.h"
+#include "message_logger.h"
+#include <iostream>
+#include <stdlib.h> 
 #include <cmath>
 
 using namespace std;
@@ -20,7 +22,7 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 	X(drop)\
 	X(climb)\
 	X(wings)\
-	X(learn)
+	X(calibrate)
 
 #define TWO_POS_SWITCHES \
 	X(grabber_auto)\
@@ -50,6 +52,10 @@ Panel::Panel():
 	#define X(BUTTON) BUTTON(false),
 	BUTTONS
 	#undef X
+	grabber(Panel::Grabber::OFF),
+	intake(Panel::Intake::OFF),
+	collector_mode(Panel::Collector_mode::FULL_AUTO),
+	lifter(Panel::Lifter::OFF),
 	auto_select(0)
 {}
 
@@ -114,7 +120,7 @@ bool set_button(const float AXIS_VALUE, const float LOWER_VALUE, const float TES
 	return (AXIS_VALUE > min && AXIS_VALUE < max);
 }
 
-bool get_in_use(Joystick_data d){
+bool get_in_use(Joystick_data d) {
 	for(int i = 0; i < JOY_AXES; i++) {
 		if(d.axis[i] != 0) return true;
 	}
@@ -126,23 +132,82 @@ bool get_in_use(Joystick_data d){
 
 Panel interpret_oi(Joystick_data d){
 	Panel p;
-	//static const float ARTIFICIAL_MAX = 1.5;
+	static const float ARTIFICIAL_MAX = 1.5;
 	{
 		p.in_use=get_in_use(d);
-		if(!p.in_use) return p;
+		if(!p.in_use)
+		{
+			return p;
+		}
 	}
 	{//set the auto mode number from the dial value
 		float auto_dial_value = d.axis[AUTO_SELECTOR_AXIS];
-		p.auto_select = interpret_20_turn_pot(auto_dial_value);
+		p.auto_select = interpret_10_turn_pot(auto_dial_value);
 	}
 	{//two position switches
+		p.grabber_auto = [&]{
+			float grabber_auto = d.axis[5];
+			return (grabber_auto < 0) ? false : true;
+		}();
+		p.intake_auto = d.button[10];
+		p.climb_lock = d.button[14];
+		p.lifter_high_power = d.button[15];
 	}
 	{//three position switches
+		p.grabber = [&]{
+			float grabber = d.axis[2];
+			static const float CLOSE=-1,OFF=0,OPEN=1;
+			if(set_button(grabber,CLOSE,OFF,OPEN)) return Panel::Grabber::OFF;
+			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::OPEN;
+			return Panel::Grabber::CLOSE;
+		}();
+		p.intake = [&]{
+			float intake = d.axis[4];
+			static const float IN=-1,OFF=0,OUT=1;
+			if(set_button(intake,IN,OFF,OUT)) return Panel::Intake::OFF;
+			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::OUT;
+			return Panel::Intake::IN;
+		}();
+		p.collector_mode = [&]{
+			float collector_mode = d.axis[3];
+			static const float NO_AUTO=-1,SEMI_AUTO=0,FULL_AUTO=1;
+			if(set_button(collector_mode,NO_AUTO,SEMI_AUTO,FULL_AUTO)) return Panel::Collector_mode::SEMI_AUTO;
+			if(set_button(collector_mode,SEMI_AUTO,FULL_AUTO,ARTIFICIAL_MAX)) return Panel::Collector_mode::FULL_AUTO;
+			return Panel::Collector_mode::NO_AUTO;
+		}();
+		p.lifter = [&]{
+			if(d.button[12]){
+				return Panel::Lifter::UP;
+			}
+			if(d.button[13]){
+				return Panel::Lifter::DOWN;
+			}
+			return Panel::Lifter::OFF;
+		}();
 	}	
 	{//buttons
+		p.floor = d.button[0];
+		p.exchange = d.button[1];
+		p.switch_ = d.button[2];
+		p.scale = d.button[3];
+		p.collect_closed = d.button[4];
+		p.collect_open = d.button[9];
+		p.eject = d.button[5];
+		p.drop = d.button[6];
+		p.climb = d.button[7];
+		p.wings = d.button[8];
+		p.calibrate = d.button[11];
 	}
 	{//Dials
 	}
+	
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_PANEL);
+	logger << "Panel:\n";
+	logger << d << "\n";
+	logger << p << "\n";
+	logger.endMessage();
+	
 	return p;
 }
 
@@ -185,19 +250,22 @@ Panel interpret_gamepad(Joystick_data d){
 	p.in_use = get_in_use(d);
 	if(!p.in_use) return p;
 	
-	//TODO: Add in all of the new controls
 	p.auto_select=0;
 
-	p.wings = d.button[Gamepad_button::LB];
+	p.calibrate = d.button[Gamepad_button::LB];
 	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
 	p.climb_lock = d.button[Gamepad_button::START];
+	p.wings = d.button[Gamepad_button::BACK];
 
 	bool alternate_operation = d.button[Gamepad_button::RB];
 
 	if(!alternate_operation) {
+		p.grabber_auto = true;
+		p.intake_auto = true;
+
 		p.collect_closed = d.button[Gamepad_button::A];
 		p.collect_open = d.button[Gamepad_button::B];
 		p.eject = d.button[Gamepad_button::X];	
@@ -230,8 +298,8 @@ Panel interpret_gamepad(Joystick_data d){
 				assert(0);
 		}	
 	} else {
-		p.grabber_auto = d.button[Gamepad_button::A];
-		p.intake_auto = d.button[Gamepad_button::B];
+		p.grabber_auto = false;
+		p.intake_auto = false;
 		
 		p.grabber = Panel::Grabber::OFF;
 		p.intake = Panel::Intake::OFF;
@@ -239,6 +307,7 @@ Panel interpret_gamepad(Joystick_data d){
 			case POV_section::CENTER:
 				break;
 			case POV_section::UP:
+				p.intake = Panel::Intake::OUT;
 				break;
 			case POV_section::UP_LEFT:	
 				p.grabber = Panel::Grabber::CLOSE;
@@ -279,7 +348,7 @@ Panel interpret_gamepad(Joystick_data d){
 			p.collector_mode = Panel::Collector_mode::NO_AUTO;
 			break;
 		default:
-			assert(0);
+			break;
 	}
 
 	p.lifter = Panel::Lifter::OFF;
@@ -291,7 +360,7 @@ Panel interpret_gamepad(Joystick_data d){
 			p.lifter = Panel::Lifter::DOWN;
 			break;
 		default:
-			assert(0);
+			break;
 	}
 	
 	return p;

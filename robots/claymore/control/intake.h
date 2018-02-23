@@ -1,10 +1,12 @@
 #ifndef INTAKE_H
 #define INTAKE_H
 
-#include <iostream>
-#include <set>
 #include "../util/interface.h"
 #include "nop.h"
+#include "message_logger.h"
+#include <iostream>
+#include <set>
+#include <sstream>
 
 struct Intake{
 	enum class Goal{IN,OFF,OUT};
@@ -50,4 +52,13 @@ Intake::Output control(Intake::Status_detail, Intake::Goal);
 Intake::Status status(Intake::Status_detail);
 bool ready(Intake::Status, Intake::Goal);
 
+inline messageLogger &operator<<(messageLogger &logger, Intake::Goal goal)
+{
+	std::stringstream strm ;
+
+	strm << goal ;
+	logger << strm.str() ;
+
+	return logger ;
+}
 #endif

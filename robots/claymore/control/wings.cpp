@@ -4,7 +4,7 @@
 
 using namespace std;
 
-#define WINGS_ADDRESS 4
+#define WING_LOCK_SOLENOID 2
 
 ostream& operator<<(ostream& o, Wings::Goal a){
 	#define X(name) if(a==Wings::Goal::name)return o<<"Wings::Goal("#name")";
@@ -21,12 +21,12 @@ bool operator==(Wings a, Wings b){ return (a.input_reader==b.input_reader && a.e
 bool operator!=(Wings a, Wings b){ return !(a==b);}
 
 Robot_outputs Wings::Output_applicator::operator()(Robot_outputs r, Wings::Output out)const{
-	r.solenoid[WINGS_ADDRESS] = out == Output::LOCKED;
+	r.solenoid[WING_LOCK_SOLENOID] = out == Output::UNLOCKED;
 	return r;
 }
 
 Wings::Output Wings::Output_applicator::operator()(Robot_outputs r)const{
-	return r.solenoid[WINGS_ADDRESS] ? Output::LOCKED : Output::UNLOCKED;
+	return r.solenoid[WING_LOCK_SOLENOID] ? Output::UNLOCKED : Output::LOCKED;
 }
 	
 set<Wings::Goal> examples(Wings::Goal*){ 

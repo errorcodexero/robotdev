@@ -4,7 +4,6 @@
 
 using namespace std;
 
-#define CAMERA_LIGHT_ADDRESS 4
 #define BLINKY_LIGHT_INFO_ADDRESS 5
 
 Lights::Goal::Goal(Camera_light a,bool c,unsigned h,double l,double r,bool cube):camera_light(a),climbing(c),lifter_height(h),drive_left(l),drive_right(r),has_cube(cube){}
@@ -175,13 +174,11 @@ Robot_inputs Lights::Input_reader::operator()(Robot_inputs r, Lights::Input in)c
 
 Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
-	out.camera_light = r.digital_io[CAMERA_LIGHT_ADDRESS] == Digital_out::one();
 	out.blinky_light_info = r.i2c.data;
 	return out;
 }
 
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
-	r.digital_io[CAMERA_LIGHT_ADDRESS] = out.camera_light ? Digital_out::one() : Digital_out::zero();
 	r.i2c.data = out.blinky_light_info;
 	return r;
 }

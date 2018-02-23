@@ -6,106 +6,60 @@
 
 using namespace std;
 
-//
-// An auto mode program that drives straight to score on the
-// switch on the same side as the robot
-//
-Executive same_switch
-{
-    Chain
-    {
-	vector<Step>
-	{
-	    Step
-	    {
-		Drive{128.0}
-	    },
-		
-            //
-	    // TODO: add grabber step to spit out the cube
-	    //
-	},
-	Executive
-	{
-	    Teleop()
-	}
-    }
-};
+#define AUTOMODE_TEST 5
 
 //
-// An auto mode program that drives straight, turns left, drives straight, turns right
-// drives straight and deposits a cube on the switch on the opposite side from the starting
-// side of the robot
+// Automodes defined in seperate files
 //
-Executive opposite_switch
-{
-    Chain
-    {
-	vector<Step>
-	{
-	    Step
-	    {
-		Drive{52.0}
-	    },
-	    Step
-	    {
-		Wait{1.0}
-	    },
-	    Step
-	    {
-		Rotate{-90.0}
-	    },
-	    Step
-	    {
-		Wait{1.0}
-	    },
-	    Step
-	    {
-		Drive{100.0}
-	    },
-	    Step
-	    {
-		Wait{1.0}
-	    },
-	    Step
-	    {
-		Rotate{90.0}
-	    },
-	    Step
-	    {
-		Wait{1.0}
-	    },
-	    Step
-	    {
-		Drive{56}
-	    }
-	    //
-	    // TODO: add grabber step to spit out the cube
-	    //
-	},
-	Executive
-	{
-	    Teleop()
-	}
-    }
-};
-	
+extern Executive calibrate_only ;
+extern Executive right_scale_right ;
+extern Executive right_scale_left ;
+extern Executive left_scale_right ;
+extern Executive left_scale_left ;
+extern Executive center_switch_right ;
+extern Executive center_switch_left ;
+extern Executive left_switch_left ;
+extern Executive right_switch_right ;
+
+Executive teleopex{Teleop()} ;
+
+//
+// Commonly used steps
+//
+Step startAuto = Step(StartAuto()) ;
+Step endAuto = Step(EndAuto()) ;
+Step calibrateLifter = Step(Calibrate_lifter()) ;
+Step calibrateGrabber = Step(Calibrate_grabber()) ;
+Step rotate90pos = Step(Rotate(90.0)) ;
+Step rotate90neg = Step(Rotate(-90.0)) ;
+Step startLifterFloor = Step(Background_lifter_to_preset(LifterController::Preset::FLOOR, 0.0)) ;
+Step startLifterExch = Step(Background_lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)) ;
+Step startLifterSwitch = Step(Background_lifter_to_preset(LifterController::Preset::SWITCH, 0.0)) ;
+Step startLifterScale = Step(Background_lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
+Step lifterToFloor = Step(Lifter_to_preset(LifterController::Preset::FLOOR, 0.0)) ;
+Step lifterToExch = Step(Lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)) ;
+Step lifterToSwitch = Step(Lifter_to_preset(LifterController::Preset::SWITCH, 0.0)) ;
+Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
+Step waitForLifter = Step(Wait_for_lifter()) ;
+Step eject = Step(Eject()) ;
+
 
 Executive make_test_step(auto a){
     return
-	Executive
-        {
-	    Chain{
-		Step
-		{
-		    a
-		},
 		Executive
+    {
+	    Chain
 		{
-		    Teleop
-		    {
-		    }
-		}
+			Step
+			{
+				a
+					},
+				Executive
+				{
+					Teleop
+					{
+					}
+				}
 	    }
 	};
 }
@@ -116,10 +70,10 @@ Executive get_auto_mode(Next_mode_info info)
     
     if(!info.autonomous)
     {
-	logger.startMessage(messageLogger::messageType::info) ;
-	logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
-	logger.endMessage() ;
-	return Executive{Teleop()};
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
+		logger.endMessage() ;
+		return Executive{Teleop()};
     }
 
 #if AUTOMODE_TEST == 0
@@ -129,11 +83,8 @@ Executive get_auto_mode(Next_mode_info info)
     logger.startMessage(messageLogger::messageType::info) ;
     logger << "get_auto_mode - AUTOMODE_TEST == 0, do nothing" ;
     logger.endMessage() ;
-    
-    const Executive auto_program
-    {
-	Teleop{}
-    };
+
+	Executive auto_program = calibrate_only ;
 	
 #elif AUTOMODE_TEST == 1
     //
@@ -145,17 +96,17 @@ Executive get_auto_mode(Next_mode_info info)
     
     Executive auto_program
     {
-	Chain
-	{
-	    Step
-	    {
-		Drive{12.0}
-	    },
-	    Executive
-	    {
-		Teleop()
-	    }
-	}
+		Chain
+		{
+			Step
+			{
+				Drive{300.0}
+			},
+				Executive
+				{
+					Teleop()
+						}
+		}
     } ;
 
 #elif AUTOMODE_TEST == 2
@@ -168,17 +119,17 @@ Executive get_auto_mode(Next_mode_info info)
     
     Executive auto_program
     {
-	Chain
-	{
-	    Step
-	    {
-		Drive{120.0}
-	    },
-	    Executive
-	    {
-		Teleop()
-	    }
-	}
+		Chain
+		{
+			Step
+			{
+				Drive{240.0}
+			},
+				Executive
+				{
+					Teleop()
+						}
+		}
     } ;
 
 #elif AUTOMODE_TEST == 3
@@ -191,17 +142,17 @@ Executive get_auto_mode(Next_mode_info info)
     
     Executive auto_program
     {
-	Chain
-	{
-	    Step
-	    {
-		Rotate{90.0}
-	    },
-	    Executive
-	    {
-		Teleop()
-	    }
-	}
+		Chain
+		{
+			Step
+			{
+				Rotate{90.0}
+			},
+				Executive
+				{
+					Teleop()
+						}
+		}
     };
 
 #elif AUTOMODE_TEST == 4
@@ -214,17 +165,17 @@ Executive get_auto_mode(Next_mode_info info)
     
     Executive auto_program
     {
-	Chain
-	{
-	    Step
-	    {
-		Rotate{-90.0}
-	    },
-	    Executive
-	    {
-		Teleop()
-	    }
-	}
+		Chain
+		{
+			Step
+			{
+				Rotate{-90.0}
+			},
+				Executive
+				{
+					Teleop()
+						}
+		}
     };
 #elif AUTOMODE_TEST == 5
     //
@@ -236,68 +187,164 @@ Executive get_auto_mode(Next_mode_info info)
     
     Executive auto_program
     {
-	Chain
-	{	
-	    vector<Step>
-	    {
-		Step
-		{
-		    Rotate{-90.0}
-		},
-		Step
-		{
-		    Wait{2.0}
-		},
-		Step
-		{
-		    Rotate{90.0}
-		},
-		Step
-		{
-		    Wait{2.0}
-		},
-	    },
-	    Executive
-	    {
-		Teleop()
-	    }
-	}
+		Chain
+		{	
+			vector<Step>
+			{
+				Step
+				{
+					Rotate{-90.0}
+				},
+					Step
+					{
+						Wait{2.0}
+					},
+						Step
+						{
+							Rotate{90.0}
+						},
+							Step
+							{
+								Wait{2.0}
+							},
+								},
+				Executive
+				{
+					Teleop()
+						}
+		}
     };
 
 #elif AUTOMODE_TEST == 6
-   //
-   // AUTOMODE_TEST = 6, start the lifter in the background, drive forward 60 inches, wait until the lifter has reached its goal
-   //
-   logger.startMessage(messageLogger::messageType::info);
-   logger << "get_auto+mode - AUTOMODE_TEST == 6, start lifter, drive 60, wait for lifter" ;
-   logger.endMessage();
+	//
+	// AUTOMODE_TEST = 6, start the lifter in the background, drive forward 60 inches, wait until the lifter has reached its goal
+	//
+	logger.startMessage(messageLogger::messageType::info);
+	logger << "get_auto+mode - AUTOMODE_TEST == 6, start lifter, drive 60, wait for lifter" ;
+	logger.endMessage();
 
-   Executive auto_program
-   {
-	Chain
+	Executive auto_program
 	{
-	    vector<Step>
-	    {
-		Step
+		Chain
 		{
-		    Start_lifter_in_background{LifterController::Preset::SWITCH, info.in.now}
+			vector<Step>
+			{
+				Step
+				{
+					Background_lifter_to_preset{LifterController::Preset::SWITCH, info.in.now}
+				},
+					Step
+					{
+						Drive{60.0}
+					},
+						Step
+						{
+							Wait_for_lifter{}
+						}
+			}
 		},
-		Step
-		{
-		    Drive{60.0}
-		},
-		Step
-		{
-		    Wait_for_lifter{}
-		}
-	    }
-	},
-	Executive
-	{
-	    Teleop()
-	}
-   };
+			Executive
+			{
+				Teleop()
+					}
+	};
     
+#elif AUTOMODE_TEST == 7
+    //
+    // AUTOMODE_TEST = 7, calibrate the lifter, move the lifter up 43.5 inches
+    //
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "get_auto+mode - AUTOMODE_TEST == 7, calibrate the lifter, move the lifter up 43.5 inches" ;
+    logger.endMessage();
+
+    Executive auto_program
+    {
+		Chain
+		{
+			vector<Step>
+			{
+				Step
+				{
+					Calibrate_lifter{}
+				},
+					Step
+					{
+						Lifter_to_height{24, info.in.now}
+					},
+						Step
+						{
+							Wait{2.0}
+						},
+							Step
+							{
+								Lifter_to_height{43.5, info.in.now}
+							},
+								Step
+								{
+									Wait{2.0}
+								},
+									Step
+									{
+										Lifter_to_height{24, info.in.now}
+									}
+			},
+				Executive
+				{
+					Teleop()
+						}
+		}
+    };
+
+#elif AUTOMODE_TEST == 8
+    //
+    // AUTOMODE_TEST = 8, calibrate the grabber, move it to the open position
+    //
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "get_auto_mode - AUTOMODE_TEST == 8, calibrate the grabber, move it to the open position" ;
+    logger.endMessage();
+
+    Executive auto_program
+    {
+		Chain
+		{
+			vector<Step>
+			{
+				Step
+				{
+					Calibrate_lifter{}
+				},
+					Step
+					{
+						Calibrate_grabber{}
+					}/*,
+					   Step
+					   {
+					   Wait{1.0}
+					   },
+					   Step
+					   {
+					   Background_lifter_to_preset{LifterController::Preset::SWITCH, info.in.now}
+					   },
+					   Step
+					   {
+					   Drive{128.0}
+					   },
+					   Step
+					   {
+					   Wait_for_lifter{}
+					   },
+					   Step
+					   {
+					   Eject{}
+					   }*/
+			},
+				Executive
+				{
+					Teleop()
+						}
+		}
+    };
+
 #elif AUTOMODE_TEST == 20
     //
     // AUTOMODE_TEST = 20, run the auto program for switch same side
@@ -316,28 +363,52 @@ Executive get_auto_mode(Next_mode_info info)
     logger << "get_auto_mode - AUTOMODE_TEST == 21, switch opposite side" ;
     logger.endMessage() ;
     
-    Executive auto_program = opposide_switch ;
+    Executive auto_program = opposite_switch ;
 	
+#elif AUTOMODE_TEST == 22
+	//
+	// AUTOMODE_TEST = 22, decide between same side and opposite side for switch
+	//
+    logger.startMessage(messageLogger::messageType::info) ;
+    logger << "get_auto_mode - AUTOMODE_TEST == 22, decide switch side" ;
+    logger.endMessage() ;
+    
+    Executive auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
+
+#elif AUTOMODE_TEST == 23
+	//
+	// AUTOMODE_TEST = 23, Run the auto program for the near scale
+	//
+    logger.startMessage(messageLogger::messageType::info) ;
+    logger << "get_auto_mode - AUTOMODE_TEST == 23, near scale" ;
+    logger.endMessage() ;
+    
+    Executive auto_program = same_scale ;
+
 #else
+
+#error BBBBB
+	Executive auto_program = calibrate_only ;
+	
     //
     // If AUTOMODE_TEST was not defined, we revert to the default behavior which is
     // to run the with the panel
-    //
-    
+    //    
+
     logger.startMessage(messageLogger::messageType::info) ;
     logger << "get_auto_mode - competition mode, selecting auto mode based on switch" ;
     logger.endMessage() ;
 	
     if(!info.panel.in_use) {
-	//
-	// No panel was detected.  May be a problem with the driver station, log this fact
-	// and do nothing during autonomous
-	//
-	logger.startMessage(messageLogger::messageType::error) ;
-	logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
-	logger.endMessage() ;
+		//
+		// No panel was detected.  May be a problem with the driver station, log this fact
+		// and do nothing during autonomous
+		//
+		logger.startMessage(messageLogger::messageType::error) ;
+		logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
+		logger.endMessage() ;
 	
-	return auto_null;
+		return opposite_switch ;
     }
 
     logger.startMessage(messageLogger::messageType::error) ;
@@ -345,11 +416,18 @@ Executive get_auto_mode(Next_mode_info info)
     logger.endMessage() ;
     
     switch(info.panel.auto_select){
-    case 0: 
-	return auto_null;
-    case 1:
-    case 2: 
+    case 0:
+		auto_program = calibrate_only ;
+		break; 
+    case 1: 
+		auto_program = auto_null;
+		break;
+    case 2:
+		auto_program = info.in.ds_info.near_switch_left ? opposite_switch : same_switch ;
+		break;
     case 3:
+		auto_program = info.in.ds_info.scale_left ? opposite_scale : same_scale ;
+		break;
     case 4: 
     case 5: 
     case 6:
@@ -367,7 +445,7 @@ Executive get_auto_mode(Next_mode_info info)
     case 18:
     case 19:
     default:
-	return auto_null;
+		return auto_null;
     }
 #endif
 	

@@ -12,7 +12,7 @@ string get_logfilename(){
 	int i=0;
 	auto name=[&](){
 		stringstream ss;
-		ss<<"/media/sda1/log_"<<i<<".txt";
+		//ss<<"/media/sda1/log_"<<i<<".txt";
 		return ss.str();
 	};
 	while(file_exists(name())){
@@ -301,11 +301,6 @@ void visit(Func f,Drivebase::Output const& a){
 template<typename Func>
 void visit(Func f,Drivebase::Status const& r){
 	DRIVEBASE_STATUS(VISIT_2ND)
-}
-
-template<typename Func>
-void visit(Func f,Gear_shifter::Output const& a){
-	f.terminal(a);
 }
 
 template<typename Func>

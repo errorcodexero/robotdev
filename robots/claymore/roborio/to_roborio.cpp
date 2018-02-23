@@ -7,17 +7,18 @@
 #include "navx_control.h"
 #include "i2c_control.h"
 #include "params_parser.h"
+#include "subsystems.h"
+#include "params_parser.h"
+#include "message_logger.h"
+#include "message_dest_dated_file.h"
+#include "message_dest_stream.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
 
-#include "params_parser.h"
-#include "message_logger.h"
 
 using namespace std;
-
-paramsInput inputParams ;
 
 Joystick_data read_joystick(frc::DriverStation& ds,int port){
 	//I don't know what the DriverStation does when port is out of range.
@@ -32,15 +33,13 @@ Joystick_data read_joystick(frc::DriverStation& ds,int port){
 	{
 		auto lim=ds.GetStickAxisCount(port);
 		assert(lim>=0);
-		unsigned axes=std::min((unsigned)JOY_AXES,(unsigned)lim);
-		for(unsigned i=0;i<axes;i++){
+		for(unsigned i=0;i<(unsigned)lim;i++){
 			r.axis[i]=ds.GetStickAxis(port,i);
 		}
 	}
 	auto lim=ds.GetStickButtonCount(port);
 	assert(lim>=0);
-	const auto buttons=std::min((unsigned)JOY_BUTTONS,(unsigned)lim);
-	for(unsigned i=0;i<buttons;i++){
+	for(unsigned i=0;i<(unsigned)lim;i++){
 		//if(buttons&(1<<i)) r.button[i]=1;
 		r.button[i]=ds.GetStickButton(port,i+1);
 	}
@@ -133,15 +132,37 @@ class To_roborio
 	bool cam_data_recieved;
 #endif
 	std::ofstream null_stream;
-	paramsInput input_params;
 public:
 To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
 		messageLogger &logger = messageLogger::get();
-		logger.enable(messageLogger::messageType::error);
-		logger.enable(messageLogger::messageType::warning);
-		logger.enable(messageLogger::messageType::info);
-		logger.enable(messageLogger::messageType::debug);
+		logger.enableType(messageLogger::messageType::error);
+		logger.enableType(messageLogger::messageType::warning);
+		logger.enableType(messageLogger::messageType::info);
+		logger.enableType(messageLogger::messageType::debug);
+
+		//
+		// Decide what subsystems you want to see
+		//
+		
+		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
+		logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
+		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
+		logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		//logger.enableSubsystem(SUBSYSTEM_PANEL);
+		//logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
+		
+
+		std::shared_ptr<messageLoggerDest> dest_p ;
+
+		dest_p = std::make_shared<messageDestStream>(std::cout) ;
+		logger.addDestination(dest_p) ;
+
+		std::string flashdrive("/media/sda1") ;
+		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
+		logger.addDestination(dest_p) ;
 
 		power = new frc::PowerDistributionPanel();
 
@@ -176,13 +197,16 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			if(!analog_in[i]) error_code|=8;
 		}
 
-		if (!input_params.readFile("/home/lvuser/params.txt"))
+		paramsInput *params_p = paramsInput::get() ;
+
+		if (!params_p->readFile("/home/lvuser/params.txt"))
 			std::cout << "Parameters file read failed" << std::endl ;
 		else
 			std::cout << "Parmeters file read sucessfully" << std::endl ;
 		
-		Drivebase::drivebase_controller.setParams(&input_params);	
-		Lifter::lifter_controller.setParams(&input_params);	
+		Drivebase::drivebase_controller.setParams(params_p);	
+		Lifter::lifter_controller.setParams(params_p);	
+		Grabber::grabber_controller.setParams(params_p);
 
 		/*
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
@@ -242,6 +266,10 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			}
 		}();
 		ds_info.location=driver_station.GetLocation();
+		std::string game_data = driver_station.GetGameSpecificMessage();
+		ds_info.near_switch_left = game_data[0] == 'L';
+		ds_info.scale_left = game_data[1] == 'L';
+		ds_info.far_switch_left = game_data[2] == 'L';
 		return ds_info;
 	}
 
@@ -273,7 +301,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//error_code|=read_driver_station(r.driver_station);
 		r.current=read_currents();
 		r.navx=read_navx();
-		r.input_params = &input_params ;
+		r.input_params = paramsInput::get() ;
 		return make_pair(r,error_code);
 	}
 	array<double,Robot_inputs::CURRENT> read_currents(){
@@ -284,7 +312,18 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			}else{
 				current[x] = -9001;
 			}
-		}		
+		}
+
+		messageLogger &logger = messageLogger::get();
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_PDPCURRENTS) ;
+		logger << "PDP Currents: " ;
+		for(size_t i = 0 ; i < current.size() ; i++)
+		{
+			if (i != 0)
+				logger << ", " ;
+			logger << i << "=" << current[i] ;
+		}
+		logger.endMessage() ;
 		return current;
 	}
 	int set_solenoid(unsigned i,Solenoid_output v){
@@ -410,12 +449,50 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 
 		error_code|=in1.second;
 		in.digital_io=digital_io.get();
+		
+		messageLogger &logger = messageLogger::get();
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DIGITALIO) ;
 
+		logger << "Ins: " ;
+		for(size_t i = 0 ; i < in.digital_io.in.size() ; i++)
+		{
+			if (i != 0)
+				logger << ", " ;
+			logger << i << "=" ;
+			Digital_in din = in.digital_io.in[i] ;
+			if (din == Digital_in::OUTPUT)
+				logger << "OUTPUT" ;
+			else if (din == Digital_in::_0)
+				logger << "0" ;
+			else if (din == Digital_in::_1)
+				logger << "1" ;
+			else if (din == Digital_in::ENCODER)
+				logger << "ENCODER" ;
+			else
+				logger << "????" ;
+		}
+		logger.endMessage() ;
+		
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DIGITALIO) ;
+		logger << "Encoders:" ;
+		for(size_t i = 0 ; i < in.digital_io.encoder.size() ; i++)
+		{
+			if (i != 0)
+				logger << ", " ;
+			logger << " " << i << " " ;
+			if (in.digital_io.encoder[i])
+				logger << *in.digital_io.encoder[i] ;
+			else
+				logger << "N/A" ;
+		}
+		logger.endMessage() ;
+		
 #ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
 		std::cout << "    digital io inputs " << elapsed * 1000 << " msec" << std::endl ;
 		elapsed = last ;
+		std::cout << "dio: " << in.digital_io << "\n";
 #endif		
 		
 		in.talon_srx=talon_srx_controls.get();

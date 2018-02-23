@@ -19,6 +19,10 @@ public:
     /// \brief set the params object used to extract parameters from the params file
     void setParams(paramsInput* input_params);
 
+    /// \brief get the params object used to extract parameters from the params file
+    /// \returns the params object
+    paramsInput* getParams();
+
     /// \brief move the grabber to a specific angle
     /// \param angle the angle in degrees for the grabber
     /// \param the start time of this operation
@@ -56,6 +60,14 @@ public:
     /// \brief returns true when the grabber has reached its desired angle
     /// \returns true when the grabber has reached its desired angle
     bool done();
+
+    /// \brief sets mDoneCalibrating to the parameter
+    /// \param done whether the grabber has finished calibrating
+    void setDoneCalibrating(bool done);
+
+    /// \brief returns whether the grabber has finished calibrating
+    /// \returns true if the grabber has finished calibrating
+    bool getDoneCalibrating();
 
     /// \brief returns the angle associated with a preset
     /// \param preset the preset of interest
@@ -125,6 +137,10 @@ private:
     //
     double mDataDumpStartTime;
 
+    //
+    // Represents whether or not the grabber has finished calibration
+    //
+    bool mDoneCalibrating;
 };
 
 #endif

@@ -28,15 +28,13 @@ Joystick_data read_joystick(frc::DriverStation& ds,int port){
 	{
 		auto lim=ds.GetStickAxisCount(port);
 		assert(lim>=0);
-		unsigned axes=std::min((unsigned)JOY_AXES,(unsigned)lim);
-		for(unsigned i=0;i<axes;i++){
+		for(unsigned i=0;i<(unsigned)lim;i++){
 			r.axis[i]=ds.GetStickAxis(port,i);
 		}
 	}
 	auto lim=ds.GetStickButtonCount(port);
 	assert(lim>=0);
-	const auto buttons=std::min((unsigned)JOY_BUTTONS,(unsigned)lim);
-	for(unsigned i=0;i<buttons;i++){
+	for(unsigned i=0;i<(unsigned)lim;i++){
 		//if(buttons&(1<<i)) r.button[i]=1;
 		r.button[i]=ds.GetStickButton(port,i+1);
 	}
@@ -128,15 +126,14 @@ class To_roborio
 	bool cam_data_recieved;
 #endif
 	std::ofstream null_stream;
-	paramsInput input_params;
 public:
   To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
 	{
 		messageLogger &logger = messageLogger::get();
-		logger.enable(messageLogger::messageType::error);
-		logger.enable(messageLogger::messageType::warning);
-		logger.enable(messageLogger::messageType::info);
-		logger.enable(messageLogger::messageType::debug);
+		logger.enableType(messageLogger::messageType::error);
+		logger.enableType(messageLogger::messageType::warning);
+		logger.enableType(messageLogger::messageType::info);
+		logger.enableType(messageLogger::messageType::debug);
 
 		power = new frc::PowerDistributionPanel();
 
@@ -171,12 +168,13 @@ public:
 			if(!analog_in[i]) error_code|=8;
 		}
 
-		if (!input_params.readFile("/home/lvuser/params.txt"))
+		paramsInput *params_p = paramsInput::get() ;
+		if (!params_p->readFile("/home/lvuser/params.txt"))
 			std::cout << "Parameters file read failed" << std::endl ;
 		else
 			std::cout << "Parmeters file read sucessfully" << std::endl ;
 		
-		Drivebase::drivebase_controller.setParams(&input_params);
+		Drivebase::drivebase_controller.setParams(params_p);
 
 		/*
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
@@ -266,7 +264,7 @@ public:
 		error_code|=read_analog(r);
 		//error_code|=read_driver_station(r.driver_station);
 		r.current=read_currents();
-		r.input_params=&input_params;
+		r.input_params=paramsInput::get() ;
 		return make_pair(r,error_code);
 	}
 	array<double,Robot_inputs::CURRENT> read_currents(){

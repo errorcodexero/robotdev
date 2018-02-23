@@ -13,9 +13,14 @@ TARGET=control.a
 COMMON=helpers
 
 #
+# Tell the make system we want WPILIB headers
+#
+WPILIB=true
+
+#
 # Add flags to indicate the robot we are building
 #
-ADDCXXFLAGS = -DCLAYMORE -I../util -I../executive -I../input -I.
+ADDCXXFLAGS = -DTUNING -DCLAYMORE -I../util -I../executive -I../input -I. -I..
 
 #
 # define the source code files
@@ -25,7 +30,6 @@ SRC = \
 	drivebase_controller.cpp\
 	force.cpp\
 	force_interface.cpp\
-	gear_shifter.cpp\
 	grabber.cpp\
 	grabber_controller.cpp\
 	intake.cpp\
@@ -52,7 +56,6 @@ COMPLEXTESTS = \
 	lights\
 	drivebase\
 	force_interface\
-	gear_shifter\
 	grabber\
 	intake\
 	lifter\
@@ -78,10 +81,6 @@ $(TESTTARGETDIR)/force_interface$(EXEEXT): force_interface.cpp force.cpp
 $(TESTTARGETDIR)/force_interface$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp
 $(TESTTARGETDIR)/force_interface$(EXEEXT): ../util/posedge_trigger.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/gear_shifter$(EXEEXT): gear_shifter.cpp nop.cpp drivebase.cpp motor_check.cpp
-$(TESTTARGETDIR)/gear_shifter$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
-$(TESTTARGETDIR)/gear_shifter$(EXEEXT): ../util/speed_tracker.cpp ../util/countdown_timer.cpp ../util/stall_monitor.cpp 
-
 $(TESTTARGETDIR)/grabber$(EXEEXT): grabber.cpp nop.cpp
 $(TESTTARGETDIR)/grabber$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/countdown_timer.cpp ../util/util.cpp
 
@@ -94,11 +93,11 @@ $(TESTTARGETDIR)/lifter$(EXEEXT): ../util/interface.cpp ../util/driver_station_i
 $(TESTTARGETDIR)/lights$(EXEEXT): lights.cpp nop.cpp
 $(TESTTARGETDIR)/lights$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/log$(EXEEXT): log.cpp nop.cpp toplevel.cpp drivebase.cpp pump.cpp lifter.cpp lights.cpp gear_shifter.cpp intake_belts.cpp intake_grabber.cpp motor_check.cpp
+$(TESTTARGETDIR)/log$(EXEEXT): log.cpp nop.cpp toplevel.cpp drivebase.cpp pump.cpp lifter.cpp lights.cpp intake_belts.cpp intake_grabber.cpp motor_check.cpp
 $(TESTTARGETDIR)/log$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp ../util/countdown_timer.cpp ../util/speed_tracker.cpp
 $(TESTTARGETDIR)/log$(EXEEXT): ../util/stall_monitor.cpp ../util/countdown_timer.cpp
 
-$(TESTTARGETDIR)/main$(EXEEXT): main.cpp toplevel.cpp nop.cpp pump.cpp drivebase.cpp gear_shifter.cpp intake_belts.cpp intake_grabber.cpp nop.cpp lifter.cpp lights.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): main.cpp toplevel.cpp nop.cpp pump.cpp drivebase.cpp intake_belts.cpp intake_grabber.cpp nop.cpp lifter.cpp lights.cpp
 $(TESTTARGETDIR)/main$(EXEEXT): motor_check.cpp force_interface.cpp force.cpp log.cpp
 $(TESTTARGETDIR)/main$(EXEEXT): ../util/countup_timer.cpp ../util/speed_tracker.cpp ../util/countdown_timer.cpp ../util/stall_monitor.cpp
 $(TESTTARGETDIR)/main$(EXEEXT): ../util/interface.cpp ../util/posedge_trigger.cpp ../util/driver_station_interface.cpp
@@ -112,14 +111,14 @@ $(TESTTARGETDIR)/nop$(EXEEXT): nop.cpp
 $(TESTTARGETDIR)/nop$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
 $(TESTTARGETDIR)/monitor$(EXEEXT): monitor.cpp force_interface.cpp toplevel.cpp force.cpp
-$(TESTTARGETDIR)/monitor$(EXEEXT): pump.cpp drivebase.cpp lifter.cpp lights.cpp gear_shifter.cpp intake_belts.cpp intake_grabber.cpp nop.cpp motor_check.cpp
+$(TESTTARGETDIR)/monitor$(EXEEXT): pump.cpp drivebase.cpp lifter.cpp lights.cpp intake_belts.cpp intake_grabber.cpp nop.cpp motor_check.cpp
 $(TESTTARGETDIR)/monitor$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 $(TESTTARGETDIR)/monitor$(EXEEXT): ../util/posedge_trigger.cpp ../util/stall_monitor.cpp ../util/speed_tracker.cpp ../util/countdown_timer.cpp
 
 $(TESTTARGETDIR)/pump$(EXEEXT): pump.cpp
 $(TESTTARGETDIR)/pump$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp lifter.cpp lights.cpp gear_shifter.cpp grabber.cpp intake.cpp wings.cpp pump.cpp motor_check.cpp nop.cpp
+$(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp lifter.cpp lifter_brake.cpp lights.cpp grabber.cpp intake.cpp wings.cpp pump.cpp motor_check.cpp nop.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/speed_tracker.cpp ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/input.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/output.cpp

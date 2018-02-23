@@ -1,10 +1,12 @@
 #ifndef DRIVEBASE_CONTROLLER_H
 #define DRIVEBASE_CONTROLLER_H
 
-#include <list>
 #include "pidctrl.h"
 #include "params_parser.h"
 #include "UdpBroadcastSender.h"
+#include "subsystems.h"
+#include <list>
+#include <string>
 
 /// \brief The DrivebaseController class contains the intelligence for the drivebase.
 /// This class contains the algorithms to drive specific distances or to rotate to
@@ -20,6 +22,10 @@ public:
     /// \param pi_p pointer to the parameter input reader
     void setParams(paramsInput *pi_p);
 
+    /// \brief get the params object used to extract parameters from the params file
+    /// \returns the params object
+    paramsInput* getParams();
+
     /// \brief initialize the drive controller to drive a fixed distance value.
     /// It is assumed that the update method below will be called within the robot
     /// loop to drive this fixed distance.  This method initializes the internal state
@@ -28,7 +34,7 @@ public:
     /// \param dist the absolute distance to drive to
     /// \param angle the angle to maintain while driving
     /// \param the time when this was requested
-    void initDistance(double dist, double angle, double time);
+    void initDistance(double dist, double angle, double time, bool end_on_stall);
 
     /// \brief rotate to the given angle
     /// \param angle the angle to rotate to
@@ -43,7 +49,8 @@ public:
     /// \param time the absolute time value
     /// \param out_l return value for the left motor voltage
     /// \param out_r return value for the right motor voltage
-    void update(double dl, double dr, double angle, double dt, double time, double &out_l, double &out_r);
+    /// \param out_high_gear return value for whether to put the drivebase into high gear
+    void update(double dl, double dr, double angle, double dt, double time, double &out_l, double &out_r, bool &out_high_gear);
 
     /// \brief called when the drivebase is idle
     /// \param dl the distance traveled by the left wheel
@@ -118,6 +125,12 @@ private:
     PIDCtrl mAnglePid;
 
     //
+    // The distance of the robot during the last robot loop.  Used to calculate
+    // the angular velocity of the robot
+    //
+    double mLastDistance;
+
+    //
     // The angle of the robot during the last robot loop.  Used to calculate
     // the angular velocity of the robot
     //
@@ -133,6 +146,21 @@ private:
     // The number of samples to keep to determine if the robot is stalled
     //
     size_t mNsamples;
+
+    //
+    // True if the drivebase is stalled
+    //
+    bool mStalled;
+
+    //
+    // If true, act as though the drivebase has finished when it stalls
+    //
+    bool mEndOnStall;
+
+    //
+    // True if the drivebase should be in high gear
+    //
+    bool mHighGear;
 
     //
     // If true, ther PID controller for distance has been reset from the long distance
@@ -189,6 +217,16 @@ private:
     //
     double mLastLeftVoltage ;
     double mLastRightVoltage ;
+
+#ifdef TUNING
+    static std::string AngleTargetName ;
+    static std::string AngleActualName ;
+    static std::string AngleVelocityName ;
+    static std::string AnglePName ;
+    static std::string AngleIName ;
+    static std::string AngleDName ;
+	static std::string AngleTimeName ;
+#endif
 };
 
 #endif

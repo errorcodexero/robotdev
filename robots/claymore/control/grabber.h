@@ -1,18 +1,21 @@
 #ifndef	GRABBER_H
 #define GRABBER_H
 
+#include "message_logger.h"
 #include "../util/interface.h"
-#include <set>
 #include "../util/countdown_timer.h"
 #include "nop.h"
 #include "grabber_controller.h"
+#include <set>
+#include <list>
+#include <sstream>
 
 struct Grabber{
 	static GrabberController grabber_controller;
 
 	struct Goal{
 		public:
-		#define GRABBER_GOAL_MODES X(GO_TO_ANGLE) X(GO_TO_PRESET) X(OPEN) X(CLOSE) X(STOP)
+		#define GRABBER_GOAL_MODES X(GO_TO_ANGLE) X(GO_TO_PRESET) X(OPEN) X(CLOSE) X(STOP) X(CALIBRATE)
 		enum class Mode{
 			#define X(MODE) MODE,
 			GRABBER_GOAL_MODES
@@ -35,6 +38,7 @@ struct Grabber{
 		static Goal open();
 		static Goal close();
 		static Goal stop();
+		static Goal calibrate();
 	};
 
 	using Output = double;
@@ -42,18 +46,21 @@ struct Grabber{
 	struct Input{
 		int ticks;
 		bool has_cube;
+		bool limit_switch;
 		
 		Input();
-		Input(int);
+		Input(int, bool, bool);
 	};
 
 	struct Status_detail{
 		bool has_cube;
+		bool outer_limit;
+		bool inner_limit;
 		double angle;
 		double time, dt;
 		
 		Status_detail();
-		Status_detail(double);
+		Status_detail(bool, bool, bool, double, double, double);
 	};
 	
 	using Status = Status_detail;
@@ -70,6 +77,8 @@ struct Grabber{
 
 	struct Estimator{
 		Status_detail last;
+		double encoder_offset;
+		std::list<double> ticks_history;
 
 		void update(Time,Grabber::Input,Grabber::Output);
 		Status_detail get()const;
@@ -110,5 +119,15 @@ bool operator!=(Grabber,Grabber);
 Grabber::Output control(Grabber::Status,Grabber::Goal);
 Grabber::Status status(Grabber::Status);
 bool ready(Grabber::Status,Grabber::Goal);
+
+inline messageLogger &operator<<(messageLogger &logger, const Grabber::Goal &goal)
+{
+	std::stringstream strm ;
+
+	strm << goal ;
+	logger << strm.str() ;
+	return logger ;
+}
+
 
 #endif

@@ -1,25 +1,24 @@
 #include "lifter.h"
 #include "util.h"
+#include "subsystems.h"
+#include "message_logger.h"
+#include <cmath>
 
 using namespace std;
 
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1
-#define LIFTER_SHIFTER_LOW 2
-#define LIFTER_SHIFTER_HIGH 3
 
-#define CLIMB_POWER .60 //TODO tune
-#define MANUAL_LIFTER_LOW_POWER .60 //TODO tune
-#define MANUAL_LIFTER_HIGH_POWER .80 //TODO tune
-#define AUTO_LIFTER_POWER .60 //TODO tune
+#define LIFTER_SHIFTER 1
+#define LIFTER_LOCK_SOLENOID 3
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
 #define TOP_HALL_EFFECT_ADDRESS 8
-#define ENCODER_ADDRESS 4 //TODO
+
+#define ENCODER_ADDRESS 2
+#define ENCODER_DIOS 4, 5
 
 LifterController Lifter::lifter_controller;
-
-int bottom_ticks = 0, top_ticks = 100;//arbitrary
 
 ostream& operator<<(ostream& o, Lifter::Goal::Gearing a){
 #define X(GEARING) if(a==Lifter::Goal::Gearing::GEARING) return o<<""#GEARING;
@@ -114,24 +113,45 @@ Lifter::Goal Lifter::Goal::background(){
     return a;
 }
 
-Lifter::Output::Output(double p, Lifter::Output::Gearing g):power(p),gearing(g){}
-Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH){}
+Lifter::Goal Lifter::Goal::calibrate(){
+    Lifter::Goal a;
+    a.mode_ = Lifter::Goal::Mode::CALIBRATE;
+    a.gearing_ = Lifter::Goal::Gearing::HIGH;
+    return a;
+}
+
+Lifter::Goal Lifter::Goal::low_gear(){
+    Lifter::Goal a;
+    a.mode_ = Lifter::Goal::Mode::LOW_GEAR;
+    a.gearing_ = Lifter::Goal::Gearing::LOW;
+    return a;
+}
+
+Lifter::Goal Lifter::Goal::lock(){
+    Lifter::Goal a;
+    a.mode_ = Lifter::Goal::Mode::LOCK;
+    a.gearing_ = Lifter::Goal::Gearing::LOW;
+    return a;
+}
+
+Lifter::Output::Output(double p, Lifter::Output::Gearing g, bool l):power(p),gearing(g),lock(l){}
+Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH,false){}
 
 Lifter::Input::Input(bool b, bool t, int e):bottom_hall_effect(b),top_hall_effect(t),ticks(e){}
 Lifter::Input::Input():Input(false,false,0){}
 
-Lifter::Status_detail::Status_detail(bool b,bool t,bool c,double h,double ti,double dt):at_bottom(b),at_top(t),at_climbed_height(c),height(h),time(ti),dt(dt){}
-Lifter::Status_detail::Status_detail():Status_detail(false,false,false,0.0,0.0,0.0){}
+Lifter::Status_detail::Status_detail(bool b,bool t,bool c,bool usr,bool lsr,double h,double ti,double dt):at_bottom(b),at_top(t),at_climbed_height(c),upper_slowdown_range(usr),lower_slowdown_range(lsr),height(h),time(ti),dt(dt){}
+Lifter::Status_detail::Status_detail():Status_detail(false,false,false,false,false,0.0,0.0,0.0){}
 
-Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg):last(s),last_gearing(g),climb_goal(cg){}
-Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,0.0){}
+Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg, double eo):last(s),last_gearing(g),climb_goal(cg),encoder_offset(eo){}
+Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,0.0,0.0){}
 
 #define CMP(VAR)				\
     if(a.VAR < b.VAR) return true;		\
     if(b.VAR < a.VAR) return false; 	
 
 bool operator==(Lifter::Output const& a,Lifter::Output const& b){
-    return a.power == b.power && a.gearing == b.gearing;
+    return a.power == b.power && a.gearing == b.gearing && a.lock == b.lock;
 }
 
 bool operator!=(Lifter::Output const& a,Lifter::Output const& b){
@@ -140,20 +160,22 @@ bool operator!=(Lifter::Output const& a,Lifter::Output const& b){
 	
 bool operator<(Lifter::Output const& a,Lifter::Output const& b){
     CMP(power)
-	CMP(gearing)
-	return false;
+    CMP(gearing)
+    CMP(lock)
+    return false;
 }
 
 ostream& operator<<(ostream& o, Lifter::Output const& a){
     o<<"(";
     o<<"power:"<<a.power;
     o<<" gearing:"<<a.gearing;
+    o<<" lock:"<<a.lock;
     o<<")";
     return o;
 }
 	
 bool operator==(Lifter::Input const& a, Lifter::Input const& b){
-    return true;
+    return a.bottom_hall_effect == b.bottom_hall_effect && a.top_hall_effect == b.top_hall_effect && a.ticks == b.ticks;
 }
 
 bool operator!=(Lifter::Input const& a, Lifter::Input const& b){
@@ -161,10 +183,18 @@ bool operator!=(Lifter::Input const& a, Lifter::Input const& b){
 }
 
 bool operator<(Lifter::Input const& a,Lifter::Input const& b){
+    CMP(bottom_hall_effect)
+    CMP(top_hall_effect)
+    CMP(ticks)
     return false;
 }
 
-ostream& operator<<(ostream& o, Lifter::Input const&){
+ostream& operator<<(ostream& o, Lifter::Input const& a){
+    o<<"(";
+    o<<"bottom_hall_effect:"<<a.bottom_hall_effect;
+    o<<" top_hall_effect:"<<a.top_hall_effect;
+    o<<" ticks:"<<a.ticks;
+    o<<")";
     return o;
 }
 
@@ -219,10 +249,10 @@ bool operator!=(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
 
 bool operator<(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
     CMP(at_top)
-	CMP(at_bottom)
-	CMP(at_climbed_height)
-	CMP(height)
-	return false;
+    CMP(at_bottom)
+    CMP(at_climbed_height)
+    CMP(height)
+    return false;
 }
 
 ostream& operator<<(ostream& o, Lifter::Status_detail const& a){
@@ -242,59 +272,93 @@ ostream& operator<<(ostream& o, Lifter const& a){
 #undef CMP
 
 Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Output const& out)const{
-    r.pwm[LIFTER_ADDRESS_L] = out.power;
-    r.pwm[LIFTER_ADDRESS_R] = out.power;
-    r.solenoid[LIFTER_SHIFTER_LOW] = out.gearing == Lifter::Output::Gearing::LOW;
-    r.solenoid[LIFTER_SHIFTER_HIGH] = out.gearing != Lifter::Output::Gearing::LOW;
+    r.pwm[LIFTER_ADDRESS_L] = -out.power;
+    r.pwm[LIFTER_ADDRESS_R] = -out.power;
+    r.solenoid[LIFTER_SHIFTER] = out.gearing == Lifter::Output::Gearing::LOW;
+    r.solenoid[LIFTER_LOCK_SOLENOID] = out.lock;
+
+    auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
+	r.digital_io[a] = Digital_out::encoder(loc,1);
+	r.digital_io[b] = Digital_out::encoder(loc,0);
+    };
+    set_encoder(ENCODER_DIOS, ENCODER_ADDRESS);
+
     return r;
 };
 
 Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)const{
     return {
-	r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
-	r.solenoid[LIFTER_SHIFTER_LOW] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH
+	-r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
+	r.solenoid[LIFTER_SHIFTER] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH,
+	r.solenoid[LIFTER_LOCK_SOLENOID]
 	   };
 }
 
 Robot_inputs Lifter::Input_reader::operator()(Robot_inputs r, Lifter::Input const& in)const{
     r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] = in.bottom_hall_effect ? Digital_in::_0 : Digital_in::_1; //Active low
     r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] = in.top_hall_effect ? Digital_in::_0 : Digital_in::_1;
-    r.digital_io.encoder[ENCODER_ADDRESS] = in.ticks;
+    r.digital_io.encoder[ENCODER_ADDRESS] = -in.ticks;
     return r;
 }
 
 Lifter::Input Lifter::Input_reader::operator()(Robot_inputs const& r)const{
-    return {
+    int enc_val = 9999;
+    if(r.digital_io.encoder[ENCODER_ADDRESS])
+	enc_val = *(r.digital_io.encoder[ENCODER_ADDRESS]);
+    enc_val = -enc_val;
+    Lifter::Input result = Lifter::Input(
 	r.digital_io.in[BOTTOM_HALL_EFFECT_ADDRESS] == Digital_in::_0,
 	r.digital_io.in[TOP_HALL_EFFECT_ADDRESS] == Digital_in::_0,
-	r.digital_io.encoder[ENCODER_ADDRESS]
-    };
+	enc_val
+    );
+    return result;
 }
 
 void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter::Output const& out){
-    last.at_bottom = in.bottom_hall_effect;
-    last.at_top = in.top_hall_effect;
+    messageLogger &logger = messageLogger::get();
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 
-    if(last.at_top != last.at_bottom){ // != being used like xor
-	if(last.at_top){
-	    top_ticks = in.ticks;
-	} 
-	if(last.at_bottom){ 
-	    bottom_ticks = in.ticks;
-	}
-    }
-    const double MAX_LIFTER_HEIGHT = 100;//inches //TODO arbitrary
-    const double INCHES_PER_TICK = MAX_LIFTER_HEIGHT / (top_ticks - bottom_ticks); 
+    logger << "Lifter:\n";
 
-    last.height = in.ticks*INCHES_PER_TICK;
+    paramsInput* input_params = Lifter::lifter_controller.getParams();
 
-    const double CLIMBING_DIFFERENCE = 100; //TODO: Tune this
-    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - CLIMBING_DIFFERENCE;
-    last_gearing = out.gearing;
+    if(Lifter::lifter_controller.calibrating()) encoder_offset = in.ticks;
+
+    /*
+    const double TICKS_PER_MOTOR_REVOLUTION = 12.0;
+    const double MOTOR_REVS_PER_LIFTER_REV = 100.0; //Gear ratio TODO: NEEDS CORRECT VALUE
+    const double TICKS_PER_LIFTER_REVOLUTION = TICKS_PER_MOTOR_REVOLUTION * MOTOR_REVS_PER_LIFTER_REV;
+    const double LIFTER_GEAR_DIAMETER = 6.0; //inches
+    const double LIFTER_GEAR_CIRCUMFERENCE = LIFTER_GEAR_DIAMETER * PI;
+    const double INCHES_PER_TICK = LIFTER_GEAR_CIRCUMFERENCE / TICKS_PER_LIFTER_REVOLUTION;
+    */
+    const double INCHES_PER_TICK_HIGH_GEAR = .08327; //(1.0 / 11.4201); //From Jeff
+    //const double INCHES_PER_TICK_LOW_GEAR = 4442.41 * 12.0; //From Jeff
+    const double COLLECTOR_OFFSET = 11.375; //inches
+    last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR + COLLECTOR_OFFSET;
+
+    double top_limit = input_params->getValue("lifter:height:top_limit", 96.0);
+    double bottom_limit = input_params->getValue("lifter:collector_offset", 11.375) + 0.75;
+
+    last.at_bottom = in.bottom_hall_effect || last.height < bottom_limit;
+    last.at_top = in.top_hall_effect || last.height > top_limit;
+
+    double slowdown_range = input_params->getValue("lifter:slowdown_range", 6.0);
+    last.upper_slowdown_range = last.height > (top_limit - slowdown_range);
+    last.lower_slowdown_range = last.height < (bottom_limit + slowdown_range);
+
+    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - input_params->getValue("lifter:climbing_difference", 100.0);
     last.at_climbed_height = last.height < climb_goal;
+    last_gearing = out.gearing;
 	
-    last.dt = last.time - now;
+    last.dt = now - last.time;
     last.time = now;
+
+    logger << "Limit Switches: Top: " << in.top_hall_effect << "   Bottom: " << in.bottom_hall_effect << "\n";
+    logger << "Upper slowdown range: " << last.upper_slowdown_range << "   Lower slowdown range: " << last.lower_slowdown_range << "\n";
+    logger << "Ticks: " << in.ticks << "    Height: " << last.height;
+
+    logger.endMessage();
 }
 
 Lifter::Status_detail Lifter::Estimator::get()const{
@@ -312,24 +376,21 @@ set<Lifter::Input> examples(Lifter::Input*){
 
 set<Lifter::Output> examples(Lifter::Output*){
     return {
-	{-MANUAL_LIFTER_LOW_POWER, Lifter::Output::Gearing::HIGH},
-	{0.0, Lifter::Output::Gearing::HIGH}, 
-	{MANUAL_LIFTER_LOW_POWER, Lifter::Output::Gearing::HIGH},
-	{0.0, Lifter::Output::Gearing::LOW},
-	{CLIMB_POWER, Lifter::Output::Gearing::LOW},
-	    };
+	{0.0, Lifter::Output::Gearing::HIGH, false}, 
+	{0.0, Lifter::Output::Gearing::LOW, false}
+    };
 }
 
 set<Lifter::Status_detail> examples(Lifter::Status_detail*){
     return {
-	{false,false,false,0.0,0.0,0.0},
-	{false,false,true,0.0,0.0,0.0},
-	{true,false,false,0.0,0.0,0.0},
-	{true,false,true,0.0,0.0,0.0},
-	{false,true,false,0.0,0.0,0.0},
-	{false,true,true,0.0,0.0,0.0},
-	{true,true,false,0.0,0.0,0.0},
-	{true,true,true,0.0,0.0,0.0}
+	{false,false,false,false,false,0.0,0.0,0.0},
+	{false,false,true,false,false,0.0,0.0,0.0},
+	{true,false,false,false,false,0.0,0.0,0.0},
+	{true,false,true,false,false,0.0,0.0,0.0},
+	{false,true,false,false,false,0.0,0.0,0.0},
+	{false,true,true,false,false,0.0,0.0,0.0},
+	{true,true,false,false,false,0.0,0.0,0.0},
+	{true,true,true,false,false,0.0,0.0,0.0}
     };
 }
 
@@ -342,9 +403,11 @@ set<Lifter::Goal> examples(Lifter::Goal*){
 }
 
 Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal const& goal){
+    paramsInput* input_params = Lifter::lifter_controller.getParams();
+
     Lifter::Status s = status(status_detail);
 
-    Lifter::Output out = {0.0, goal.gearing()};
+    Lifter::Output out = {0.0, goal.gearing(), false};
     if(s == Lifter::Status::ERROR) return out;
 
     if(Lifter::lifter_controller.runningInBackground() || goal.mode() == Lifter::Goal::Mode::BACKGROUND) {
@@ -354,40 +417,57 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
-	if(s != Lifter::Status::CLIMBED)
-		out.power = -CLIMB_POWER;
-	else
-		out.power = 0.0;
+	out.power = -input_params->getValue("lifter:climb_power", 0.6);
 	break;
     case Lifter::Goal::Mode::UP:
-	if(s != Lifter::Status::TOP)
-		out.power = goal.high_power() ? MANUAL_LIFTER_HIGH_POWER : MANUAL_LIFTER_LOW_POWER;
-	else
-		out.power = 0.0;
+	out.power = goal.high_power() ? input_params->getValue("lifter:manual_power:high", 0.8) : input_params->getValue("lifter:manual_power:low", 0.4);
 	break;
     case Lifter::Goal::Mode::DOWN:
-	if(s != Lifter::Status::BOTTOM)
-		out.power = goal.high_power() ? -MANUAL_LIFTER_HIGH_POWER : -MANUAL_LIFTER_LOW_POWER;
-	else
-		out.power = 0.0;
+	out.power = goal.high_power() ? -input_params->getValue("lifter:manual_power:high", 0.8) : -input_params->getValue("lifter:manual_power:low", 0.4);
 	break;
     case Lifter::Goal::Mode::STOP:
 	Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);
-	out.power = 0.0;
+	out.power = input_params->getValue("lifter:hold_power:high_gear", 0.1);
 	break; 
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
-	Lifter::lifter_controller.updateHeightOnChange(goal.target(), status_detail.time);
+	Lifter::lifter_controller.updateHeightOnChange(goal.target(), status_detail.height, status_detail.time);
 	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
 	break;
     case Lifter::Goal::Mode::GO_TO_PRESET:
-	Lifter::lifter_controller.updateHeightOnChange(goal.preset_target(), status_detail.time);
+	Lifter::lifter_controller.updateHeightOnChange(goal.preset_target(), status_detail.height, status_detail.time);
 	Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
 	break;
     case Lifter::Goal::Mode::BACKGROUND:
 	break;
+    case Lifter::Goal::Mode::CALIBRATE:
+	break;
+    case Lifter::Goal::Mode::LOW_GEAR:
+	out.power = input_params->getValue("lifter:hold_power:low_gear", 0.0);
+	break;
+    case Lifter::Goal::Mode::LOCK:
+	out.power = 0.0;
+	out.lock = true;
+	break;
     default:
 	nyi
     }
+
+    messageLogger &logger = messageLogger::get();
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+    logger << "Lifter status: " << status_detail.at_top << " " << status_detail.at_bottom << " " << out.power << "\n";
+
+    if((status_detail.upper_slowdown_range && out.power > 0.0) ||
+       (status_detail.lower_slowdown_range && out.power < 0.0))
+	out.power = copysign(min(fabs(out.power), input_params->getValue("lifter:slowdown_power", 0.2)), out.power);
+
+    if((status_detail.at_top && out.power > 0.0) ||
+       (status_detail.at_bottom && out.power < 0.0) ||
+       (status_detail.at_climbed_height && out.power < 0.0))
+	out.power = 0.0;
+
+    logger << "After: " << out.power << "\n";
+    logger.endMessage();
+
     return out;
 }
 
@@ -416,10 +496,10 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
     case Lifter::Goal::Mode::CLIMB:
 	return status == Lifter::Status::CLIMBED;
     case Lifter::Goal::Mode::UP:
-	return status == Lifter::Status::TOP;
     case Lifter::Goal::Mode::DOWN:
-	return status == Lifter::Status::BOTTOM;
     case Lifter::Goal::Mode::STOP:
+    case Lifter::Goal::Mode::CALIBRATE:
+    case Lifter::Goal::Mode::LOW_GEAR:
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
     case Lifter::Goal::Mode::GO_TO_PRESET:
