@@ -26,7 +26,7 @@ using namespace std;
 #define R_MOTOR_LOC_2 4
 #define R_MOTOR_LOC_3 5
 
-#define SHIFTER_SOLENOID_LOW 0
+#define SHIFTER_SOLENOID 0
 #endif
 
 
@@ -408,7 +408,7 @@ double get_output(Drivebase::Output out,Drivebase::Motor m){
 }
 
 void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output out){
-	paramsInput* input_params = Drivebase::drivebase_controller.getParams();
+	//paramsInput* input_params = Drivebase::drivebase_controller.getParams();
 
 	last.distances = in.distances;
 	last.angle = in.angle;
@@ -421,7 +421,7 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 		speed_timer.set(POLL_TIME);
 	}
 
-	if(last_shifter_output != out.high_gear) {
+	/*if(last_shifter_output != out.high_gear) {
 		double shift_separation_time = input_params->getValue("drivebase:shifter:shift_separation_time", 2.0);
 		shift_timer.set(shift_separation_time);
 	}
@@ -440,7 +440,8 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 			last.high_gear_recommended = false;
 		if(speed_average > fast_shift_threshold)
 			last.high_gear_recommended = true;
-	}
+	}*/
+	last.high_gear_recommended = false;
 
 	last.dt = now - last.now;
 	last.now = now;
@@ -463,7 +464,7 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;
 #endif
 
-	robot.solenoid[SHIFTER_SOLENOID_LOW] = !b.high_gear;
+	robot.solenoid[SHIFTER_SOLENOID] = !b.high_gear;
 
 	auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 		robot.digital_io[a] = Digital_out::encoder(loc,1);
@@ -480,7 +481,7 @@ Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)c
 	return Drivebase::Output{	
 		robot.talon_srx[L_MOTOR_LOC_1].power_level,
 		-robot.talon_srx[R_MOTOR_LOC_1].power_level,
-		!robot.solenoid[SHIFTER_SOLENOID_LOW]
+		!robot.solenoid[SHIFTER_SOLENOID]
 	};
 }
 

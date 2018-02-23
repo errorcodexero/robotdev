@@ -2,6 +2,7 @@
 #include "executive.h"
 #include "util.h"
 #include "message_logger.h"
+#include "params_parser.h"
 #include "../subsystems.h"
 #include <queue>
 #include <cmath>
@@ -269,6 +270,57 @@ bool Drive::operator==(Drive const& a)const{
 }
 
 //
+// Drive_param: same as drive above, but the distance comes from the params
+//
+Drive_param::Drive_param(const char *param_p, double defval, bool end_stall)
+{
+    mParam = param_p ;
+    mDefaultValue = defval ;
+    mEndOnStall = end_stall ;
+    mInited = false ;
+}
+
+Step::Status Drive_param::done(Next_mode_info info)
+{
+    Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+    if (ret == Step::Status::FINISHED_SUCCESS)
+    {
+	messageLogger &logger = messageLogger::get() ;
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+	logger << "Drive step complete" ;
+	logger.endMessage() ;
+    }
+    return ret ;
+}
+
+Toplevel::Goal Drive_param::run(Run_info info)
+{
+    return run(info, {});
+}
+
+Toplevel::Goal Drive_param::run(Run_info info, Toplevel::Goal goals)
+{
+    if(!mInited) {
+	paramsInput *param_p = paramsInput::get() ;
+	double dist = param_p->getValue(mParam, mDefaultValue) ;
+	double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+	Drivebase::drivebase_controller.initDistance(avg_status + dist, info.status.drive.angle, info.in.now, mEndOnStall);
+	mInited = true;
+    }
+    goals.drive = Drivebase::Goal::drive_straight();
+    return goals;
+}
+
+unique_ptr<Step_impl> Drive_param::clone()const{
+    return unique_ptr<Step_impl>(new Drive_param(*this));
+}
+
+bool Drive_param::operator==(Drive_param const& a) const
+{
+    return a.mParam == mParam && mEndOnStall == a.mEndOnStall ;
+}
+
+//
 // Drive_timed: Drive the motors at the specified powers for a specified amount of time
 //
 
@@ -394,21 +446,21 @@ bool Rotate::operator==(Rotate const& b)const{
 // Start_lifter_in_background: Start moving the lifter to a specified preset in the background
 //
 
-Start_lifter_in_background::Start_lifter_in_background(LifterController::Preset preset, double time):preset(preset),time(time),init(false){}
+Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double time):preset(preset),time(time),init(false){}
 
-Step::Status Start_lifter_in_background::done(Next_mode_info){
+Step::Status Background_lifter_to_preset::done(Next_mode_info){
     messageLogger &logger = messageLogger::get() ;
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-    logger << "Start_lifter_in_background step complete" ;
+    logger << "Background_lifter_to_preset step complete" ;
     logger.endMessage() ;
     return Step::Status::FINISHED_SUCCESS;
 }
 
-Toplevel::Goal Start_lifter_in_background::run(Run_info info){
+Toplevel::Goal Background_lifter_to_preset::run(Run_info info){
     return run(info,{});
 }
 
-Toplevel::Goal Start_lifter_in_background::run(Run_info info,Toplevel::Goal goals){
+Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
 	Lifter::lifter_controller.backgroundMoveToHeight(preset, info.status.lifter.height, time);
 	init = false;
@@ -416,11 +468,11 @@ Toplevel::Goal Start_lifter_in_background::run(Run_info info,Toplevel::Goal goal
     return goals;
 }
 
-unique_ptr<Step_impl> Start_lifter_in_background::clone()const{
-    return unique_ptr<Step_impl>(new Start_lifter_in_background(*this));
+unique_ptr<Step_impl> Background_lifter_to_preset::clone()const{
+    return unique_ptr<Step_impl>(new Background_lifter_to_preset(*this));
 }
 
-bool Start_lifter_in_background::operator==(Start_lifter_in_background const& b)const{
+bool Background_lifter_to_preset::operator==(Background_lifter_to_preset const& b)const{
     return preset == b.preset && time == b.time && init == b.init;
 }
 

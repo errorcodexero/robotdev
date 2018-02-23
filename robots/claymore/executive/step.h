@@ -136,6 +136,22 @@ public:
     bool operator==(Drive const&)const;
 };
 
+class Drive_param:public Step_impl_inner<Drive_param>{
+    std::string mParam ;
+    Inch mDefaultValue ;
+    bool mEndOnStall ;
+    bool mInited ;
+
+public:
+    explicit Drive_param(const char *param, double defvalue, bool end_on_stall=false);
+
+    Toplevel::Goal run(Run_info,Toplevel::Goal);
+    Toplevel::Goal run(Run_info);
+    Step::Status done(Next_mode_info);
+    std::unique_ptr<Step_impl> clone() const;
+    bool operator==(Drive_param const &) const;
+};
+
 //Drive the motors at the specified powers for a specified amount of time
 class Drive_timed:public Step_impl_inner<Drive_timed>{
     double left_power;
@@ -185,18 +201,18 @@ struct Rotate: Step_impl_inner<Rotate>{
 };
 
 //Start moving the lifter to a specified preset in the background
-struct Start_lifter_in_background: Step_impl_inner<Start_lifter_in_background>{
+struct Background_lifter_to_preset: Step_impl_inner<Background_lifter_to_preset>{
     LifterController::Preset preset;
     double time;
     bool init;
 
-    explicit Start_lifter_in_background(LifterController::Preset, double);
+    explicit Background_lifter_to_preset(LifterController::Preset, double);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
     std::unique_ptr<Step_impl> clone()const;
-    bool operator==(Start_lifter_in_background const&)const;
+    bool operator==(Background_lifter_to_preset const&)const;
 };
 
 //Wait until the lifter has reached its goal

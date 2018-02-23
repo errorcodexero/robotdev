@@ -39,7 +39,18 @@ SRC = \
 	step.cpp\
 	teleop.cpp\
 	test.cpp\
-	timed.cpp
+	timed.cpp\
+	auto_calibonly.cpp\
+	auto_r_scale_r.cpp\
+	auto_r_scale_l.cpp\
+	auto_l_scale_r.cpp\
+	auto_l_scale_l.cpp\
+	auto_c_switch_r.cpp\
+	auto_c_switch_l.cpp\
+	auto_l_switch_l.cpp\
+	auto_r_switch_r.cpp\
+	auto_two_cube_right.cpp\
+	auto_two_cube_left.cpp
 
 ifndef TESTS
 TESTS = \

@@ -118,7 +118,7 @@ $(TESTTARGETDIR)/monitor$(EXEEXT): ../util/posedge_trigger.cpp ../util/stall_mon
 $(TESTTARGETDIR)/pump$(EXEEXT): pump.cpp
 $(TESTTARGETDIR)/pump$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp lifter.cpp lights.cpp grabber.cpp intake.cpp wings.cpp pump.cpp motor_check.cpp nop.cpp
+$(TESTTARGETDIR)/toplevel$(EXEEXT): toplevel.cpp drivebase.cpp lifter.cpp lifter_brake.cpp lights.cpp grabber.cpp intake.cpp wings.cpp pump.cpp motor_check.cpp nop.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/speed_tracker.cpp ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/countdown_timer.cpp ../util/stall_monitor.cpp ../util/input.cpp
 $(TESTTARGETDIR)/toplevel$(EXEEXT): ../util/output.cpp

@@ -8,11 +8,13 @@ using namespace std;
 
 #define LIFTER_ADDRESS_L 0
 #define LIFTER_ADDRESS_R 1
-#define LIFTER_SHIFTER_LOW 1
-#define LIFTER_SHIFTER_HIGH 4
+
+#define LIFTER_SHIFTER 1
+#define LIFTER_LOCK_SOLENOID 3
 
 #define BOTTOM_HALL_EFFECT_ADDRESS 9
 #define TOP_HALL_EFFECT_ADDRESS 8
+
 #define ENCODER_ADDRESS 2
 #define ENCODER_DIOS 4, 5
 
@@ -125,8 +127,15 @@ Lifter::Goal Lifter::Goal::low_gear(){
     return a;
 }
 
-Lifter::Output::Output(double p, Lifter::Output::Gearing g):power(p),gearing(g){}
-Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH){}
+Lifter::Goal Lifter::Goal::lock(){
+    Lifter::Goal a;
+    a.mode_ = Lifter::Goal::Mode::LOCK;
+    a.gearing_ = Lifter::Goal::Gearing::LOW;
+    return a;
+}
+
+Lifter::Output::Output(double p, Lifter::Output::Gearing g, bool l):power(p),gearing(g),lock(l){}
+Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH,false){}
 
 Lifter::Input::Input(bool b, bool t, int e):bottom_hall_effect(b),top_hall_effect(t),ticks(e){}
 Lifter::Input::Input():Input(false,false,0){}
@@ -142,7 +151,7 @@ Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing
     if(b.VAR < a.VAR) return false; 	
 
 bool operator==(Lifter::Output const& a,Lifter::Output const& b){
-    return a.power == b.power && a.gearing == b.gearing;
+    return a.power == b.power && a.gearing == b.gearing && a.lock == b.lock;
 }
 
 bool operator!=(Lifter::Output const& a,Lifter::Output const& b){
@@ -151,20 +160,22 @@ bool operator!=(Lifter::Output const& a,Lifter::Output const& b){
 	
 bool operator<(Lifter::Output const& a,Lifter::Output const& b){
     CMP(power)
-	CMP(gearing)
-	return false;
+    CMP(gearing)
+    CMP(lock)
+    return false;
 }
 
 ostream& operator<<(ostream& o, Lifter::Output const& a){
     o<<"(";
     o<<"power:"<<a.power;
     o<<" gearing:"<<a.gearing;
+    o<<" lock:"<<a.lock;
     o<<")";
     return o;
 }
 	
 bool operator==(Lifter::Input const& a, Lifter::Input const& b){
-    return true;
+    return a.bottom_hall_effect == b.bottom_hall_effect && a.top_hall_effect == b.top_hall_effect && a.ticks == b.ticks;
 }
 
 bool operator!=(Lifter::Input const& a, Lifter::Input const& b){
@@ -172,10 +183,18 @@ bool operator!=(Lifter::Input const& a, Lifter::Input const& b){
 }
 
 bool operator<(Lifter::Input const& a,Lifter::Input const& b){
+    CMP(bottom_hall_effect)
+    CMP(top_hall_effect)
+    CMP(ticks)
     return false;
 }
 
-ostream& operator<<(ostream& o, Lifter::Input const&){
+ostream& operator<<(ostream& o, Lifter::Input const& a){
+    o<<"(";
+    o<<"bottom_hall_effect:"<<a.bottom_hall_effect;
+    o<<" top_hall_effect:"<<a.top_hall_effect;
+    o<<" ticks:"<<a.ticks;
+    o<<")";
     return o;
 }
 
@@ -255,8 +274,8 @@ ostream& operator<<(ostream& o, Lifter const& a){
 Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Output const& out)const{
     r.pwm[LIFTER_ADDRESS_L] = -out.power;
     r.pwm[LIFTER_ADDRESS_R] = -out.power;
-    r.solenoid[LIFTER_SHIFTER_LOW] = out.gearing == Lifter::Output::Gearing::LOW;
-    r.solenoid[LIFTER_SHIFTER_HIGH] = out.gearing != Lifter::Output::Gearing::LOW;
+    r.solenoid[LIFTER_SHIFTER] = out.gearing == Lifter::Output::Gearing::LOW;
+    r.solenoid[LIFTER_LOCK_SOLENOID] = out.lock;
 
     auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 	r.digital_io[a] = Digital_out::encoder(loc,1);
@@ -270,7 +289,8 @@ Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Out
 Lifter::Output Lifter::Output_applicator::operator()(Robot_outputs const& r)const{
     return {
 	-r.pwm[LIFTER_ADDRESS_L], //assuming that left and right sides are set to the same value
-	r.solenoid[LIFTER_SHIFTER_LOW] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH
+	r.solenoid[LIFTER_SHIFTER] ? Lifter::Output::Gearing::LOW : Lifter::Output::Gearing::HIGH,
+	r.solenoid[LIFTER_LOCK_SOLENOID]
 	   };
 }
 
@@ -356,8 +376,8 @@ set<Lifter::Input> examples(Lifter::Input*){
 
 set<Lifter::Output> examples(Lifter::Output*){
     return {
-	{0.0, Lifter::Output::Gearing::HIGH}, 
-	{0.0, Lifter::Output::Gearing::LOW}
+	{0.0, Lifter::Output::Gearing::HIGH, false}, 
+	{0.0, Lifter::Output::Gearing::LOW, false}
     };
 }
 
@@ -387,7 +407,7 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 
     Lifter::Status s = status(status_detail);
 
-    Lifter::Output out = {0.0, goal.gearing()};
+    Lifter::Output out = {0.0, goal.gearing(), false};
     if(s == Lifter::Status::ERROR) return out;
 
     if(Lifter::lifter_controller.runningInBackground() || goal.mode() == Lifter::Goal::Mode::BACKGROUND) {
@@ -423,6 +443,10 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	break;
     case Lifter::Goal::Mode::LOW_GEAR:
 	out.power = input_params->getValue("lifter:hold_power:low_gear", 0.0);
+	break;
+    case Lifter::Goal::Mode::LOCK:
+	out.power = 0.0;
+	out.lock = true;
 	break;
     default:
 	nyi
