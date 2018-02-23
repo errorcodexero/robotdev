@@ -23,4 +23,4 @@ static vector<Step> steps =
 } ;
 
 static Chain chain(steps, teleopex) ;
-Executive left_switch_right(chain) ;
+Executive left_switch_left(chain) ;
