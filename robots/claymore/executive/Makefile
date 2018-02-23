@@ -52,6 +52,7 @@ SRC = \
 	auto_two_cube_right.cpp\
 	auto_two_cube_left.cpp
 
+
 ifndef TESTS
 TESTS = \
 	timed

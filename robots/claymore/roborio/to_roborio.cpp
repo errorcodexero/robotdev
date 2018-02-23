@@ -144,21 +144,35 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//
 		// Decide what subsystems you want to see
 		//
-		
+
+#ifdef DEBUG
 		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
-		logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
-		logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		//logger.enableSubsystem(SUBSYSTEM_TELEOP);
 		//logger.enableSubsystem(SUBSYSTEM_PANEL);
-		//logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
-		
+#else
+		//
+		// In competition mode, we always want the drivebase and auto mode
+		// debug information
+		//
+		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
+		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
+#endif
 
 		std::shared_ptr<messageLoggerDest> dest_p ;
 
+#ifdef DEBUG
+		//
+		// We only want printouts on COUT when we are debugging
+		// In competition mode, this information goes to a log file on
+		// the USB stick
+		//
 		dest_p = std::make_shared<messageDestStream>(std::cout) ;
 		logger.addDestination(dest_p) ;
+#endif
 
 		std::string flashdrive("/media/sda1") ;
 		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
