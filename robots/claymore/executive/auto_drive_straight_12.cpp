@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
@@ -9,7 +10,7 @@ using namespace std ;
 // Action: Score on right switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> drive_straight_12_steps =
+static vector<Step> steps =
 {
     startAuto,
     Step(Drive(12.0, false)),
@@ -18,5 +19,5 @@ static vector<Step> drive_straight_12_steps =
     endAuto
 } ;
 
-static Chain drive_straight_12_chain(drive_straight_12_steps, teleopex) ;
-Executive drive_straight_12(drive_straight_12_chain) ;
+static Chain chain(steps, teleopex) ;
+Executive drive_straight_12(chain) ;

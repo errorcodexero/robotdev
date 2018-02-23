@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
@@ -9,7 +10,7 @@ using namespace std ;
 // Action: Two cube score on right, scale then switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> two_cube_right_steps =
+static vector<Step> steps =
 {
     startAuto,
     calibrateLifter,
@@ -29,5 +30,5 @@ static vector<Step> two_cube_right_steps =
     endAuto,
 } ;
 
-static Chain two_cube_right_chain(two_cube_right_steps, teleopex) ;
-Executive two_cube_right(two_cube_right_chain) ;
+static Chain chain(steps, teleopex) ;
+Executive two_cube_right(chain) ;

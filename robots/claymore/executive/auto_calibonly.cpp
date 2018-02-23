@@ -1,11 +1,12 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
 
 ////////////////////   Calibrate Only Auto Program /////////////////////////////////
 
-vector<Step> calibrate_only_steps =
+static vector<Step> steps =
 {
     startAuto,
     calibrateLifter,
@@ -13,7 +14,7 @@ vector<Step> calibrate_only_steps =
     endAuto
 } ;
 
-Chain calibrate_only_chain(calibrate_only_steps, teleopex) ;
+static Chain chain(steps, teleopex) ;
 
-Executive calibrate_only(calibrate_only_chain) ;
+Executive calibrate_only(chain) ;
 

@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
@@ -9,7 +10,7 @@ using namespace std ;
 // Action: Score on left switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> grabber_test_steps
+static vector<Step> steps
 {
     startAuto,
     calibrateLifter,
@@ -17,5 +18,5 @@ static vector<Step> grabber_test_steps
     endAuto,
 };
 
-static Chain grabber_test_chain(grabber_test_steps, teleopex) ;
-Executive grabber_test(grabber_test_chain) ;
+static Chain chain(steps, teleopex) ;
+Executive grabber_test(chain) ;

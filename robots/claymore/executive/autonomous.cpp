@@ -29,10 +29,6 @@ extern Executive center_switch_left ;
 extern Executive left_switch_left ;
 extern Executive right_switch_right ;
 
-//
-// Executive used to end each automode step
-//
-Executive teleopex{Teleop()} ;
 
 //
 // Commonly used steps

@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
@@ -9,7 +10,7 @@ using namespace std ;
 // Action: Score on left scale
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> right_scale_left_steps =
+static vector<Step> steps =
 {
     startAuto,
     calibrateLifter,
@@ -26,5 +27,5 @@ static vector<Step> right_scale_left_steps =
     endAuto,
 } ;
 
-static Chain right_scale_left_chain(right_scale_left_steps, teleopex) ;
-Executive right_scale_left(right_scale_left_chain) ;
+static Chain chain(steps, teleopex) ;
+Executive right_scale_left(chain) ;

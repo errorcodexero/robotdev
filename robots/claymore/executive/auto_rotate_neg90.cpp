@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
@@ -9,12 +10,12 @@ using namespace std ;
 // Action: Score on right switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> rotate_neg90_steps =
+static vector<Step> steps =
 {
     startAuto,
     rotate90pos,
     endAuto
 } ;
 
-static Chain rotate_neg90_chain(rotate_neg90_steps, teleopex) ;
-Executive rotate_neg90(rotate_neg90_chain) ;
+static Chain chain(steps, teleopex) ;
+Executive rotate_neg90(chain) ;
