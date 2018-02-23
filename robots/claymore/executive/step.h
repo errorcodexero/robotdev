@@ -253,8 +253,19 @@ struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
 };
 
 //Move the lifter to a specified preset
-struct Lifter_to_preset: Lifter_to_height{
+struct Lifter_to_preset: Step_impl_inner<Lifter_to_preset>
+{
+    LifterController::Preset mPreset;
+    double mTime;
+    bool mInit;
+
     explicit Lifter_to_preset(LifterController::Preset, double);
+	
+    Toplevel::Goal run(Run_info,Toplevel::Goal);
+    Toplevel::Goal run(Run_info);
+    Step::Status done(Next_mode_info);
+    std::unique_ptr<Step_impl> clone()const;
+    bool operator==(Lifter_to_preset const&)const;
 };
 
 //Calibrate the grabber at the current angle
