@@ -66,7 +66,8 @@ struct Drivebase{
 #define DRIVEBASE_OUTPUT(X)			\
     X(double,l)					\
     X(double,r)					\
-    X(bool,high_gear)                           
+    X(bool,high_gear)                           \
+    X(bool,brake)
     DECLARE_STRUCT(Output,DRIVEBASE_OUTPUT)
 
 #define SPEEDS_ITEMS(X)				\
@@ -123,6 +124,7 @@ struct Drivebase{
 
 	double left_,right_;
 	Gear gear_;
+	bool brake_;
 
     public:
 	Goal();	
@@ -133,8 +135,9 @@ struct Drivebase{
 	double left()const;
 
 	Gear gear()const;
+	bool brake()const;
 		
-	static Goal absolute(double,double,Gear gear=Gear::AUTO);
+	static Goal absolute(double,double,Gear gear=Gear::AUTO,bool brake=true);
 	static Goal drive_straight();
 	static Goal rotate();
     };

@@ -82,6 +82,7 @@ struct Talon_srx_output{
 		X(PID_values,pid) \
 		X(double,power_level) \
 		X(double,speed) \
+		X(bool,brake) \
 		X(Mode,mode) 
 
 	STRUCT_MEMBERS(TALON_SRX_OUTPUT_ITEMS)

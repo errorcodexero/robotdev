@@ -99,7 +99,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 
 		Drivebase::Goal::Gear gear_shifter = high_gear ? Drivebase::Goal::Gear::HIGH : Drivebase::Goal::Gear::LOW;
 
-		goals.drive = Drivebase::Goal::absolute(left, right, gear_shifter);
+		goals.drive = Drivebase::Goal::absolute(left, right, gear_shifter, false);
 	}
 
 	switch(collector_mode) {
