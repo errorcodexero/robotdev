@@ -4,6 +4,7 @@
 #include "UdpReceiver.h"
 #include <cstdint>
 #include <thread>
+#include <vector>
 
 namespace frc
 {
@@ -44,6 +45,26 @@ namespace frc
 		static const uint8_t cRequestTime = 0x01;
 		static const uint8_t cRobotHasCode = 0x20;
 
+	private:
+		class JoystickState
+		{
+		public:
+			JoystickState()
+			{
+				m_buttons = 0;
+			}
+
+			~JoystickState()
+			{
+			}
+
+
+
+		private:
+			uint16_t m_buttons;
+			std::vector<float> m_axis;
+			std::vector<uint16_t> m_pov;
+		};
 
 	private:
 		DriverStation();
@@ -137,6 +158,8 @@ namespace frc
 
 		Alliance m_alliance;
 		int m_location;
+
+		std::vector<JoystickState> m_joysticks;
 
 		//
 		// Battery voltage
