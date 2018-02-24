@@ -31,7 +31,7 @@ CTRE=false
 # Add build flags and libraries
 #
 CXXFLAGS = `pkg-config --cflags opencv`
-ADDLIBS = `pkg-config --libs opencv`
+ADDLIBS = `pkg-config --libs opencv libv4l2`
 
 
 #
