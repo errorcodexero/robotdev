@@ -554,7 +554,6 @@ bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const{
 //
 // Lifter_to_height: Move the lifter to a specified height
 //
-
 Lifter_to_height::Lifter_to_height(double target_height, double time):target_height(target_height),time(time),init(false){}
 
 Step::Status Lifter_to_height::done(Next_mode_info info){
@@ -586,7 +585,8 @@ unique_ptr<Step_impl> Lifter_to_height::clone()const{
     return unique_ptr<Step_impl>(new Lifter_to_height(*this));
 }
 
-bool Lifter_to_height::operator==(Lifter_to_height const& b)const{
+bool Lifter_to_height::operator==(Lifter_to_height const& b)const
+{
     return target_height == b.target_height && time == b.time && init == b.init;
 }
 
@@ -594,7 +594,45 @@ bool Lifter_to_height::operator==(Lifter_to_height const& b)const{
 // Lifter_to_preset: Move the lifter to a specified preset
 //
 
-Lifter_to_preset::Lifter_to_preset(LifterController::Preset target_preset, double time):Lifter_to_height(Lifter::lifter_controller.presetToHeight(target_preset), time){}
+Lifter_to_preset::Lifter_to_preset(LifterController::Preset preset, double time)
+{
+    mPreset = preset ;
+    mTime = time ;
+    mInit = false ;
+}
+
+Step::Status Lifter_to_preset::done(Next_mode_info info){
+    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(mPreset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+    if (ret == Step::Status::FINISHED_SUCCESS)
+    {
+	messageLogger &logger = messageLogger::get() ;
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+	logger << "Lifter_to_preset step complete" ;
+	logger.endMessage() ;
+    }
+    return ret ;
+}
+
+Toplevel::Goal Lifter_to_preset::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
+    if(!mInit) {
+	Lifter::lifter_controller.moveToHeight(mPreset, info.status.lifter.height, mTime);
+	mInit = false;
+    }
+    goals.lifter = Lifter::Goal::go_to_preset(mPreset);
+    return goals;
+}
+
+unique_ptr<Step_impl> Lifter_to_preset::clone()const{
+    return unique_ptr<Step_impl>(new Lifter_to_preset(*this));
+}
+
+bool Lifter_to_preset::operator==(Lifter_to_preset const& b)const{
+    return mPreset == b.mPreset ;
+}
 
 //
 // Calibrate_grabber: Calibrate the grabber at the current angle

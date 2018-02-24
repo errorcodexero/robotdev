@@ -20,6 +20,7 @@ extern Executive lifter_test;
 extern Executive lifter_move ;
 extern Executive grabber_test ;
 extern Executive calibrate_only ;
+extern Executive cross_line ;
 extern Executive right_scale_right ;
 extern Executive right_scale_left ;
 extern Executive left_scale_right ;
@@ -28,27 +29,10 @@ extern Executive center_switch_right ;
 extern Executive center_switch_left ;
 extern Executive left_switch_left ;
 extern Executive right_switch_right ;
+extern Executive two_cube_left ;
+extern Executive two_cube_right ;
 
-
-//
-// Commonly used steps
-//
-Step startAuto = Step(StartAuto()) ;
-Step endAuto = Step(EndAuto()) ;
-Step calibrateLifter = Step(Calibrate_lifter()) ;
-Step calibrateGrabber = Step(Calibrate_grabber()) ;
-Step rotate90pos = Step(Rotate(90.0)) ;
-Step rotate90neg = Step(Rotate(-90.0)) ;
-Step startLifterFloor = Step(Background_lifter_to_preset(LifterController::Preset::FLOOR, 0.0)) ;
-Step startLifterExch = Step(Background_lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)) ;
-Step startLifterSwitch = Step(Background_lifter_to_preset(LifterController::Preset::SWITCH, 0.0)) ;
-Step startLifterScale = Step(Background_lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
-Step lifterToFloor = Step(Lifter_to_preset(LifterController::Preset::FLOOR, 0.0)) ;
-Step lifterToExch = Step(Lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)) ;
-Step lifterToSwitch = Step(Lifter_to_preset(LifterController::Preset::SWITCH, 0.0)) ;
-Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
-Step waitForLifter = Step(Wait_for_lifter()) ;
-Step eject = Step(Eject()) ;
+const Executive auto_null{Teleop{}};
 
 //
 // Ok we have done multiple things here trying to get something that works well
@@ -57,18 +41,21 @@ Step eject = Step(Eject()) ;
 // This variable is set differently depending on whether or not the 'C' preprocessor
 // variable AUTOMODE is set.  If AUTOMODE is set, the the variable automode is set to
 // the value of AUTOMODE.  In this, with the AUTOMODE variable on the make command line
-// you can force the auto mode to any mode you want.
+// you can force the auto mode to any mode you want.  This is useful for debugging
+// automodes or general robot autonomous capabilities.
 //
 // e.g. make CONFIG=debug AUTOMODE=102
 //
 // If AUTOMODE is not set (or if you are not building for configuration debug), then the
 // value of automode is set based on the switch on the panel.  This switch only has 10
-// positions so only the first 10 automodes in the switch statement are accessible.
+// positions so only the first 10 automodes in the switch statement are accessible. This
+// is for competitions.
 //
 
 Executive get_auto_mode(Next_mode_info info)
 {
-    Executive auto_program = calibrate_only ;
+    Executive auto_program = auto_null ;
+
     messageLogger &logger = messageLogger::get() ;
     int automode = 0 ;
     
@@ -119,10 +106,11 @@ Executive get_auto_mode(Next_mode_info info)
     {
     case 0:
 	auto_program = calibrate_only ;
-	break; 
-    case 1: 
 	break;
-    case 2:
+    case 1:
+	auto_program = cross_line ;
+	break ;
+    case 2: 
 	auto_program = info.in.ds_info.near_switch_left ? center_switch_left : center_switch_right ;
 	break;
     case 3:
@@ -130,12 +118,30 @@ Executive get_auto_mode(Next_mode_info info)
 	break;
     case 4:
 	auto_program = info.in.ds_info.scale_left ? left_scale_left : left_scale_right ;
+	break;
+    case 5:
+	if (info.in.ds_info.scale_left)
+	    auto_program = left_scale_left ;
+	else if (info.in.ds_info.near_switch_left)
+	    auto_program = left_switch_left ;
+	else
+	    auto_program = cross_line ;
 	break ;
-    case 5: 
-    case 6:
-    case 7: 
-    case 8: 
-    case 9: 
+    case 6: 
+	if (!info.in.ds_info.scale_left)
+	    auto_program = right_scale_right ;
+	else if (!info.in.ds_info.near_switch_left)
+	    auto_program = right_switch_right ;
+	else
+	    auto_program = cross_line ;
+	break ;
+    case 7:
+	break;
+    case 8:
+	auto_program = two_cube_left ;
+	break ;
+    case 9:
+	auto_program = two_cube_right ;
 	break ;
 	
     case 100:
@@ -254,7 +260,7 @@ Executive get_auto_mode(Next_mode_info info)
 	auto_program = calibrate_only ;
 	break ;
     }
-	
+
     return auto_program ;
 }
 

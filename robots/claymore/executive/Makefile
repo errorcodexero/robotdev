@@ -49,6 +49,7 @@ DEBUG_AUTOMODES = \
 	auto_grabber_test.cpp
 
 COMPETITION_AUTOMODES = \
+	auto_cross_line.cpp\
 	auto_r_scale_r.cpp\
 	auto_r_scale_l.cpp\
 	auto_l_scale_r.cpp\
@@ -57,8 +58,8 @@ COMPETITION_AUTOMODES = \
 	auto_c_switch_l.cpp\
 	auto_l_switch_l.cpp\
 	auto_r_switch_r.cpp\
-	auto_two_cube_right.cpp\
-	auto_two_cube_left.cpp
+	auto_l_two_cube.cpp\
+	auto_r_two_cube.cpp
 
 
 SRC = \

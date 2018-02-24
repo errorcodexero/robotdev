@@ -6,21 +6,18 @@ using namespace std ;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
-// Start: Left
-// Action: Score on left switch
+// Start: Center
+// Action: Score on right switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
 {
     startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterSwitch,
-    // TODO
+    Step(Drive_param("auto:cross_line:segment1",120.0, false)),
     waitForLifter,
     eject,
     endAuto
 } ;
 
 static Chain chain(steps, teleopex) ;
-Executive left_switch_left(chain) ;
+Executive cross_line(chain) ;
