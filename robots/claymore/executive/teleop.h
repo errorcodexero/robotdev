@@ -28,7 +28,8 @@ struct Teleop : Executive_impl<Teleop> {
 		X(Lifter::Goal, lifter_goal) \
 		X(Wings::Goal, wings_goal) \
 		X(Collector_mode, collector_mode) \
-		X(Countdown_timer, eject_timer) \
+		X(Countdown_timer, intake_timer) \
+		X(bool, started_intake_with_cube) \
 		X(Posedge_trigger, calibrate_trigger) \
 		X(Posedge_trigger, has_cube_trigger) \
 		X(bool, high_gear)

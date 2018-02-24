@@ -14,7 +14,7 @@ ifeq ($(CONFIG), debug)
 CXXFLAGS = -DDEBUG
 else
 ifeq ($(CONFIG), release)
-CXXFLAGS = -DRELEASE
+CXXFLAGS += -DRELEASE
 else
 $(error CONFIG must be set to either 'debug' or 'release')
 endif
@@ -30,6 +30,11 @@ SHELL=bash
 # The directory for external libraries
 #
 EXTERNALSW = ../../../external
+
+#
+# Detect raspberry pi.  This field is not reliably set for other platforms.
+#
+UNAME2 := $(shell uname -a | awk '{print $$2}')
 
 
 #
@@ -63,6 +68,14 @@ else
 CROSSCXX = arm-frc-linux-gnueabi-g++
 AR = arm-frc-linux-gnueabi-ar
 EXEEXT=
+endif
+
+# Use native compiler on raspberry pi, else the cross compiler
+ifeq ($(UNAME2),raspberrypi)
+COMPILER=/usr/bin/g++
+AR=
+else
+COMPILER=$(CROSSCXX)
 endif
 
 #
@@ -216,11 +229,11 @@ endif
 #
 ifeq ($(VERBOSE),1)
 $(OBJDIR)/%.o : %.cpp
-	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(COMPILER) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 else
 $(OBJDIR)/%.o : %.cpp
 	@echo -n "Compiling file '"$<"' ... "
-	@$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	@$(COMPILER) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 	@echo done
 endif
 

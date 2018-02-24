@@ -50,7 +50,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),high_gear(false){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_intake_with_cube(false),high_gear(false){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	messageLogger &logger = messageLogger::get();
@@ -99,37 +99,40 @@ Toplevel::Goal Teleop::run(Run_info info) {
 
 		Drivebase::Goal::Gear gear_shifter = high_gear ? Drivebase::Goal::Gear::HIGH : Drivebase::Goal::Gear::LOW;
 
-		goals.drive = Drivebase::Goal::absolute(left, right, gear_shifter);
+		goals.drive = Drivebase::Goal::absolute(left, right, gear_shifter, false);
 	}
 
 	switch(collector_mode) {
 		case Collector_mode::DO_NOTHING:
 			goals.grabber = Grabber::Goal::stop();
-			goals.intake = Intake::Goal::OFF;
+			goals.intake = Intake::Goal::off();
 			break;
 		case Collector_mode::GRABBING:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::OFF;
+			goals.intake = Intake::Goal::off();
 			break;
 		case Collector_mode::COLLECT_OPEN:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-			goals.intake = Intake::Goal::IN;
+			goals.intake = Intake::Goal::in();
 			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
 			break;
 		case Collector_mode::COLLECT_CLOSED:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::IN;
+			goals.intake = Intake::Goal::in();
 			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
 			break;
 		case Collector_mode::EJECT:
-			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::OUT;
-			eject_timer.update(info.in.now, info.in.robot_mode.enabled);
-			if(eject_timer.done()) collector_mode = Collector_mode::DO_NOTHING;
-			break;
 		case Collector_mode::DROP:
-			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-			goals.intake = Intake::Goal::OFF;
+			if(collector_mode == Collector_mode::EJECT) {
+				goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+				goals.intake = Intake::Goal::out();
+			} else {
+				goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+				goals.intake = Intake::Goal::out(0.2);
+			}
+			intake_timer.update(info.in.now, info.in.robot_mode.enabled);
+			if((started_intake_with_cube && !info.status.grabber.has_cube) || intake_timer.done())
+				collector_mode = Collector_mode::DO_NOTHING;
 			break;
 		default: assert(0);
 	}
@@ -191,9 +194,14 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
 	if(info.panel.eject) {
 		collector_mode = Collector_mode::EJECT;
-		eject_timer.set(1);
+		started_intake_with_cube = info.status.grabber.has_cube;
+		intake_timer.set(1.0);
 	}
-	if(info.panel.drop) collector_mode = Collector_mode::DROP;
+	if(info.panel.drop) {
+		collector_mode = Collector_mode::DROP;
+		started_intake_with_cube = info.status.grabber.has_cube;
+		intake_timer.set(0.5);
+	}
 
 	if(calibrate_trigger(info.panel.calibrate)) {
 		Lifter::lifter_controller.setCalibrate(true);
@@ -218,9 +226,9 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 
 	if(!info.panel.intake_auto) {
-		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::OFF;
-		if(info.panel.intake == Panel::Intake::IN) goals.intake = Intake::Goal::IN;
-		if(info.panel.intake == Panel::Intake::OUT) goals.intake = Intake::Goal::OUT;
+		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::off();
+		if(info.panel.intake == Panel::Intake::IN) goals.intake = Intake::Goal::in();
+		if(info.panel.intake == Panel::Intake::OUT) goals.intake = Intake::Goal::out();
 	}
 
 	{

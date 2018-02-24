@@ -63,6 +63,7 @@ void Talon_srx_control::set(Talon_srx_output a, bool enable) {
 		}
 		return;
 	}
+	talon->SetNeutralMode(a.brake ? ctre::phoenix::motorcontrol::NeutralMode::Brake : ctre::phoenix::motorcontrol::NeutralMode::Coast);
 	switch(a.mode){
 		case Talon_srx_output::Mode::PERCENT:
 			/* TODO:  was causing problems so it has been removed -- should we fix it and use it?

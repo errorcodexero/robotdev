@@ -294,6 +294,20 @@ struct Grabber_to_preset: Step_impl_inner<Grabber_to_preset>{
     bool operator==(Grabber_to_preset const&)const;
 };
 
+//Put the grabber into collecting mode until a cube is collected
+struct Collect: Step_impl_inner<Collect>{
+    double time;
+    bool init;
+
+    explicit Collect(double);
+
+    Toplevel::Goal run(Run_info,Toplevel::Goal);
+    Toplevel::Goal run(Run_info);
+    Step::Status done(Next_mode_info);
+    std::unique_ptr<Step_impl> clone()const;
+    bool operator==(Collect const&)const;
+};
+
 //Eject a cube
 struct Eject: Step_impl_inner<Eject>{
     Countdown_timer eject_timer;

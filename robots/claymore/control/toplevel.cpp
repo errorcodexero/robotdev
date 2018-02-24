@@ -98,9 +98,9 @@ ostream& operator<<(ostream& o,Toplevel::Output_applicator const&){
 
 Toplevel::Output::Output():
 	pump(Pump::Output::AUTO),
-	drive(0.0,0.0,false),
+	drive(0.0,0.0,false,true),
 	grabber(0.0),
-	intake(Intake::Output::OFF),
+	intake(0.0, 0.0),
 	lifter({0.0,Lifter::Output::Gearing::HIGH,false}),
 	lights(),
 	wings(Wings::Output::LOCKED)
