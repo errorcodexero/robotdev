@@ -6,8 +6,6 @@ using namespace std;
 
 #define INTAKE_ADDRESS_R 4
 #define INTAKE_ADDRESS_L 3
-#define L_INTAKE_POWER 1.0 //TODO tune this
-#define R_INTAKE_POWER 1.0 //TODO tune this
 
 Intake::Goal::Goal():left_(0.0),right_(0.0){}
 
@@ -20,9 +18,11 @@ double Intake::Goal::right()const {
 }
 
 Intake::Goal Intake::Goal::in() {
+	paramsInput* input_params = paramsInput::get();
+
 	Goal a;
-	a.left_ = L_INTAKE_POWER;
-	a.right_ = R_INTAKE_POWER;
+	a.left_ = input_params->getValue("intake:left_default", 1.0);
+	a.right_ = input_params->getValue("intake:right_default", 1.0);
 	return a;
 }
 
@@ -41,9 +41,11 @@ Intake::Goal Intake::Goal::off() {
 }
 
 Intake::Goal Intake::Goal::out() {
+	paramsInput* input_params = paramsInput::get();
+
 	Goal a;
-	a.left_ = -L_INTAKE_POWER;
-	a.right_ = -R_INTAKE_POWER;
+	a.left_ = -input_params->getValue("intake:left_default", 1.0);
+	a.right_ = -input_params->getValue("intake:right_default", 1.0);
 	return a;
 }
 
