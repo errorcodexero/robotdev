@@ -105,32 +105,32 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	switch(collector_mode) {
 		case Collector_mode::DO_NOTHING:
 			goals.grabber = Grabber::Goal::stop();
-			goals.intake = Intake::Goal::OFF;
+			goals.intake = Intake::Goal::off();
 			break;
 		case Collector_mode::GRABBING:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::OFF;
+			goals.intake = Intake::Goal::off();
 			break;
 		case Collector_mode::COLLECT_OPEN:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-			goals.intake = Intake::Goal::IN;
+			goals.intake = Intake::Goal::in();
 			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
 			break;
 		case Collector_mode::COLLECT_CLOSED:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::IN;
+			goals.intake = Intake::Goal::in();
 			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
 			break;
 		case Collector_mode::EJECT:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::OUT;
+			goals.intake = Intake::Goal::out();
 			eject_timer.update(info.in.now, info.in.robot_mode.enabled);
 			if((started_eject_with_cube && !info.status.grabber.has_cube) || eject_timer.done())
 				collector_mode = Collector_mode::DO_NOTHING;
 			break;
 		case Collector_mode::DROP:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-			goals.intake = Intake::Goal::OFF;
+			goals.intake = Intake::Goal::off();
 			break;
 		default: assert(0);
 	}
@@ -220,9 +220,9 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 
 	if(!info.panel.intake_auto) {
-		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::OFF;
-		if(info.panel.intake == Panel::Intake::IN) goals.intake = Intake::Goal::IN;
-		if(info.panel.intake == Panel::Intake::OUT) goals.intake = Intake::Goal::OUT;
+		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::off();
+		if(info.panel.intake == Panel::Intake::IN) goals.intake = Intake::Goal::in();
+		if(info.panel.intake == Panel::Intake::OUT) goals.intake = Intake::Goal::out();
 	}
 
 	{

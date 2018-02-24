@@ -15,7 +15,7 @@
 	X(Pump,pump,Pump::Goal::AUTO)\
 	X(Drivebase,drive,)\
 	X(Grabber,grabber,Grabber::Goal::stop())\
-	X(Intake,intake,Intake::Goal::OFF)\
+	X(Intake,intake,Intake::Goal::off())\
 	X(Lifter,lifter,Lifter::Goal::stop())\
 	X(Lights,lights,)\
 	X(Wings,wings,Wings::Goal::LOCKED)

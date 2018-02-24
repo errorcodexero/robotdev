@@ -818,7 +818,7 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals){
     // Tell the grabber/intake to eject the cube
     //
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-    goals.intake = Intake::Goal::OUT;
+    goals.intake = Intake::Goal::out();
     
     return goals;
 }
