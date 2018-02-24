@@ -75,6 +75,16 @@ public:
     /// \param time the start time of the new request
     void updateHeightOnChange(Preset preset, double current_height, double time);
 
+    /// \brief returns true if the lifter has reached the specified height
+    /// \param target the height to check against
+    /// \returns true if the lifter has reached the specified height
+    bool finishedTarget(double target);
+
+    /// \brief returns true if the lifter has reached the specified preset
+    /// \param target the preset to check against
+    /// \returns true if the lifter has reached the specified preset
+    bool finishedTarget(Preset target);
+
     /// \brief returns true when the lifter has reached its desired height
     /// \returns true when the lifter has reached its desired height
     bool done();

@@ -58,7 +58,7 @@ bool Lifter::Goal::high_power()const{
     return high_power_;
 }
 
-Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0),high_power_(false){}
+Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0),preset_target_(LifterController::Preset::FLOOR),high_power_(false){}
 
 Lifter::Goal Lifter::Goal::climb(){
     Lifter::Goal a;
@@ -144,7 +144,7 @@ Lifter::Status_detail::Status_detail(bool b,bool t,bool c,bool usr,bool lsr,doub
 Lifter::Status_detail::Status_detail():Status_detail(false,false,false,false,false,0.0,0.0,0.0){}
 
 Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg, double eo):last(s),last_gearing(g),climb_goal(cg),encoder_offset(eo){}
-Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,0.0,0.0){}
+Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,-9999.0,0.0){}
 
 #define CMP(VAR)				\
     if(a.VAR < b.VAR) return true;		\
@@ -348,7 +348,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     last.lower_slowdown_range = last.height < (bottom_limit + slowdown_range);
 
     if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - input_params->getValue("lifter:climbing_difference", 100.0);
-    last.at_climbed_height = last.height < climb_goal;
+    last.at_climbed_height = climb_goal > -9999.0 && last.height < climb_goal;
     last_gearing = out.gearing;
 	
     last.dt = now - last.time;
@@ -502,7 +502,9 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
     case Lifter::Goal::Mode::LOW_GEAR:
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
+	return Lifter::lifter_controller.finishedTarget(goal.target());
     case Lifter::Goal::Mode::GO_TO_PRESET:
+	return Lifter::lifter_controller.finishedTarget(goal.preset_target());
     case Lifter::Goal::Mode::BACKGROUND:
 	return Lifter::lifter_controller.done();
     default:
