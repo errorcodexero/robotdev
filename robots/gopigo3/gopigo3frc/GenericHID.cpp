@@ -26,7 +26,7 @@ namespace frc
 	{
 	}
 
-	int GenericHID::GetPOV(int pov = 0) const
+	int GenericHID::GetPOV(int pov) const
 	{
 	}
 

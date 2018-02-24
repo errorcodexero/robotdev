@@ -10,7 +10,7 @@ namespace frc
 	{
 	}
 
-	static Joystick *Joystick::GetStickForPort(int port)
+	Joystick *Joystick::GetStickForPort(int port)
 	{
 
 	}
@@ -63,11 +63,11 @@ namespace frc
 	{
 
 	}
-	double Joystick::GetX(JoystickHand hand = JoystickHand::kRightHand) const
+	double Joystick::GetX(JoystickHand hand) const
 	{
 
 	}
-	double Joystick::GetY(JoystickHand hand = JoystickHand::kRightHand) const
+	double Joystick::GetY(JoystickHand hand) const
 	{
 
 	}

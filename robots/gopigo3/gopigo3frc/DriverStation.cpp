@@ -32,6 +32,93 @@ namespace frc
 			m_ds_p = new DriverStation();
 	}
 
+	bool DriverStation::GetStickButton(int stick, int button)
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return false;
+
+		if (static_cast<size_t>(button) > m_joysticks[stick].getButtonCount())
+			return false;
+
+		return m_joysticks[stick].getButton(button);
+	}
+
+	bool DriverStation::GetStickButtonPressed(int stick, int button)
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return false;
+
+		if (static_cast<size_t>(button) > m_joysticks[stick].getButtonCount())
+			return false;
+
+		return m_joysticks[stick].getButtonPressed(button);
+	}
+
+	bool DriverStation::GetStickButtonReleased(int stick, int button)
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return false;
+
+		if (static_cast<size_t>(button) > m_joysticks[stick].getButtonCount())
+			return false;
+
+		return m_joysticks[stick].getButtonReleased(button);
+	}
+
+	double DriverStation::GetStickAxis(int stick, int axis)
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return 0.0;
+
+		if (static_cast<size_t>(axis) >= m_joysticks[stick].getAxisCount())
+			return 0.0;
+
+		return m_joysticks[stick].getAxis(axis);
+	}
+
+	int DriverStation::GetStickPOV(int stick, int axis)
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return 0.0;
+
+		if (static_cast<size_t>(axis) >= m_joysticks[stick].getPOVCount())
+			return 0.0;
+
+		return m_joysticks[stick].getPOVValue(axis);
+	}
+
+	int DriverStation::GetStickButtons(int stick) const
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return 0;
+
+		return m_joysticks[stick].getButtons();
+	}
+
+	int DriverStation::GetStickAxisCount(int stick) const
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return 0;
+
+		return m_joysticks[stick].getAxisCount();
+	}
+
+	int DriverStation::GetStickPOVCount(int stick) const
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return 0;
+
+		return m_joysticks[stick].getPOVCount();
+	}
+
+	int DriverStation::GetStickButtonCount(int stick) const
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return 0;
+
+		return m_joysticks[stick].getButtonCount();
+	}
+
 	void DriverStation::waitForConnection()
 	{
 		m_server_in_p = new xeromisc::UdpBroadcastReceiver();
@@ -131,43 +218,55 @@ namespace frc
 	{
 	}
 
-	void DriverStation::processJoystickData(int index, const std::vector<uint8_t> &data, size_t start)
+	void DriverStation::processJoystickData(size_t index, const std::vector<uint8_t> &data, size_t start)
 	{
 		start += 2;
 
-		uint8_t axiscount = data[start++];
-		setJoystickAxisCount(index, axiscount);
-		for (size_t i = 0; i < axiscount; i++)
-			setJoystickAxisValue(index, i, byteToFloat(data[start++]);
+		if (index >= m_joysticks.size())
+			m_joysticks.resize(index);
 
-		uint8_t buttoncount = data[start++];
-		setJoystickButtonCount(index, buttoncount);
-		uint16_t buttons = data[start++] << 8;
-		buttons |= data[start++];
-		setJoystickButtons(uint16_t);
+		JoystickState &state = m_joysticks[index];
+
+		uint8_t axiscount = data[start++];
+		state.setAxisCount(axiscount);
+		for (size_t i = 0; i < axiscount; i++)
+		{
+			float v = byteToFloat(data[start], 1.0);
+
+			std::cout << "Axis " << i;
+			std::cout << ", Raw Value " << data[start];
+			std::cout << ", Axis Value " << v << std::endl;
+			state.setAxis(i, byteToFloat(data[start++], 1.0));
+		}
+
+		state.setButtonCount(data[start++]);
+		uint16_t buttons = static_cast<uint16_t>(data[start++] << 8);
+		buttons = static_cast<uint16_t>(buttons | data[start++]);
+		state.setButtons(buttons);
 
 		uint8_t povcount = data[start++];
-		setPOVCount(povcount);
+		state.setPOVCount(povcount);
 		for (size_t i = 0; i < povcount; i++)
 		{
-			uint16_t value = data[start++] << 8;
-			value |= data[start];
-			setJoystickPOVValue(index, i, value);
+			uint16_t value = static_cast<uint16_t>(data[start++] << 8);
+			value = static_cast<uint16_t>(value | data[start]);
+			state.setPOVValue(i, value);
 		}
 	}
 
 	void DriverStation::dsRecvCommThread()
 	{
 		std::vector<uint8_t> data(128);
-		int count;
-		int index;
+		size_t index;
 
 		while (m_running)
 		{
 			size_t sofar = 0;
-			count = m_server_in_p->receive(data);
-			if (count < 6)
+			int ret = m_server_in_p->receive(data);
+			if (ret < 6)
 				continue;
+
+			size_t count = static_cast<size_t>(ret);
 
 			index = 0;
 

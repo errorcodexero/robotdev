@@ -57,11 +57,100 @@ namespace frc
 			~JoystickState()
 			{
 			}
+			void setButtonCount(size_t count)
+			{
+				m_button_count = count;
+			}
 
+			size_t getButtonCount() const
+			{
+				return m_button_count;
+			}
 
+			void setButtons(uint16_t value)
+			{
+				uint16_t bcomp = static_cast<uint16_t>(~m_buttons);
+				uint16_t vcomp = static_cast<uint16_t>(value);
+				uint16_t newpresses = bcomp & value;
+				uint16_t newreleases = m_buttons & vcomp;
+
+				m_presses |= newpresses;
+				m_presses |= newreleases;
+
+				m_buttons = value;
+			}
+
+			uint16_t getButtons() const
+			{
+				return m_buttons;
+			}
+
+			bool getButton(int button) const
+			{
+				return ((m_buttons & (1 << button)) != 0);
+			}
+
+			bool getButtonPressed(int button)
+			{
+				bool pressed = ((m_presses & (1 << button)) != 0);
+				m_presses = static_cast<uint16_t>(m_presses & ~(1 << button));
+
+				return pressed;
+			}
+
+			bool getButtonReleased(int button)
+			{
+				bool released = ((m_releases & (1 << button)) != 0);
+				m_releases = static_cast<uint16_t>(m_releases & ~(1 << button));
+
+				return released;
+			}
+
+			void setAxisCount(size_t cnt)
+			{
+				m_axis.resize(cnt);
+			}
+
+			size_t getAxisCount() const
+			{
+				return m_axis.size();
+			}
+
+			void setAxis(size_t which, float value)
+			{
+				m_axis[which] = value;
+			}
+
+			float getAxis(size_t which)
+			{
+				return m_axis[which];
+			}
+
+			void setPOVCount(size_t cnt)
+			{
+				m_pov.resize(cnt);
+			}
+
+			size_t getPOVCount() const
+			{
+				return m_pov.size();
+			}
+
+			void setPOVValue(size_t which, uint16_t value)
+			{
+				m_pov[which] = value;
+			}
+
+			uint16_t getPOVValue(size_t which)
+			{
+				return m_pov[which];
+			}
 
 		private:
+			size_t m_button_count;
 			uint16_t m_buttons;
+			uint16_t m_presses;
+			uint16_t m_releases;
 			std::vector<float> m_axis;
 			std::vector<uint16_t> m_pov;
 		};
@@ -77,6 +166,7 @@ namespace frc
 		};
 	public:
 		virtual ~DriverStation();
+		static void initialize();
 
 		static DriverStation &get()
 		{
@@ -121,7 +211,19 @@ namespace frc
 			return m_location;
 		}
 
-		static void initialize();
+		bool GetStickButton(int stick, int button);
+		bool GetStickButtonPressed(int stick, int button);
+		bool GetStickButtonReleased(int stick, int button);
+		double GetStickAxis(int stick, int axis);
+		int GetStickPOV(int stick, int pov);
+		int GetStickButtons(int stick) const;
+		int GetStickAxisCount(int stick) const;
+		int GetStickPOVCount(int stick) const;
+		int GetStickButtonCount(int stick) const;
+		bool GetJoystickIsXbox(int stick) const
+		{
+			return false;
+		}
 
 	protected:
 		void waitForConnection();
@@ -132,9 +234,14 @@ namespace frc
 		void processBaseDSData(const std::vector<uint8_t> &data, size_t start);
 		void processTimeData(const std::vector<uint8_t> &data, size_t start);
 		void processTimeZoneData(const std::vector<uint8_t> &data, size_t start);
-		void processJoystickData(int index, const std::vector<uint8_t> &data, size_t start);
+		void processJoystickData(size_t index, const std::vector<uint8_t> &data, size_t start);
+
 		uint16_t encodeVoltage(float v);
 
+		float byteToFloat(uint8_t value, float max)
+		{
+			return static_cast<float>(value) * max / 255.0f;
+		}
 
 	private:
 		static DriverStation *m_ds_p;
