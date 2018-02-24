@@ -50,7 +50,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),high_gear(false){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_eject_with_cube(false),high_gear(false){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	messageLogger &logger = messageLogger::get();
@@ -125,7 +125,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
 			goals.intake = Intake::Goal::OUT;
 			eject_timer.update(info.in.now, info.in.robot_mode.enabled);
-			if(eject_timer.done()) collector_mode = Collector_mode::DO_NOTHING;
+			if((started_eject_with_cube && !info.status.grabber.has_cube) || eject_timer.done())
+				collector_mode = Collector_mode::DO_NOTHING;
 			break;
 		case Collector_mode::DROP:
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
@@ -191,6 +192,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
 	if(info.panel.eject) {
 		collector_mode = Collector_mode::EJECT;
+		started_eject_with_cube = info.status.grabber.has_cube;
 		eject_timer.set(1);
 	}
 	if(info.panel.drop) collector_mode = Collector_mode::DROP;

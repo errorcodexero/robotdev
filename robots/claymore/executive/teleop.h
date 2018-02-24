@@ -31,6 +31,7 @@ struct Teleop : Executive_impl<Teleop> {
 		X(Countdown_timer, eject_timer) \
 		X(Posedge_trigger, calibrate_trigger) \
 		X(Posedge_trigger, has_cube_trigger) \
+		X(bool, started_eject_with_cube) \
 		X(bool, high_gear)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 
