@@ -14,8 +14,6 @@ static vector<Step> steps =
 {
     startAuto,
     Step(Drive(120.0, false)),
-    waitForLifter,
-    eject,
     endAuto
 } ;
 

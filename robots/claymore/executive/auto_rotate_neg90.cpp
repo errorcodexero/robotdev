@@ -13,7 +13,7 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
-    rotate90pos,
+    rotate90neg,
     endAuto
 } ;
 

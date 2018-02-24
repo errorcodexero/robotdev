@@ -253,9 +253,10 @@ Toplevel::Goal Drive::run(Run_info info){
 
 Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
     if(!init) {
-	double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-	Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle, info.in.now, end_on_stall);
-	init = true;
+		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle,
+													 info.in.now, end_on_stall, target_distance >= 0.0);
+		init = true;
     }
     goals.drive = Drivebase::Goal::drive_straight();
     return goals;
@@ -274,12 +275,10 @@ bool Drive::operator==(Drive const& a)const{
 //
 Drive_param::Drive_param(const char *param_p, double defval, bool end_stall)
 {
-#ifdef NOTYET
     mParam = param_p ;
     mDefaultValue = defval ;
     mEndOnStall = end_stall ;
     mInited = false ;
-#endif
 }
 
 Step::Status Drive_param::done(Next_mode_info info)
@@ -306,7 +305,7 @@ Toplevel::Goal Drive_param::run(Run_info info, Toplevel::Goal goals)
 	paramsInput *param_p = paramsInput::get() ;
 	double dist = param_p->getValue(mParam, mDefaultValue) ;
 	double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-	Drivebase::drivebase_controller.initDistance(avg_status + dist, info.status.drive.angle, info.in.now, mEndOnStall);
+	Drivebase::drivebase_controller.initDistance(avg_status + dist, info.status.drive.angle, info.in.now, mEndOnStall, dist >= 0.0);
 	mInited = true;
     }
     goals.drive = Drivebase::Goal::drive_straight();
@@ -415,7 +414,7 @@ Toplevel::Goal Rotate::run(Run_info info){
 
 Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
-	Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now) ;
+		Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0) ;
 	init = true;
     }
 

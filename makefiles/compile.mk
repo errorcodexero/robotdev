@@ -11,7 +11,7 @@ ifndef CONFIG
 $(error missing the CONFIG variable on the make command line, e.g. make CONFIG=debug)
 else
 ifeq ($(CONFIG), debug)
-CXXFLAGS = -D_DEBUG
+CXXFLAGS = -DDEBUG
 else
 ifeq ($(CONFIG), release)
 CXXFLAGS = -DRELEASE

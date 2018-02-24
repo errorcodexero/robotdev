@@ -44,6 +44,7 @@ DEBUG_AUTOMODES = \
 	auto_drive_straight_300.cpp\
 	auto_drive_straight_120.cpp\
 	auto_drive_straight_12.cpp\
+	auto_drive_straight_neg30.cpp\
 	auto_lifter_test.cpp\
 	auto_lifter_move.cpp\
 	auto_grabber_test.cpp

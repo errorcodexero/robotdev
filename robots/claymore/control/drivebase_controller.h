@@ -34,12 +34,12 @@ public:
     /// \param dist the absolute distance to drive to
     /// \param angle the angle to maintain while driving
     /// \param the time when this was requested
-    void initDistance(double dist, double angle, double time, bool end_on_stall);
+    void initDistance(double dist, double angle, double time, bool end_on_stall, bool forward);
 
     /// \brief rotate to the given angle
     /// \param angle the angle to rotate to
     /// \param the time when this was requested
-    void initAngle(double angle, double time);
+    void initAngle(double angle, double time, bool posangle);
 
     /// \brief update the left and right motor values to acheive the desired goal
     /// \param dl the distance traveled by the left wheel
@@ -81,6 +81,11 @@ private:
     // The target distance or angle, depending on the mode of the drivebase_controller
     //
     double mTarget ;
+
+	//
+	// If true, we are driving straight forward (increasing distance)
+	//
+	bool mForward ;
 
     //
     // The time we started our search for the target distance or angle
@@ -140,7 +145,7 @@ private:
     // The distance travelled by the robot for the last N robot loops.  This
     // is used to determine if the robot is stalled
     //
-    std::list<double> mDistanceHistory;
+    std::list<double> mHistory;
 
     //
     // The number of samples to keep to determine if the robot is stalled

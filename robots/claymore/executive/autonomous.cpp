@@ -4,7 +4,7 @@
 #include "step.h"
 #include "message_logger.h"
 
-#define AUTOMODE 101
+#define AUTOMODE 91
 
 using namespace std;
 
@@ -15,6 +15,7 @@ using namespace std;
 extern Executive drive_straight_120 ;
 extern Executive drive_straight_12 ;
 extern Executive drive_straight_300 ;
+extern Executive drive_straight_neg30 ;
 extern Executive rotate_pos90 ;
 extern Executive rotate_neg90 ;
 extern Executive rotate_both ;
@@ -60,13 +61,13 @@ Executive get_auto_mode(Next_mode_info info)
 
     messageLogger &logger = messageLogger::get() ;
     int automode = 0 ;
-    
+	
     if(!info.autonomous)
     {
-	logger.startMessage(messageLogger::messageType::info) ;
-	logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
-	logger.endMessage() ;
-	return Executive{Teleop()};
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "get_auto_mode - not in autonomous, returning Teleop mode" ;
+		logger.endMessage() ;
+		return Executive{Teleop()};
     }
 
 #if defined(AUTOMODE) && defined(DEBUG)
@@ -86,15 +87,15 @@ Executive get_auto_mode(Next_mode_info info)
     logger.endMessage() ;
 	
     if(!info.panel.in_use) {
-	//
-	// No panel was detected.  May be a problem with the driver station, log this fact
-	// and do nothing during autonomous
-	//
-	logger.startMessage(messageLogger::messageType::error) ;
-	logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
-	logger.endMessage() ;
+		//
+		// No panel was detected.  May be a problem with the driver station, log this fact
+		// and do nothing during autonomous
+		//
+		logger.startMessage(messageLogger::messageType::error) ;
+		logger << "get_auto_mode - no panel detected, defaulting to null auto program" ;
+		logger.endMessage() ;
 	
-	return calibrate_only ;
+		return calibrate_only ;
     }
 
     logger.startMessage(messageLogger::messageType::error) ;
@@ -107,160 +108,192 @@ Executive get_auto_mode(Next_mode_info info)
     switch(automode)
     {
     case 0:
-	auto_program = calibrate_only ;
-	break;
+		auto_program = calibrate_only ;
+		break;
     case 1:
-	auto_program = cross_line ;
-	break ;
+		auto_program = cross_line ;
+		break ;
     case 2: 
-	auto_program = info.in.ds_info.near_switch_left ? center_switch_left : center_switch_right ;
-	break;
+		auto_program = info.in.ds_info.near_switch_left ? center_switch_left : center_switch_right ;
+		break;
     case 3:
-	auto_program = info.in.ds_info.scale_left ? right_scale_left : right_scale_right ;
-	break;
+		auto_program = info.in.ds_info.scale_left ? right_scale_left : right_scale_right ;
+		break;
     case 4:
-	auto_program = info.in.ds_info.scale_left ? left_scale_left : left_scale_right ;
-	break;
+		auto_program = info.in.ds_info.scale_left ? left_scale_left : left_scale_right ;
+		break;
     case 5:
-	if (info.in.ds_info.scale_left)
-	    auto_program = left_scale_left ;
-	else if (info.in.ds_info.near_switch_left)
-	    auto_program = left_switch_left ;
-	else
-	    auto_program = cross_line ;
-	break ;
+		if (info.in.ds_info.scale_left)
+			auto_program = left_scale_left ;
+		else if (info.in.ds_info.near_switch_left)
+			auto_program = left_switch_left ;
+		else
+			auto_program = cross_line ;
+		break ;
     case 6: 
-	if (!info.in.ds_info.scale_left)
-	    auto_program = right_scale_right ;
-	else if (!info.in.ds_info.near_switch_left)
-	    auto_program = right_switch_right ;
-	else
-	    auto_program = cross_line ;
-	break ;
+		if (!info.in.ds_info.scale_left)
+			auto_program = right_scale_right ;
+		else if (!info.in.ds_info.near_switch_left)
+			auto_program = right_switch_right ;
+		else
+			auto_program = cross_line ;
+		break ;
     case 7:
-	break;
+		break;
     case 8:
-	auto_program = two_cube_left ;
-	break ;
+		auto_program = two_cube_left ;
+		break ;
     case 9:
-	auto_program = two_cube_right ;
-	break ;
-	
+		auto_program = two_cube_right ;
+		break ;
+
+	case 90:
+		auto_program = center_switch_right ;
+		break ;
+		
+	case 91:
+		auto_program = center_switch_left ;
+		break ;
+
+	case 92:
+		auto_program = left_scale_left ;
+		break ;
+		
+	case 93:
+		auto_program = right_scale_right ;
+		break ;
+		
+	case 94:
+		auto_program = left_scale_right ;
+		break ;
+		
+	case 95:
+		auto_program = right_scale_left ;
+		break ;
+
     case 100:
-	//
-	// calibrate only
-	//
-	auto_program = calibrate_only ;
-	break ;
+		//
+		// calibrate only
+		//
+		auto_program = calibrate_only ;
+		break ;
 
     case 101:
-	//
-	// drive straight for 120 inches (10 feet)
-	//
-	auto_program = drive_straight_120 ;
-	break ;
+		//
+		// drive straight for 120 inches (10 feet)
+		//
+		auto_program = drive_straight_120 ;
+		break ;
 	
     case 102:
-	//
-	// drive straight for 12 inches (1 foot)
-	//
-	auto_program = drive_straight_12 ;
-	break ;
+		//
+		// drive straight for 12 inches (1 foot)
+		//
+		auto_program = drive_straight_12 ;
+		break ;
 	
     case 103:
-	//
-	// drive straight for 12 inches (1 foot)
-	//
-	auto_program = drive_straight_300 ;
-	break ;
+		//
+		// drive straight for 12 inches (1 foot)
+		//
+		auto_program = drive_straight_300 ;
+		break ;
 
     case 104:
-	//
-	// Rotate 90 degrees
-	//
-	auto_program = rotate_pos90 ;
-	break ;
+		//
+		// Rotate 90 degrees
+		//
+		auto_program = rotate_pos90 ;
+		break ;
 	
     case 105:
-	//
-	// Rotate 90 degrees
-	//
-	auto_program = rotate_neg90 ;
-	break ;
+		//
+		// Rotate 90 degrees
+		//
+		auto_program = rotate_neg90 ;
+		break ;
 
     case 106:
-	//
-	// Rotate 90 degrees
-	//
-	auto_program = rotate_both ;
-	break ;
+		//
+		// Rotate 90 degrees
+		//
+		auto_program = rotate_both ;
+		break ;
 
     case 107:
-	//
-	// Start lifter in brackground, drive 60 inches, wait for lifter
-	//
-	auto_program = lifter_test ;
-	break ;
+		//
+		// Start lifter in brackground, drive 60 inches, wait for lifter
+		//
+		auto_program = lifter_test ;
+		break ;
 	
     case 108:
-	//
-	// Calibrate the lifter, move to 24 inches, 43.5 inches, 24 inches
-	//
-	auto_program = lifter_move ;
-	break ;
+		//
+		// Calibrate the lifter, move to 24 inches, 43.5 inches, 24 inches
+		//
+		auto_program = lifter_move ;
+		break ;
 
     case 109:
-	//
-	// Test the grabber
-	//
-	auto_program = grabber_test ;
-	break;
+		//
+		// Test the grabber
+		//
+		auto_program = grabber_test ;
+		break;
+
+    case 110:
+		//
+		// drive straight for 12 inches (1 foot)
+		//
+		auto_program = drive_straight_neg30 ;
+		break ;
+		
 
     case 120:
-	//
-	// Competition auto program, start in center, score on right side of switch
-	//
-	auto_program = center_switch_right ;
-	break ;
+		//
+		// Competition auto program, start in center, score on right side of switch
+		//
+		auto_program = center_switch_right ;
+		break ;
 
     case 121:
-	//
-	// Competition auto program, start in center, score on left side of switch
-	//
-	auto_program = center_switch_left ;
-	break ;
+		//
+		// Competition auto program, start in center, score on left side of switch
+		//
+		auto_program = center_switch_left ;
+		break ;
 
     case 122:
-	//
-	// Competition auto program, start on right side, score on right scale
-	//
-	auto_program = right_scale_right ;
-	break ;
+		//
+		// Competition auto program, start on right side, score on right scale
+		//
+		auto_program = right_scale_right ;
+		break ;
 	
     case 123:
-	//
-	// Competition auto program, start on left side, score scale on left sdie
-	//
-	auto_program = left_scale_left ;
-	break ;
+		//
+		// Competition auto program, start on left side, score scale on left sdie
+		//
+		auto_program = left_scale_left ;
+		break ;
 
     case 124:
-	//
-	// Compeition auto program, start on right side, score left scale
-	//
-	auto_program = right_scale_left ;
-	break ;
+		//
+		// Compeition auto program, start on right side, score left scale
+		//
+		auto_program = right_scale_left ;
+		break ;
 	
     case 125:
-	//
-	// Compeition auto program, start on left side, score right scale
-	//
-	auto_program = left_scale_right ;
-	break ;
+		//
+		// Compeition auto program, start on left side, score right scale
+		//
+		auto_program = left_scale_right ;
+		break ;
 
     default:
-	auto_program = calibrate_only ;
-	break ;
+		auto_program = calibrate_only ;
+		break ;
     }
 
     return auto_program ;

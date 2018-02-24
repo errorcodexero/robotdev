@@ -13,9 +13,9 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
-    Step(Drive(300.0, false)),
+    Step(Drive(-30.0, false)),
     endAuto
 } ;
 
 static Chain chain(steps, teleopex) ;
-Executive drive_straight_300(chain) ;
+Executive drive_straight_neg30(chain) ;

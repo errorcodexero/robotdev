@@ -21,7 +21,7 @@ static vector<Step> steps
     Step(Drive_param("auto:c_switch_l:segment2", 100.0, false)),
     rotate90pos,
     startLifterSwitch,
-    Step(Drive_param("auto:c_switch_l:segment3", 56.0, false)),
+    Step(Drive_param("auto:c_switch_l:segment3", 56.0, true)),
     waitForLifter,
     eject,
     endAuto,
