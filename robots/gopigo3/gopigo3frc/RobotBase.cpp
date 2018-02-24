@@ -10,7 +10,8 @@ namespace frc {
 		assert(m_robot_base_p == nullptr);
 		m_robot_base_p = this;
 
-		setRobotMode(RobotMode::Disabled);
+		setRobotMode(RobotMode::Operator);
+		setEnabled(false);
 		m_hardware.init();
 	}
 
@@ -30,7 +31,7 @@ namespace frc {
 	}
 
 	bool RobotBase::IsDisabled() const {
-		return m_mode == RobotMode::Disabled;
+		return !m_enabled;
 	}
 
 	bool RobotBase::IsAutonomous() const {
@@ -38,7 +39,7 @@ namespace frc {
 	}
 
 	bool RobotBase::IsEnabled() const {
-		return m_mode != RobotMode::Disabled;
+		return m_enabled;
 	}
 
 	bool RobotBase::IsTest() const {
@@ -47,9 +48,5 @@ namespace frc {
 
 	bool RobotBase::IsOperatorControl() const {
 		return m_mode == RobotMode::Operator;
-	}
-
-	void RobotBase::setRobotMode(RobotMode mode) {
-		m_mode = mode;
 	}
 }

@@ -53,14 +53,27 @@ namespace frc
 	protected:
 		enum class RobotMode
 		{
-			Disabled,
 			Autonomous,
 			Operator,
 			Test,
 			Finished,
 		};
 
-		void setRobotMode(RobotMode mode);
+		void setRobotMode(RobotMode mode)
+		{
+			m_mode = mode;
+		}
+
+		RobotMode getRobotMode()
+		{
+			return m_mode;
+		}
+
+		void setEnabled(bool b)
+		{
+			m_enabled = b;
+		}
+
 		void stopAll()
 		{
 			m_hardware.reset();
@@ -76,6 +89,11 @@ namespace frc
 		// The current robot mode
 		//
 		RobotMode m_mode;
+
+		//
+		// If true, the robot is enabled
+		//
+		bool m_enabled;
 
 		//
 		// The GoPiGo3 robot hardware

@@ -44,7 +44,9 @@
     <ClInclude Include="CounterBase.h" />
     <ClInclude Include="DriverStation.h" />
     <ClInclude Include="Encoder.h" />
+    <ClInclude Include="GenericHID.h" />
     <ClInclude Include="I2C.h" />
+    <ClInclude Include="Joystick.h" />
     <ClInclude Include="LiveWindow\LiveWindowSendable.h" />
     <ClInclude Include="networktables\NetworkTableEntry.h" />
     <ClInclude Include="PIDSource.h" />
@@ -64,7 +66,9 @@
   <ItemGroup>
     <ClCompile Include="DriverStation.cpp" />
     <ClCompile Include="Encoder.cpp" />
+    <ClCompile Include="GenericHID.cpp" />
     <ClCompile Include="I2C.cpp" />
+    <ClCompile Include="Joystick.cpp" />
     <ClCompile Include="RobotBase.cpp" />
     <ClCompile Include="SampleRobot.cpp" />
     <ClCompile Include="Servo.cpp" />

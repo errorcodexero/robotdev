@@ -12,6 +12,10 @@ namespace frc
 	{
 		m_voltage = 11.2f;
 		m_robot_code = true;
+		m_auto_mode = false;
+		m_test_mode = false;
+		m_restart_robotcode = false;
+		m_reboot_pi = false;
 
 		m_packet_index = 0;
 		m_running = false;
@@ -56,28 +60,148 @@ namespace frc
 
 	void DriverStation::processBaseDSData(const std::vector<uint8_t> &data, size_t start)
 	{
+		uint8_t control = data[start + 3];
+		uint8_t request = data[start + 4];
+		uint8_t station = data[start + 5];
+
+		if ((control & 0x03) == cTest)
+		{
+			m_test_mode = true;
+			m_auto_mode = false;
+		}
+		else if ((control & 0x03) == cAutonomous)
+		{
+			m_test_mode = false;
+			m_auto_mode = true;
+		}
+		else
+		{
+			m_test_mode = false;
+			m_auto_mode = false;
+		}
+
+		if ((control & cEnabled) == cEnabled)
+			m_enabled = true;
+		else
+			m_enabled = false;
+
+		if (request == cRequestRestartCode)
+			m_restart_robotcode = true;
+		else if (request == cRequestReboot)
+			m_reboot_pi = true;
+
+		switch (station)
+		{
+		case cRed1:
+			m_alliance = Alliance::kRed;
+			m_location = 1;
+			break;
+		case cRed2:
+			m_alliance = Alliance::kRed;
+			m_location = 2;
+			break;
+		case cRed3:
+			m_alliance = Alliance::kRed;
+			m_location = 3;
+			break;
+		case cBlue1:
+			m_alliance = Alliance::kBlue;
+			m_location = 1;
+			break;
+		case cBlue2:
+			m_alliance = Alliance::kBlue;
+			m_location = 2;
+			break;
+		case cBlue3:
+			m_alliance = Alliance::kBlue;
+			m_location = 3;
+			break;
+		default:
+			m_alliance = Alliance::kRed;
+			m_location = 1;
+			break;
+		}
+	}
+
+	void DriverStation::processTimeData(const std::vector<uint8_t> &data, size_t start)
+	{
 	}
 
 	void DriverStation::processTimeZoneData(const std::vector<uint8_t> &data, size_t start)
 	{
 	}
 
-	void DriverStation::processJoystickData(const std::vector<uint8_t> &data, size_t start)
+	void DriverStation::processJoystickData(int index, const std::vector<uint8_t> &data, size_t start)
 	{
+		start += 2;
+
+		uint8_t axiscount = data[start++];
+		setJoystickAxisCount(index, axiscount);
+		for (size_t i = 0; i < axiscount; i++)
+			setJoystickAxisValue(index, i, byteToFloat(data[start++]);
+
+		uint8_t buttoncount = data[start++];
+		setJoystickButtonCount(index, buttoncount);
+		uint16_t buttons = data[start++] << 8;
+		buttons |= data[start++];
+		setJoystickButtons(uint16_t);
+
+		uint8_t povcount = data[start++];
+		setPOVCount(povcount);
+		for (size_t i = 0; i < povcount; i++)
+		{
+			uint16_t value = data[start++] << 8;
+			value |= data[start];
+			setJoystickPOVValue(index, i, value);
+		}
 	}
 
 	void DriverStation::dsRecvCommThread()
 	{
 		std::vector<uint8_t> data(128);
 		int count;
+		int index;
 
 		while (m_running)
 		{
+			size_t sofar = 0;
 			count = m_server_in_p->receive(data);
 			if (count < 6)
 				continue;
 
-			processBaseDSData(data, 0);
+			index = 0;
+
+			processBaseDSData(data, sofar);
+			sofar += 6;
+
+			while (sofar < count - 1)
+			{
+				uint8_t len = data[sofar];
+				uint8_t tag = data[sofar + 1];
+
+				if (tag == cTagJoystick)
+				{
+					processJoystickData(index++, data, sofar);
+					sofar += len;
+				}
+				else if (tag == cTagDate)
+				{
+					processTimeData(data, sofar);
+					sofar += len;
+				}
+				else if (tag == cTagTimezone)
+				{
+					processTimeZoneData(data, sofar);
+					sofar += len;
+				}
+				else
+				{
+					//
+					// Unknown tag
+					//
+					sofar += len;
+				}
+			}
 		}
 	}
 

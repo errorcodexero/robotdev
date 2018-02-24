@@ -39,19 +39,26 @@ namespace frc
 	{
 		int ms;
 
-		setRobotMode(RobotBase::RobotMode::Disabled);
+		std::cout << "Internal control" << std::endl;
+
+		setEnabled(false);
+		setRobotMode(RobotBase::RobotMode::Autonomous);
 		ms = static_cast<int>(m_start_delay * 1000);
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
-		setRobotMode(RobotBase::RobotMode::Autonomous);
+		setEnabled(true);
 		ms = static_cast<int>(m_auto_period * 1000);
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
+		setEnabled(false);
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		setRobotMode(RobotBase::RobotMode::Operator);
+		setEnabled(true);
+
 		ms = static_cast<int>(m_teleop_period * 1000);
 		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 
-		setRobotMode(RobotBase::RobotMode::Disabled);
+		setEnabled(false);
 		stopAll();
 
 		m_running = false;
@@ -60,10 +67,27 @@ namespace frc
 
 	void SampleRobot::DriverStationControl()
 	{
-		setRobotMode(RobotBase::RobotMode::Disabled);
+		std::cout << "DriverStation control" << std::endl;
+
+		DriverStation &st = DriverStation::get();
+		setRobotMode(RobotBase::RobotMode::Operator);
+		setEnabled(false);
 
 		while (true)
 		{
+			if (st.IsTest() && getRobotMode() != RobotMode::Test)
+				setRobotMode(RobotMode::Test);
+			else if (st.IsAutonomous() && getRobotMode() != RobotMode::Autonomous)
+				setRobotMode(RobotMode::Autonomous);
+			else if (st.IsOperatorControl() && getRobotMode() != RobotMode::Operator)
+				setRobotMode(RobotMode::Operator);
+
+			if (st.IsEnabled() && !IsEnabled())
+				setEnabled(true);
+			else if (st.IsDisabled() && !IsDisabled())
+				setEnabled(false);
+
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		}
 	}
 
@@ -119,6 +143,7 @@ namespace frc
 			else if (args[index] == "--station")
 			{
 				m_station = true;
+				index++;
 			}
 			else
 			{
