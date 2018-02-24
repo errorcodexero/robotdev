@@ -75,7 +75,7 @@ ifeq ($(UNAME2),raspberrypi)
 COMPILER=/usr/bin/g++
 AR=
 else
-COMPILER=($CROSSCXX)
+COMPILER=$(CROSSCXX)
 endif
 
 #
