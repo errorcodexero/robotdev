@@ -136,6 +136,14 @@ void LifterController::updateHeightOnChange(Preset preset, double current_height
     updateHeightOnChange(presetToHeight(preset), current_height, time);
 }
 
+bool LifterController::finishedTarget(double target) {
+    return mMode == Mode::IDLE && fabs(mTarget - target) < mHeightThreshold;
+}
+
+bool LifterController::finishedTarget(Preset target) {
+    return finishedTarget(presetToHeight(target));
+}
+
 bool LifterController::done() {
     return mMode == Mode::IDLE;
 }

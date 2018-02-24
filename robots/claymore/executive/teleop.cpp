@@ -50,7 +50,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),climbing(false),high_gear(false){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),high_gear(false){}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	messageLogger &logger = messageLogger::get();
@@ -137,77 +137,61 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	logger << "Intake: " << goals.intake << "\n";
 	logger << "Grabber: " << goals.grabber << "\n";
 
-	if(info.status.grabber.has_cube) {
+	if(has_cube_trigger(info.status.grabber.has_cube)) {
 		collector_mode = Collector_mode::DO_NOTHING;
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 	}
 
-	if(info.panel.lifter == Panel::Lifter::OFF && ready(status(info.status.lifter), lifter_goal)) {
-		lifter_goal = Lifter::Goal::stop();
-		//collector_mode = Collector_mode::DO_NOTHING;
-	}
 	if(info.panel.floor) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
 		collector_mode = Collector_mode::DO_NOTHING;
-		climbing = false;
-	}
-	if(info.panel.exchange) {
+	} else if(info.panel.exchange) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 		collector_mode = Collector_mode::DO_NOTHING;
-		climbing = false;
-	}
-	if(info.panel.switch_) {
+	} else if(info.panel.switch_) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
 		collector_mode = Collector_mode::DO_NOTHING;
-		climbing = false;
-	}
-	if(info.panel.scale) {
+	} else if(info.panel.scale) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
 		collector_mode = Collector_mode::DO_NOTHING;
-		climbing = false;
-	}
-	if(info.panel.lifter == Panel::Lifter::UP) {
+	} else if(info.panel.lifter == Panel::Lifter::UP) {
 		lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
 		collector_mode = Collector_mode::DO_NOTHING;
-		climbing = false;
-	}
-	if(info.panel.lifter == Panel::Lifter::DOWN) {
+	} else if(info.panel.lifter == Panel::Lifter::DOWN) {
 		lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 		collector_mode = Collector_mode::DO_NOTHING;
-		climbing = false;
+	} else if(ready(status(info.status.lifter), lifter_goal)) {
+		lifter_goal = Lifter::Goal::stop();
 	}
 	goals.lifter = lifter_goal;
 
 	Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
-	if(climbing && ready(status(info.status.lifter), prep_climb_goal))
-		goals.lifter = Lifter::Goal::low_gear();
+	Lifter::Goal climb_goal = Lifter::Goal::climb();
+	bool prep_climb_done = ready(status(info.status.lifter), prep_climb_goal);
+	bool climb_done = ready(status(info.status.lifter), climb_goal);
 	if(info.panel.climb) {
-		if(!climbing || !ready(status(info.status.lifter), prep_climb_goal)) {
+		if(!prep_climb_done) {
 			logger << "PREPARING TO CLIMB\n";
 
 			lifter_goal = prep_climb_goal;
-			climbing = true;
-		} else {
-			if(info.panel.climb_lock) {
-				logger << "CLIMBING\n";
+		} else if(info.panel.climb_lock) {
+			logger << "CLIMBING\n";
 
-				goals.lifter = Lifter::Goal::climb();
-			}
+			goals.lifter = Lifter::Goal::climb();
 		}
 	}
-	if(climbing) {
+	if(goals.lifter == prep_climb_goal || prep_climb_done)
 		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
-		if(goals.lifter == Lifter::Goal::climb() && ready(status(info.status.lifter), Lifter::Goal::climb())) {
-			logger << "LOCKING\n";
-			goals.lifter = Lifter::Goal::lock();
-		}
-	}
+	if(prep_climb_done)
+		goals.lifter = Lifter::Goal::low_gear();
+	if(climb_done)
+		goals.lifter = Lifter::Goal::lock();
 
 	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
 	if(info.panel.eject) {
 		collector_mode = Collector_mode::EJECT;
-		eject_timer.set(2);
+		eject_timer.set(1);
 	}
 	if(info.panel.drop) collector_mode = Collector_mode::DROP;
 
@@ -222,8 +206,10 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.grabber = Grabber::Goal::calibrate();
 	}
 
-	if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
-	goals.wings = wings_goal;
+	//if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
+	//goals.wings = wings_goal;
+
+	if(info.panel.wings) goals.lifter = Lifter::Goal::lock();
 
 	if(!info.panel.grabber_auto) {
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::stop();
