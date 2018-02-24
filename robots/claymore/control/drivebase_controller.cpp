@@ -180,12 +180,12 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		if(!mResetPid) {
 		    logger << "SWITCHED PID CONSTANTS\n";
 
-		    double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
+		    /*double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
 		    double i = mInputParams->getValue("drivebase:distance:reset:i", 0.15);
 		    double d = mInputParams->getValue("drivebase:distance:reset:d", 0.0);
 		    double f = mInputParams->getValue("drivebase:distance:reset:f", 0.0);
 		    double imax = mInputParams->getValue("drivebase:distance:reset:imax", 10.0);
-		    mDistPid.Init(p, i, d, f, -0.6, 0.6, imax);
+		    mDistPid.Init(p, i, d, f, -0.6, 0.6, imax);*/
 
 		    mResetPid = true;
 		    mDistanceHistory.clear();

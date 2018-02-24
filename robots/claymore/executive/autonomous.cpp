@@ -4,6 +4,8 @@
 #include "step.h"
 #include "message_logger.h"
 
+#define AUTOMODE 101
+
 using namespace std;
 
 
