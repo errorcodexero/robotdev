@@ -547,7 +547,7 @@ template<typename USER_CODE>
 class Robot_adapter: public frc::SampleRobot{
 	To_roborio<USER_CODE> u;
 
-	double looptime = 0.05 ;
+	double looptime = 0.02 ;
 
 	void RobotInit(){}
 	
