@@ -69,7 +69,7 @@ namespace frc
 	{
 		std::cout << "DriverStation control" << std::endl;
 
-		DriverStation &st = DriverStation::get();
+		DriverStation &st = DriverStation::GetInstance();
 		setRobotMode(RobotBase::RobotMode::Operator);
 		setEnabled(false);
 

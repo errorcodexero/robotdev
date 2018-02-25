@@ -255,7 +255,7 @@ namespace frc
 		start += 2;
 
 		if (index >= m_joysticks.size())
-			m_joysticks.resize(index);
+			m_joysticks.resize(index + 1);
 
 		JoystickState &state = m_joysticks[index];
 

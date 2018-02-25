@@ -16,6 +16,7 @@
     <ClInclude Include="ServoSubsystem.h" />
     <ClInclude Include="XeroGPG3Robot.h" />
     <ClInclude Include="XeroRobotGPG3AutoController.h" />
+    <ClInclude Include="XeroRobotGPG3OperController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoSetServoPosition.cpp" />
@@ -23,6 +24,7 @@
     <ClCompile Include="ServoSubsystem.cpp" />
     <ClCompile Include="XeroGPG3Robot.cpp" />
     <ClCompile Include="XeroRobotGPG3AutoController.cpp" />
+    <ClCompile Include="XeroRobotGPG3OperController.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{736f5f78-16e3-45a0-a2e9-f484f5f0e105}</ProjectGuid>

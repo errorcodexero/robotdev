@@ -62,6 +62,12 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="AutoDelay.cpp" />
     <ClCompile Include="AutoDriveBaseChar.cpp" />
@@ -78,7 +84,6 @@
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
     <ClCompile Include="NavXAngleMeasurementDevice.cpp" />
-    <ClCompile Include="OperatorControllerBase.cpp" />
     <ClCompile Include="ParamFileReader.cpp" />
     <ClCompile Include="PIDCtrl.cpp" />
     <ClCompile Include="RobotControllerBase.cpp" />
@@ -106,7 +111,6 @@
     <ClInclude Include="MessageLogger.h" />
     <ClInclude Include="MessageStreamDestination.h" />
     <ClInclude Include="NavXAngleMeasurementDevice.h" />
-    <ClInclude Include="OperatorControllerBase.h" />
     <ClInclude Include="ParamFileReader.h" />
     <ClInclude Include="PIDCtrl.h" />
     <ClInclude Include="RobotControllerBase.h" />

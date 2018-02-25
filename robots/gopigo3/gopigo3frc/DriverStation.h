@@ -193,7 +193,7 @@ namespace frc
 		virtual ~DriverStation();
 		static void initialize();
 
-		static DriverStation &get()
+		static DriverStation &GetInstance()
 		{
 			if (m_ds_p == nullptr)
 				initialize();
