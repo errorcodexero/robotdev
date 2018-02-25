@@ -1,6 +1,6 @@
-drivebase:distance:p                     0.025
+drivebase:distance:p                     0.052
 drivebase:distance:i                     0.0
-drivebase:distance:d                     0.0
+drivebase:distance:d                     -0.00003
 drivebase:distance:f                     0.0
 drivebase:distance:imax                  10.0
 drivebase:distance:vmax                  0.8
@@ -12,13 +12,27 @@ drivebase:angleCorrection:d              0.0
 drivebase:angleCorrection:f              0.0
 drivebase:angleCorrection:imax           1000.0
 
-drivebase:angle:p                        0.0055
-drivebase:angle:i                        0.005
-drivebase:angle:d                        0.000015
-drivebase:angle:f                        0.0
-drivebase:angle:imax                     30.0
-drivebase:angle:minv                     -0.8
-drivebase:angle:maxv                     0.8
+drivebase:angle:pos:p                    0.012
+drivebase:angle:pos:i                    0.0
+drivebase:angle:pos:d                    -0.00002
+drivebase:angle:pos:f                    0.0
+drivebase:angle:pos:imax                 30.0
+drivebase:angle:pos:minv                 -0.8
+drivebase:angle:pos:maxv                 0.8
+
+drivebase:angle:neg:p                    0.015
+drivebase:angle:neg:i                    0.0
+drivebase:angle:neg:d                    -0.00001
+drivebase:angle:neg:f                    0.0
+drivebase:angle:neg:imax                 30.0
+drivebase:angle:neg:minv                 -0.8
+drivebase:angle:neg:maxv                 0.8
+
+drivebase:angle:reset:p			0
+drivebase:angle:reset:i			0.02
+drivebase:angle:reset:d			0
+drivebase:angle:reset:f			0
+drivebase:angle:reset:imax		10
 
 drivebase:straight:threshold             1.0
 drivebase:angle:threshold                5.0
@@ -34,7 +48,7 @@ drivebase:distance:reset:f               0
 drivebase:distance:reset:imax            10
 
 drivebase:distance:low_gear_threshold    72.0
-drivebase:distance:high_gear_threshold   10000.0
+drivebase:distance:high_gear_threshold   120.0
 drivebase:distance:shift_v_threshold     0.01
 
 drivebase:shifter:shift_separation_time  2.0
@@ -50,14 +64,14 @@ lifter:up:f                              0.1
 lifter:up:imax                           6.0
 
 lifter:down:p                            0.025
-lifter:down:i                            0.0166
-lifter:down:d                            0.0
+lifter:down:i                            0.0
+lifter:down:d                            0.000065
 lifter:down:f                            0.1
-lifter:down:imax                         6.0
+lifter:down:imax                         5.0
 
 lifter:threshold                         1.0
 
-lifter:climbing_difference               100.0
+lifter:climbing_difference               2500.0
 
 lifter:climb_power                       0.6
 lifter:manual_power:low                  0.4
@@ -94,4 +108,23 @@ grabber:calibrate_threshold              0.1
 
 grabber:angle:closed                     -10.0
 grabber:angle:open                       45.0
-grabber:angle:stowed                     90.0
+grabber:angle:stowed                     97.5
+
+
+intake:left_default                     1.0
+intake:right_default                    1.0
+
+
+auto:c_switch_r:segment1		105
+
+auto:c_switch_l:segment1		52
+auto:c_switch_l:segment2		110
+auto:c_switch_l:segment3		50
+
+auto:r_switch_r:segment1		148
+auto:r_switch_r:segment2		30
+
+auto:l_scale_r:segment1			223
+auto:l_scale_r:segment2			200
+auto:l_scale_r:segment3			22
+auto:l_scale_r:segment4			-22
