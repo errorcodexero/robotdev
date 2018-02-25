@@ -4,7 +4,7 @@
 #include "step.h"
 #include "message_logger.h"
 
-#define AUTOMODE 93
+#define AUTOMODE 111
 
 using namespace std;
 
@@ -34,6 +34,7 @@ extern Executive left_switch_left ;
 extern Executive right_switch_right ;
 extern Executive two_cube_left ;
 extern Executive two_cube_right ;
+extern Executive lift_eject ;
 
 const Executive auto_null{Teleop{}};
 
@@ -247,7 +248,14 @@ Executive get_auto_mode(Next_mode_info info)
 		//
 		auto_program = drive_straight_neg30 ;
 		break ;
-		
+
+	case 111:
+		//
+		// Lift the lifter to high scale height, eject the cube and drop the lifter to
+		// exchange height
+		//
+		auto_program = lift_eject ;
+		break ;
 
     case 120:
 		//

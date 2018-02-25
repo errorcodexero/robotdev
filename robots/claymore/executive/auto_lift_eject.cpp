@@ -6,8 +6,8 @@ using namespace std ;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
-// Start: Left
-// Action: Score on left switch
+// Start: Right
+// Action: Score on right scale
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
@@ -15,14 +15,11 @@ static vector<Step> steps =
     startAuto,
     calibrateLifter,
     calibrateGrabber,
-    startLifterSwitch,
-    Step(Drive_param("auto:l_switch_l:segment1", 148, false)),
-    rotate90pos,
-    Step(Drive_param("auto:l_switch_l:segment1", 18, true)),
-    waitForLifter,
+    Step(Lifter_to_height(89.3, 0.0)),
     eject,
-    endAuto
+    lifterToExch,
+    endAuto,
 } ;
 
 static Chain chain(steps, teleopex) ;
-Executive left_switch_left(chain) ;
+Executive lift_eject(chain) ;
