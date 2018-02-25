@@ -347,8 +347,8 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     last.upper_slowdown_range = last.height > (top_limit - slowdown_range);
     last.lower_slowdown_range = last.height < (bottom_limit + slowdown_range);
 
-    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = last.height - input_params->getValue("lifter:climbing_difference", 100.0);
-    last.at_climbed_height = climb_goal > -9999.0 && last.height < climb_goal;
+    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = in.ticks - input_params->getValue("lifter:climbing_difference", 100.0);
+    last.at_climbed_height = (climb_goal > -9999.0) && (in.ticks < climb_goal);
     last_gearing = out.gearing;
 	
     last.dt = now - last.time;
@@ -458,14 +458,15 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
     logger << "Lifter status: " << status_detail.at_top << " " << status_detail.at_bottom << " " << out.power << "\n";
 
-    if((status_detail.upper_slowdown_range && out.power > 0.0) ||
-       (status_detail.lower_slowdown_range && out.power < 0.0))
-	out.power = copysign(min(fabs(out.power), input_params->getValue("lifter:slowdown_power", 0.2)), out.power);
+    if(goal.gearing() != Lifter::Goal::Gearing::LOW) {
+        if((status_detail.upper_slowdown_range && out.power > 0.0) ||
+           (status_detail.lower_slowdown_range && out.power < 0.0))
+	    out.power = copysign(min(fabs(out.power), input_params->getValue("lifter:slowdown_power", 0.2)), out.power);
 
-    if((status_detail.at_top && out.power > 0.0) ||
-       (status_detail.at_bottom && out.power < 0.0) ||
-       (status_detail.at_climbed_height && out.power < 0.0))
-	out.power = 0.0;
+        if((status_detail.at_top && out.power > 0.0) ||
+           (status_detail.at_bottom && out.power < 0.0))
+            out.power = 0.0;
+    }
 
     logger << "After: " << out.power << "\n";
     logger.endMessage();

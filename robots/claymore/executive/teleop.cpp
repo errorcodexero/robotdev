@@ -136,14 +136,18 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			break;
 		default: assert(0);
 	}
-	logger << "Collector: " << collector_mode << "\n";
-	logger << "Intake: " << goals.intake << "\n";
-	logger << "Grabber: " << goals.grabber << "\n";
+	//logger << "Collector: " << collector_mode << "\n";
+	//logger << "Intake: " << goals.intake << "\n";
+	//logger << "Grabber: " << goals.grabber << "\n";
 
 	if(has_cube_trigger(info.status.grabber.has_cube)) {
-		collector_mode = Collector_mode::DO_NOTHING;
-		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+		if(cube_timer.done()) {
+			collector_mode = Collector_mode::DO_NOTHING;
+			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+		}
+		cube_timer.set(0.5);
 	}
+	cube_timer.update(info.in.now, info.in.robot_mode.enabled);
 
 	if(info.panel.floor) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
@@ -171,7 +175,6 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
 	Lifter::Goal climb_goal = Lifter::Goal::climb();
 	bool prep_climb_done = ready(status(info.status.lifter), prep_climb_goal);
-	bool climb_done = ready(status(info.status.lifter), climb_goal);
 	if(info.panel.climb) {
 		if(!prep_climb_done) {
 			logger << "PREPARING TO CLIMB\n";
@@ -180,15 +183,22 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		} else if(info.panel.climb_lock) {
 			logger << "CLIMBING\n";
 
-			goals.lifter = Lifter::Goal::climb();
+			goals.lifter = climb_goal;
 		}
 	}
-	if(goals.lifter == prep_climb_goal || prep_climb_done)
+	if(goals.lifter == prep_climb_goal || prep_climb_done) {
+		logger << "A\n";
 		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
-	if(prep_climb_done)
+	}
+	if(goals.lifter == prep_climb_goal && prep_climb_done) {
+		logger << "B\n";
 		goals.lifter = Lifter::Goal::low_gear();
-	if(climb_done)
+	}
+	logger << "At Climb Height: " << info.status.lifter.at_climbed_height << "\n";
+	if(info.status.lifter.at_climbed_height){
+		logger << "C\n";
 		goals.lifter = Lifter::Goal::lock(true);
+	}
 
 	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
