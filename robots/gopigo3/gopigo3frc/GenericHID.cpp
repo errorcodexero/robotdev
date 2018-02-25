@@ -84,10 +84,12 @@ namespace frc
 
 	int GenericHID::SetOutput(int outputNumber, bool value) const
 	{
+		return 0;
 	}
 
 	int GenericHID::SetOutputs(int value) const
 	{
+		return 0;
 	}
 
 	void GenericHID::SetRumble(RumbleType type, double value)
