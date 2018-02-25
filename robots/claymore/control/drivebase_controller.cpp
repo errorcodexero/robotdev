@@ -222,6 +222,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 					mStalled = true;
 				}
 			}
+			logger.endMessage() ;
 
 			double base = mDistPid.getOutput(mTarget, avg_dist, dt);
 
@@ -249,16 +250,25 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			double velocity = (avg_dist - mLastDistance) / dt;
 			if(fabs(velocity) > velocity_threshold) {
 				if(remaining_distance < low_gear_threshold) { 
-					if(mHighGear) logger << "SHIFTED INTO LOW GEAR\n";
+					if(mHighGear)
+					{
+						logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
+						logger << "SHIFTED INTO LOW GEAR\n";
+					}
 					mHighGear = false;
 				}
 				if(remaining_distance > high_gear_threshold) {
-					if(!mHighGear) logger << "SHIFTED INTO HIGH GEAR\n";
+					if(!mHighGear)
+					{
+						logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
+						logger << "SHIFTED INTO HIGH GEAR\n";
+					}
 					mHighGear = true;
 				}
 			}
 			out_high_gear = mHighGear;
 
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 			logger << "update(DISTANCE)";
 			logger << ", dt " << dt;
 			logger << ", angle " << angle;
@@ -295,7 +305,9 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if (mHistory.size() == mNsamples && fabs(mHistory.back() - mHistory.front()) < mPidResetThreshold)
 			{
 				if (!mResetPid) {
+					logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 					logger << "DRIVEBASE stalled - switched to alternate angle PID constants\n" ;
+					logger.endMessage() ;
 					
 					double p = mInputParams->getValue("drivebase:angle:reset:p", 0.0);
 					double i = mInputParams->getValue("drivebase:angle:reset:i", 0.15);
@@ -309,7 +321,9 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 				}
 				else
 				{
+					logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 					logger << "drivebase stalled with alternate angle PID constants\n" ;
+					logger.endMessage() ;
 				}
 			}
 
