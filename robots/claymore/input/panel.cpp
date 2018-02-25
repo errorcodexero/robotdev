@@ -158,15 +158,15 @@ Panel interpret_oi(Joystick_data d){
 			float grabber = d.axis[2];
 			static const float CLOSE=-1,OFF=0,OPEN=1;
 			if(set_button(grabber,CLOSE,OFF,OPEN)) return Panel::Grabber::OFF;
-			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::OPEN;
-			return Panel::Grabber::CLOSE;
+			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::CLOSE;
+			return Panel::Grabber::OPEN;
 		}();
 		p.intake = [&]{
 			float intake = d.axis[4];
 			static const float IN=-1,OFF=0,OUT=1;
 			if(set_button(intake,IN,OFF,OUT)) return Panel::Intake::OFF;
-			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::OUT;
-			return Panel::Intake::IN;
+			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::IN;
+			return Panel::Intake::OUT;
 		}();
 		p.collector_mode = [&]{
 			float collector_mode = d.axis[3];
