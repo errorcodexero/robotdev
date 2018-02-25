@@ -188,7 +188,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(prep_climb_done)
 		goals.lifter = Lifter::Goal::low_gear();
 	if(climb_done)
-		goals.lifter = Lifter::Goal::lock();
+		goals.lifter = Lifter::Goal::lock(true);
 
 	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;

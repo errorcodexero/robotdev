@@ -12,6 +12,7 @@ LifterController::LifterController() {
     mMaxChange = 6.0;
     mDataDumpMode = false;
     mDataDumpStartTime = 0.0;
+    mManuallyAdjusted = false;
 }
 
 void LifterController::setParams(paramsInput* input_params) {
@@ -27,6 +28,7 @@ void LifterController::moveToHeight(double height, double current_height, double
     mMode = Mode::HEIGHT;
     mTarget = height;
     mStartTime = time ;
+    mManuallyAdjusted = false;
 
     double p, i, d, f, imax;
     if(current_height < height) {
@@ -63,6 +65,10 @@ void LifterController::backgroundMoveToHeight(Preset preset, double current_heig
 
 void LifterController::setCalibrate(bool calibrate) {
     mCalibrating = calibrate;
+}
+
+void LifterController::setManuallyAdjusted() {
+    mManuallyAdjusted = true;
 }
 
 void LifterController::update(double height, double time, double dt, double& out) {
@@ -126,7 +132,7 @@ void LifterController::updateHeightOnChange(double height, double current_height
     // we consider valid for reaching our target height we do
     // not initialize for the new height
     //
-    if (std::fabs(height - mLastTarget) > mHeightThreshold) {
+    if (std::fabs(height - mLastTarget) > mHeightThreshold || mManuallyAdjusted) {
 	moveToHeight(height, current_height, time);
 	mLastTarget = height;
     }

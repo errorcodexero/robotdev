@@ -51,6 +51,9 @@ public:
     /// \param calibrate true to put the lifter into calibration mode, false to put it into idle
     void setCalibrate(bool calibrate);
 
+    /// \brief tell the lifter that it's height has been manually adjusted
+    void setManuallyAdjusted();
+
     /// \brief this method is called each time the robot loop is run to update the lifer
     /// This method uses a PID controller to position the lifter to the desired location
     /// \param height the current height of the lifter
@@ -170,6 +173,11 @@ private:
     // Represents whether or not the lifter is calibrating
     //
     bool mCalibrating;
+
+    //
+    // Represents whether or not the lifter has been manually adjusted
+    //
+    bool mManuallyAdjusted;
 };
 
 #endif

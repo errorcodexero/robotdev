@@ -127,10 +127,10 @@ Lifter::Goal Lifter::Goal::low_gear(){
     return a;
 }
 
-Lifter::Goal Lifter::Goal::lock(){
+Lifter::Goal Lifter::Goal::lock(bool low_gear){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::LOCK;
-    a.gearing_ = Lifter::Goal::Gearing::LOW;
+    a.gearing_ = low_gear ? Lifter::Goal::Gearing::LOW : Lifter::Goal::Gearing::HIGH;
     return a;
 }
 
@@ -421,9 +421,11 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	break;
     case Lifter::Goal::Mode::UP:
 	out.power = goal.high_power() ? input_params->getValue("lifter:manual_power:high", 0.8) : input_params->getValue("lifter:manual_power:low", 0.4);
+	Lifter::lifter_controller.setManuallyAdjusted();
 	break;
     case Lifter::Goal::Mode::DOWN:
 	out.power = goal.high_power() ? -input_params->getValue("lifter:manual_power:high", 0.8) : -input_params->getValue("lifter:manual_power:low", 0.4);
+	Lifter::lifter_controller.setManuallyAdjusted();
 	break;
     case Lifter::Goal::Mode::STOP:
 	Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);

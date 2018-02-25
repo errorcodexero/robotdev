@@ -44,8 +44,8 @@ Intake::Goal Intake::Goal::out() {
 	paramsInput* input_params = paramsInput::get();
 
 	Goal a;
-	a.left_ = -input_params->getValue("intake:left_default", 1.0);
-	a.right_ = -input_params->getValue("intake:right_default", 1.0);
+	a.left_ = -(input_params->getValue("intake:left_default", 1.0));
+	a.right_ = -(input_params->getValue("intake:right_default", 1.0));
 	return a;
 }
 
@@ -115,7 +115,7 @@ bool operator!=(Intake a, Intake b){ return !(a==b);}
 
 Robot_outputs Intake::Output_applicator::operator()(Robot_outputs r, Intake::Output out)const{
 	r.pwm[INTAKE_ADDRESS_R] = out.right;
-	r.pwm[INTAKE_ADDRESS_L] = out.left;
+	r.pwm[INTAKE_ADDRESS_L] = -out.left;
 	return r;
 }
 

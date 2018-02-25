@@ -49,7 +49,7 @@ struct Lifter{
 		static Goal background();
 		static Goal calibrate();
 		static Goal low_gear();
-		static Goal lock();
+		static Goal lock(bool low_gear=false);
 	};
 
 	struct Output{
