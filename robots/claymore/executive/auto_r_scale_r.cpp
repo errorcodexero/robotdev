@@ -18,7 +18,7 @@ static vector<Step> steps =
     startLifterExch,
     Step(Drive_param("auto:r_scale_r:segment1", 306, false)),
     rotate90neg,
-    lifterToScale,
+    Step(Lifter_to_height(89.3, 0.0)),
     eject,
     endAuto,
 } ;

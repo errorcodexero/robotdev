@@ -47,7 +47,8 @@ DEBUG_AUTOMODES = \
 	auto_drive_straight_neg30.cpp\
 	auto_lifter_test.cpp\
 	auto_lifter_move.cpp\
-	auto_grabber_test.cpp
+	auto_grabber_test.cpp\
+	auto_lift_eject.cpp
 
 COMPETITION_AUTOMODES = \
 	auto_cross_line.cpp\
