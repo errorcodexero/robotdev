@@ -13,14 +13,14 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterSwitch,
+    //calibrateLifter,
+    //calibrateGrabber,
+    //startLifterSwitch,
     Step(Drive_param("auto:r_switch_r:segment1", 148, false)),
     rotate90neg,
     Step(Drive_param("auto:r_switch_r:segment2", 18, true)),
-    waitForLifter,
-    eject,
+    //waitForLifter,
+    //eject,
     endAuto
 } ;
 
