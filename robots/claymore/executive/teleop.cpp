@@ -242,8 +242,34 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 
 	{
-		goals.lights.climbing = false;//TODO
-		goals.lights.lifter_height = (int)(info.status.lifter.height / 3);
+		goals.lights.climbing = goals.lifter.preset_target() == LifterController::Preset::PREP_CLIMB;
+		goals.lights.lifter_height = (unsigned)info.status.lifter.height;
+		goals.lights.drive_left = goals.drive.left();
+		goals.lights.drive_right = goals.drive.right();
+		goals.lights.has_cube = info.status.grabber.has_cube;
+		goals.lights.collector_open = collector_mode == Collector_mode::COLLECT_OPEN;
+		goals.lights.collector_closed = collector_mode == Collector_mode::COLLECT_CLOSED;
+		goals.lights.wings_deployed = goals.wings == Wings::Goal::UNLOCKED;
+		goals.lights.lifter_status = [&]{
+			Lifter::Status s = status(info.status.lifter);
+			if(!ready(s,goals.lifter)){
+				return Lights::Goal::Lifter_status::UNKNOWN;
+			}
+			switch(goals.lifter.preset_target()){
+				case LifterController::Preset::FLOOR:
+					return Lights::Goal::Lifter_status::FLOOR;
+				case LifterController::Preset::EXCHANGE:
+					return Lights::Goal::Lifter_status::EXCHANGE;
+				case LifterController::Preset::PREP_CLIMB:
+					return Lights::Goal::Lifter_status::CLIMB;
+				case LifterController::Preset::SWITCH:
+					return Lights::Goal::Lifter_status::SWITCH;
+				case LifterController::Preset::SCALE:
+					return Lights::Goal::Lifter_status::SCALE;
+				default:
+					nyi
+			}
+		}();
 	}
 
 	logger.endMessage();
