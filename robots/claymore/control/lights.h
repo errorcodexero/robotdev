@@ -12,14 +12,27 @@ struct Lights{
 	struct Goal{//TODO: use macros
 		Camera_light camera_light;
 	
+		//these do not represent goals but statuses of other parts of our robot--done this way due to limitations of our code structure
 		bool climbing;
 		unsigned lifter_height;
 		double drive_left;	
 		double drive_right;	
 		bool has_cube;
-			
+		bool collector_open;
+		bool collector_closed;
+		bool wings_deployed;
+		
+		#define LIFTER_STATUSES_FOR_LIGHTS X(UNKNOWN) X(FLOOR) X(EXCHANGE) X(CLIMB) X(SWITCH) X(SCALE)
+		enum class Lifter_status{
+			#define X(STATUS) STATUS, 
+			LIFTER_STATUSES_FOR_LIGHTS
+			#undef X
+		};
+
+		Lifter_status lifter_status;
+
 		Goal();
-		Goal(Camera_light,bool,unsigned,double,double,bool);
+		Goal(Camera_light,bool,unsigned,double,double,bool,bool,bool,bool,Lifter_status);
 	};
 	
 	struct Input{
@@ -52,10 +65,21 @@ struct Lights{
 
 	struct Output{ 
 		bool camera_light;
+
+		//To send over I2C
 		std::vector<uint8_t> blinky_light_info;
 
+		//OI lights
+		static const unsigned LIFTER_STATUS_BINARY_LEN = 3;
+		std::array<bool,LIFTER_STATUS_BINARY_LEN> lifter_status;
+		bool collector_open;
+		bool collector_closed;
+		bool has_cube;
+		bool wings_deployed;
+		bool enabled;
+
 		Output();
-		Output(bool,std::vector<uint8_t>);
+		Output(bool,std::vector<uint8_t>,std::array<bool,LIFTER_STATUS_BINARY_LEN>,bool,bool,bool,bool,bool);
 	};
 	
 	struct Output_applicator{
