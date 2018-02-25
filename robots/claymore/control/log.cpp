@@ -194,8 +194,8 @@ void visit(Func f,PID_values const& r){
 	PID_VALUE_ITEMS(VISIT)
 }
 
-template<typename Func>
-void visit(Func f,Driver_station_output const& r){
+template<typename Func,MSP430_option DIGITAL_OUTPUTS>
+void visit(Func f,Driver_station_output<DIGITAL_OUTPUTS> const& r){
 	#define DRIVER_STATION_OUTPUT(X) X(digital)
 	DRIVER_STATION_OUTPUT(VISIT)
 }

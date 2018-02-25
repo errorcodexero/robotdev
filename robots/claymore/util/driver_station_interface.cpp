@@ -82,8 +82,12 @@ ostream& operator<<(ostream& o,Driver_station_input a){
 	return o<<")";
 }
 
-bool operator==(Driver_station_output a,Driver_station_output b){
-	for(unsigned i=0;i<Driver_station_output::DIGITAL_OUTPUTS;i++){
+template<MSP430_option DIGITAL_OUTPUTS_A, MSP430_option DIGITAL_OUTPUTS_B>
+bool operator==(Driver_station_output<DIGITAL_OUTPUTS_A> a,Driver_station_output<DIGITAL_OUTPUTS_B> b){
+	if(a.digital.size() != b.digital.size()){
+		return false;
+	}
+	for(unsigned i = 0; i < a.digital.size();i++){
 		if(a.digital[i]!=b.digital[i]){
 			return 0;
 		}
@@ -91,20 +95,23 @@ bool operator==(Driver_station_output a,Driver_station_output b){
 	return 1;
 }
 
-bool operator!=(Driver_station_output a,Driver_station_output b){
+template<MSP430_option DIGITAL_OUTPUTS_A, MSP430_option DIGITAL_OUTPUTS_B>
+bool operator!=(Driver_station_output<DIGITAL_OUTPUTS_A> a,Driver_station_output<DIGITAL_OUTPUTS_B> b){
 	return !(a==b);
 }
 
-Driver_station_output::Driver_station_output(){
-	for(unsigned i = 0; i < DIGITAL_OUTPUTS; i++){
+template<MSP430_option DIGITAL_OUTPUTS>
+Driver_station_output<DIGITAL_OUTPUTS>::Driver_station_output(){
+	for(unsigned i = 0; i < digital.size(); i++){
 		digital[i] = 0;
 	}
 }
 
-ostream& operator<<(ostream& o,Driver_station_output a){
+template<MSP430_option DIGITAL_OUTPUTS>
+ostream& operator<<(ostream& o,Driver_station_output<DIGITAL_OUTPUTS> a){
 	o<<"(";
 	o<<"digital:";
-	for(unsigned i=0;i<Driver_station_output::DIGITAL_OUTPUTS;i++){
+	for(unsigned i=0;i<a.digital.size();i++){
 		o<<a.digital[i];
 	}
 	return o<<")";

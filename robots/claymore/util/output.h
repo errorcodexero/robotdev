@@ -12,7 +12,7 @@
 	X(relay,RELAY,Robot_outputs::RELAYS)\
 	X(digital_io,DIGITAL_IO,Robot_outputs::DIGITAL_IOS)\
 	X(talon_srx,TALON_SRX,Robot_outputs::TALON_SRX_OUTPUTS)\
-	X(driver_station,DRIVER_STATION,Driver_station_output::DIGITAL_OUTPUTS)
+	X(driver_station,DRIVER_STATION,Robot_outputs::DRIVER_STATION_DIGITAL_OUTPUTS)
 
 class Output{
 	public:

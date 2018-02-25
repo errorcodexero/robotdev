@@ -29,7 +29,8 @@ void print_diff_approx(std::ostream& o,T &a,T b){
 void print_diff(std::ostream&,unsigned char&,unsigned char);
 void print_diff(std::ostream&,Toplevel::Status&,Toplevel::Status const&);
 void print_diff(std::ostream&,Main&,Main const&);
-void print_diff(std::ostream&,Driver_station_output&,Driver_station_output const&);
+template<MSP430_option DIGITAL_OUTPUTS>
+void print_diff(std::ostream&,Driver_station_output<DIGITAL_OUTPUTS>&,Driver_station_output<DIGITAL_OUTPUTS> const&);
 void print_diff(std::ostream&,Robot_outputs&,Robot_outputs const&);
 void print_diff(std::ostream&,Robot_inputs&,Robot_inputs const&);
 

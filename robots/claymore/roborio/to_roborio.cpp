@@ -388,7 +388,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 	
 		{	
 			frc::Joystick panel(Panel::PORT);
-			for(unsigned i=0;i<Driver_station_output::DIGITAL_OUTPUTS;i++){
+			for(unsigned i=0;i<Robot_outputs::DRIVER_STATION_DIGITAL_OUTPUTS;i++){
 				panel.SetOutput(i+1, out.driver_station.digital[i]);
 			}
 		}
