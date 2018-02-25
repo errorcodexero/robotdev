@@ -57,10 +57,13 @@ namespace frc
 		int GetButtonCount() const;
 		HIDType GetType() const;
 		std::string GetName() const;
-		int GetAxisType() const;
+		int GetAxisType(int axis) const;
 		int GetPort() const;
 		int SetOutput(int outputNumber, bool value) const;
 		int SetOutputs(int value) const;
 		void SetRumble(RumbleType type, double value);
+
+	private:
+		int m_port;
 	};
 }

@@ -14,6 +14,9 @@ namespace frc
 		static const uint16_t ROBOT_IN_PORT = 1110;
 		static const uint16_t ROBOT_OUT_PORT = 1150;
 
+		//
+		// Meaningful bits from the driverstation protocol
+		//
 		static const uint8_t cTest = 0x01;
 		static const uint8_t cEnabled = 0x04;
 		static const uint8_t cAutonomous = 0x02;
@@ -87,11 +90,13 @@ namespace frc
 
 			bool getButton(int button) const
 			{
+				button--;
 				return ((m_buttons & (1 << button)) != 0);
 			}
 
 			bool getButtonPressed(int button)
 			{
+				button--;
 				bool pressed = ((m_presses & (1 << button)) != 0);
 				m_presses = static_cast<uint16_t>(m_presses & ~(1 << button));
 
@@ -100,6 +105,7 @@ namespace frc
 
 			bool getButtonReleased(int button)
 			{
+				button--;
 				bool released = ((m_releases & (1 << button)) != 0);
 				m_releases = static_cast<uint16_t>(m_releases & ~(1 << button));
 
@@ -109,12 +115,14 @@ namespace frc
 			void setAxisCount(size_t cnt)
 			{
 				m_axis.resize(cnt);
+				m_axistype.resize(cnt);
 			}
 
 			size_t getAxisCount() const
 			{
 				return m_axis.size();
 			}
+
 
 			void setAxis(size_t which, float value)
 			{
@@ -146,13 +154,30 @@ namespace frc
 				return m_pov[which];
 			}
 
+			std::string getName() const
+			{
+				return m_name;
+			}
+
+			void setAxisType(size_t which, int type)
+			{
+				m_axistype[which] = type;
+			}
+
+			int getAxisType(size_t which) const
+			{
+				return m_axistype[which];
+			}
+
 		private:
 			size_t m_button_count;
 			uint16_t m_buttons;
 			uint16_t m_presses;
 			uint16_t m_releases;
+			std::vector<int> m_axistype;
 			std::vector<float> m_axis;
 			std::vector<uint16_t> m_pov;
+			std::string m_name;
 		};
 
 	private:
@@ -175,6 +200,29 @@ namespace frc
 
 			return *m_ds_p;
 		}
+
+		bool GetStickButton(int stick, int button);
+		bool GetStickButtonPressed(int stick, int button);
+		bool GetStickButtonReleased(int stick, int button);
+		double GetStickAxis(int stick, int axis);
+		int GetStickPOV(int stick, int pov);
+		int GetStickButtons(int stick) const;
+		int GetStickAxisCount(int stick) const;
+		int GetStickPOVCount(int stick) const;
+		int GetStickButtonCount(int stick) const;
+
+		bool GetJoystickIsXbox(int stick) const
+		{
+			return false;
+		}
+
+		int GetJoystickType() const
+		{
+			return 0;
+		}
+
+		std::string GetJoystickName(int stick) const;
+		int GetJoystickAxisType(int stick, int axis) const;
 
 		bool IsEnabled() const
 		{
@@ -201,6 +249,44 @@ namespace frc
 			return m_test_mode;
 		}
 
+		bool IsDSAttached() const
+		{
+			return true;
+		}
+
+		bool IsNewControlData()
+		{
+			bool ret = m_newpacket;
+			m_newpacket = false;
+
+			return ret;
+		}
+
+		bool IsFMSAttached() const
+		{
+			return false;
+		}
+
+		bool IsSysActive() const
+		{
+			return true;
+		}
+
+		bool IsBrownedOut() const
+		{
+			return false;
+		}
+
+		std::string GetGameSpecificMessage() const
+		{
+			return "LLL";
+		}
+
+		std::string GetEventName() const
+		{
+			return "PNW District - Wilsonville Event";
+		}
+
 		Alliance GetAlliance() const
 		{
 			return m_alliance;
@@ -211,18 +297,22 @@ namespace frc
 			return m_location;
 		}
 
-		bool GetStickButton(int stick, int button);
-		bool GetStickButtonPressed(int stick, int button);
-		bool GetStickButtonReleased(int stick, int button);
-		double GetStickAxis(int stick, int axis);
-		int GetStickPOV(int stick, int pov);
-		int GetStickButtons(int stick) const;
-		int GetStickAxisCount(int stick) const;
-		int GetStickPOVCount(int stick) const;
-		int GetStickButtonCount(int stick) const;
-		bool GetJoystickIsXbox(int stick) const
+		void WaitForData()
 		{
-			return false;
+			m_waiting = true;
+			while (m_waiting);
+		}
+
+		void WaitForData(double timeout);
+
+		double GetMatchTime() const
+		{
+			return 0.0;
+		}
+
+		double GetBatteryVoltage()
+		{
+			return 12.0;
 		}
 
 	protected:
@@ -265,6 +355,9 @@ namespace frc
 
 		Alliance m_alliance;
 		int m_location;
+
+		bool m_newpacket;
+		bool m_waiting;
 
 		std::vector<JoystickState> m_joysticks;
 

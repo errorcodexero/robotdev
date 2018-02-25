@@ -119,6 +119,38 @@ namespace frc
 		return m_joysticks[stick].getButtonCount();
 	}
 
+	std::string DriverStation::GetJoystickName(int stick) const
+	{
+		std::string empty;
+
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return empty;
+
+		return m_joysticks[stick].getName();
+	}
+
+	int DriverStation::GetJoystickAxisType(int stick, int which) const
+	{
+		if (static_cast<size_t>(stick) >= m_joysticks.size())
+			return -1;
+
+		return m_joysticks[stick].getAxisType(which);
+	}
+
+	void DriverStation::WaitForData(double timeout)
+	{
+		int64_t timeoutms = static_cast<int64_t>(timeout * 1000);
+
+		auto start = std::chrono::high_resolution_clock::now();
+		while (m_waiting)
+		{
+			auto duration = std::chrono::high_resolution_clock::now() - start;
+			auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(duration);
+			if (ms.count() > timeoutms)
+				break;
+		}
+	}
+
 	void DriverStation::waitForConnection()
 	{
 		m_server_in_p = new xeromisc::UdpBroadcastReceiver();
@@ -237,6 +269,7 @@ namespace frc
 			std::cout << ", Raw Value " << data[start];
 			std::cout << ", Axis Value " << v << std::endl;
 			state.setAxis(i, byteToFloat(data[start++], 1.0));
+			state.setAxisType(i, 0);
 		}
 
 		state.setButtonCount(data[start++]);
@@ -301,6 +334,9 @@ namespace frc
 					sofar += len;
 				}
 			}
+
+			m_newpacket = true;
+			m_waiting = false;
 		}
 	}
 
