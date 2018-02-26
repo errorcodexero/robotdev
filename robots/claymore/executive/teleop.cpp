@@ -13,24 +13,24 @@ double set_drive_speed(double axis,double boost,bool slow){
 }
 
 bool operator<(Teleop::Nudge const& a,Teleop::Nudge const& b){
-	#define X(A,B) if(a.B<b.B) return 1; if(b.B<a.B) return 0;
+#define X(A,B) if(a.B<b.B) return 1; if(b.B<a.B) return 0;
 	NUDGE_ITEMS(X)
-	#undef X
-	return 0;
+#undef X
+		return 0;
 }
 
 bool operator==(Teleop::Nudge const& a,Teleop::Nudge const& b){
-	#define X(A,B) if(a.B!=b.B) return 0;
+#define X(A,B) if(a.B!=b.B) return 0;
 	NUDGE_ITEMS(X)
-	#undef X
-	return 1;
+#undef X
+		return 1;
 }
 
 ostream& operator<<(ostream& o,Teleop::Nudge const& a){
-	#define X(t,NAME) o<<""#NAME<<":"<<(a.NAME)<<" ";
+#define X(t,NAME) o<<""#NAME<<":"<<(a.NAME)<<" ";
 	NUDGE_ITEMS(X)
-	#undef X
-	return o;
+#undef X
+		return o;
 }
 
 ostream& operator<<(ostream& o, Teleop::HasCubeState const &a)
@@ -38,27 +38,27 @@ ostream& operator<<(ostream& o, Teleop::HasCubeState const &a)
     switch(a)
     {
     case Teleop::HasCubeState::NoCube:
-	o << "NoCube" ;
-	break ;
+		o << "NoCube" ;
+		break ;
     case Teleop::HasCubeState::MaybeHasCube:
-	o << "MaybeHasCube" ;
-	break ;
+		o << "MaybeHasCube" ;
+		break ;
     case Teleop::HasCubeState::HasCube:
-	o << "HasCube" ;
-	break ;
+		o << "HasCube" ;
+		break ;
     case Teleop::HasCubeState::MaybeLostCube:
-	o << "MaybeLostCube" ;
-	break ;
+		o << "MaybeLostCube" ;
+		break ;
     }
 
     return o ;
 }
 
 ostream& operator<<(ostream& o,Teleop::Collector_mode const& a){
-	#define X(NAME) if(a==Teleop::Collector_mode::NAME) return o<<""#NAME;
+#define X(NAME) if(a==Teleop::Collector_mode::NAME) return o<<""#NAME;
 	COLLECTOR_MODES
-	#undef X
-	assert(0);
+#undef X
+		assert(0);
 }
 
 Executive Teleop::next_mode(Next_mode_info info) {
@@ -100,23 +100,23 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		}
 		const double NUDGE_POWER=.2,ROTATE_NUDGE_POWER=.2;
 		double left=([&]{
-			if(!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
-			if(!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
-			if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;
-			if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
-			double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
-			if(spin) power+=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
-			return -power; //inverted so drivebase values can be positive
-		}());
+				if(!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
+				if(!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
+				if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;
+				if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
+				double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
+				if(spin) power+=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
+				return -power; //inverted so drivebase values can be positive
+			}());
 		double right=-clip([&]{ //right side is reversed
-			if(!nudges[Nudges::FORWARD].timer.done()) return -NUDGE_POWER;
-			if(!nudges[Nudges::BACKWARD].timer.done()) return NUDGE_POWER;
-			if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;	
-			if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
-			double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
-			if(spin) power-=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
-			return power;
-		}());
+				if(!nudges[Nudges::FORWARD].timer.done()) return -NUDGE_POWER;
+				if(!nudges[Nudges::BACKWARD].timer.done()) return NUDGE_POWER;
+				if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;	
+				if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
+				double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
+				if(spin) power-=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
+				return power;
+			}());
 
 		if(info.driver_joystick.button[Gamepad_button::RB]) high_gear = false;
 		if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER] > .8) high_gear = true;
@@ -127,38 +127,38 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	}
 
 	switch(collector_mode) {
-		case Collector_mode::DO_NOTHING:
-			goals.grabber = Grabber::Goal::stop();
-			goals.intake = Intake::Goal::off();
-			break;
-		case Collector_mode::GRABBING:
+	case Collector_mode::DO_NOTHING:
+		goals.grabber = Grabber::Goal::stop();
+		goals.intake = Intake::Goal::off();
+		break;
+	case Collector_mode::GRABBING:
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+		goals.intake = Intake::Goal::off();
+		break;
+	case Collector_mode::COLLECT_OPEN:
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+		goals.intake = Intake::Goal::in();
+		if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
+		break;
+	case Collector_mode::COLLECT_CLOSED:
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+		goals.intake = Intake::Goal::in();
+		if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
+		break;
+	case Collector_mode::EJECT:
+	case Collector_mode::DROP:
+		if(collector_mode == Collector_mode::EJECT) {
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::off();
-			break;
-		case Collector_mode::COLLECT_OPEN:
+			goals.intake = Intake::Goal::out();
+		} else {
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-			goals.intake = Intake::Goal::in();
-			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
-			break;
-		case Collector_mode::COLLECT_CLOSED:
-			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::in();
-			if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
-			break;
-		case Collector_mode::EJECT:
-		case Collector_mode::DROP:
-			if(collector_mode == Collector_mode::EJECT) {
-				goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-				goals.intake = Intake::Goal::out();
-			} else {
-				goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-				goals.intake = Intake::Goal::out(0.2);
-			}
-			intake_timer.update(info.in.now, info.in.robot_mode.enabled);
-			if((started_intake_with_cube && !info.status.grabber.has_cube) || intake_timer.done())
-				collector_mode = Collector_mode::DO_NOTHING;
-			break;
-		default: assert(0);
+			goals.intake = Intake::Goal::out(0.2);
+		}
+		intake_timer.update(info.in.now, info.in.robot_mode.enabled);
+		if((started_intake_with_cube && !info.status.grabber.has_cube) || intake_timer.done())
+			collector_mode = Collector_mode::DO_NOTHING;
+		break;
+	default: assert(0);
 	}
 	//logger << "Collector: " << collector_mode << "\n";
 	//logger << "Intake: " << goals.intake << "\n";
@@ -183,80 +183,81 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	case HasCubeState::NoCube:
 	    if (info.status.grabber.has_cube)
 	    {
-		//
-		// We are currently in the no cube state, but see the cube
-		// present signal, we move immediately to the HasCube state.
-		//
-		has_cube_state = HasCubeState::MaybeHasCube ;
-		cube_timer.set(0.25) ;
+			//
+			// We are currently in the no cube state, but see the cube
+			// present signal, we move immediately to the HasCube state.
+			//
+			has_cube_state = HasCubeState::MaybeHasCube ;
+			cube_timer.set(0.25) ;
 	    }
 	    break ;
 
 	case HasCubeState::MaybeHasCube:
 	    if (!info.status.grabber.has_cube)
 	    {
-		//
-		// The has cube disappeared before the timer expired.  We assume
-		// this was a glitch and do not respond to the cube
-		//
-		has_cube_state = HasCubeState::NoCube ;
+			//
+			// The has cube disappeared before the timer expired.  We assume
+			// this was a glitch and do not respond to the cube
+			//
+			has_cube_state = HasCubeState::NoCube ;
 	    }
 	    else if (cube_timer.done())
 	    {
-		//
-		// The timer for the has cube status has expired, assume we really
-		// have a cube.
-		//
+			//
+			// The timer for the has cube status has expired, assume we really
+			// have a cube.
+			//
 
-		//
-		// Note, we shift the collector to holding a cube regardless of where
-		// the lifter is on the robot.
-		//
-		collector_mode = Collector_mode::DO_NOTHING;
+			//
+			// Note, we shift the collector to holding a cube regardless of where
+			// the lifter is on the robot.  This keeps the grabber holding the cube
+			// and shuts down the intake belts
+			//
+			collector_mode = Collector_mode::DO_NOTHING;
 
-		if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
-		    Lifter::lifter_controller.isCalibrated())
-		{
-		    //
-		    // If we collected the cube witin a small tolerane of the floor height, we move the
-		    // lifter up to EXCHANGE height.  Note, if we collect the cube at any other height
-		    // it is already off the floor and we let the drive team deal with height.
-		    //
-		    // Also, if the lifter has not been calibrated, we never move the lifter.  We want it
-		    // to stay on the floor until the lifter is calibrated.
-		    //
-		    lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-		}
-		has_cube_state = HasCubeState::HasCube ;
+			if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
+				Lifter::lifter_controller.isCalibrated())
+			{
+				//
+				// If we collected the cube witin a small tolerance of the floor height, we move the
+				// lifter up to EXCHANGE height.  Note, if we collect the cube at any other height
+				// it is already off the floor and we let the drive team deal with height.
+				//
+				// Also, if the lifter has not been calibrated, we never move the lifter.  We want it
+				// to stay on the floor until the lifter is calibrated.
+				//
+				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+			}
+			has_cube_state = HasCubeState::HasCube ;
 	    }
 	    break ;
 	case HasCubeState::HasCube:
 	    if (!info.status.grabber.has_cube)
 	    {
-		//
-		// We lost the has cube signal, so we may have lost the cube, or the
-		// signal may have just disappeared temporarily.  Start a timer to see if the
-		// cube is really gone
-		//
-		cube_timer.set(0.5) ;
-		has_cube_state = HasCubeState::MaybeLostCube ;
+			//
+			// We lost the has cube signal, so we may have lost the cube, or the
+			// signal may have just disappeared temporarily.  Start a timer to see if the
+			// cube is really gone
+			//
+			cube_timer.set(0.5) ;
+			has_cube_state = HasCubeState::MaybeLostCube ;
 	    }
 	    break ;
 	case HasCubeState::MaybeLostCube:
 	    if (info.status.grabber.has_cube)
 	    {
-		//
-		// The cube has reappeared, just assume some flakiness with the sensor of that
-		// the cube is jostling around.
-		//
-		has_cube_state = HasCubeState::HasCube ;
+			//
+			// The cube has reappeared, just assume some flakiness with the sensor of that
+			// the cube is jostling around.
+			//
+			has_cube_state = HasCubeState::HasCube ;
 	    }
 	    else if (cube_timer.done())
 	    {
-		//
-		// The cube is really gone, go back to the no cube state
-		//
-		has_cube_state = HasCubeState::NoCube ;
+			//
+			// The cube is really gone, go back to the no cube state
+			//
+			has_cube_state = HasCubeState::NoCube ;
 	    }
 	    break ;
 	} ;
@@ -369,18 +370,18 @@ Toplevel::Goal Teleop::run(Run_info info) {
 				return Lights::Goal::Lifter_status::UNKNOWN;
 			}
 			switch(goals.lifter.preset_target()){
-				case LifterController::Preset::FLOOR:
-					return Lights::Goal::Lifter_status::FLOOR;
-				case LifterController::Preset::EXCHANGE:
-					return Lights::Goal::Lifter_status::EXCHANGE;
-				case LifterController::Preset::PREP_CLIMB:
-					return Lights::Goal::Lifter_status::CLIMB;
-				case LifterController::Preset::SWITCH:
-					return Lights::Goal::Lifter_status::SWITCH;
-				case LifterController::Preset::SCALE:
-					return Lights::Goal::Lifter_status::SCALE;
-				default:
-					nyi
+			case LifterController::Preset::FLOOR:
+			return Lights::Goal::Lifter_status::FLOOR;
+			case LifterController::Preset::EXCHANGE:
+			return Lights::Goal::Lifter_status::EXCHANGE;
+			case LifterController::Preset::PREP_CLIMB:
+			return Lights::Goal::Lifter_status::CLIMB;
+			case LifterController::Preset::SWITCH:
+			return Lights::Goal::Lifter_status::SWITCH;
+			case LifterController::Preset::SCALE:
+			return Lights::Goal::Lifter_status::SCALE;
+			default:
+			nyi
 			}
 		}();
 	}
@@ -391,25 +392,25 @@ Toplevel::Goal Teleop::run(Run_info info) {
 }
 
 bool Teleop::operator<(Teleop const& a)const{
-	#define X(t,NAME) if(NAME<a.NAME) return 1; if(a.NAME<NAME) return 0;
+#define X(t,NAME) if(NAME<a.NAME) return 1; if(a.NAME<NAME) return 0;
 	TELEOP_ITEMS(X)
-	#undef X
-	return 0;
+#undef X
+		return 0;
 }
 
 bool Teleop::operator==(Teleop const& a)const{
-	#define X(t,NAME) if(NAME!=a.NAME) return 0;
+#define X(t,NAME) if(NAME!=a.NAME) return 0;
 	TELEOP_ITEMS(X)
-	#undef X
-	return 1;
+#undef X
+		return 1;
 }
 
 void Teleop::display(ostream& o)const{
 	o<<"Teleop( ";
-	#define X(t,NAME) o<<""#NAME<<":"<<(NAME)<<" ";
+#define X(t,NAME) o<<""#NAME<<":"<<(NAME)<<" ";
 	TELEOP_ITEMS(X)
-	#undef X
-	o<<")";
+#undef X
+		o<<")";
 }
 
 #ifdef TELEOP_TEST
