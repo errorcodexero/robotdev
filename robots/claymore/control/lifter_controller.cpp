@@ -24,6 +24,13 @@ paramsInput* LifterController::getParams() {
     return mInputParams;
 }
 
+bool LifterController::nearPreset(Preset preset, double height, double tol)
+{
+    double preheight = presetToHeight(preset) ;
+
+    return fabs(preheight - height) < tol ;
+}
+
 void LifterController::moveToHeight(double height, double current_height, double time) {
     mMode = Mode::HEIGHT;
     mTarget = height;

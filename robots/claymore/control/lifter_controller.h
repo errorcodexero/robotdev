@@ -104,6 +104,9 @@ public:
     /// \param preset the preset of interest
     double presetToHeight(Preset preset);
 
+    /// \brief returns true if the current height of the lifter is near the given preset
+    bool nearPreset(Preset preset, double height, double tol) ;
+
 private:
     // Indicates the mode of the lifter
     enum class Mode {

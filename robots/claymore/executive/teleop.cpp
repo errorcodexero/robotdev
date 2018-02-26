@@ -33,6 +33,27 @@ ostream& operator<<(ostream& o,Teleop::Nudge const& a){
 	return o;
 }
 
+ostream& operator<<(ostream& o, Teleop::HasCubeState const &a)
+{
+    switch(a)
+    {
+    case Teleop::HasCubeState::NoCube:
+	o << "NoCube" ;
+	break ;
+    case Teleop::HasCubeState::MaybeHasCube:
+	o << "MaybeHasCube" ;
+	break ;
+    case Teleop::HasCubeState::HasCube:
+	o << "HasCube" ;
+	break ;
+    case Teleop::HasCubeState::MaybeLostCube:
+	o << "MaybeLostCube" ;
+	break ;
+    }
+
+    return o ;
+}
+
 ostream& operator<<(ostream& o,Teleop::Collector_mode const& a){
 	#define X(NAME) if(a==Teleop::Collector_mode::NAME) return o<<""#NAME;
 	COLLECTOR_MODES
@@ -50,7 +71,10 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_intake_with_cube(false),high_gear(false){}
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_intake_with_cube(false),high_gear(false)
+{
+    has_cube_state = HasCubeState::NoCube ;
+}
 
 Toplevel::Goal Teleop::run(Run_info info) {
 	messageLogger &logger = messageLogger::get();
@@ -140,13 +164,98 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	//logger << "Intake: " << goals.intake << "\n";
 	//logger << "Grabber: " << goals.grabber << "\n";
 
-	if(has_cube_trigger(info.status.grabber.has_cube)) {
-		if(cube_timer.done()) {
-			collector_mode = Collector_mode::DO_NOTHING;
-			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+	//
+	// Note, this is a state machine
+	//
+	// States:
+	//
+	// NoCube        - the collector is not holding a cube
+	// MaybeHasCube  - the collector may be holding a cube but we want the has_cube
+	//                 signal to stay active long enough to be sure (250 ms)
+	// HasCube       - the collector is holding a cube
+	// MaybeLostCube - the collector was previously holding a cube and may have lost it
+	//                 we want the has_cube signal to stay inactive long enough to be
+	//                 sure
+	//
+
+	switch(has_cube_state)
+	{
+	case HasCubeState::NoCube:
+	    if (info.status.grabber.has_cube)
+	    {
+		//
+		// We are currently in the no cube state, but see the cube
+		// present signal, we move immediately to the HasCube state.
+		//
+		has_cube_state = HasCubeState::MaybeHasCube ;
+		cube_timer.set(0.25) ;
+	    }
+	    break ;
+
+	case HasCubeState::MaybeHasCube:
+	    if (!info.status.grabber.has_cube)
+	    {
+		//
+		// The has cube disappeared before the timer expired.  We assume
+		// this was a glitch and do not respond to the cube
+		//
+		has_cube_state = HasCubeState::NoCube ;
+	    }
+	    else if (cube_timer.done())
+	    {
+		//
+		// The timer for the has cube status has expired, assume we really
+		// have a cube.
+		//
+
+		//
+		// Note, we shift the collector to holding a cube regardless of where
+		// the lifter is on the robot.
+		//
+		collector_mode = Collector_mode::DO_NOTHING;
+
+		if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0))
+		{
+		    //
+		    // If we collected the cube witin a small tolerane of the floor height, we move the
+		    // lifter up to EXCHANGE height.  Note, if we collect the cube at any other height
+		    // it is already off the floor and we let the drive team deal with height.
+		    //
+		    lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 		}
-		cube_timer.set(0.5);
-	}
+		has_cube_state = HasCubeState::HasCube ;
+	    }
+	    break ;
+	case HasCubeState::HasCube:
+	    if (!info.status.grabber.has_cube)
+	    {
+		//
+		// We lost the has cube signal, so we may have lost the cube, or the
+		// signal may have just disappeared temporarily.  Start a timer to see if the
+		// cube is really gone
+		//
+		cube_timer.set(0.5) ;
+		has_cube_state = HasCubeState::MaybeLostCube ;
+	    }
+	    break ;
+	case HasCubeState::MaybeLostCube:
+	    if (info.status.grabber.has_cube)
+	    {
+		//
+		// The cube has reappeared, just assume some flakiness with the sensor of that
+		// the cube is jostling around.
+		//
+		has_cube_state = HasCubeState::HasCube ;
+	    }
+	    else if (cube_timer.done())
+	    {
+		//
+		// The cube is really gone, go back to the no cube state
+		//
+		has_cube_state = HasCubeState::NoCube ;
+	    }
+	    break ;
+	} ;
 	cube_timer.update(info.in.now, info.in.robot_mode.enabled);
 
 	if(info.panel.floor) {
