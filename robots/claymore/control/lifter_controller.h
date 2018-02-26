@@ -100,9 +100,16 @@ public:
     /// \returns true when the lifter is calibrating
     bool calibrating();
 
+    /// \brief returns true if the lifter has been calibrated
+    /// \returns true when the lifter has been calibrated
+    bool isCalibrated() const ;
+
     /// \brief returns the height assocaited with a preset
     /// \param preset the preset of interest
     double presetToHeight(Preset preset);
+
+    /// \brief returns true if the current height of the lifter is near the given preset
+    bool nearPreset(Preset preset, double height, double tol) ;
 
 private:
     // Indicates the mode of the lifter
@@ -173,6 +180,12 @@ private:
     // Represents whether or not the lifter is calibrating
     //
     bool mCalibrating;
+
+    //
+    // if true, we hvae seen the mCalibrating go from true to false indicating
+    // that the lifter has been calibrated
+    //
+    bool mCalibrated ;
 
     //
     // Represents whether or not the lifter has been manually adjusted

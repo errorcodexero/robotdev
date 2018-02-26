@@ -9,6 +9,8 @@
 #include <sstream>
 
 struct Teleop : Executive_impl<Teleop> {
+    enum class HasCubeState { NoCube, MaybeHasCube, HasCube, MaybeLostCube } ;
+    
 	enum Nudges{FORWARD,BACKWARD,CLOCKWISE,COUNTERCLOCKWISE,NUDGES};
 	#define NUDGE_ITEMS(X) X(Posedge_trigger,trigger) X(Countdown_timer,timer)
 	struct Nudge{
@@ -23,17 +25,17 @@ struct Teleop : Executive_impl<Teleop> {
 		#undef X
 	};
 
-	#define TELEOP_ITEMS(X)\
-		X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges) \
-		X(Lifter::Goal, lifter_goal) \
-		X(Wings::Goal, wings_goal) \
-		X(Collector_mode, collector_mode) \
-		X(Countdown_timer, intake_timer) \
-		X(bool, started_intake_with_cube) \
-		X(Posedge_trigger, calibrate_trigger) \
-		X(Posedge_trigger, has_cube_trigger) \
-		X(Countdown_timer, cube_timer) \
-		X(bool, high_gear)
+#define TELEOP_ITEMS(X)					       \
+	X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges)	       \
+	X(Lifter::Goal, lifter_goal)		       \
+	X(Wings::Goal, wings_goal)			       \
+	X(Collector_mode, collector_mode)		       \
+	X(Countdown_timer, intake_timer)		       \
+	X(bool, started_intake_with_cube)		       \
+	X(Posedge_trigger, calibrate_trigger)	       \
+	X(Countdown_timer, cube_timer)		       \
+	X(bool, high_gear)				       \
+	X(HasCubeState, has_cube_state)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 
 	Executive next_mode(Next_mode_info);
@@ -46,7 +48,7 @@ struct Teleop : Executive_impl<Teleop> {
 };
 
 std::ostream& operator<<(std::ostream&,Teleop::Nudge const&);
-//std::ostream& operator<<(std::ostream&,Teleop::Intake_mode const&);
+std::ostream& operator<<(std::ostream&,Teleop::HasCubeState const&) ;
 
 bool operator<(Teleop::Nudge const&,Teleop::Nudge const&);
 bool operator==(Teleop::Nudge const&,Teleop::Nudge const&);
