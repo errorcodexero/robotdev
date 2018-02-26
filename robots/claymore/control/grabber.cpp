@@ -12,8 +12,8 @@ using namespace std;
 #define CUBE_SENSOR_ADDRESS 12
 #define LIMIT_SWITCH_ADDRESS 11
 
-#define MANUAL_GRABBER_POWER .60 	//TODO tune
-#define CALIBRATE_POWER .40 	   //TODO tune
+#define MANUAL_GRABBER_POWER .20
+#define CALIBRATE_POWER .40
 
 GrabberController Grabber::grabber_controller;
 
