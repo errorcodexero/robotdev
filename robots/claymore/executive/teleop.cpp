@@ -214,12 +214,16 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		//
 		collector_mode = Collector_mode::DO_NOTHING;
 
-		if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0))
+		if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
+		    Lifter::lifter_controller.isCalibrated())
 		{
 		    //
 		    // If we collected the cube witin a small tolerane of the floor height, we move the
 		    // lifter up to EXCHANGE height.  Note, if we collect the cube at any other height
 		    // it is already off the floor and we let the drive team deal with height.
+		    //
+		    // Also, if the lifter has not been calibrated, we never move the lifter.  We want it
+		    // to stay on the floor until the lifter is calibrated.
 		    //
 		    lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
 		}

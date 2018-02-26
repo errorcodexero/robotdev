@@ -13,6 +13,13 @@ LifterController::LifterController() {
     mDataDumpMode = false;
     mDataDumpStartTime = 0.0;
     mManuallyAdjusted = false;
+    mCalibrating = false ;
+    mCalibrated = false ;
+}
+
+bool LifterController::isCalibrated() const
+{
+    return mCalibrated ;
 }
 
 void LifterController::setParams(paramsInput* input_params) {
@@ -71,6 +78,9 @@ void LifterController::backgroundMoveToHeight(Preset preset, double current_heig
 }
 
 void LifterController::setCalibrate(bool calibrate) {
+    if (mCalibrating == true && calibrate == false)
+	mCalibrated = true ;
+    
     mCalibrating = calibrate;
 }
 
