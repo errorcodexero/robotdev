@@ -155,7 +155,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			goals.intake = Intake::Goal::out(0.2);
 		}
 		intake_timer.update(info.in.now, info.in.robot_mode.enabled);
-		if((started_intake_with_cube && !info.status.grabber.has_cube) || intake_timer.done())
+		if((started_intake_with_cube && has_cube_state == HasCubeState::NoCube) || intake_timer.done())
 			collector_mode = Collector_mode::DO_NOTHING;
 		break;
 	default: assert(0);
@@ -318,12 +318,12 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
 	if(info.panel.eject) {
 		collector_mode = Collector_mode::EJECT;
-		started_intake_with_cube = info.status.grabber.has_cube;
+		started_intake_with_cube = has_cube_state == HasCubeState::HasCube;
 		intake_timer.set(1.0);
 	}
 	if(info.panel.drop) {
 		collector_mode = Collector_mode::DROP;
-		started_intake_with_cube = info.status.grabber.has_cube;
+		started_intake_with_cube = has_cube_state == HasCubeState::HasCube;
 		intake_timer.set(0.5);
 	}
 
