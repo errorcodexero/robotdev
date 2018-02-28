@@ -275,7 +275,7 @@ Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Out
     r.pwm[LIFTER_ADDRESS_L] = -out.power;
     r.pwm[LIFTER_ADDRESS_R] = -out.power;
     r.solenoid[LIFTER_SHIFTER] = out.gearing == Lifter::Output::Gearing::LOW;
-    r.solenoid[LIFTER_LOCK_SOLENOID] = out.lock;
+    r.solenoid[LIFTER_LOCK_SOLENOID] = !out.lock;
 
     auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 	r.digital_io[a] = Digital_out::encoder(loc,1);
@@ -503,6 +503,7 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
     case Lifter::Goal::Mode::STOP:
     case Lifter::Goal::Mode::CALIBRATE:
     case Lifter::Goal::Mode::LOW_GEAR:
+    case Lifter::Goal::Mode::LOCK:
 	return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
 	return Lifter::lifter_controller.finishedTarget(goal.target());
