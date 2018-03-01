@@ -21,8 +21,8 @@ Intake::Goal Intake::Goal::in() {
 	paramsInput* input_params = paramsInput::get();
 
 	Goal a;
-	a.left_ = input_params->getValue("intake:left_default", 1.0);
-	a.right_ = input_params->getValue("intake:right_default", 1.0);
+	a.left_ = input_params->getValue("intake:in:left_default", 1.0);
+	a.right_ = input_params->getValue("intake:in:right_default", 1.0);
 	return a;
 }
 
@@ -44,8 +44,8 @@ Intake::Goal Intake::Goal::out() {
 	paramsInput* input_params = paramsInput::get();
 
 	Goal a;
-	a.left_ = -(input_params->getValue("intake:left_default", 1.0));
-	a.right_ = -(input_params->getValue("intake:right_default", 1.0));
+	a.left_ = -(input_params->getValue("intake:out:left_default", 1.0));
+	a.right_ = -(input_params->getValue("intake:out:right_default", 1.0));
 	return a;
 }
 
