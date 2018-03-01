@@ -309,9 +309,18 @@ struct Collect: Step_impl_inner<Collect>{
 };
 
 //Eject a cube
-struct Eject: Step_impl_inner<Eject>{
+struct Eject: Step_impl_inner<Eject>
+{
+	enum class EjectState
+	{
+		Start,
+		WaitingOnTime,
+		CubeSensorOn,
+		Done
+	} ;
+	
+	EjectState mState ;
     Countdown_timer eject_timer;
-    bool sensor_ok ;
 
     explicit Eject();
 	

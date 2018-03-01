@@ -31,7 +31,7 @@ Step::Step(Step const& a):impl(a.get().clone()){}
 Step::Step(Step_impl const& a){
     auto c=a.clone();
     if(!c)nyi
-	      impl=move(c);
+			  impl=move(c);
 }
 
 Toplevel::Goal Step::run(Run_info info, Toplevel::Goal goals){
@@ -102,13 +102,13 @@ Step::Status Combo::done(Next_mode_info info){
     Step::Status b_status = step_b.done(info);
     switch(a_status){
     case Step::Status::FINISHED_SUCCESS:
-	return b_status;
+		return b_status;
     case Step::Status::UNFINISHED:
-	return a_status;//TODO
+		return a_status;//TODO
     case Step::Status::FINISHED_FAILURE:
-	nyi //TODO
+		nyi //TODO
     default:
-	assert(0);
+		assert(0);
     } 
 }
 
@@ -142,10 +142,10 @@ Step::Status Wait::done(Next_mode_info){
     Step::Status ret =  wait_timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Wait step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Wait step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
@@ -239,10 +239,10 @@ Step::Status Drive::done(Next_mode_info info){
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Drive step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Drive step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -286,10 +286,10 @@ Step::Status Drive_param::done(Next_mode_info info)
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Drive step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Drive step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -302,11 +302,11 @@ Toplevel::Goal Drive_param::run(Run_info info)
 Toplevel::Goal Drive_param::run(Run_info info, Toplevel::Goal goals)
 {
     if(!mInited) {
-	paramsInput *param_p = paramsInput::get() ;
-	double dist = param_p->getValue(mParam, mDefaultValue) ;
-	double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-	Drivebase::drivebase_controller.initDistance(avg_status + dist, info.status.drive.angle, info.in.now, mEndOnStall, dist >= 0.0);
-	mInited = true;
+		paramsInput *param_p = paramsInput::get() ;
+		double dist = param_p->getValue(mParam, mDefaultValue) ;
+		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+		Drivebase::drivebase_controller.initDistance(avg_status + dist, info.status.drive.angle, info.in.now, mEndOnStall, dist >= 0.0);
+		mInited = true;
     }
     goals.drive = Drivebase::Goal::drive_straight();
     return goals;
@@ -335,10 +335,10 @@ Step::Status Drive_timed::done(Next_mode_info /*info*/){
     Step::Status ret =  timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Timed Drive step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Timed Drive step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -385,9 +385,9 @@ Toplevel::Goal Ram::run(Run_info info){
 
 Toplevel::Goal Ram::run(Run_info info,Toplevel::Goal goals){
     if(!init){
-	initial_distances = info.status.drive.distances;
-	target_distances = target_distances + initial_distances;
-	init = true;
+		initial_distances = info.status.drive.distances;
+		target_distances = target_distances + initial_distances;
+		init = true;
     }
 
     goals.drive = Drivebase::Goal::absolute(left_power, right_power);
@@ -415,7 +415,7 @@ Toplevel::Goal Rotate::run(Run_info info){
 Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
 		Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0) ;
-	init = true;
+		init = true;
     }
 
     goals.drive = Drivebase::Goal::rotate();
@@ -426,10 +426,10 @@ Step::Status Rotate::done(Next_mode_info info){
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Rotate step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Rotate step complete" ;
+		logger.endMessage() ;
     }
 
     return ret ;
@@ -463,8 +463,8 @@ Toplevel::Goal Background_lifter_to_preset::run(Run_info info){
 
 Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
-	Lifter::lifter_controller.backgroundMoveToHeight(preset, info.status.lifter.height, time);
-	init = false;
+		Lifter::lifter_controller.backgroundMoveToHeight(preset, info.status.lifter.height, time);
+		init = false;
     }
     return goals;
 }
@@ -487,10 +487,10 @@ Step::Status Wait_for_lifter::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::background()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Wait For Lifter Step done" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Wait For Lifter Step done" ;
+		logger.endMessage() ;
     }
 
     return ret ;
@@ -525,10 +525,10 @@ Step::Status Calibrate_lifter::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Calibrate Lifter Step done" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Calibrate Lifter Step done" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -559,10 +559,10 @@ Step::Status Lifter_to_height::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_height(target_height)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Lifter_to_height step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Lifter_to_height step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -573,8 +573,8 @@ Toplevel::Goal Lifter_to_height::run(Run_info info){
 
 Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
-	Lifter::lifter_controller.moveToHeight(target_height, info.status.lifter.height, time);
-	init = false;
+		Lifter::lifter_controller.moveToHeight(target_height, info.status.lifter.height, time);
+		init = false;
     }
     goals.lifter = Lifter::Goal::go_to_height(target_height);
     return goals;
@@ -604,10 +604,10 @@ Step::Status Lifter_to_preset::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(mPreset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Lifter_to_preset step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Lifter_to_preset step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -618,8 +618,8 @@ Toplevel::Goal Lifter_to_preset::run(Run_info info){
 
 Toplevel::Goal Lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!mInit) {
-	Lifter::lifter_controller.moveToHeight(mPreset, info.status.lifter.height, mTime);
-	mInit = false;
+		Lifter::lifter_controller.moveToHeight(mPreset, info.status.lifter.height, mTime);
+		mInit = false;
     }
     goals.lifter = Lifter::Goal::go_to_preset(mPreset);
     return goals;
@@ -645,10 +645,10 @@ Step::Status Calibrate_grabber::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.grabber), Grabber::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Calibrate grabber step done" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Calibrate grabber step done" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -680,10 +680,10 @@ Step::Status Grabber_to_preset::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.grabber), Grabber::Goal::go_to_preset(target_preset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Grabber To Preset complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Grabber To Preset complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
@@ -695,8 +695,8 @@ Toplevel::Goal Grabber_to_preset::run(Run_info info){
 
 Toplevel::Goal Grabber_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
-	Grabber::grabber_controller.moveToAngle(target_preset, time);
-	init = false;
+		Grabber::grabber_controller.moveToAngle(target_preset, time);
+		init = false;
     }
     goals.grabber = Grabber::Goal::go_to_preset(target_preset);
     return goals;
@@ -720,10 +720,10 @@ Step::Status Collect::done(Next_mode_info info){
     Step::Status ret = info.status.grabber.has_cube ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Collect complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Collect complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
@@ -735,8 +735,8 @@ Toplevel::Goal Collect::run(Run_info info){
 
 Toplevel::Goal Collect::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
-	Grabber::grabber_controller.moveToAngle(GrabberController::Preset::OPEN, time);
-	init = false;
+		Grabber::grabber_controller.moveToAngle(GrabberController::Preset::OPEN, time);
+		init = false;
     }
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
     return goals;
@@ -754,58 +754,63 @@ bool Collect::operator==(Collect const& b)const{
 // Eject: Eject a cube
 //
 
-Eject::Eject(){
-    eject_timer.set(1.0);
+Eject::Eject()
+{
+	mState = EjectState::Start ;
 }
 
-Step::Status Eject::done(Next_mode_info info){
+Step::Status Eject::done(Next_mode_info info)
+{
     Step::Status ret = Step::Status::UNFINISHED ;
-    bool reason_sensor = true ;
-
-    if (sensor_ok && !info.status.grabber.has_cube)
-    {
-	//
-	// If we detected a cube when we ran this step, and
-	// we no longer detect a cube now, we assume the cube
-	// is ejected and consider this step finished.
-	//
-	ret = Step::Status::FINISHED_SUCCESS ;
-    }
-    else if (eject_timer.done())
-    {
-	//
-	// Otherwise, if our eject timeout has finished, we consider
-	// this step done
-	//
-	ret = Step::Status::FINISHED_SUCCESS ;
-	reason_sensor = false ;
-    }
-    
+	if (mState == EjectState::Done)
+		ret = Step::Status::FINISHED_SUCCESS ;
+		
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Eject step complete - " ;
-	logger << (reason_sensor ? "sensor" : "timer") ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Eject step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
-	
 }
 
 Toplevel::Goal Eject::run(Run_info info){
     return run(info,{});
 }
 
-Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals){
-    //
-    // This is to detect against the cube detector not working.  If the
-    // cube detector is not detecting a cube when we start and eject
-    // step, we assume the detector is not working.  While the cube could
-    // have fallen out, and this is more likely, assuming a broken detector
-    // is the safer assumption.
-    //
-    sensor_ok = info.status.grabber.has_cube ;
+Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
+{
+	switch(mState)
+	{
+	case EjectState::Start:
+		if (info.status.grabber.has_cube)
+		{
+			mState = EjectState::CubeSensorOn ;
+		}
+		else
+		{
+			mState = EjectState::WaitingOnTime ;
+			eject_timer.set(1.0) ;
+		}
+		break ;
+
+	case EjectState::CubeSensorOn:
+		if (!info.status.grabber.has_cube)
+		{
+			eject_timer.set(0.50) ;
+			mState = EjectState::WaitingOnTime ;
+		}
+		break ;
+
+	case EjectState::WaitingOnTime:
+		if (eject_timer.done())
+			mState = EjectState::Done ;
+		break ;
+
+	case EjectState::Done:
+		break ;
+	}		
 
     //
     // Update the timer.  When it expires we consider this step done no matter
@@ -839,10 +844,10 @@ Step::Status Drop_grabber::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS) 
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Drop grabber step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Drop grabber step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
@@ -885,14 +890,14 @@ void test_step(Step a){
     //abort if they do change
 
     while(to_visit.size()){
-	auto f=to_visit.front();
-	to_visit.pop();
+		auto f=to_visit.front();
+		to_visit.pop();
 
-	if(visited.find(f)!=visited.end()) continue;
+		if(visited.find(f)!=visited.end()) continue;
 
-	visited|=f;
+		visited|=f;
 
-	//TODO: Actually run some data on it.
+		//TODO: Actually run some data on it.
     }
 
     //see that will at some point "done" can be set

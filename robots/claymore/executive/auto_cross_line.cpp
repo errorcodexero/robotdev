@@ -14,8 +14,6 @@ static vector<Step> steps =
 {
     startAuto,
     Step(Drive_param("auto:cross_line:segment1",120.0, false)),
-    waitForLifter,
-    eject,
     endAuto
 } ;
 
