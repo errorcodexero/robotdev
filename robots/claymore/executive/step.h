@@ -313,9 +313,24 @@ struct Eject: Step_impl_inner<Eject>
 {
 	enum class EjectState
 	{
+		//
+		// We are ready to start an eject operation
+		//
 		Start,
+
+		//
+		// We are waiting on a timer to expire to be done
+		//
 		WaitingOnTime,
-		CubeSensorOn,
+
+		//
+		// Waiting for the cube sensor to turn off (or the timer)
+		//
+		WaitingCubeSensorOff,
+
+		//
+		// Eject is done
+		//
 		Done
 	} ;
 	
