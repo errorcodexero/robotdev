@@ -514,7 +514,7 @@ bool operator==(Robot_outputs a,Robot_outputs b){
 			return 0;
 		}
 	}
-	return a.pump==b.pump && a.navx==b.navx && a.driver_station==b.driver_station;
+	return a.pump==b.pump && a.navx==b.navx && a.primary_driver_station==b.primary_driver_station && a.secondary_driver_station == b.secondary_driver_station;
 }
 
 bool operator!=(Robot_outputs a,Robot_outputs b){
@@ -581,7 +581,8 @@ ostream& operator<<(ostream& o,Robot_outputs a){
 	}
 	o<<" navx:"<<a.navx;
 	o<<" pump:"<<a.pump;
-	o<<" driver_station_output:"<<a.driver_station;
+	o<<" primary_driver_station_output:"<<a.primary_driver_station;
+	o<<" secondary_driver_station_output:"<<a.secondary_driver_station;
 	return o<<")";
 }
 

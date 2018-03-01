@@ -42,6 +42,8 @@ struct Panel{
 	Panel();
 };
 
+const unsigned OI_LIGHTS_PORT = 3;
+
 bool operator!=(Panel const&,Panel const&);
 std::ostream& operator<<(std::ostream&,Panel);
 

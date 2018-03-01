@@ -79,7 +79,8 @@ void print_diff(ostream& o,Robot_outputs &a,Robot_outputs const& b){
 			a.digital_io[i]=b.digital_io[i];
 		}
 	}
-	print_diff(o,a.driver_station,b.driver_station);
+	print_diff(o,a.primary_driver_station,b.primary_driver_station);
+	print_diff(o,a.secondary_driver_station,b.secondary_driver_station);
 }
 
 void print_diff(ostream& o,Robot_inputs &a,Robot_inputs const& b){

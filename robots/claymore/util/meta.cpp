@@ -133,7 +133,8 @@ set<Robot_output> differences(Robot_outputs const& a,Robot_outputs const& b){
 	#undef CHECK_NUMBERED
 
 	#define X(A,B,C) if(a.C!=b.C) r|=Robot_output{B{}};
-	X(DRIVER_STATION,Driver_station,driver_station)\
+	X(DRIVER_STATION,Driver_station,primary_driver_station)\
+	X(DRIVER_STATION,Driver_station,secondary_driver_station)\
 	X(PUMP,Pump,pump)
 	#undef X
 	return r;

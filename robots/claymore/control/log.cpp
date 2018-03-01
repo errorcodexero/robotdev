@@ -28,7 +28,8 @@ string get_logfilename(){
 	X(digital_io) \
 	X(talon_srx) \
 	X(navx) \
-	X(driver_station) \
+	X(primary_driver_station) \
+	X(secondary_driver_station) \
 	X(pump)
 
 #define LOG_INNER(NAME) log(o,header,prefix+"_"#NAME,a.NAME);
