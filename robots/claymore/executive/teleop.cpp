@@ -280,6 +280,11 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		if((started_intake_with_cube && has_cube_state == HasCubeState::NoCube) || intake_timer.done())
 			collector_mode = Collector_mode::IDLE;
 		break;
+	case Collector_mode::CALIBRATE:
+		goals.grabber = Grabber::Goal::calibrate();
+		if(ready(info.status.grabber, Grabber::Goal::calibrate()))
+			collector_mode = Collector_mode::HOLD_CUBE;
+		break;
 	default: assert(0);
 	}	
 
@@ -328,15 +333,16 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.lifter = Lifter::Goal::lock(true);
 	}	
 
-	if(calibrate_trigger(info.panel.calibrate)) {
+	if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
 		Lifter::lifter_controller.setCalibrate(true);
-		Grabber::grabber_controller.setDoneCalibrating(false);
+		goals.lifter = Lifter::Goal::calibrate();
 	} else {
 		Lifter::lifter_controller.setCalibrate(false);	
 	}
-	if(info.panel.calibrate) {
-		goals.lifter = Lifter::Goal::calibrate();
-		goals.grabber = Grabber::Goal::calibrate();
+
+	if(calibrate_grabber_trigger(info.panel.calibrate_grabber)) {
+		Grabber::grabber_controller.setDoneCalibrating(false);
+		collector_mode = Collector_mode::CALIBRATE;
 	}
 
 	//if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;

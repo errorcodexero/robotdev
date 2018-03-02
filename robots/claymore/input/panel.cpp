@@ -22,7 +22,8 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 	X(drop)\
 	X(climb)\
 	X(wings)\
-	X(calibrate)
+	X(calibrate_grabber)\
+	X(calibrate_lifter)
 
 #define TWO_POS_SWITCHES \
 	X(grabber_auto)\
@@ -196,7 +197,8 @@ Panel interpret_oi(Joystick_data d){
 		p.drop = d.button[6];
 		p.climb = d.button[7];
 		p.wings = d.button[8];
-		p.calibrate = d.button[11];
+		p.calibrate_grabber = d.button[11];
+		p.calibrate_lifter = d.button[11];
 	}
 	{//Dials
 	}
@@ -250,9 +252,8 @@ Panel interpret_gamepad(Joystick_data d){
 	p.in_use = get_in_use(d);
 	if(!p.in_use) return p;
 	
-	p.auto_select=0;
+	p.auto_select = 0;
 
-	p.calibrate = d.button[Gamepad_button::LB];
 	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
@@ -265,6 +266,8 @@ Panel interpret_gamepad(Joystick_data d){
 	if(!alternate_operation) {
 		p.grabber_auto = true;
 		p.intake_auto = true;
+
+		p.calibrate_grabber = d.button[Gamepad_button::LB];
 
 		p.collect_closed = d.button[Gamepad_button::A];
 		p.collect_open = d.button[Gamepad_button::B];
@@ -300,6 +303,8 @@ Panel interpret_gamepad(Joystick_data d){
 	} else {
 		p.grabber_auto = false;
 		p.intake_auto = false;
+
+		p.calibrate_lifter = d.button[Gamepad_button::LB];
 		
 		p.grabber = Panel::Grabber::OFF;
 		p.intake = Panel::Intake::OFF;
