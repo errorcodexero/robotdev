@@ -71,7 +71,7 @@ Executive Teleop::next_mode(Next_mode_info info) {
 
 IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
-Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::DO_NOTHING),started_intake_with_cube(false),high_gear(false)
+Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::IDLE),started_intake_with_cube(false),high_gear(false)
 {
     has_cube_state = HasCubeState::NoCube ;
 }
@@ -126,44 +126,6 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		goals.drive = Drivebase::Goal::absolute(left, right, gear_shifter, false);
 	}
 
-	switch(collector_mode) {
-	case Collector_mode::DO_NOTHING:
-		goals.grabber = Grabber::Goal::stop();
-		goals.intake = Intake::Goal::off();
-		break;
-	case Collector_mode::GRABBING:
-		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-		goals.intake = Intake::Goal::off();
-		break;
-	case Collector_mode::COLLECT_OPEN:
-		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-		goals.intake = Intake::Goal::in();
-		if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
-		break;
-	case Collector_mode::COLLECT_CLOSED:
-		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-		goals.intake = Intake::Goal::in();
-		if(info.status.grabber.has_cube) collector_mode = Collector_mode::GRABBING;
-		break;
-	case Collector_mode::EJECT:
-	case Collector_mode::DROP:
-		if(collector_mode == Collector_mode::EJECT) {
-			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-			goals.intake = Intake::Goal::out();
-		} else {
-			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-			goals.intake = Intake::Goal::out(0.2);
-		}
-		intake_timer.update(info.in.now, info.in.robot_mode.enabled);
-		if((started_intake_with_cube && has_cube_state == HasCubeState::NoCube) || intake_timer.done())
-			collector_mode = Collector_mode::DO_NOTHING;
-		break;
-	default: assert(0);
-	}
-	//logger << "Collector: " << collector_mode << "\n";
-	//logger << "Intake: " << goals.intake << "\n";
-	//logger << "Grabber: " << goals.grabber << "\n";
-
 	//
 	// Note, this is a state machine
 	//
@@ -213,7 +175,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			// the lifter is on the robot.  This keeps the grabber holding the cube
 			// and shuts down the intake belts
 			//
-			collector_mode = Collector_mode::DO_NOTHING;
+			collector_mode = Collector_mode::IDLE;
 
 			if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
 				Lifter::lifter_controller.isCalibrated())
@@ -263,24 +225,81 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	} ;
 	cube_timer.update(info.in.now, info.in.robot_mode.enabled);
 
+	if(info.panel.collect_open) {
+		if(collector_mode == Collector_mode::COLLECT_OPEN)
+			collector_mode = Collector_mode::IDLE;
+		else
+			collector_mode = Collector_mode::COLLECT_OPEN;
+	}
+	if(info.panel.collect_closed) {
+		if(collector_mode == Collector_mode::COLLECT_CLOSED)
+			collector_mode = Collector_mode::IDLE;
+		else
+			collector_mode = Collector_mode::COLLECT_CLOSED;
+	}
+	if(info.panel.eject) {
+		collector_mode = Collector_mode::EJECT;
+		started_intake_with_cube = has_cube_state == HasCubeState::HasCube;
+		intake_timer.set(1.0);
+	}
+	if(info.panel.drop) {
+		collector_mode = Collector_mode::DROP;
+		started_intake_with_cube = has_cube_state == HasCubeState::HasCube;
+		intake_timer.set(0.5);
+	}
+
+	switch(collector_mode) {
+	case Collector_mode::IDLE:
+		goals.grabber = Grabber::Goal::idle();
+		goals.intake = Intake::Goal::off();
+		break;
+	case Collector_mode::HOLD_CUBE:
+		goals.grabber = Grabber::Goal::hold();
+		goals.intake = Intake::Goal::off();
+		break;
+	case Collector_mode::COLLECT_OPEN:
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+		goals.intake = Intake::Goal::in();
+		if(has_cube_state == HasCubeState::HasCube) collector_mode = Collector_mode::HOLD_CUBE;
+		break;
+	case Collector_mode::COLLECT_CLOSED:
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+		goals.intake = Intake::Goal::in();
+		if(has_cube_state == HasCubeState::HasCube) collector_mode = Collector_mode::HOLD_CUBE;
+		break;
+	case Collector_mode::EJECT:
+	case Collector_mode::DROP:
+		if(collector_mode == Collector_mode::EJECT) {
+			goals.grabber = Grabber::Goal::hold();
+			goals.intake = Intake::Goal::out();
+		} else {
+			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+			goals.intake = Intake::Goal::out(0.2);
+		}
+		intake_timer.update(info.in.now, info.in.robot_mode.enabled);
+		if((started_intake_with_cube && has_cube_state == HasCubeState::NoCube) || intake_timer.done())
+			collector_mode = Collector_mode::IDLE;
+		break;
+	case Collector_mode::CALIBRATE:
+		goals.grabber = Grabber::Goal::calibrate();
+		if(ready(info.status.grabber, Grabber::Goal::calibrate()))
+			collector_mode = Collector_mode::HOLD_CUBE;
+		break;
+	default: assert(0);
+	}	
+
 	if(info.panel.floor) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
-		collector_mode = Collector_mode::DO_NOTHING;
 	} else if(info.panel.exchange) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-		collector_mode = Collector_mode::DO_NOTHING;
 	} else if(info.panel.switch_) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
-		collector_mode = Collector_mode::DO_NOTHING;
 	} else if(info.panel.scale) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
-		collector_mode = Collector_mode::DO_NOTHING;
 	} else if(info.panel.lifter == Panel::Lifter::UP) {
 		lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
-		collector_mode = Collector_mode::DO_NOTHING;
 	} else if(info.panel.lifter == Panel::Lifter::DOWN) {
 		lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
-		collector_mode = Collector_mode::DO_NOTHING;
 	} else if(ready(status(info.status.lifter), lifter_goal)) {
 		lifter_goal = Lifter::Goal::stop();
 	}
@@ -312,30 +331,18 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.status.lifter.at_climbed_height){
 		logger << "C\n";
 		goals.lifter = Lifter::Goal::lock(true);
-	}
+	}	
 
-	if(info.panel.collect_open) collector_mode = Collector_mode::COLLECT_OPEN;
-	if(info.panel.collect_closed) collector_mode = Collector_mode::COLLECT_CLOSED;
-	if(info.panel.eject) {
-		collector_mode = Collector_mode::EJECT;
-		started_intake_with_cube = has_cube_state == HasCubeState::HasCube;
-		intake_timer.set(1.0);
-	}
-	if(info.panel.drop) {
-		collector_mode = Collector_mode::DROP;
-		started_intake_with_cube = has_cube_state == HasCubeState::HasCube;
-		intake_timer.set(0.5);
-	}
-
-	if(calibrate_trigger(info.panel.calibrate)) {
+	if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
 		Lifter::lifter_controller.setCalibrate(true);
-		Grabber::grabber_controller.setDoneCalibrating(false);
+		goals.lifter = Lifter::Goal::calibrate();
 	} else {
 		Lifter::lifter_controller.setCalibrate(false);	
 	}
-	if(info.panel.calibrate) {
-		goals.lifter = Lifter::Goal::calibrate();
-		goals.grabber = Grabber::Goal::calibrate();
+
+	if(calibrate_grabber_trigger(info.panel.calibrate_grabber)) {
+		Grabber::grabber_controller.setDoneCalibrating(false);
+		collector_mode = Collector_mode::CALIBRATE;
 	}
 
 	//if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
@@ -344,7 +351,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	if(info.panel.wings) goals.lifter = Lifter::Goal::lock();
 
 	if(!info.panel.grabber_auto) {
-		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::stop();
+		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::idle();
 		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::open();
 		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::close();
 	}

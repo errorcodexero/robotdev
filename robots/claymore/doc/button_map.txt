@@ -40,7 +40,8 @@ Gunner:
  Start      - Climb/wing lock
  Back       - Wing release
  RB         - Alternative Operation (AO) - changes what other buttons do if held
- LB         - Calibrate
+ LB         - Calibrate grabber
+              AO: Calibrate lifter
  RT         - Lifter high power
  LT         - Climb
  L_Joy:
