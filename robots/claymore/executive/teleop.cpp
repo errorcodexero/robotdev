@@ -175,7 +175,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			// the lifter is on the robot.  This keeps the grabber holding the cube
 			// and shuts down the intake belts
 			//
-			collector_mode = Collector_mode::IDLE;
+			collector_mode = Collector_mode::HOLD_CUBE;
 
 			if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
 				Lifter::lifter_controller.isCalibrated())
@@ -188,7 +188,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 				// Also, if the lifter has not been calibrated, we never move the lifter.  We want it
 				// to stay on the floor until the lifter is calibrated.
 				//
-				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+				collect_delay_timer.set(0.5);
 			}
 			has_cube_state = HasCubeState::HasCube ;
 	    }
@@ -201,7 +201,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			// signal may have just disappeared temporarily.  Start a timer to see if the
 			// cube is really gone
 			//
-			cube_timer.set(0.5) ;
+			paramsInput* input_params = paramsInput::get();
+			cube_timer.set(input_params->getValue("teleop:collection_delay", 0.5)) ;
 			has_cube_state = HasCubeState::MaybeLostCube ;
 	    }
 	    break ;
@@ -225,13 +226,17 @@ Toplevel::Goal Teleop::run(Run_info info) {
 	} ;
 	cube_timer.update(info.in.now, info.in.robot_mode.enabled);
 
-	if(info.panel.collect_open) {
+	collect_delay_timer.update(info.in.now, info.in.robot_mode.enabled);
+	if(collect_delay_trigger(collect_delay_timer.done()))
+		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+
+	if(collect_open_trigger(info.panel.collect_open)) {
 		if(collector_mode == Collector_mode::COLLECT_OPEN)
 			collector_mode = Collector_mode::IDLE;
 		else
 			collector_mode = Collector_mode::COLLECT_OPEN;
 	}
-	if(info.panel.collect_closed) {
+	if(collect_closed_trigger(info.panel.collect_closed)) {
 		if(collector_mode == Collector_mode::COLLECT_CLOSED)
 			collector_mode = Collector_mode::IDLE;
 		else
@@ -286,7 +291,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			collector_mode = Collector_mode::HOLD_CUBE;
 		break;
 	default: assert(0);
-	}	
+	}
+	logger << "Collector mode: " << collector_mode << "\n";
 
 	if(info.panel.floor) {
 		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
@@ -327,7 +333,7 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		logger << "B\n";
 		goals.lifter = Lifter::Goal::low_gear();
 	}
-	logger << "At Climb Height: " << info.status.lifter.at_climbed_height << "\n";
+	//logger << "At Climb Height: " << info.status.lifter.at_climbed_height << "\n";
 	if(info.status.lifter.at_climbed_height){
 		logger << "C\n";
 		goals.lifter = Lifter::Goal::lock(true);
@@ -361,6 +367,8 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		if(info.panel.intake == Panel::Intake::IN) goals.intake = Intake::Goal::in();
 		if(info.panel.intake == Panel::Intake::OUT) goals.intake = Intake::Goal::out();
 	}
+
+	logger << "Grabber goal: " << goals.grabber << "\n";
 
 	{
 		goals.lights.climbing = goals.lifter.preset_target() == LifterController::Preset::PREP_CLIMB;
