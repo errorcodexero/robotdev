@@ -518,7 +518,7 @@ bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
 //
 
 Calibrate_lifter::Calibrate_lifter(){
-    Lifter::lifter_controller.setCalibrate(true);
+	mInited = false ;
 }
 
 Step::Status Calibrate_lifter::done(Next_mode_info info){
@@ -538,6 +538,11 @@ Toplevel::Goal Calibrate_lifter::run(Run_info info){
 }
 
 Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals){
+	if (!mInited)
+	{
+		Lifter::lifter_controller.setCalibrate(true);
+		mInited = true ;
+	}
     goals.lifter = Lifter::Goal::calibrate();
     return goals;
 }
