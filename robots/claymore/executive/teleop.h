@@ -18,7 +18,7 @@ struct Teleop : Executive_impl<Teleop> {
 		Countdown_timer timer;
 	};
 
-	#define COLLECTOR_MODES X(DO_NOTHING) X(GRABBING) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
+	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
 	enum class Collector_mode{
 		#define X(NAME) NAME,
 		COLLECTOR_MODES
@@ -56,15 +56,15 @@ double set_drive_speed(double,double,double);
 
 inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode mode)
 {
-	#define COLLECTOR_MODES X(DO_NOTHING) X(GRABBING) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
+	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
 	
 	switch(mode)
 	{
-	case Teleop::Collector_mode::DO_NOTHING:
-		logger << "DO_NOTHING" ;
+	case Teleop::Collector_mode::IDLE:
+		logger << "IDLE" ;
 		break ;
-	case Teleop::Collector_mode::GRABBING:
-		logger << "GRABBING" ;
+	case Teleop::Collector_mode::HOLD_CUBE:
+		logger << "HOLD_CUBE" ;
 		break ;
 	case Teleop::Collector_mode::COLLECT_OPEN:
 		logger << "COLLECT_OPEN" ;
