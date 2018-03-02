@@ -20,16 +20,16 @@ drivebase:angle:pos:imax                 30.0
 drivebase:angle:pos:minv                 -0.8
 drivebase:angle:pos:maxv                 0.8
 
-drivebase:angle:neg:p                    0.015
+drivebase:angle:neg:p                    0.01
 drivebase:angle:neg:i                    0.0
-drivebase:angle:neg:d                    -0.00001
+drivebase:angle:neg:d                    -0.00002
 drivebase:angle:neg:f                    0.0
 drivebase:angle:neg:imax                 30.0
 drivebase:angle:neg:minv                 -0.8
 drivebase:angle:neg:maxv                 0.8
 
 drivebase:angle:reset:p			0
-drivebase:angle:reset:i			0.02
+drivebase:angle:reset:i			0.015
 drivebase:angle:reset:d			0
 drivebase:angle:reset:f			0
 drivebase:angle:reset:imax		10
@@ -73,7 +73,7 @@ lifter:threshold                         1.0
 
 lifter:climbing_difference               2500.0
 
-lifter:climb_power                       0.6
+lifter:climb_power                       1.0
 lifter:manual_power:low                  0.4
 lifter:manual_power:high                 0.8
 lifter:slowdown_power                    0.2
@@ -101,7 +101,7 @@ grabber:imax                             20.0
 
 grabber:threshold                        1.0
 
-grabber:hold_power                       -0.2
+grabber:hold_power                       -0.30
 
 grabber:samples                          5
 grabber:calibrate_threshold              0.1
@@ -121,10 +121,15 @@ auto:c_switch_l:segment1		52
 auto:c_switch_l:segment2		110
 auto:c_switch_l:segment3		50
 
-auto:r_switch_r:segment1		148
+auto:r_switch_r:segment1		136
 auto:r_switch_r:segment2		30
 
 auto:l_scale_r:segment1			223
 auto:l_scale_r:segment2			200
 auto:l_scale_r:segment3			22
 auto:l_scale_r:segment4			-22
+
+auto:r_scale_r:segment1			300
+auto:r_scale_r:segment2			12
+auto:r_scale_r:segment3			-12
+

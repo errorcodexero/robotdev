@@ -518,7 +518,7 @@ bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
 //
 
 Calibrate_lifter::Calibrate_lifter(){
-    Lifter::lifter_controller.setCalibrate(true);
+	mInited = false ;
 }
 
 Step::Status Calibrate_lifter::done(Next_mode_info info){
@@ -538,6 +538,11 @@ Toplevel::Goal Calibrate_lifter::run(Run_info info){
 }
 
 Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals){
+	if (!mInited)
+	{
+		Lifter::lifter_controller.setCalibrate(true);
+		mInited = true ;
+	}
     goals.lifter = Lifter::Goal::calibrate();
     return goals;
 }
@@ -875,7 +880,7 @@ bool Eject::operator==(Eject const& b)const{
 Drop_grabber::Drop_grabber(){}
 
 Step::Status Drop_grabber::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS) 
     {
 		messageLogger &logger = messageLogger::get() ;
@@ -892,8 +897,12 @@ Toplevel::Goal Drop_grabber::run(Run_info info){
 }
 
 Toplevel::Goal Drop_grabber::run(Run_info info,Toplevel::Goal goals){
-    goals.lifter = Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER);
-    goals.grabber = Grabber::Goal::stop();
+    Lifter::Goal drop_grabber_goal = Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER);
+    if(!ready(status(info.status.lifter), drop_grabber_goal))
+	goals.lifter = drop_grabber_goal;
+    else
+    	goals.lifter = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
+    goals.grabber = Grabber::Goal::hold();
     return goals;
 }
 

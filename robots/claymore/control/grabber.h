@@ -15,7 +15,7 @@ struct Grabber{
 
 	struct Goal{
 		public:
-		#define GRABBER_GOAL_MODES X(GO_TO_ANGLE) X(GO_TO_PRESET) X(OPEN) X(CLOSE) X(STOP) X(CALIBRATE)
+		#define GRABBER_GOAL_MODES X(IDLE) X(HOLD) X(OPEN) X(CLOSE) X(GO_TO_ANGLE) X(GO_TO_PRESET) X(CALIBRATE)
 		enum class Mode{
 			#define X(MODE) MODE,
 			GRABBER_GOAL_MODES
@@ -33,11 +33,12 @@ struct Grabber{
 		double target()const;
 		GrabberController::Preset preset_target()const;
 
-		static Goal go_to_angle(double);
-		static Goal go_to_preset(GrabberController::Preset);
+		static Goal idle();
+		static Goal hold();
 		static Goal open();
 		static Goal close();
-		static Goal stop();
+		static Goal go_to_angle(double);
+		static Goal go_to_preset(GrabberController::Preset);
 		static Goal calibrate();
 	};
 

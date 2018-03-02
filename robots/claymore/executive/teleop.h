@@ -18,7 +18,7 @@ struct Teleop : Executive_impl<Teleop> {
 		Countdown_timer timer;
 	};
 
-	#define COLLECTOR_MODES X(DO_NOTHING) X(GRABBING) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
+	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(CALIBRATE)
 	enum class Collector_mode{
 		#define X(NAME) NAME,
 		COLLECTOR_MODES
@@ -27,13 +27,18 @@ struct Teleop : Executive_impl<Teleop> {
 
 #define TELEOP_ITEMS(X)					       \
 	X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges)	       \
-	X(Lifter::Goal, lifter_goal)		       \
+	X(Lifter::Goal, lifter_goal)                           \
 	X(Wings::Goal, wings_goal)			       \
 	X(Collector_mode, collector_mode)		       \
+	X(Posedge_trigger, collect_open_trigger)               \
+	X(Posedge_trigger, collect_closed_trigger)             \
+	X(Countdown_timer, collect_delay_timer)                \
+	X(Posedge_trigger, collect_delay_trigger)              \
 	X(Countdown_timer, intake_timer)		       \
 	X(bool, started_intake_with_cube)		       \
-	X(Posedge_trigger, calibrate_trigger)	       \
-	X(Countdown_timer, cube_timer)		       \
+	X(Posedge_trigger, calibrate_lifter_trigger)	       \
+	X(Posedge_trigger, calibrate_grabber_trigger)          \
+	X(Countdown_timer, cube_timer)		               \
 	X(bool, high_gear)				       \
 	X(HasCubeState, has_cube_state)
 	STRUCT_MEMBERS(TELEOP_ITEMS)
@@ -56,15 +61,15 @@ double set_drive_speed(double,double,double);
 
 inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode mode)
 {
-	#define COLLECTOR_MODES X(DO_NOTHING) X(GRABBING) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP)
+	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(CALIBRATE)
 	
 	switch(mode)
 	{
-	case Teleop::Collector_mode::DO_NOTHING:
-		logger << "DO_NOTHING" ;
+	case Teleop::Collector_mode::IDLE:
+		logger << "IDLE" ;
 		break ;
-	case Teleop::Collector_mode::GRABBING:
-		logger << "GRABBING" ;
+	case Teleop::Collector_mode::HOLD_CUBE:
+		logger << "HOLD_CUBE" ;
 		break ;
 	case Teleop::Collector_mode::COLLECT_OPEN:
 		logger << "COLLECT_OPEN" ;
@@ -78,6 +83,9 @@ inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode m
 	case Teleop::Collector_mode::DROP:
 		logger << "DROP" ;
 		break ;
+	case Teleop::Collector_mode::CALIBRATE:
+		logger << "CALIBRATE" ;
+		break;
 	default:
 		assert(false) ;
 		break ;

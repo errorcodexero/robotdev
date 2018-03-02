@@ -46,17 +46,23 @@ GrabberController::Preset Grabber::Goal::preset_target()const{
 	return preset_target_;
 }
 
-Grabber::Goal::Goal():mode_(Grabber::Goal::Mode::STOP),target_(0.0),preset_target_(GrabberController::Preset::CLOSED){}
+Grabber::Goal::Goal():mode_(Grabber::Goal::Mode::IDLE),target_(0.0),preset_target_(GrabberController::Preset::CLOSED){}
+
+Grabber::Goal Grabber::Goal::idle(){
+	Grabber::Goal a;
+	a.mode_ = Grabber::Goal::Mode::IDLE;
+	return a;
+}
+
+Grabber::Goal Grabber::Goal::hold(){
+	Grabber::Goal a;
+	a.mode_ = Grabber::Goal::Mode::HOLD;
+	return a;
+}
 
 Grabber::Goal Grabber::Goal::open(){
 	Grabber::Goal a;
 	a.mode_ = Grabber::Goal::Mode::OPEN;
-	return a;
-}
-
-Grabber::Goal Grabber::Goal::stop(){
-	Grabber::Goal a;
-	a.mode_ = Grabber::Goal::Mode::STOP;
 	return a;
 }
 
@@ -95,7 +101,7 @@ Grabber::Status_detail::Status_detail():Status_detail(false, false, false, 0.0, 
 Grabber::Estimator::Estimator():last(){}
 
 std::set<Grabber::Goal> examples(Grabber::Goal*){
-	return {Grabber::Goal::open(),Grabber::Goal::stop(),Grabber::Goal::close(),Grabber::Goal::go_to_angle(0.0),Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED)};
+	return {Grabber::Goal::idle(),Grabber::Goal::hold(),Grabber::Goal::open(),Grabber::Goal::close(),Grabber::Goal::go_to_angle(0.0),Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED)};
 }
 
 std::set<Grabber::Output> examples(Grabber::Output*){
@@ -308,19 +314,24 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 
 	Grabber::Output out = 0.0;
 	switch(goal.mode()){
-		case Grabber::Goal::Mode::OPEN:
-			out = MANUAL_GRABBER_POWER;
-			logger << "OPEN\n";
+		case Grabber::Goal::Mode::IDLE:
+			Grabber::grabber_controller.idle(status.angle, status.time, status.dt);
+			out = 0.0;
+			logger << "IDLE\n";
 			break;
-		case Grabber::Goal::Mode::STOP:
+		case Grabber::Goal::Mode::HOLD:
 			Grabber::grabber_controller.idle(status.angle, status.time, status.dt);
 			out = input_params->getValue("grabber:hold_power", -0.1);
-			logger << "STOP\n";
+			logger << "HOLD\n";
 			break;
 		case Grabber::Goal::Mode::CLOSE:
 			out = -MANUAL_GRABBER_POWER;
 			logger << "CLOSE\n";
 			break;
+		case Grabber::Goal::Mode::OPEN:
+			out = MANUAL_GRABBER_POWER;
+			logger << "OPEN\n";
+			break;	
 		case Grabber::Goal::Mode::GO_TO_ANGLE:
 			logger.endMessage();
 			Grabber::grabber_controller.updateAngleOnChange(goal.target(), status.time);
@@ -361,9 +372,10 @@ Grabber::Status status(Grabber::Status s){
 
 bool ready(Grabber::Status status,Grabber::Goal goal){
 	switch(goal.mode()){
+		case Grabber::Goal::Mode::IDLE:
+		case Grabber::Goal::Mode::HOLD:
 		case Grabber::Goal::Mode::OPEN:
 		case Grabber::Goal::Mode::CLOSE:
-		case Grabber::Goal::Mode::STOP:
 			return true;
 		case Grabber::Goal::Mode::GO_TO_ANGLE:
 		case Grabber::Goal::Mode::GO_TO_PRESET:

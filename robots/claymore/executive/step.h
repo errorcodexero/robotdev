@@ -228,6 +228,7 @@ struct Wait_for_lifter: Step_impl_inner<Wait_for_lifter>{
 
 //Calibrate the lifter at the current height
 struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
+	bool mInited ;
     explicit Calibrate_lifter();
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
