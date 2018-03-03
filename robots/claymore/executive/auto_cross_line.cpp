@@ -13,6 +13,7 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
+    AUTO_PREAMBLE
     Step(Drive("auto:cross_line:segment1",120.0, false)),
     endAuto
 } ;

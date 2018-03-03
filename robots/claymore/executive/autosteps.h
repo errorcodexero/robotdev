@@ -22,6 +22,13 @@ static Step lifterToSwitch = Step(Lifter_to_preset(LifterController::Preset::SWI
 static Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
 static Step waitForLifter = Step(Wait_for_lifter()) ;
 static Step eject = Step(Eject()) ;
+static Step dropGrabber = Step(Drop_grabber());
+
+#define AUTO_PREAMBLE \
+	startAuto, \
+	calibrateLifter, \
+	dropGrabber, \
+	calibrateGrabber,
 
 //
 // Executive used to end each automode step

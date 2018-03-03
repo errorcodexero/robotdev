@@ -13,8 +13,7 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
-    calibrateLifter,
-    calibrateGrabber,
+    AUTO_PREAMBLE
     startLifterSwitch,
     Step(Drive("auto:l_switch_l:segment1", 148, false)),
     rotate90pos,
