@@ -39,8 +39,7 @@ struct Teleop : Executive_impl<Teleop> {
 	X(Posedge_trigger, calibrate_lifter_trigger)	       \
 	X(Posedge_trigger, calibrate_grabber_trigger)          \
 	X(Countdown_timer, cube_timer)		               \
-	X(bool, high_gear)				       \
-	X(HasCubeState, has_cube_state)
+	X(bool, high_gear)				       
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 
 	Executive next_mode(Next_mode_info);
