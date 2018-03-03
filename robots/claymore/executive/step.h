@@ -260,6 +260,8 @@ struct Lifter_to_preset: Step_impl_inner<Lifter_to_preset>
 
 //Calibrate the grabber at the current angle
 struct Calibrate_grabber: Step_impl_inner<Calibrate_grabber>{
+    bool mInited ;
+    
     explicit Calibrate_grabber();
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);

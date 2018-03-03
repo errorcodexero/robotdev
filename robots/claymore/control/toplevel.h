@@ -14,7 +14,7 @@
 #define TOPLEVEL_ITEMS \
 	X(Pump,pump,Pump::Goal::AUTO)\
 	X(Drivebase,drive,)\
-	X(Grabber,grabber,Grabber::Goal::hold_if_cube())\
+	X(Grabber,grabber,Grabber::Goal::hold())\
 	X(Intake,intake,Intake::Goal::off())\
 	X(Lifter,lifter,Lifter::Goal::stop())\
 	X(Lights,lights,)\

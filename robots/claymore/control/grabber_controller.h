@@ -3,6 +3,7 @@
 
 #include "pidctrl.h"
 #include "params_parser.h"
+#include "countdown_timer.h"
 
 class GrabberController {
 public:
@@ -13,15 +14,62 @@ public:
 	STOWED                          ///< Move the grabber to the 'stowed' position
     };
 
+    enum class CubeState {
+	NoCube,
+	MaybeHasCube,
+	HasCube,
+	MaybeLostCube,
+    } ;
+
+    enum class ArmState {
+	CALIBRATING,		       ///< Calibrating the grabber to establish position reference
+	IDLE,			       ///< Let the grabber be idle
+	HOLD,			       ///< Hold a cube in the grabber
+        ANGLE,			       ///< Move the grabber to a position
+	OPEN,			       ///< Manually open the grabber arm
+	CLOSE,			       ///< Manually close the grabber arm
+    } ;
+
     /// \brief create the grabber controller object
     GrabberController();
 
-    /// \brief set the params object used to extract parameters from the params file
-    void setParams(paramsInput* input_params);
+    /// \brief return the cube state for the grabber
+    CubeState getCubeState()
+    {
+	return mCubeState ;
+    }
 
-    /// \brief get the params object used to extract parameters from the params file
-    /// \returns the params object
-    paramsInput* getParams();
+    /// \brief returnt he ARM state for the grabber
+    ArmState getArmState()
+    {
+	return mArmState ;
+    }
+
+    /// \brief set the arm state to idle
+    void setIdle()
+    {
+	mArmState = ArmState::IDLE ;
+    }
+
+    void hold()
+    {
+	mArmState = ArmState::HOLD ;
+    }
+
+    void open()
+    {
+	mArmState = ArmState::OPEN ;
+    }
+
+    void close()
+    {
+	mArmState = ArmState::CLOSE ;
+    }
+
+    void calibrate()
+    {
+	mArmState = ArmState::CALIBRATING ;
+    }
 
     /// \brief move the grabber to a specific angle
     /// \param angle the angle in degrees for the grabber
@@ -36,26 +84,11 @@ public:
     /// \brief this method is called each time the robot loop is run to update the grabber
     /// This method uses a PID controller to position the grabber at the desired angle
     /// \param angle the current angle of the grabber
+    /// \param cubesensor the state of the cube sensor
     /// \param time the current time in seconds
     /// \param dt the time that has elapsed since the last time this was called
     /// \param out the output voltage for the grabber motor
-    void update(double angle, double time, double dt, double &out);
-
-    /// \brief this method is called when the grabber is idle
-    /// \param angle the current height for the grabber
-    /// \param time the current time
-    /// \param dt the time since the last this this was called
-    void idle(double angle, double time, double dt);
-
-    /// \brief this method updates the angle target internally when a new target is required
-    /// \param angle the new requested angle in inches
-    /// \param time the start time of the new request
-    void updateAngleOnChange(double angle, double time);
-    
-    /// \brief this method updates the angle target internally when a new target is required
-    /// \param preset the preset we need to hit
-    /// \param time the start time of the new request
-    void updateAngleOnChange(Preset preset, double time);
+    void update(double angle, bool cubesensor, double time, double dt, double &out);
 
     /// \brief returns true when the grabber has reached its desired angle
     /// \returns true when the grabber has reached its desired angle
@@ -63,15 +96,27 @@ public:
 
     /// \brief sets mDoneCalibrating to the parameter
     /// \param done whether the grabber has finished calibrating
-    void setDoneCalibrating(bool done);
-
-    /// \brief returns whether the grabber has finished calibrating
-    /// \returns true if the grabber has finished calibrating
-    bool getDoneCalibrating();
+    bool isCalibrating()
+    {
+	return mArmState == ArmState::CALIBRATING ;
+    }
 
     /// \brief returns the angle associated with a preset
     /// \param preset the preset of interest
     double presetToAngle(Preset preset);
+
+    /// \brief check for transitions of the cube state
+    bool cubeStateTransition(CubeState prev, CubeState current)
+    {
+	return mPrevCubeState == prev && mCubeState == current ;
+    }
+					  
+
+private:
+    void processCubeState(bool cubesensor, double now) ;
+    void idleState(double angle, double time, double dt) ;
+    void calibrate(double angle, double dt, double &out) ;
+    void angleState(double angle, double time, double dt, double &out) ;
 
 private:
     // Indicates the mode of the grabber
@@ -140,7 +185,52 @@ private:
     //
     // Represents whether or not the grabber has finished calibration
     //
-    bool mDoneCalibrating;
+    bool mCalibrated ;
+
+    //
+    // The state of the cube in the grabber
+    //
+    CubeState mCubeState ;
+
+    //
+    // The previous cube state
+    //
+    CubeState mPrevCubeState ;
+
+    //
+    // The state of the grabber
+    //
+    ArmState mArmState ;
+
+    //
+    // The timer for the cube state
+    //
+    Countdown_timer mCubeStateTimer ;
+
+    //
+    // The angle for the grabber stowed
+    //
+    double mMaximumAngle ;
+
+    //
+    // The angle for the grabber at its maximum closed state
+    //
+    double mMinimumAngle ;
+
+    //
+    // The angle for close collecting
+    //
+    double mCloseCollectAngle ;
+
+    //
+    // The angle for open collecting
+    //
+    double mOpenCollectAngle ;
+
+    //
+    // The angle for stowing the grabber for climbing
+    //
+    double mStowedAngle ;
 };
 
 #endif
