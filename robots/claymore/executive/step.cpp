@@ -512,6 +512,8 @@ Step::Status Calibrate_lifter::done(Next_mode_info info){
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
 		logger << "Calibrate Lifter Step done" ;
 		logger.endMessage() ;
+
+		Lifter::lifter_controller.setCalibrate(false);
     }
     return ret ;
 }
@@ -592,6 +594,8 @@ Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals)
 		mInited = false ;
     }
     goals.lifter = Lifter::Goal::go_to_height(mTargetHeight);
+    if(info.status.grabber.has_cube)
+        goals.grabber = Grabber::Goal::hold();
     return goals;
 }
 
@@ -637,6 +641,8 @@ Toplevel::Goal Lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
 		mInit = false;
     }
     goals.lifter = Lifter::Goal::go_to_preset(mPreset);
+    if(info.status.grabber.has_cube)
+        goals.grabber = Grabber::Goal::hold();
     return goals;
 }
 

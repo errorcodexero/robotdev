@@ -92,6 +92,12 @@ Grabber::Goal Grabber::Goal::calibrate(){
 	return a;
 }
 
+Grabber::Goal Grabber::Goal::hold_if_cube(){
+	Grabber::Goal a;
+	a.mode_ = Grabber::Goal::Mode::HOLD_IF_CUBE;
+	return a;
+}
+
 Grabber::Input::Input(int t, bool hc, bool ls):ticks(t),has_cube(hc),limit_switch(ls){}
 Grabber::Input::Input():Input(0, false, false){}
 
@@ -101,7 +107,16 @@ Grabber::Status_detail::Status_detail():Status_detail(false, false, false, 0.0, 
 Grabber::Estimator::Estimator():last(){}
 
 std::set<Grabber::Goal> examples(Grabber::Goal*){
-	return {Grabber::Goal::idle(),Grabber::Goal::hold(),Grabber::Goal::open(),Grabber::Goal::close(),Grabber::Goal::go_to_angle(0.0),Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED)};
+	return {
+		Grabber::Goal::idle(),
+		Grabber::Goal::hold(),
+		Grabber::Goal::open(),
+		Grabber::Goal::close(),
+		Grabber::Goal::go_to_angle(0.0),
+		Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED),
+		Grabber::Goal::calibrate(),
+		Grabber::Goal::hold_if_cube()
+	};
 }
 
 std::set<Grabber::Output> examples(Grabber::Output*){
@@ -308,6 +323,7 @@ Grabber::Status Grabber::Estimator::get()const{
 Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 	messageLogger &logger = messageLogger::get();
 	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+	logger << "Has cube: " << status.has_cube << "\n";
 	logger << "Grabber goal: ";
 
 	paramsInput* input_params = Grabber::grabber_controller.getParams();
@@ -350,6 +366,13 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
 			out = -CALIBRATE_POWER;
 			logger << "CALIBRATE\n";
 			break;
+		case Grabber::Goal::Mode::HOLD_IF_CUBE:
+			if(status.has_cube)
+				out = input_params->getValue("grabber:hold_power", -0.1);
+			else
+				out = 0.0;
+			logger << "HOLD_IF_CUBE\n";
+			break;
 		default:
 			assert(0);
 	}
@@ -376,6 +399,7 @@ bool ready(Grabber::Status status,Grabber::Goal goal){
 		case Grabber::Goal::Mode::HOLD:
 		case Grabber::Goal::Mode::OPEN:
 		case Grabber::Goal::Mode::CLOSE:
+		case Grabber::Goal::Mode::HOLD_IF_CUBE:
 			return true;
 		case Grabber::Goal::Mode::GO_TO_ANGLE:
 		case Grabber::Goal::Mode::GO_TO_PRESET:

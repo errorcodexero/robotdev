@@ -323,6 +323,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     paramsInput* input_params = Lifter::lifter_controller.getParams();
 
     if(Lifter::lifter_controller.calibrating()) encoder_offset = in.ticks;
+    logger << "Encoder offset: " << encoder_offset << "\n";
 
     /*
     const double TICKS_PER_MOTOR_REVOLUTION = 12.0;

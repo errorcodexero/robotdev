@@ -148,12 +148,13 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 #ifdef DEBUG
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
-		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		logger.enableSubsystem(SUBSYSTEM_LIFTER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
-		logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		//logger.enableSubsystem(SUBSYSTEM_TELEOP);
 		//logger.enableSubsystem(SUBSYSTEM_PANEL);
+		//logger.enableSubsystem(SUBSYSTEM_SOLENOIDS);
 #else
 		//
 		// In competition mode, we always want the drivebase and auto mode
@@ -375,10 +376,17 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			if(r) error_code|=2;
 		}
 
+		messageLogger &logger = messageLogger::get();
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_SOLENOIDS) ;
+		logger << "Solenoids: ";
 		for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
+			logger << out.solenoid[i];
+			logger << ", ";
 			int r=set_solenoid(i,out.solenoid[i]);
 			if(r) error_code|=16;
 		}
+		logger.endMessage();
+
 		for(unsigned i=0;i<Robot_outputs::RELAYS;i++){
 			int r=set_relay(i,out.relay[i]);
 			if(r) error_code|=32;

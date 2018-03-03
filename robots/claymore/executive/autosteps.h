@@ -27,7 +27,6 @@ static Step dropGrabber = Step(Drop_grabber());
 #define AUTO_PREAMBLE \
 	startAuto, \
 	calibrateLifter, \
-	dropGrabber, \
 	calibrateGrabber,
 
 //

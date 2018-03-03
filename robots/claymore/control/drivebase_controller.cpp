@@ -248,7 +248,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 
 			double remaining_distance = fabs(mTarget - avg_dist);
 			double velocity = (avg_dist - mLastDistance) / dt;
-			if(fabs(velocity) > velocity_threshold) {
+			if(fabs(velocity) > velocity_threshold && mHistory.size() > 0) {
 				if(remaining_distance < low_gear_threshold) { 
 					if(mHighGear)
 					{

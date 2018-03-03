@@ -15,7 +15,7 @@ struct Grabber{
 
 	struct Goal{
 		public:
-		#define GRABBER_GOAL_MODES X(IDLE) X(HOLD) X(OPEN) X(CLOSE) X(GO_TO_ANGLE) X(GO_TO_PRESET) X(CALIBRATE)
+		#define GRABBER_GOAL_MODES X(IDLE) X(HOLD) X(OPEN) X(CLOSE) X(GO_TO_ANGLE) X(GO_TO_PRESET) X(CALIBRATE) X(HOLD_IF_CUBE)
 		enum class Mode{
 			#define X(MODE) MODE,
 			GRABBER_GOAL_MODES
@@ -40,6 +40,7 @@ struct Grabber{
 		static Goal go_to_angle(double);
 		static Goal go_to_preset(GrabberController::Preset);
 		static Goal calibrate();
+		static Goal hold_if_cube();
 	};
 
 	using Output = double;

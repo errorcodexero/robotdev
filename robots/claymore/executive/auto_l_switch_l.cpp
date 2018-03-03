@@ -14,10 +14,12 @@ static vector<Step> steps =
 {
     startAuto,
     AUTO_PREAMBLE
-    startLifterSwitch,
+    startLifterExch,
     Step(Drive("auto:l_switch_l:segment1", 148, false)),
     rotate90pos,
-    Step(Drive("auto:l_switch_l:segment1", 18, true)),
+    startLifterSwitch,
+    Step(Wait(0.5)),
+    Step(Drive("auto:l_switch_l:segment2", 18, true)),
     waitForLifter,
     eject,
     endAuto

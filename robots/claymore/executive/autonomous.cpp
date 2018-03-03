@@ -4,7 +4,7 @@
 #include "step.h"
 #include "message_logger.h"
 
-#define AUTOMODE 96
+#define AUTOMODE 92
 
 using namespace std;
 
@@ -173,6 +173,9 @@ Executive get_auto_mode(Next_mode_info info)
 		break ;
 	case 96:
 		auto_program = right_switch_right;
+		break;
+	case 97:
+		auto_program = left_switch_left;
 		break;
 
     case 100:

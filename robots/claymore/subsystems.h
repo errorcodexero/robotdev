@@ -5,6 +5,7 @@
 #define SUBSYSTEM_DIGITALIO                     (1 << 4)
 #define SUBSYSTEM_TELEOP                        (1 << 5)
 #define SUBSYSTEM_PANEL                         (1 << 6)
-#define SUBSYSTEM_AUTONOMOUS					(1 << 7)
+#define SUBSYSTEM_AUTONOMOUS			(1 << 7)
+#define SUBSYSTEM_SOLENOIDS                     (1 << 8)
 
 #define SUBSYSTEM_ALL				(0xffffffffffffffff)
