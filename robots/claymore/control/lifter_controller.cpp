@@ -2,6 +2,9 @@
 #include "message_logger.h"
 #include "../subsystems.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std ;
 
 LifterController::LifterController() {
     mMode = Mode::IDLE;
@@ -46,17 +49,28 @@ void LifterController::moveToHeight(double height, double current_height, double
 
     double p, i, d, f, imax;
     if(current_height < height) {
-	p = mInputParams->getValue("lifter:up:p", 0.01);
-	i = mInputParams->getValue("lifter:up:i", 0.0);
-	d = mInputParams->getValue("lifter:up:d", 0.0);
-	f = mInputParams->getValue("lifter:up:f", 0.0);
-	imax = mInputParams->getValue("lifter:up:imax", 1000.0);
+		p = mInputParams->getValue("lifter:up:p", 0.01);
+		i = mInputParams->getValue("lifter:up:i", 0.0);
+		d = mInputParams->getValue("lifter:up:d", 0.0);
+		f = mInputParams->getValue("lifter:up:f", 0.0);
+		imax = mInputParams->getValue("lifter:up:imax", 1000.0);
     } else {
-	p = mInputParams->getValue("lifter:down:p", 0.01);
-	i = mInputParams->getValue("lifter:down:i", 0.0);
-	d = mInputParams->getValue("lifter:down:d", 0.0);
-	f = mInputParams->getValue("lifter:down:f", 0.0);
-	imax = mInputParams->getValue("lifter:down:imax", 1000.0);
+		if (current_height - height > 6.0)
+		{
+			p = mInputParams->getValue("lifter:down:p", 0.01);
+			i = mInputParams->getValue("lifter:down:i", 0.0);
+			d = mInputParams->getValue("lifter:down:d", 0.0);
+			f = mInputParams->getValue("lifter:down:f", 0.0);
+			imax = mInputParams->getValue("lifter:down:imax", 1000.0);
+		}
+		else
+		{
+			p = mInputParams->getValue("lifter:downsmall:p", 0.01);
+			i = mInputParams->getValue("lifter:downsmall:i", 0.0);
+			d = mInputParams->getValue("lifter:downsmall:d", 0.0);
+			f = mInputParams->getValue("lifter:downsmall:f", 0.0);
+			imax = mInputParams->getValue("lifter:downsmall:imax", 1000.0);
+		}
     }
 	
     mHeightPID.Init(p, i, d, f, -0.8, 0.8, imax);
@@ -150,8 +164,8 @@ void LifterController::updateHeightOnChange(double height, double current_height
     // not initialize for the new height
     //
     if (std::fabs(height - mLastTarget) > mHeightThreshold || mManuallyAdjusted) {
-	moveToHeight(height, current_height, time);
-	mLastTarget = height;
+		moveToHeight(height, current_height, time);
+		mLastTarget = height;
     }
 }
 

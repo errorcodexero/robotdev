@@ -4,31 +4,32 @@
 #include "pidctrl.h"
 #include "params_parser.h"
 #include "countdown_timer.h"
+#include <iostream>
 
 class GrabberController {
 public:
     /// \brief the presets that the grabber already knows about.
     enum class Preset {
-	CLOSED,				///< Move the grabber to the 'closed' position
-	OPEN,                           ///< Move the grabber to the 'open' position
-	STOWED                          ///< Move the grabber to the 'stowed' position
-    };
+		CLOSED,				///< Move the grabber to the 'closed' position
+		OPEN,                           ///< Move the grabber to the 'open' position
+		STOWED                          ///< Move the grabber to the 'stowed' position
+	};
 
     enum class CubeState {
-	NoCube,
-	MaybeHasCube,
-	HasCube,
-	MaybeLostCube,
-    } ;
+		NoCube,
+		MaybeHasCube,
+		HasCube,
+		MaybeLostCube,
+	} ;
 
     enum class ArmState {
-	CALIBRATING,		       ///< Calibrating the grabber to establish position reference
-	IDLE,			       ///< Let the grabber be idle
-	HOLD,			       ///< Hold a cube in the grabber
-        ANGLE,			       ///< Move the grabber to a position
-	OPEN,			       ///< Manually open the grabber arm
-	CLOSE,			       ///< Manually close the grabber arm
-    } ;
+		CALIBRATING,	       ///< Calibrating the grabber to establish position reference
+		IDLE,			       ///< Let the grabber be idle
+		HOLD,			       ///< Hold a cube in the grabber
+		ANGLE,			       ///< Move the grabber to a position
+		OPEN,			       ///< Manually open the grabber arm
+		CLOSE,			       ///< Manually close the grabber arm
+	} ;
 
     /// \brief create the grabber controller object
     GrabberController();
@@ -36,39 +37,39 @@ public:
     /// \brief return the cube state for the grabber
     CubeState getCubeState()
     {
-	return mCubeState ;
+		return mCubeState ;
     }
 
     /// \brief returnt he ARM state for the grabber
     ArmState getArmState()
     {
-	return mArmState ;
+		return mArmState ;
     }
 
     /// \brief set the arm state to idle
     void setIdle()
     {
-	mArmState = ArmState::IDLE ;
+		mArmState = ArmState::IDLE ;
     }
 
     void hold()
     {
-	mArmState = ArmState::HOLD ;
+		mArmState = ArmState::HOLD ;
     }
 
     void open()
     {
-	mArmState = ArmState::OPEN ;
+		mArmState = ArmState::OPEN ;
     }
 
     void close()
     {
-	mArmState = ArmState::CLOSE ;
+		mArmState = ArmState::CLOSE ;
     }
 
     void calibrate()
     {
-	mArmState = ArmState::CALIBRATING ;
+		mArmState = ArmState::CALIBRATING ;
     }
 
     /// \brief move the grabber to a specific angle
@@ -98,7 +99,7 @@ public:
     /// \param done whether the grabber has finished calibrating
     bool isCalibrating()
     {
-	return mArmState == ArmState::CALIBRATING ;
+		return mArmState == ArmState::CALIBRATING ;
     }
 
     /// \brief returns the angle associated with a preset
@@ -108,7 +109,7 @@ public:
     /// \brief check for transitions of the cube state
     bool cubeStateTransition(CubeState prev, CubeState current)
     {
-	return mPrevCubeState == prev && mCubeState == current ;
+		return mPrevCubeState == prev && mCubeState == current ;
     }
 					  
 
@@ -118,12 +119,41 @@ private:
     void calibrate(double angle, double dt, double &out) ;
     void angleState(double angle, double time, double dt, double &out) ;
 
+	std::string armStateToString(ArmState st)
+	{
+		std::string result="BADWOLF" ;
+		
+		switch(st)
+		{
+		case ArmState::CALIBRATING:
+			result = "CALIBRATING" ;
+			break ;
+		case ArmState::IDLE:
+			result = "IDLE" ;
+			break ;
+		case ArmState::HOLD:
+			result = "HOLD" ;
+			break ;
+		case ArmState::ANGLE:
+			result = "ANGLE" ;
+			break ;
+		case ArmState::OPEN:
+			result = "OPEN" ;
+			break ;
+		case ArmState::CLOSE:
+			result = "CLOSE" ;
+			break ;
+		}
+
+		return result ;
+	}
+
 private:
     // Indicates the mode of the grabber
     enum class Mode {
-	IDLE,			// Doing nothing
-        ANGLE			// Seeking a desired angle
-    };
+		IDLE,			// Doing nothing
+			ANGLE			// Seeking a desired angle
+			};
 
     //
     // The current mode for the grabber
@@ -201,6 +231,11 @@ private:
     // The state of the grabber
     //
     ArmState mArmState ;
+
+	//
+	// The previous state of the ARM
+	//
+	ArmState mPrevArmState ;
 
     //
     // The timer for the cube state

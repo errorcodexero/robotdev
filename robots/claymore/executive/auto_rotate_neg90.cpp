@@ -18,7 +18,6 @@ static vector<Step> steps =
     startLifterExch,
     waitForLifter,
     rotate90neg,
-	eject,
     endAuto
 } ;
 

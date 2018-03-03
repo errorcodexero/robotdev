@@ -263,26 +263,26 @@ void Grabber::Estimator::update(Time time,Grabber::Input input,Grabber::Output o
     paramsInput* input_params = paramsInput::get() ;
 
     if(Grabber::grabber_controller.isCalibrating()) {
-	ticks_history.push_back(input.ticks);
-	logger << "CALIBRATING:" ;
-	for(const auto &v : ticks_history)
-	    logger << " " << v ;
+		ticks_history.push_back(input.ticks);
+		logger << "CALIBRATING:" ;
+		for(const auto &v : ticks_history)
+			logger << " " << v ;
 		
-	size_t samples = static_cast<int>(input_params->getValue("grabber:samples", 5.0) + 0.5) ;
-	if(ticks_history.size() > samples)
-	    ticks_history.pop_front();
-
-	double delta = ticks_history.back() - ticks_history.front() ;
-	double thresh = input_params->getValue("grabber:calibrate_threshold", 0.1) ;
-	logger << ", samples " << samples ;
-	logger << ", delta " << delta ;
-	logger << ", thresh " << thresh ;
+		size_t samples = static_cast<int>(input_params->getValue("grabber:samples", 5.0) + 0.5) ;
+		if(ticks_history.size() > samples)
+			ticks_history.pop_front();
 		
-	if (ticks_history.size() == samples && fabs(delta) < thresh) {
-	    encoder_offset = input.ticks;
-	    Grabber::grabber_controller.hold() ;
-	    logger << "DONE CALIBRATING - switching to HOLD state" << "\n";
-	}	
+		double delta = ticks_history.back() - ticks_history.front() ;
+		double thresh = input_params->getValue("grabber:calibrate_threshold", 0.1) ;
+		logger << ", samples " << samples ;
+		logger << ", delta " << delta ;
+		logger << ", thresh " << thresh ;
+		
+		if (ticks_history.size() == samples && fabs(delta) < thresh) {
+			encoder_offset = input.ticks;
+			Grabber::grabber_controller.hold() ;
+			logger << "DONE CALIBRATING - switching to HOLD state" << "\n";
+		}	
     }
 
     last.angle = (input.ticks - encoder_offset) * DEGREES_PER_TICK;

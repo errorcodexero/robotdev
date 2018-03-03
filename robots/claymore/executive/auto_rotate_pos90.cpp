@@ -13,6 +13,9 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
+    calibrateLifter,
+    calibrateGrabber,
+    startLifterExch,
     rotate90pos,
     endAuto
 } ;

@@ -498,23 +498,23 @@ Lifter::Status status(Lifter::Status_detail const& status_detail){
 bool ready(Lifter::Status const& status,Lifter::Goal const& goal){
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
-	return status == Lifter::Status::CLIMBED;
+		return status == Lifter::Status::CLIMBED;
     case Lifter::Goal::Mode::UP:
     case Lifter::Goal::Mode::DOWN:
     case Lifter::Goal::Mode::STOP:
     case Lifter::Goal::Mode::CALIBRATE:
     case Lifter::Goal::Mode::LOW_GEAR:
     case Lifter::Goal::Mode::LOCK:
-	return true;
+		return true;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
-	return Lifter::lifter_controller.finishedTarget(goal.target());
+		return Lifter::lifter_controller.finishedTarget(goal.target());
     case Lifter::Goal::Mode::GO_TO_PRESET:
-	return Lifter::lifter_controller.finishedTarget(goal.preset_target());
+		return Lifter::lifter_controller.finishedTarget(goal.preset_target());
     case Lifter::Goal::Mode::BACKGROUND:
-	return Lifter::lifter_controller.done();
+		return Lifter::lifter_controller.done();
     default:
-	nyi
-	    }
+		nyi
+			}
 }
 
 #ifdef LIFTER_TEST

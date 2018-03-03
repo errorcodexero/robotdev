@@ -25,9 +25,7 @@ static Step eject = Step(Eject()) ;
 static Step dropGrabber = Step(Drop_grabber());
 
 #define AUTO_PREAMBLE \
-	startAuto, \
-	calibrateLifter, \
-	calibrateGrabber,
+	calibrateLifter,
 
 //
 // Executive used to end each automode step

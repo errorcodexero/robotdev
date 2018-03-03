@@ -13,7 +13,9 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
-    AUTO_PREAMBLE
+	Step(Lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)),
+	Step(Lifter_to_preset(LifterController::Preset::FLOOR, 0.0)),
+	calibrateGrabber,
     startLifterExch,
     Step(Drive("auto:l_switch_l:segment1", 148, false)),
     rotate90pos,

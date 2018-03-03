@@ -870,6 +870,7 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
 		break ;
 
 	case EjectState::Done:
+		Grabber::grabber_controller.setIdle() ;
 		break ;
 	}		
 
