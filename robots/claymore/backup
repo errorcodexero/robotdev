@@ -3,8 +3,9 @@
 team=1425
 restore=0
 backup_params=false
+backup_log=false
 
-while getopts ":t:r:p" opt; do
+while getopts ":t:r:pl" opt; do
 	case $opt in
 		t)
 			team=$OPTARG
@@ -14,6 +15,9 @@ while getopts ":t:r:p" opt; do
 			;;
 		p)
 			backup_params=true
+			;;
+		l)
+			backup_log=true
 			;;
 		\?)
 			echo "Invalid option: -$OPTARG" >&2
@@ -30,12 +34,23 @@ if [ ! -d "backups" ]; then
 	mkdir backups
 fi
 
-if $backup_params; then
-	params_n=$(find backups -type f -name params_\* | wc -l)
-	scp lvuser@roborio-1425-frc.local:params.txt ./backups/params_$(($params_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
+backup_file () {
+	file_n=$(find backups -type f -name $2_\* | wc -l)
+	scp lvuser@roborio-1425-frc.local:$1 ./backups/$2_$((file_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
 	if [ $? -eq 0 ]; then
-		echo "Saved as params file $(($params_n+1))."
+		echo Saved as $2 file $((file_n+1)).
 	fi
+}
+
+if $backup_params || $backup_log; then
+	if $backup_params; then
+		backup_file params.txt params
+	fi
+	
+	if $backup_log; then
+		backup_file FRC_UserProgram.log log
+	fi
+
 	exit 0
 fi
 
