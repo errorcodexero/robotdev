@@ -16,7 +16,7 @@ static vector<Step> steps =
     calibrateLifter,
     calibrateGrabber,
     startLifterSwitch,
-    Step(Drive_param("auto:c_switch_r:segment1", 105, true)),
+    Step(Drive("auto:c_switch_r:segment1", 105, true)),
     waitForLifter,
     eject,
     endAuto

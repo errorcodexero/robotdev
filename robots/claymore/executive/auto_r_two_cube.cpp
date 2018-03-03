@@ -16,17 +16,17 @@ static vector<Step> steps =
     calibrateLifter,
     calibrateGrabber,
     startLifterExch,
-    Step(Drive_param("auto:r_scale_r:segment1", 306, false)),
+    Step(Drive("auto:r_scale_r:segment1", 306, false)),
     rotate90neg,
     lifterToScale,
     eject,
     Step(Rotate(-75.0)),						// Would be great to get from parameter
     // open collector
-    Step(Drive_param("auto:r_scale_r:segment2", 100, false)),		// No clue, need to figure out
+    Step(Drive("auto:r_scale_r:segment2", 100, false)),		// No clue, need to figure out
     // close collector and collect
     lifterToSwitch,
     Step(Rotate(-15.0)),						// Would be great to get from parameter
-    Step(Drive_param("auto:r_scale_r:segment2", 12, true)),		// No clue, need to figure out
+    Step(Drive("auto:r_scale_r:segment2", 12, true)),		// No clue, need to figure out
     endAuto,
 } ;
 

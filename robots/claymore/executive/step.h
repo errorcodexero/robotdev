@@ -122,34 +122,21 @@ public:
 
 //Drive straight a specified distance
 class Drive:public Step_impl_inner<Drive>{
-    Inch target_distance;
-    bool end_on_stall;
-    bool init;
+    Inch mTargetDistance;
+	std::string mParamName ;
+    bool mEndOnStall ;
+    bool mInited ;
 
 public:
-    explicit Drive(Inch, bool end_on_stall=false);
+    explicit Drive(Inch dist, bool end_on_stall=false);
+    explicit Drive(const char *param_p, Inch dist, bool end_on_stall=false);
+    explicit Drive(const std::string &param, Inch dist, bool end_on_stall=false);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
     std::unique_ptr<Step_impl> clone()const;
     bool operator==(Drive const&)const;
-};
-
-class Drive_param:public Step_impl_inner<Drive_param>{
-    std::string mParam ;
-    Inch mDefaultValue ;
-    bool mEndOnStall ;
-    bool mInited ;
-
-public:
-    explicit Drive_param(const char *param, double defvalue, bool end_on_stall=false);
-
-    Toplevel::Goal run(Run_info,Toplevel::Goal);
-    Toplevel::Goal run(Run_info);
-    Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone() const;
-    bool operator==(Drive_param const &) const;
 };
 
 //Drive the motors at the specified powers for a specified amount of time
@@ -240,11 +227,13 @@ struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
 
 //Move the lifter to a sepecified height
 struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
-    double target_height;
-    double time;
-    bool init;
-
-    explicit Lifter_to_height(double, double);
+	double mTargetHeight ;
+	std::string mParamName ;
+	bool mInited ;
+	
+    explicit Lifter_to_height(double height);
+    explicit Lifter_to_height(const char *param_p, double height);
+    explicit Lifter_to_height(const std::string &param, double height);
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);

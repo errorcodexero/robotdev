@@ -16,20 +16,10 @@ static vector<Step> steps =
     calibrateLifter,
     calibrateGrabber,
     startLifterExch,
-    Step(Drive_param("auto:r_scale_r:segment1", 306, false)),
+    Step(Drive("auto:r_scale_r:segment1", 306, false)),
     rotate90neg,
-    Step(Lifter_to_height(89.6, 0.0)),
-	
-    #ifdef DRIVE_FORWARD
-Step(Drive_param("auto:r_scale_r:segment2", 12, false)),
-#endif
-	
+    Step(Lifter_to_height(89.6)),
     eject,
-	
-#ifdef DRIVE_FORWARD
-    Step(Drive_param("auto:r_scale_r:segment3", -12, false)),
-#endif
-	
     startLifterExch,
     endAuto,
 } ;

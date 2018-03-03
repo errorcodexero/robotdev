@@ -16,9 +16,9 @@ static vector<Step> steps =
     calibrateLifter,
     calibrateGrabber,
     startLifterExch,
-    Step(Drive_param("auto:l_scale_l:segment1", 306, false)),
+    Step(Drive("auto:l_scale_l:segment1", 306, false)),
     rotate90pos,
-    Step(Lifter_to_height(89.3, 0.0)),
+    Step(Lifter_to_height(89.3)),
     eject,
     endAuto,
 } ;

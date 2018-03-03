@@ -233,9 +233,31 @@ bool EndAuto::operator==(EndAuto const& b)const{
 // Drive: Drive straight a specified distance
 //
 
-Drive::Drive(Inch target, bool end_on_stall):target_distance(target),end_on_stall(end_on_stall),init(false){}
+Drive::Drive(Inch dist, bool end_on_stall)
+{
+	mTargetDistance = dist ;
+	mEndOnStall = end_on_stall ;
+	mInited = false ;
+}
 
-Step::Status Drive::done(Next_mode_info info){
+Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
+{
+	mParamName = param_p ;
+	mTargetDistance = dist ;
+	mEndOnStall = end_on_stall ;
+	mInited = false ;
+}
+
+Drive::Drive(const std::string &param, Inch dist, bool end_on_stall)
+{
+	mParamName = param ;
+	mTargetDistance = dist ;
+	mEndOnStall = end_on_stall ;
+	mInited = false ;
+}
+
+Step::Status Drive::done(Next_mode_info info)
+{
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
@@ -247,16 +269,29 @@ Step::Status Drive::done(Next_mode_info info){
     return ret ;
 }
 
-Toplevel::Goal Drive::run(Run_info info){
+Toplevel::Goal Drive::run(Run_info info)
+{
     return run(info, {});
 }
 
-Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
-    if(!init) {
+Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals)
+{
+    if(!mInited)
+	{
+		if (mParamName.length() > 0)
+		{
+			//
+			// Based on a parameter name, go get the value from the
+			// parameter file
+			//
+			paramsInput *params_p = paramsInput::get() ;
+			mTargetDistance = params_p->getValue(mParamName, mTargetDistance) ;
+		}
+		
 		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-		Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle,
-													 info.in.now, end_on_stall, target_distance >= 0.0);
-		init = true;
+		Drivebase::drivebase_controller.initDistance(avg_status + mTargetDistance, info.status.drive.angle,
+													 info.in.now, mEndOnStall, mTargetDistance >= 0.0);
+		mInited = true ;
     }
     goals.drive = Drivebase::Goal::drive_straight();
     return goals;
@@ -267,64 +302,12 @@ unique_ptr<Step_impl> Drive::clone()const{
 }
 
 bool Drive::operator==(Drive const& a)const{
-    return target_distance == a.target_distance && end_on_stall == a.end_on_stall && init == a.init;
-}
-
-//
-// Drive_param: same as drive above, but the distance comes from the params
-//
-Drive_param::Drive_param(const char *param_p, double defval, bool end_stall)
-{
-    mParam = param_p ;
-    mDefaultValue = defval ;
-    mEndOnStall = end_stall ;
-    mInited = false ;
-}
-
-Step::Status Drive_param::done(Next_mode_info info)
-{
-    Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-    if (ret == Step::Status::FINISHED_SUCCESS)
-    {
-		messageLogger &logger = messageLogger::get() ;
-		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-		logger << "Drive step complete" ;
-		logger.endMessage() ;
-    }
-    return ret ;
-}
-
-Toplevel::Goal Drive_param::run(Run_info info)
-{
-    return run(info, {});
-}
-
-Toplevel::Goal Drive_param::run(Run_info info, Toplevel::Goal goals)
-{
-    if(!mInited) {
-		paramsInput *param_p = paramsInput::get() ;
-		double dist = param_p->getValue(mParam, mDefaultValue) ;
-		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-		Drivebase::drivebase_controller.initDistance(avg_status + dist, info.status.drive.angle, info.in.now, mEndOnStall, dist >= 0.0);
-		mInited = true;
-    }
-    goals.drive = Drivebase::Goal::drive_straight();
-    return goals;
-}
-
-unique_ptr<Step_impl> Drive_param::clone()const{
-    return unique_ptr<Step_impl>(new Drive_param(*this));
-}
-
-bool Drive_param::operator==(Drive_param const& a) const
-{
-    return a.mParam == mParam && mEndOnStall == a.mEndOnStall ;
+    return mTargetDistance == a.mTargetDistance && mEndOnStall == a.mEndOnStall && mInited == a.mInited ;
 }
 
 //
 // Drive_timed: Drive the motors at the specified powers for a specified amount of time
 //
-
 Drive_timed::Drive_timed(double l, double r, double t){
     left_power = l;
     right_power = r;
@@ -558,10 +541,29 @@ bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const{
 //
 // Lifter_to_height: Move the lifter to a specified height
 //
-Lifter_to_height::Lifter_to_height(double target_height, double time):target_height(target_height),time(time),init(false){}
+Lifter_to_height::Lifter_to_height(double target_height)
+{
+	mTargetHeight = target_height ;
+	mInited = false ;
+}
 
-Step::Status Lifter_to_height::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_height(target_height)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+Lifter_to_height::Lifter_to_height(const char *param_p, double height)
+{
+	mParamName = param_p ;
+	mTargetHeight = height ;
+	mInited = false ;
+}
+
+Lifter_to_height::Lifter_to_height(const std::string &param, double height)
+{
+	mParamName = param ;
+	mTargetHeight = height ;
+	mInited = false ;
+}
+
+Step::Status Lifter_to_height::done(Next_mode_info info)
+{
+    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_height(mTargetHeight)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
 		messageLogger &logger = messageLogger::get() ;
@@ -572,16 +574,24 @@ Step::Status Lifter_to_height::done(Next_mode_info info){
     return ret ;
 }
 
-Toplevel::Goal Lifter_to_height::run(Run_info info){
+Toplevel::Goal Lifter_to_height::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals){
-    if(!init) {
-		Lifter::lifter_controller.moveToHeight(target_height, info.status.lifter.height, time);
-		init = false;
+Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals)
+{
+    if(!mInited) {
+		if (mParamName.length() > 0)
+		{
+			paramsInput *params_p = paramsInput::get() ;
+			mTargetHeight = params_p->getValue(mParamName, mTargetHeight) ;
+		}
+		
+		Lifter::lifter_controller.moveToHeight(mTargetHeight, info.status.lifter.height, info.in.now) ;
+		mInited = false ;
     }
-    goals.lifter = Lifter::Goal::go_to_height(target_height);
+    goals.lifter = Lifter::Goal::go_to_height(mTargetHeight);
     return goals;
 }
 
@@ -591,7 +601,7 @@ unique_ptr<Step_impl> Lifter_to_height::clone()const{
 
 bool Lifter_to_height::operator==(Lifter_to_height const& b)const
 {
-    return target_height == b.target_height && time == b.time && init == b.init;
+    return mTargetHeight == b.mTargetHeight && mInited == b.mInited ;
 }
 
 //
