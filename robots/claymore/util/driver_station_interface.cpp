@@ -82,41 +82,6 @@ ostream& operator<<(ostream& o,Driver_station_input a){
 	return o<<")";
 }
 
-template<MSP430_option DIGITAL_OUTPUTS_A, MSP430_option DIGITAL_OUTPUTS_B>
-bool operator==(Driver_station_output<DIGITAL_OUTPUTS_A> a,Driver_station_output<DIGITAL_OUTPUTS_B> b){
-	if(a.digital.size() != b.digital.size()){
-		return false;
-	}
-	for(unsigned i = 0; i < a.digital.size();i++){
-		if(a.digital[i]!=b.digital[i]){
-			return 0;
-		}
-	}
-	return 1;
-}
-
-template<MSP430_option DIGITAL_OUTPUTS_A, MSP430_option DIGITAL_OUTPUTS_B>
-bool operator!=(Driver_station_output<DIGITAL_OUTPUTS_A> a,Driver_station_output<DIGITAL_OUTPUTS_B> b){
-	return !(a==b);
-}
-
-template<MSP430_option DIGITAL_OUTPUTS>
-Driver_station_output<DIGITAL_OUTPUTS>::Driver_station_output(){
-	for(unsigned i = 0; i < digital.size(); i++){
-		digital[i] = 0;
-	}
-}
-
-template<MSP430_option DIGITAL_OUTPUTS>
-ostream& operator<<(ostream& o,Driver_station_output<DIGITAL_OUTPUTS> a){
-	o<<"(";
-	o<<"digital:";
-	for(unsigned i=0;i<a.digital.size();i++){
-		o<<a.digital[i];
-	}
-	return o<<")";
-}
-
 #ifdef DRIVER_STATION_INTERFACE_TEST
 int main(){
 	Driver_station_input a;

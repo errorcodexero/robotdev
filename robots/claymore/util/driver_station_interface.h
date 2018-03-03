@@ -15,15 +15,35 @@ template<MSP430_option DIGITAL_OUTPUTS>
 struct Driver_station_output{
     std::bitset<DIGITAL_OUTPUTS> digital;
 
-    Driver_station_output();
-};
+    template<MSP430_option DIGITAL_OUTPUTS_A>
+    friend bool operator==(Driver_station_output const& a, Driver_station_output<DIGITAL_OUTPUTS_A> const& b) {
+        if(a.digital.size() != b.digital.size()){
+                return false;
+        }
+        for(unsigned i = 0; i < a.digital.size();i++){
+                if(a.digital[i]!=b.digital[i]){
+                        return 0;
+                }
+        }
+        return 1;
+    }
 
-template<MSP430_option DIGITAL_OUTPUTS_A,MSP430_option DIGITAL_OUTPUTS_B>
-bool operator==(Driver_station_output<DIGITAL_OUTPUTS_A>,Driver_station_output<DIGITAL_OUTPUTS_B>);
-template<MSP430_option DIGITAL_OUTPUTS_A,MSP430_option DIGITAL_OUTPUTS_B>
-bool operator!=(Driver_station_output<DIGITAL_OUTPUTS_A>,Driver_station_output<DIGITAL_OUTPUTS_B>);
-template<MSP430_option DIGITAL_OUTPUTS>
-std::ostream& operator<<(std::ostream&,Driver_station_output<DIGITAL_OUTPUTS>);
+    template<MSP430_option DIGITAL_OUTPUTS_A>
+    friend bool operator!=(Driver_station_output const& a, Driver_station_output<DIGITAL_OUTPUTS_A> const& b) {
+	return !(a==b);
+    }
+
+    friend std::ostream& operator<<(std::ostream& o,Driver_station_output<DIGITAL_OUTPUTS> a) {
+        o<<"(";
+        o<<"digital:";
+        for(unsigned i=0;i<a.digital.size();i++){
+                o<<a.digital[i];
+        }
+        return o<<")";
+    }
+
+    Driver_station_output():digital(0) {}
+};
 
 struct Driver_station_input{
     static const unsigned ANALOG_INPUTS=8;//TODO get real value
