@@ -27,7 +27,7 @@ struct OI_light_addresses{
 	};
 };
 
-const unsigned HAS_CUBE_INDICATOR_ADDRESS = 5;//TODO
+const unsigned HAS_CUBE_INDICATOR_ADDRESS = 13;
 
 Lights::Goal::Goal(
 	Camera_light a,
