@@ -36,10 +36,16 @@ string Monitor<Main>::update(Main b){
 	return o.str();
 }
 
-void print_diff(ostream& o,Driver_station_output &a,Driver_station_output const& b){
+template<MSP430_option DIGITAL_OUTPUTS>
+void print_diff(ostream& o,Driver_station_output<DIGITAL_OUTPUTS> &a,Driver_station_output<DIGITAL_OUTPUTS> const& b){
 	#define X(name) print_diff(o,a.name,b.name);
+	if(a.digital.size() != b.digital.size()){
+		o<<"Driver_station_output::digital.size()"<<a.digital.size()<<"->"<<b.digital.size()<<"\n";
+		#undef X
+		return;
+	}
 	//X(lcd) skipping this for now since it really clutters the prinout right now since it shows shooter wheel speeds
-	for(unsigned i=0;i<Driver_station_output::DIGITAL_OUTPUTS;i++){
+	for(unsigned i=0;i<a.digital.size();i++){
 		if(a.digital[i]!=b.digital[i]){
 			o<<"Driver_station_output::digital["<<i<<"]:"<<a.digital[i]<<"->"<<b.digital[i]<<"\n";
 			a.digital[i]=b.digital[i];
@@ -73,7 +79,8 @@ void print_diff(ostream& o,Robot_outputs &a,Robot_outputs const& b){
 			a.digital_io[i]=b.digital_io[i];
 		}
 	}
-	print_diff(o,a.driver_station,b.driver_station);
+	print_diff(o,a.primary_driver_station,b.primary_driver_station);
+	print_diff(o,a.secondary_driver_station,b.secondary_driver_station);
 }
 
 void print_diff(ostream& o,Robot_inputs &a,Robot_inputs const& b){

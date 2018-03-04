@@ -264,8 +264,10 @@ struct Robot_outputs{
 	
 	//could add in some setup for the analog inputs
 	
-	static const unsigned DRIVER_STATION_DIGITAL_OUTPUTS = Driver_station_output::DIGITAL_OUTPUTS;
-	Driver_station_output driver_station;
+	static const MSP430_option PRIMARY_DRIVER_STATION_DIGITAL_OUTPUTS = MSP430_option::_2;	
+	Driver_station_output<PRIMARY_DRIVER_STATION_DIGITAL_OUTPUTS> primary_driver_station;
+	static const MSP430_option SECONDARY_DRIVER_STATION_DIGITAL_OUTPUTS = MSP430_option::_2;	
+	Driver_station_output<SECONDARY_DRIVER_STATION_DIGITAL_OUTPUTS> secondary_driver_station;
 	
 	Pump_output pump;
 	

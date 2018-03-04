@@ -9,16 +9,41 @@
 
 //this is the interface for the OI
 
+enum MSP430_option{_1 = 11, _2 = 6, _3 = 2};
+
+template<MSP430_option DIGITAL_OUTPUTS>
 struct Driver_station_output{
-    static const unsigned DIGITAL_OUTPUTS=6;//Note: this is dependent on the option of the TI Launchpad MSP430 - this is for option 2 from 2017
     std::bitset<DIGITAL_OUTPUTS> digital;
 
-    Driver_station_output();
-};
+    template<MSP430_option DIGITAL_OUTPUTS_A>
+    friend bool operator==(Driver_station_output const& a, Driver_station_output<DIGITAL_OUTPUTS_A> const& b) {
+        if(a.digital.size() != b.digital.size()){
+                return false;
+        }
+        for(unsigned i = 0; i < a.digital.size();i++){
+                if(a.digital[i]!=b.digital[i]){
+                        return 0;
+                }
+        }
+        return 1;
+    }
 
-bool operator==(Driver_station_output,Driver_station_output);
-bool operator!=(Driver_station_output,Driver_station_output);
-std::ostream& operator<<(std::ostream&,Driver_station_output);
+    template<MSP430_option DIGITAL_OUTPUTS_A>
+    friend bool operator!=(Driver_station_output const& a, Driver_station_output<DIGITAL_OUTPUTS_A> const& b) {
+	return !(a==b);
+    }
+
+    friend std::ostream& operator<<(std::ostream& o,Driver_station_output<DIGITAL_OUTPUTS> a) {
+        o<<"(";
+        o<<"digital:";
+        for(unsigned i=0;i<a.digital.size();i++){
+                o<<a.digital[i];
+        }
+        return o<<")";
+    }
+
+    Driver_station_output():digital(0) {}
+};
 
 struct Driver_station_input{
     static const unsigned ANALOG_INPUTS=8;//TODO get real value

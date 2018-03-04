@@ -311,34 +311,33 @@ Robot_inputs Lights::Input_reader::operator()(Robot_inputs r, Lights::Input in)c
 Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.blinky_light_info = r.i2c.data;
+		
+	out.collector_open = r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_OPEN];
+	out.collector_closed = r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED];
+	out.has_cube = r.primary_driver_station.digital[OI_light_addresses::HAS_CUBE];
+	out.wings_deployed = r.primary_driver_station.digital[OI_light_addresses::WINGS_DEPLOYED];
+ 	out.enabled = r.primary_driver_station.digital[OI_light_addresses::ENABLED];
 	
-	/*	
-	out.collector_open = r.driver_station.digital[OI_light_addresses::COLLECTOR_OPEN];
-	out.collector_closed = r.driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED];
-	out.has_cube = r.driver_station.digital[OI_light_addresses::HAS_CUBE];
-	out.wings_deployed = r.driver_station.digital[OI_light_addresses::WINGS_DEPLOYED];
- 	out.enabled = r.driver_station.digital[OI_light_addresses::ENABLED];
+	out.lifter_status[0] = r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_A];
+	out.lifter_status[1] = r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_B];
+	out.lifter_status[2] = r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_C];
 	
-	out.lifter_status[0] = r.driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_A];
-	out.lifter_status[1] = r.driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_B];
-	out.lifter_status[2] = r.driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_C];
-	*/
 	return out;
 }
 
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.i2c.data = out.blinky_light_info;
-	/*
-	r.driver_station.digital[OI_light_addresses::COLLECTOR_OPEN] = out.collector_open;
-	r.driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED] = out.collector_closed;
-	r.driver_station.digital[OI_light_addresses::HAS_CUBE] = out.has_cube;
-	r.driver_station.digital[OI_light_addresses::WINGS_DEPLOYED] = out.wings_deployed;
-	r.driver_station.digital[OI_light_addresses::ENABLED] = out.enabled;
 	
-	r.driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_A] = out.lifter_status[0];
-	r.driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_B] = out.lifter_status[1];
-	r.driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_C] = out.lifter_status[2];
-	*/
+	r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_OPEN] = out.collector_open;
+	r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED] = out.collector_closed;
+	r.primary_driver_station.digital[OI_light_addresses::HAS_CUBE] = out.has_cube;
+	r.primary_driver_station.digital[OI_light_addresses::WINGS_DEPLOYED] = out.wings_deployed;
+	r.primary_driver_station.digital[OI_light_addresses::ENABLED] = out.enabled;
+	
+	r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_A] = out.lifter_status[0];
+	r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_B] = out.lifter_status[1];
+	r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_C] = out.lifter_status[2];
+	
 	return r;
 }
 
