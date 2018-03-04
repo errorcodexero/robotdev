@@ -20,7 +20,7 @@ struct Lights{
 		bool has_cube;
 		bool collector_open;
 		bool collector_closed;
-		bool wings_deployed;
+		bool wings_ready;
 		
 		#define LIFTER_STATUSES_FOR_LIGHTS X(UNKNOWN) X(FLOOR) X(EXCHANGE) X(CLIMB) X(SWITCH) X(SCALE)
 		enum class Lifter_status{
@@ -75,7 +75,7 @@ struct Lights{
 		bool collector_open;
 		bool collector_closed;
 		bool has_cube;
-		bool wings_deployed;
+		bool wings_ready;
 		bool enabled;
 
 		Output();

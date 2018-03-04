@@ -369,25 +369,25 @@ void Teleop::runLights(const Run_info &info, Toplevel::Goal &goals)
 
     goals.lights.collector_open = collector_mode == Collector_mode::COLLECT_OPEN;
     goals.lights.collector_closed = collector_mode == Collector_mode::COLLECT_CLOSED;
-    goals.lights.wings_deployed = goals.wings == Wings::Goal::UNLOCKED;
+    goals.lights.wings_ready = goals.wings == Wings::Goal::UNLOCKED && info.status.lifter.height > 30;//make sure it's above the climbing stabilizers- TODO make a param?
     goals.lights.lifter_status = [&]{
 		Lifter::Status s = status(info.status.lifter);
 		if(!ready(s,goals.lifter)){
 			return Lights::Goal::Lifter_status::UNKNOWN;
 		}
 		switch(goals.lifter.preset_target()){
-		case LifterController::Preset::FLOOR:
-	    return Lights::Goal::Lifter_status::FLOOR;
-		case LifterController::Preset::EXCHANGE:
-		return Lights::Goal::Lifter_status::EXCHANGE;
-		case LifterController::Preset::PREP_CLIMB:
-	    return Lights::Goal::Lifter_status::CLIMB;
-		case LifterController::Preset::SWITCH:
-	    return Lights::Goal::Lifter_status::SWITCH;
-		case LifterController::Preset::SCALE:
-	    return Lights::Goal::Lifter_status::SCALE;
-		default:
-	    nyi
+			case LifterController::Preset::FLOOR:
+				return Lights::Goal::Lifter_status::FLOOR;
+			case LifterController::Preset::EXCHANGE:
+				return Lights::Goal::Lifter_status::EXCHANGE;
+			case LifterController::Preset::PREP_CLIMB:
+				return Lights::Goal::Lifter_status::CLIMB;
+			case LifterController::Preset::SWITCH:
+			    return Lights::Goal::Lifter_status::SWITCH;
+			case LifterController::Preset::SCALE:
+			    return Lights::Goal::Lifter_status::SCALE;
+			default:
+			    nyi
 		}
     }();
 }
