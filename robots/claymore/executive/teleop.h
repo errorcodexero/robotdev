@@ -9,7 +9,6 @@
 #include <sstream>
 
 struct Teleop : Executive_impl<Teleop> {
-    enum class HasCubeState { NoCube, MaybeHasCube, HasCube, MaybeLostCube } ;
     
 	enum Nudges{FORWARD,BACKWARD,CLOCKWISE,COUNTERCLOCKWISE,NUDGES};
 	#define NUDGE_ITEMS(X) X(Posedge_trigger,trigger) X(Countdown_timer,timer)
@@ -18,7 +17,7 @@ struct Teleop : Executive_impl<Teleop> {
 		Countdown_timer timer;
 	};
 
-	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(CALIBRATE)
+    #define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(CALIBRATE)
 	enum class Collector_mode{
 		#define X(NAME) NAME,
 		COLLECTOR_MODES
@@ -44,7 +43,10 @@ struct Teleop : Executive_impl<Teleop> {
 
 	Executive next_mode(Next_mode_info);
 	Toplevel::Goal run(Run_info);
-	bool operator<(Teleop const&)const;
+	void runDrivebase(const Run_info &info, Toplevel::Goal &goal) ;
+	void runCollector(const Run_info &info, Toplevel::Goal &goal) ;
+	void runLights(const Run_info &info, Toplevel::Goal &goal) ;
+   	bool operator<(Teleop const&)const;
 	bool operator==(Teleop const&)const;
 	void display(std::ostream&)const;
 	Teleop();
@@ -52,7 +54,6 @@ struct Teleop : Executive_impl<Teleop> {
 };
 
 std::ostream& operator<<(std::ostream&,Teleop::Nudge const&);
-std::ostream& operator<<(std::ostream&,Teleop::HasCubeState const&) ;
 
 bool operator<(Teleop::Nudge const&,Teleop::Nudge const&);
 bool operator==(Teleop::Nudge const&,Teleop::Nudge const&);
