@@ -13,7 +13,7 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
-    AUTO_PREAMBLE
+    AUTO_PREAMBLE,
     startLifterExch,
     Step(Drive("auto:r_scale_r:segment1", 219.0, false)),
     rotate90neg,
@@ -23,7 +23,7 @@ static vector<Step> steps =
     rotate90pos,
     lifterToScale,
     eject,
-    endAuto,
+	AUTO_POSTAMBLE,
 } ;
 
 static Chain chain(steps, teleopex) ;

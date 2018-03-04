@@ -13,12 +13,12 @@ using namespace std ;
 static vector<Step> steps =
 {
     startAuto,
-    AUTO_PREAMBLE
+    AUTO_PREAMBLE,
     startLifterSwitch,
     Step(Drive("auto:c_switch_r:segment1", 105, true)),
     waitForLifter,
     eject,
-    endAuto
+	AUTO_POSTAMBLE,
 } ;
 
 static Chain chain(steps, teleopex) ;

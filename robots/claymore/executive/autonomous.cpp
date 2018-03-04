@@ -4,7 +4,7 @@
 #include "step.h"
 #include "message_logger.h"
 
-#define AUTOMODE 91
+#define AUTOMODE 1
 
 using namespace std;
 

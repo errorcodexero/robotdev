@@ -1,6 +1,7 @@
 #include "wings.h"
 #include <stdlib.h>
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -21,7 +22,9 @@ bool operator==(Wings a, Wings b){ return (a.input_reader==b.input_reader && a.e
 bool operator!=(Wings a, Wings b){ return !(a==b);}
 
 Robot_outputs Wings::Output_applicator::operator()(Robot_outputs r, Wings::Output out)const{
-	r.solenoid[WING_LOCK_SOLENOID] = out == Output::UNLOCKED;
+	if (out == Output::UNLOCKED)
+		cout << "Unlocking wings" << endl ;
+	r.solenoid[WING_LOCK_SOLENOID] = (out == Output::UNLOCKED) ;
 	return r;
 }
 

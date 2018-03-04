@@ -189,6 +189,11 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			collector_mode = Collector_mode::IDLE;
 		break;
     case Collector_mode::CALIBRATE:
+		cout << "COLLECTOR MODE IS CALIBRATE" << endl ;
+		
+		if (Grabber::grabber_controller.isCalibrating())
+			cout << "GrabberController is calibrating in collector_mode switch" << endl ;
+		
 		goals.grabber = Grabber::Goal::calibrate();
 		if(ready(info.status.grabber, Grabber::Goal::calibrate()))
 			collector_mode = Collector_mode::HOLD_CUBE;
@@ -254,10 +259,14 @@ Toplevel::Goal Teleop::run(Run_info info) {
 		collector_mode = Collector_mode::CALIBRATE;
     }
     
-    //if(info.panel.wings && info.panel.climb_lock) wings_goal = Wings::Goal::UNLOCKED;
-    //goals.wings = wings_goal;
+    if(info.panel.wings && info.panel.climb_lock)
+	{
+		wings_goal = Wings::Goal::UNLOCKED;
+		goals.wings = wings_goal ;
+	}
     
-    if(info.panel.wings) goals.lifter = Lifter::Goal::lock();
+    //if(info.panel.wings)
+	  //goals.lifter = Lifter::Goal::lock();
     
     if(!info.panel.grabber_auto) {
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::idle();
