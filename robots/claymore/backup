@@ -4,8 +4,9 @@ team=1425
 restore=0
 backup_params=false
 backup_log=false
+open_n=0
 
-while getopts ":t:r:pl" opt; do
+while getopts ":t:r:plo:" opt; do
 	case $opt in
 		t)
 			team=$OPTARG
@@ -18,6 +19,9 @@ while getopts ":t:r:pl" opt; do
 			;;
 		l)
 			backup_log=true
+			;;
+		o)
+			open_n=$OPTARG
 			;;
 		\?)
 			echo "Invalid option: -$OPTARG" >&2
@@ -36,6 +40,29 @@ fi
 
 backup_file () {
 	file_n=$(find backups -type f -name $2_\* | wc -l)
+
+	if [ $open_n -gt 0 ]; then
+		if [ $open_n -gt $file_n ]; then
+			echo $2 $open_n chosen, but only $file_n present. >&2
+			exit 1
+		fi
+		
+		to_open=$(find backups -type f -name $2_$(($open_n))_\*)
+		to_open_n=$(wc -w <<<$to_open)
+		if [ $to_open_n -eq 0 ]; then
+			echo No $2 with number $open_n found. >&2
+			exit 1
+		elif [ $to_open_n -gt 1 ]; then
+			echo Multiple $2 with number $open_n found. >&2
+			exit 1
+		else
+			echo Opening $2 $open_n ...
+			vim $to_open
+		fi
+
+		exit 0
+	fi
+
 	scp lvuser@roborio-1425-frc.local:$1 ./backups/$2_$((file_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
 	if [ $? -eq 0 ]; then
 		echo Saved as $2 file $((file_n+1)).
