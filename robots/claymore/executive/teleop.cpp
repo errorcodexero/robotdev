@@ -122,6 +122,12 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 	    // to stay on the floor until the lifter is calibrated.
 	    //
 	    double delay = params_p->getValue("teleop:collection_delay", 0.5) ;
+
+	    //
+	    // Start a timer for moving to exchange height.  This ensure that is we are collecting
+	    // from OPEN mode, the grabber arms have time to completely grasp the cube before we
+	    // start raising the lifter
+	    //
 	    collect_delay_timer.set(delay);
 	}
     }
@@ -132,7 +138,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 	//
     }
 
-    
+    //
+    // Go to exchange height if the timer has expired.  This timer was setup when we saw
+    // the transition no cube to having a cube.  Basically it causes us to go to exchange height
+    // when we detect a cube present
+    //
     collect_delay_timer.update(info.in.now, info.in.robot_mode.enabled);
     if(collect_delay_trigger(collect_delay_timer.done()))
 	lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
