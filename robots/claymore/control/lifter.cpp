@@ -357,7 +357,10 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     last.upper_slowdown_range = last.height > (top_limit - slowdown_range);
     last.lower_slowdown_range = last.height < (bottom_limit + slowdown_range);
 
-    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) climb_goal = in.ticks - input_params->getValue("lifter:climbing_difference", 100.0);
+    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) {
+	climb_goal = in.ticks - input_params->getValue("lifter:climbing_difference", 100.0);
+	cout << "Climb Goal: " << climb_goal << "  Ticks: " << in.ticks << endl;
+    }
     last.at_climbed_height = (climb_goal > -9999.0) && (in.ticks < climb_goal);
     last_gearing = out.gearing;
 	
@@ -366,6 +369,7 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
 
     logger << "    Limit Switches: Top: " << in.top_hall_effect << "   Bottom: " << in.bottom_hall_effect << "\n";
     logger << "    Upper slowdown range: " << last.upper_slowdown_range << "   Lower slowdown range: " << last.lower_slowdown_range << "\n";
+    logger << "    At climb height: " << last.at_climbed_height;
     logger << "    Ticks: " << in.ticks << "    Height: " << last.height;
 
     logger.endMessage();
@@ -511,46 +515,35 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal)
 {
 	bool ret = false ;
 	
-	cout << "checking finished" << endl ;
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
-		cout << "    climb" << endl ;
 		ret = status == Lifter::Status::CLIMBED;
 		break ;
     case Lifter::Goal::Mode::UP:
-		cout << "    up" << endl ;
 		ret = true ;
 		break ;
     case Lifter::Goal::Mode::DOWN:
-		cout << "    down" << endl ;
 		ret = true ;
 		break ;
     case Lifter::Goal::Mode::STOP:
-		cout << "    stop" << endl ;
 		ret = true ;
 		break ;
     case Lifter::Goal::Mode::CALIBRATE:
-		cout << "    calibrate" << endl ;
 		ret = true ;
 		break ;
     case Lifter::Goal::Mode::LOW_GEAR:
-		cout << "    low gear" << endl ;
 		ret = true ;
 		break ;
     case Lifter::Goal::Mode::LOCK:
-		cout << "    lock" << endl ;
 		ret = true ;
 		break ;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
-		cout << "    height" << endl ;
 		ret = Lifter::lifter_controller.finishedTarget(goal.target());
 		break ;
     case Lifter::Goal::Mode::GO_TO_PRESET:
-		cout << "    preset" << endl ;
 		ret = Lifter::lifter_controller.finishedTarget(goal.preset_target());
 		break ;
     case Lifter::Goal::Mode::BACKGROUND:
-		cout << "    background" << endl ;
 		ret = Lifter::lifter_controller.done();
 		break ;
     default:
@@ -559,7 +552,6 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal)
 		break ;
 	}
 	
-	cout << "done checking finished" << endl ;
 	return ret ;
 }
 

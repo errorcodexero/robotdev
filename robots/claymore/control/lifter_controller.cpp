@@ -178,7 +178,6 @@ bool LifterController::finishedTarget(double target) {
 
 	if (mMode == Mode::IDLE && fabs(mTarget - target) < mHeightThreshold)
 	{
-		cout << "    finished is true" << endl ;
 		ret = true ;
 	}
 

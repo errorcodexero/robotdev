@@ -110,6 +110,8 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     if (Grabber::grabber_controller.cubeStateTransition(GrabberController::CubeState::MaybeHasCube, GrabberController::CubeState::HasCube))
     {
 		logger << "    Performed acuire cube actions\n" ;
+		logger << "    Near preset: " << Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) << "\n";
+		logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
 		
 		collector_mode = Collector_mode::HOLD_CUBE ;
 		if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
@@ -258,18 +260,13 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     {
 		logger << "    lifter reached goal, stopping\n" ;
 		lifter_goal = Lifter::Goal::stop();
-    }
-    
-    if(lifter_goal == prep_climb_goal || prep_climb_done) {
-		logger << "    Climb - stowing the grabber\n" ;
-		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
-    }
+    } 
     
     if(lifter_goal == prep_climb_goal && prep_climb_done) {
-		logger << "    Climb - shifting to low gear\n" ;
-		goals.lifter = Lifter::Goal::low_gear();
+        logger << "    Climb - shifting to low gear\n" ;
+	goals.lifter = Lifter::Goal::low_gear();
     }
-    
+
     if(info.status.lifter.at_climbed_height){
 		goals.lifter = Lifter::Goal::lock(true);
     }	
@@ -332,6 +329,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		break;
     default:
 		assert(0);
+    }
+
+    if(lifter_goal == prep_climb_goal || prep_climb_done) {
+		logger << "    Climb - stowing the grabber\n" ;
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
     }
 
     if(!info.panel.grabber_auto) {

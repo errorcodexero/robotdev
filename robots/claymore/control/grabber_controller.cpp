@@ -79,6 +79,7 @@ void GrabberController::moveToAngle(Preset preset, double time)
 //
 void GrabberController::processCubeState(bool cubesensor, double now)
 {
+    mPrevCubeState = mCubeState;
     switch(mCubeState)
     {
     case CubeState::NoCube:
@@ -120,8 +121,8 @@ void GrabberController::processCubeState(bool cubesensor, double now)
 			// signal may have just disappeared temporarily.  Start a timer to see if the
 			// cube is really gone
 			//
-			paramsInput* input_params = paramsInput::get();
-			mCubeStateTimer.set(input_params->getValue("teleop:collection_delay", 0.5)) ;
+			//paramsInput* input_params = paramsInput::get();
+			mCubeStateTimer.set(0.5) ;
 			mCubeState = CubeState::MaybeLostCube ;
 		}
 		break ;
