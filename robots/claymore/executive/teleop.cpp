@@ -367,8 +367,8 @@ void Teleop::runLights(const Run_info &info, Toplevel::Goal &goals)
     goals.lights.drive_right = goals.drive.right();
     goals.lights.has_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
 
-    goals.lights.collector_open = collector_mode == Collector_mode::COLLECT_OPEN;
-    goals.lights.collector_closed = collector_mode == Collector_mode::COLLECT_CLOSED;
+    goals.lights.collect_open = collector_mode == Collector_mode::COLLECT_OPEN;
+    goals.lights.collect_closed = collector_mode == Collector_mode::COLLECT_CLOSED;
     goals.lights.wings_ready = goals.wings == Wings::Goal::UNLOCKED && info.status.lifter.height > 30;//make sure it's above the climbing stabilizers- TODO make a param?
     goals.lights.lifter_status = [&]{
 		Lifter::Status s = status(info.status.lifter);

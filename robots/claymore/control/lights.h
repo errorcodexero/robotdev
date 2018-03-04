@@ -18,8 +18,8 @@ struct Lights{
 		double drive_left;	
 		double drive_right;	
 		bool has_cube;
-		bool collector_open;
-		bool collector_closed;
+		bool collect_open;
+		bool collect_closed;
 		bool wings_ready;
 		
 		#define LIFTER_STATUSES_FOR_LIGHTS X(UNKNOWN) X(FLOOR) X(EXCHANGE) X(CLIMB) X(SWITCH) X(SCALE)
@@ -72,9 +72,9 @@ struct Lights{
 		//OI lights
 		static const unsigned LIFTER_STATUS_BINARY_LEN = 3;
 		std::array<bool,LIFTER_STATUS_BINARY_LEN> lifter_status;
-		bool collector_open;
-		bool collector_closed;
-		bool has_cube;
+		bool collect_open;
+		bool collect_closed;
+		bool has_cube;//this also has a robot indicator light
 		bool wings_ready;
 		bool enabled;
 

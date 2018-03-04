@@ -7,16 +7,27 @@ using namespace std;
 #define BLINKY_LIGHT_INFO_ADDRESS 5
 
 struct OI_light_addresses{
-	static const unsigned COLLECTOR_OPEN = 0;
-	static const unsigned COLLECTOR_CLOSED = 1;
-	static const unsigned HAS_CUBE = 2;
-	static const unsigned WINGS_DEPLOYED = 3; 
-	static const unsigned ENABLED = 4;
-	
-	static const unsigned LIFTER_STATUS_BINARY_A = 5;
-	static const unsigned LIFTER_STATUS_BINARY_B = 6;
-	static const unsigned LIFTER_STATUS_BINARY_C = 7;
+	struct Primary{
+		static const unsigned HAS_CUBE = 1;
+		static const unsigned COLLECT_OPEN = 2;
+		static const unsigned COLLECT_CLOSED = 3;
+		static const unsigned WINGS_READY = 4;
+	};
+
+	struct Secondary{
+		static const unsigned COLLECT_OPEN = 0;
+		static const unsigned COLLECT_CLOSED = 1;
+		static const unsigned HAS_CUBE = 2;
+		static const unsigned WINGS_READY = 3; 
+		static const unsigned ENABLED = 4;
+		
+		static const unsigned LIFTER_STATUS_BINARY_A = 5;
+		static const unsigned LIFTER_STATUS_BINARY_B = 6;
+		static const unsigned LIFTER_STATUS_BINARY_C = 7;
+	};
 };
+
+const unsigned HAS_CUBE_INDICATOR_ADDRESS = 5;//TODO
 
 Lights::Goal::Goal(
 	Camera_light a,
@@ -36,8 +47,8 @@ Lights::Goal::Goal(
 	drive_left(l),
 	drive_right(r),
 	has_cube(cube),
-	collector_open(open),
-	collector_closed(closed),
+	collect_open(open),
+	collect_closed(closed),
 	wings_ready(wings),
 	lifter_status(lifter)
 {}
@@ -69,8 +80,8 @@ Lights::Output::Output(
 ):
 	camera_light(c),
 	blinky_light_info(b),
-	collector_open(open),
-	collector_closed(closed),
+	collect_open(open),
+	collect_closed(closed),
 	has_cube(cube),
 	wings_ready(wings),
 	enabled(en)
@@ -149,8 +160,8 @@ ostream& operator<<(ostream& o, Lights::Output a){
 	o<<"camera_light:"<<a.camera_light;
 	o<<" blinky_light_info:"<<a.blinky_light_info;
 	o<<" lifter_status:"<<a.lifter_status;
-	o<<" collector_open:"<<a.collector_open;
-	o<<" collector_closed:"<<a.collector_closed;
+	o<<" collect_open:"<<a.collect_open;
+	o<<" collect_closed:"<<a.collect_closed;
 	o<<" has_cube:"<<a.has_cube;
 	o<<" wings_ready:"<<a.wings_ready;
 	o<<" enabled:"<<a.enabled;
@@ -166,8 +177,8 @@ ostream& operator<<(ostream& o, Lights::Goal a){
 	o<<" drive_left:"<<a.drive_left;
 	o<<" drive_right"<<a.drive_right;
 	o<<" has_cube:"<<a.has_cube;
-	o<<" collector_open:"<<a.collector_open;
-	o<<" collector_closed:"<<a.collector_closed;
+	o<<" collect_open:"<<a.collect_open;
+	o<<" collect_closed:"<<a.collect_closed;
 	o<<" wings_ready:"<<a.wings_ready;
 	o<<" lifter_status:"<<a.lifter_status;
 	return o<<")";
@@ -209,7 +220,7 @@ bool operator==(Lights::Output a,Lights::Output b){
 	return a.camera_light == b.camera_light && 
 		a.blinky_light_info == b.blinky_light_info && 
 		a.lifter_status == b.lifter_status && 
-		a.collector_open == b.collector_open &&
+		a.collect_open == b.collect_open &&
 		a.has_cube == b.has_cube &&
 		a.wings_ready == b.wings_ready &&
 		a.enabled == b.enabled;
@@ -232,8 +243,8 @@ bool operator==(Lights::Goal a,Lights::Goal b){
 		a.drive_left == b.drive_left && 
 		a.drive_right == b.drive_right && 
 		a.has_cube == b.has_cube && 
-		a.collector_open == b.collector_open &&
-		a.collector_closed == b.collector_closed && 
+		a.collect_open == b.collect_open &&
+		a.collect_closed == b.collect_closed && 
 		a.wings_ready == b.wings_ready &&
 		a.lifter_status == b.lifter_status;
 }
@@ -245,8 +256,8 @@ bool operator<(Lights::Goal a,Lights::Goal b){
 	CMP(drive_left)
 	CMP(drive_right)
 	CMP(has_cube)
-	CMP(collector_open)
-	CMP(collector_closed)
+	CMP(collect_open)
+	CMP(collect_closed)
 	CMP(wings_ready)
 	CMP(lifter_status)
 	return 0;
@@ -311,16 +322,16 @@ Robot_inputs Lights::Input_reader::operator()(Robot_inputs r, Lights::Input in)c
 Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.blinky_light_info = r.i2c.data;
-		
-	out.collector_open = r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_OPEN];
-	out.collector_closed = r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED];
-	out.has_cube = r.primary_driver_station.digital[OI_light_addresses::HAS_CUBE];
-	out.wings_ready = r.primary_driver_station.digital[OI_light_addresses::WINGS_DEPLOYED];
- 	out.enabled = r.primary_driver_station.digital[OI_light_addresses::ENABLED];
 	
-	out.lifter_status[0] = r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_A];
-	out.lifter_status[1] = r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_B];
-	out.lifter_status[2] = r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_C];
+	out.collect_open = r.secondary_driver_station.digital[OI_light_addresses::Secondary::COLLECT_OPEN];
+	out.collect_closed = r.secondary_driver_station.digital[OI_light_addresses::Secondary::COLLECT_CLOSED];
+	out.has_cube = r.secondary_driver_station.digital[OI_light_addresses::Secondary::HAS_CUBE];
+	out.wings_ready = r.secondary_driver_station.digital[OI_light_addresses::Secondary::WINGS_READY];
+ 	out.enabled = r.secondary_driver_station.digital[OI_light_addresses::Secondary::ENABLED];
+	
+	out.lifter_status[0] = r.secondary_driver_station.digital[OI_light_addresses::Secondary::LIFTER_STATUS_BINARY_A];
+	out.lifter_status[1] = r.secondary_driver_station.digital[OI_light_addresses::Secondary::LIFTER_STATUS_BINARY_B];
+	out.lifter_status[2] = r.secondary_driver_station.digital[OI_light_addresses::Secondary::LIFTER_STATUS_BINARY_C];
 	
 	return out;
 }
@@ -328,16 +339,23 @@ Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.i2c.data = out.blinky_light_info;
 	
-	r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_OPEN] = out.collector_open;
-	r.primary_driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED] = out.collector_closed;
-	r.primary_driver_station.digital[OI_light_addresses::HAS_CUBE] = out.has_cube;
-	r.primary_driver_station.digital[OI_light_addresses::WINGS_DEPLOYED] = out.wings_ready;
-	r.primary_driver_station.digital[OI_light_addresses::ENABLED] = out.enabled;
+	r.primary_driver_station.digital[OI_light_addresses::Primary::COLLECT_OPEN] = out.collect_open;
+	r.primary_driver_station.digital[OI_light_addresses::Primary::COLLECT_CLOSED] = out.collect_closed;
+	r.primary_driver_station.digital[OI_light_addresses::Primary::COLLECT_CLOSED] = out.collect_closed;
+	r.primary_driver_station.digital[OI_light_addresses::Primary::WINGS_READY] = out.wings_ready;
 	
-	r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_A] = out.lifter_status[0];
-	r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_B] = out.lifter_status[1];
-	r.primary_driver_station.digital[OI_light_addresses::LIFTER_STATUS_BINARY_C] = out.lifter_status[2];
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::COLLECT_OPEN] = out.collect_open;
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::COLLECT_CLOSED] = out.collect_closed;
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::HAS_CUBE] = out.has_cube;
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::WINGS_READY] = out.wings_ready;
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::ENABLED] = out.enabled;
 	
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::LIFTER_STATUS_BINARY_A] = out.lifter_status[0];
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::LIFTER_STATUS_BINARY_B] = out.lifter_status[1];
+	r.secondary_driver_station.digital[OI_light_addresses::Secondary::LIFTER_STATUS_BINARY_C] = out.lifter_status[2];
+	
+	r.digital_io[HAS_CUBE_INDICATOR_ADDRESS] = out.has_cube ? Digital_out::one() : Digital_out::zero();
+
 	return r;
 }
 
@@ -413,7 +431,7 @@ set<Lights::Output> examples(Lights::Output*){
 							(uint8_t)goal.has_cube
 						},
 						goal.lifter_status,
-						goal.collector_open,
+						goal.collect_open,
 				});
 			}
 		}
@@ -470,8 +488,8 @@ Lights::Output control(Lights::Status status, Lights::Goal goal){
 				nyi
 		}
 	}();
-	out.collector_open = goal.collector_open;
-	out.collector_closed = goal.collector_closed;
+	out.collect_open = goal.collect_open;
+	out.collect_closed = goal.collect_closed;
 	out.has_cube = goal.has_cube;
 	out.wings_ready = goal.wings_ready;
 	out.enabled = status.enabled;
