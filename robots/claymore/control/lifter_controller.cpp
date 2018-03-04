@@ -174,7 +174,15 @@ void LifterController::updateHeightOnChange(Preset preset, double current_height
 }
 
 bool LifterController::finishedTarget(double target) {
-    return mMode == Mode::IDLE && fabs(mTarget - target) < mHeightThreshold;
+    bool ret = false ;
+
+	if (mMode == Mode::IDLE && fabs(mTarget - target) < mHeightThreshold)
+	{
+		cout << "    finished is true" << endl ;
+		ret = true ;
+	}
+
+	return ret ;
 }
 
 bool LifterController::finishedTarget(Preset target) {

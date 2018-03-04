@@ -148,11 +148,11 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 #ifdef DEBUG
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
-		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
-		logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
-		//logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		logger.enableSubsystem(SUBSYSTEM_TELEOP);
 		//logger.enableSubsystem(SUBSYSTEM_PANEL);
 		//logger.enableSubsystem(SUBSYSTEM_SOLENOIDS);
 #else
@@ -221,7 +221,8 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			std::cout << "Parmeters file read sucessfully" << std::endl ;
 		
 		Drivebase::drivebase_controller.setParams(params_p);	
-		Lifter::lifter_controller.setParams(params_p);	
+		Lifter::lifter_controller.setParams(params_p);
+		Grabber::grabber_controller.init() ;
 
 		/*
 		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){

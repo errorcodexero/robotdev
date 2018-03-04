@@ -34,6 +34,9 @@ public:
     /// \brief create the grabber controller object
     GrabberController();
 
+	/// \brief initialize the grabber controller
+	void init() ;
+
     /// \brief return the cube state for the grabber
     CubeState getCubeState()
     {

@@ -40,6 +40,8 @@ struct Lifter{
 		LifterController::Preset preset_target()const;
 		bool high_power()const;
 
+		std::string toString() const ;
+
 		static Goal climb();
 		static Goal go_to_height(double);
 		static Goal go_to_preset(LifterController::Preset);
@@ -105,13 +107,13 @@ struct Lifter{
 		Status_detail last;
 		Output::Gearing last_gearing;
 		double climb_goal;
-		double encoder_offset;
+		int encoder_offset;
 
 		void update(Time const&,Input const&,Output const&);
 		Status_detail get()const;
 		
 		Estimator();
-		Estimator(Lifter::Status_detail, Output::Gearing, double, double);
+		Estimator(Lifter::Status_detail st, Output::Gearing gear, double cg, int eo);
 	};
 
 	Output_applicator output_applicator;
