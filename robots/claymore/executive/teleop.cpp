@@ -114,8 +114,8 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
 		
 		collector_mode = Collector_mode::HOLD_CUBE ;
-		if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
-			Lifter::lifter_controller.isCalibrated())
+		double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::EXCHANGE) ;
+		if (info.status.lifter.height < exheight && Lifter::lifter_controller.isCalibrated())
 		{
 			//
 			// If we collected the cube witin a small tolerance of the floor height, we move the
