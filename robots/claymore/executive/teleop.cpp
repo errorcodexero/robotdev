@@ -199,7 +199,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		logger << "    Collector to EJECT\n" ;
 		collector_mode = Collector_mode::EJECT;
 		started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
-		intake_timer.set(1.0);
+		intake_timer.set(0.1);
     }
     else if(info.panel.drop)
     {
@@ -264,7 +264,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     
     if(lifter_goal == prep_climb_goal && prep_climb_done) {
         logger << "    Climb - shifting to low gear\n" ;
-	goals.lifter = Lifter::Goal::low_gear();
+		goals.lifter = Lifter::Goal::low_gear();
     }
 
     if(info.status.lifter.at_climbed_height){
