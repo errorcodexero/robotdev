@@ -475,10 +475,14 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 			logger << "    Lifter - applying slowdown\n" ;
 		}
 
-        if((status_detail.at_top && out.power > 0.0) ||
-           (status_detail.at_bottom && out.power < 0.0))
+        if(((status_detail.at_top || status_detail.at_top_limit) && out.power > 0.0) ||
+           ((status_detail.at_bottom || status_detail.at_bottom_limit) && out.power < 0.0))
             out.power = 0.0;
-    }
+    } else {
+		if((status_detail.at_top_limit && out.power > 0.0) ||
+		   (status_detail.at_bottom_limit && out.power < 0.0))
+			out.power = 0.0;
+	}
 
     logger << "After: " << out.power << "\n";
     logger.endMessage();
