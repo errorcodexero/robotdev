@@ -151,7 +151,7 @@ Panel interpret_oi(Joystick_data d){
 			return (grabber_auto < 0) ? false : true;
 		}();
 		p.intake_auto = d.button[10];
-		p.climb_lock = d.button[14];
+		p.climb_lock = !d.button[14];
 		p.lifter_high_power = d.button[15];
 	}
 	{//three position switches
@@ -258,7 +258,7 @@ Panel interpret_gamepad(Joystick_data d){
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
-	p.climb_lock = d.button[Gamepad_button::START];
+	p.climb_lock = !d.button[Gamepad_button::START];
 	p.wings = d.button[Gamepad_button::BACK];
 
 	bool alternate_operation = d.button[Gamepad_button::RB];

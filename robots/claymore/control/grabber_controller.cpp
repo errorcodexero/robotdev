@@ -77,13 +77,13 @@ void GrabberController::moveToAngle(Preset preset, double time)
 //                 we want the has_cube signal to stay inactive long enough to be
 //                 sure
 //
-void GrabberController::processCubeState(bool cubesensor, double now)
+void GrabberController::processCubeState(bool cubesensor, bool arms_in, double now)
 {
     mPrevCubeState = mCubeState;
     switch(mCubeState)
     {
     case CubeState::NoCube:
-		if (cubesensor)
+		if (cubesensor && !arms_in)
 		{
 			//
 			// We are currently in the no cube state, but see the cube
@@ -166,7 +166,7 @@ void GrabberController::update(double angle, bool cubesensor, double time, doubl
     //
     // Update the cube state
     //
-    processCubeState(cubesensor, time) ;
+    processCubeState(cubesensor, angle < presetToAngle(Preset::CLOSED), time) ;
 
     switch(mArmState)
     {

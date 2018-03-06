@@ -71,23 +71,23 @@ void Teleop::runDrivebase(const Run_info &info, Toplevel::Goal &goals)
     }
     const double NUDGE_POWER=.2,ROTATE_NUDGE_POWER=.2;
     double left=([&]{
-			if(!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
-			if(!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
-			if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;
-			if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
-			double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
-			if(spin) power+=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
-			return -power; //inverted so drivebase values can be positive
-		}());
+		if(!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
+		if(!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
+		if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;
+		if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
+		double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
+		if(spin) power+=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
+		return -power; //inverted so drivebase values can be positive
+	}());
     double right=-clip([&]{ //right side is reversed
-			if(!nudges[Nudges::FORWARD].timer.done()) return -NUDGE_POWER;
-			if(!nudges[Nudges::BACKWARD].timer.done()) return NUDGE_POWER;
-			if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;	
-			if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
-			double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
-			if(spin) power-=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
-			return power;
-		}());
+		if(!nudges[Nudges::FORWARD].timer.done()) return -NUDGE_POWER;
+		if(!nudges[Nudges::BACKWARD].timer.done()) return NUDGE_POWER;
+		if(!nudges[Nudges::CLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;	
+		if(!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
+		double power=set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
+		if(spin) power-=set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
+		return power;
+	}());
     
     if(info.driver_joystick.button[Gamepad_button::RB]) high_gear = false;
     if(info.driver_joystick.axis[Gamepad_axis::RTRIGGER] > .8) high_gear = true;
@@ -104,120 +104,126 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
     Lifter::Goal climb_goal = Lifter::Goal::climb();
 
-    //
-    // If the grabber tells us we collected a cube, perform teleop cube processing
-    //
-    if (Grabber::grabber_controller.cubeStateTransition(GrabberController::CubeState::MaybeHasCube, GrabberController::CubeState::HasCube))
-    {
-		logger << "    Performed acuire cube actions\n" ;
-		logger << "    Near preset: " << Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) << "\n";
-		logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
-		
-		collector_mode = Collector_mode::HOLD_CUBE ;
-		double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::EXCHANGE) ;
-		if (info.status.lifter.height < exheight && Lifter::lifter_controller.isCalibrated())
-		{
-			//
-			// If we collected the cube witin a small tolerance of the floor height, we move the
-			// lifter up to EXCHANGE height.  Note, if we collect the cube at any other height
-			// it is already off the floor and we let the drive team deal with height.
-			//
-			// Also, if the lifter has not been calibrated, we never move the lifter.  We want it
-			// to stay on the floor until the lifter is calibrated.
-			//
-			double delay = params_p->getValue("teleop:collection_delay", 0.5) ;
+	logger << "HAS CUBE: ";
+	logger << (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube);
 
-			//
-			// Start a timer for moving to exchange height.  This ensure that is we are collecting
-			// from OPEN mode, the grabber arms have time to completely grasp the cube before we
-			// start raising the lifter
-			//
-			collect_delay_timer.set(delay);
+    if(info.panel.climb_lock) {
+		//
+		// If the grabber tells us we collected a cube, perform teleop cube processing
+		//
+		if (Grabber::grabber_controller.cubeStateTransition(GrabberController::CubeState::MaybeHasCube, GrabberController::CubeState::HasCube))
+		{
+			logger << "    Performed aquire cube actions\n" ;
+			logger << "    Near preset: " << Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) << "\n";
+			logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
 			
-			logger << "    Started exchange height timer\n" ;
-		}
-    }
-    else if (Grabber::grabber_controller.cubeStateTransition(GrabberController::CubeState::MaybeLostCube, GrabberController::CubeState::NoCube))
-    {
-		logger << "    Performed lost cube actions\n" ;
-		
-		//
-		// Perform an teleop processing we want where when the grabber tells us we lost a cube
-		//
-    }
+			collector_mode = Collector_mode::HOLD_CUBE ;
+			double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::SWITCH) ;
+			if (info.status.lifter.height < exheight && Lifter::lifter_controller.isCalibrated())
+			{
+				//
+				// If we collected the cube witin a small tolerance of the floor height, we move the
+				// lifter up to EXCHANGE height.  Note, if we collect the cube at any other height
+				// it is already off the floor and we let the drive team deal with height.
+				//
+				// Also, if the lifter has not been calibrated, we never move the lifter.  We want it
+				// to stay on the floor until the lifter is calibrated.
+				//
+				double delay = params_p->getValue("teleop:collection_delay", 0.5) ;
 
-    //
-    // Go to exchange height if the timer has expired.  This timer was setup when we saw
-    // the transition no cube to having a cube.  Basically it causes us to go to exchange height
-    // when we detect a cube present
-    //
-    collect_delay_timer.update(info.in.now, info.in.robot_mode.enabled);
-    if(collect_delay_trigger(collect_delay_timer.done()))
-	{
-		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-		logger << "    Set lifter goal to exchange height\n" ;
+				//
+				// Start a timer for moving to exchange height.  This ensure that is we are collecting
+				// from OPEN mode, the grabber arms have time to completely grasp the cube before we
+				// start raising the lifter
+				//
+				collect_delay_timer.set(delay);
+				
+				logger << "    Started exchange height timer\n" ;
+			}
+		}
+		else if (Grabber::grabber_controller.cubeStateTransition(GrabberController::CubeState::MaybeLostCube, GrabberController::CubeState::NoCube))
+		{
+			logger << "    Performed lost cube actions\n" ;
+			
+			//
+			// Perform an teleop processing we want where when the grabber tells us we lost a cube
+			//
+		}
+
+		//
+		// Go to exchange height if the timer has expired.  This timer was setup when we saw
+		// the transition no cube to having a cube.  Basically it causes us to go to exchange height
+		// when we detect a cube present
+		//
+		collect_delay_timer.update(info.in.now, info.in.robot_mode.enabled);
+		if(collect_delay_trigger(collect_delay_timer.done()))
+		{
+			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+			logger << "    Set lifter goal to exchange height\n" ;
+		}
+
+		//
+		// Now process the panel inputs and decide what to do.
+		//
+
+		//
+		// TODO: What is the priority of these operations
+		//
+		if(collect_open_trigger(info.panel.collect_open))
+		{
+			if(collector_mode == Collector_mode::COLLECT_OPEN)
+			{
+				collector_mode = Collector_mode::IDLE;
+				logger << "    Collector to IDLE mode\n" ;
+			}
+			else
+			{
+				collector_mode = Collector_mode::COLLECT_OPEN;
+				logger << "    Collector to OPEN mode\n" ;
+			}
+		}
+		else if(collect_closed_trigger(info.panel.collect_closed))
+		{
+			if(collector_mode == Collector_mode::COLLECT_CLOSED)
+			{
+				collector_mode = Collector_mode::IDLE;
+				logger << "    Collector to IDLE mode\n" ;
+			}
+			else
+			{
+				collector_mode = Collector_mode::COLLECT_CLOSED;
+				logger << "    Collector to CLOSED mode\n" ;
+			}
+		}
+		else if(info.panel.eject)
+		{
+			//
+			// BWG: Should these not alse be triggers?
+			//
+			logger << "    Collector to EJECT\n" ;
+			collector_mode = Collector_mode::EJECT;
+			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
+			intake_timer.set(0.1);
+		}
+		else if(info.panel.drop)
+		{
+			//
+			// BWG: Should these not alse be triggers?
+			//
+			logger << "    Collector to DROP\n" ;
+			collector_mode = Collector_mode::DROP;
+			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
+			intake_timer.set(0.5);
+		}
+	} else {
+		collector_mode = Collector_mode::STOW;
 	}
-
-    //
-    // Now process the panel inputs and decide what to do.
-    //
-
-    //
-    // TODO: What is the priority of these operations
-    //
-    if(collect_open_trigger(info.panel.collect_open))
-    {
-		if(collector_mode == Collector_mode::COLLECT_OPEN)
-		{
-			collector_mode = Collector_mode::IDLE;
-			logger << "    Collector to IDLE mode\n" ;
-		}
-		else
-		{
-			collector_mode = Collector_mode::COLLECT_OPEN;
-			logger << "    Collector to OPEN mode\n" ;
-		}
-    }
-    else if(collect_closed_trigger(info.panel.collect_closed))
-    {
-		if(collector_mode == Collector_mode::COLLECT_CLOSED)
-		{
-			collector_mode = Collector_mode::IDLE;
-			logger << "    Collector to IDLE mode\n" ;
-		}
-		else
-		{
-			collector_mode = Collector_mode::COLLECT_CLOSED;
-			logger << "    Collector to CLOSED mode\n" ;
-		}
-    }
-    else if(info.panel.eject)
-    {
-		//
-		// BWG: Should these not alse be triggers?
-		//
-		logger << "    Collector to EJECT\n" ;
-		collector_mode = Collector_mode::EJECT;
-		started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
-		intake_timer.set(0.1);
-    }
-    else if(info.panel.drop)
-    {
-		//
-		// BWG: Should these not alse be triggers?
-		//
-		logger << "    Collector to DROP\n" ;
-		collector_mode = Collector_mode::DROP;
-		started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
-		intake_timer.set(0.5);
-    }
     
     //
     // Process the panel for the lifter commands
     //
     bool prep_climb_done = ready(status(info.status.lifter), prep_climb_goal);
-    if(info.panel.climb)
-    {
+    if(info.panel.climb) {
 		//
 		// The climb buttons means one of two things.  The first time it is pressed
 		// prep_climb_done is false and we just move the lifter to climb height.  The
@@ -230,38 +236,39 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			logger << "    Climb - climbing (climb lock is on)\n";
 			lifter_goal = climb_goal ;
 		}
+    } else if(!info.panel.climb_lock) {
+		if (info.panel.floor)
+		{
+			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
+		}
+		else if(info.panel.exchange)
+		{
+			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+		}
+		else if(info.panel.switch_)
+		{
+			logger << "    requested switch from panel\n" ;
+			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
+		}
+		else if(info.panel.scale)
+		{
+			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
+		}
+		else if(info.panel.lifter == Panel::Lifter::UP)
+		{
+			lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
+		}
+		else if(info.panel.lifter == Panel::Lifter::DOWN)
+		{
+			lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
+		}
+		else if(ready(status(info.status.lifter), lifter_goal))
+		{
+			logger << "    lifter reached goal, stopping\n" ;
+			lifter_goal = Lifter::Goal::stop();
+		}
     }
-    else if(info.panel.floor)
-    {
-		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
-    }
-    else if(info.panel.exchange)
-    {
-		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-    }
-    else if(info.panel.switch_)
-    {
-		logger << "    requested switch from panel\n" ;
-		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
-    }
-    else if(info.panel.scale)
-    {
-		lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
-    }
-    else if(info.panel.lifter == Panel::Lifter::UP)
-    {
-		lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
-    }
-    else if(info.panel.lifter == Panel::Lifter::DOWN)
-    {
-		lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
-    }
-	else if(ready(status(info.status.lifter), lifter_goal))
-    {
-		logger << "    lifter reached goal, stopping\n" ;
-		lifter_goal = Lifter::Goal::stop();
-    } 
-    
+
     if(lifter_goal == prep_climb_goal && prep_climb_done) {
         logger << "    Climb - shifting to low gear\n" ;
 		goals.lifter = Lifter::Goal::low_gear();
@@ -270,23 +277,20 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     if(info.status.lifter.at_climbed_height){
 		goals.lifter = Lifter::Goal::lock(true);
     }	
-    
-    if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
-		logger << "    Lifter calibration requested from panel\n" ;
-		Lifter::lifter_controller.setCalibrate(true);
-		goals.lifter = Lifter::Goal::calibrate();
-    }
-    
-    if(calibrate_grabber_trigger(info.panel.calibrate_grabber)) {
-		logger << "    Grabber calibration requested from panel\n" ;
-		Grabber::grabber_controller.calibrate() ;
-		collector_mode = Collector_mode::CALIBRATE;
-    }
-    
-    if(info.panel.wings && info.panel.climb_lock)
-    {
-		goals.wings = Wings::Goal::UNLOCKED;
-    }
+
+	if(info.panel.climb_lock) { 
+		if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
+			logger << "    Lifter calibration requested from panel\n" ;
+			Lifter::lifter_controller.setCalibrate(true);
+			goals.lifter = Lifter::Goal::calibrate();
+		}
+		
+		if(calibrate_grabber_trigger(info.panel.calibrate_grabber)) {
+			logger << "    Grabber calibration requested from panel\n" ;
+			Grabber::grabber_controller.calibrate() ;
+			collector_mode = Collector_mode::CALIBRATE;
+		} 
+	}
     
     switch(collector_mode) {
     case Collector_mode::IDLE:
@@ -322,6 +326,10 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		if ((started_intake_with_cube && Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::NoCube) || intake_timer.done())
 			collector_mode = Collector_mode::IDLE;
 		break;
+	case Collector_mode::STOW:
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
+		goals.intake = Intake::Goal::off();
+		break;
     case Collector_mode::CALIBRATE:
 		goals.grabber = Grabber::Goal::calibrate();
 		if(ready(info.status.grabber, Grabber::Goal::calibrate()))
@@ -329,11 +337,6 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		break;
     default:
 		assert(0);
-    }
-
-    if(lifter_goal == prep_climb_goal || prep_climb_done) {
-		logger << "    Climb - stowing the grabber\n" ;
-		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
     }
 
     if(!info.panel.grabber_auto) {
@@ -404,6 +407,12 @@ Toplevel::Goal Teleop::run(Run_info info)
     
     runDrivebase(info, goals) ;
     runCollector(info, goals) ;
+
+	if(info.panel.wings && !info.panel.climb_lock) {
+		logger << "    Unlocking wings\n";
+		goals.wings = Wings::Goal::UNLOCKED;
+    }
+
     runLights(info, goals) ;
 
     logger.endMessage() ;

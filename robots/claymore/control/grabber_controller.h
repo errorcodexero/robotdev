@@ -117,7 +117,7 @@ public:
 					  
 
 private:
-    void processCubeState(bool cubesensor, double now) ;
+    void processCubeState(bool cubesensor, bool arms_in, double now) ;
     void idleState(double angle, double time, double dt) ;
     void calibrate(double angle, double dt, double &out) ;
     void angleState(double angle, double time, double dt, double &out) ;

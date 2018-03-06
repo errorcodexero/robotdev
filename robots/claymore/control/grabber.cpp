@@ -340,6 +340,13 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
     // We call update all the time now that all of the work is in the grabber_controller
     //
     Grabber::grabber_controller.update(status.angle, status.has_cube, status.time, status.dt, out);
+
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug);
+	logger << "Grabber output: " << out;
+	logger.endMessage();
+
+
     return out;
 }
 

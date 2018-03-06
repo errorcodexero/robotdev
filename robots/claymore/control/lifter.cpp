@@ -152,8 +152,8 @@ Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH,false){}
 Lifter::Input::Input(bool b, bool t, int e):bottom_hall_effect(b),top_hall_effect(t),ticks(e){}
 Lifter::Input::Input():Input(false,false,0){}
 
-Lifter::Status_detail::Status_detail(bool b,bool t,bool c,bool usr,bool lsr,double h,double ti,double dt):at_bottom(b),at_top(t),at_climbed_height(c),upper_slowdown_range(usr),lower_slowdown_range(lsr),height(h),time(ti),dt(dt){}
-Lifter::Status_detail::Status_detail():Status_detail(false,false,false,false,false,0.0,0.0,0.0){}
+Lifter::Status_detail::Status_detail(bool b,bool bl,bool t,bool tl,bool c,bool usr,bool lsr,double h,double ti,double dt):at_bottom(b),at_bottom_limit(bl),at_top(t),at_top_limit(tl),at_climbed_height(c),upper_slowdown_range(usr),lower_slowdown_range(lsr),height(h),time(ti),dt(dt){}
+Lifter::Status_detail::Status_detail():Status_detail(false,false,false,false,false,false,false,0.0,0.0,0.0){}
 
 Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg, int eo):last(s),last_gearing(g),climb_goal(cg),encoder_offset(eo){}
 Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,-9999.0,0.0){}
@@ -350,8 +350,10 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     double top_limit = input_params->getValue("lifter:height:top_limit", 96.0);
     double bottom_limit = input_params->getValue("lifter:collector_offset", 11.375) + 0.75;
 
-    last.at_bottom = in.bottom_hall_effect || last.height < bottom_limit;
-    last.at_top = in.top_hall_effect || last.height > top_limit;
+	last.at_bottom = last.height < bottom_limit;
+    last.at_bottom_limit = in.bottom_hall_effect;
+	last.at_top = last.height > top_limit;
+    last.at_top_limit = in.top_hall_effect;
 
     double slowdown_range = input_params->getValue("lifter:slowdown_range", 6.0);
     last.upper_slowdown_range = last.height > (top_limit - slowdown_range);
@@ -397,14 +399,7 @@ set<Lifter::Output> examples(Lifter::Output*){
 
 set<Lifter::Status_detail> examples(Lifter::Status_detail*){
     return {
-		{false,false,false,false,false,0.0,0.0,0.0},
-		{false,false,true,false,false,0.0,0.0,0.0},
-		{true,false,false,false,false,0.0,0.0,0.0},
-		{true,false,true,false,false,0.0,0.0,0.0},
-		{false,true,false,false,false,0.0,0.0,0.0},
-		{false,true,true,false,false,0.0,0.0,0.0},
-		{true,true,false,false,false,0.0,0.0,0.0},
-		{true,true,true,false,false,0.0,0.0,0.0}
+		{false,false,false,false,false,false,false,0.0,0.0,0.0},
     };
 }
 
