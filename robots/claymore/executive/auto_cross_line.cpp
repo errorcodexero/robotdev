@@ -12,8 +12,7 @@ using namespace std ;
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
 {
-    startAuto,
-    AUTO_PREAMBLE,
+    AUTO_PREAMBLE("cross_line"),
     Step(Drive("auto:cross_line:segment1",144.0, false)),
 	AUTO_POSTAMBLE,
 } ;

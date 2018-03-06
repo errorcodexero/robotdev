@@ -8,7 +8,7 @@ using namespace std ;
 
 static vector<Step> steps =
 {
-    startAuto,
+    Step(StartAuto("calibrate_only")),
     calibrateLifter,
     calibrateGrabber,
     endAuto
