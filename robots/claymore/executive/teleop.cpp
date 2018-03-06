@@ -114,8 +114,8 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
 		
 		collector_mode = Collector_mode::HOLD_CUBE ;
-		if (Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) &&
-			Lifter::lifter_controller.isCalibrated())
+		double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::EXCHANGE) ;
+		if (info.status.lifter.height < exheight && Lifter::lifter_controller.isCalibrated())
 		{
 			//
 			// If we collected the cube witin a small tolerance of the floor height, we move the
@@ -199,7 +199,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		logger << "    Collector to EJECT\n" ;
 		collector_mode = Collector_mode::EJECT;
 		started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
-		intake_timer.set(1.0);
+		intake_timer.set(0.1);
     }
     else if(info.panel.drop)
     {
@@ -264,7 +264,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     
     if(lifter_goal == prep_climb_goal && prep_climb_done) {
         logger << "    Climb - shifting to low gear\n" ;
-	goals.lifter = Lifter::Goal::low_gear();
+		goals.lifter = Lifter::Goal::low_gear();
     }
 
     if(info.status.lifter.at_climbed_height){

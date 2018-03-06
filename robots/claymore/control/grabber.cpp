@@ -313,28 +313,27 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
     //
     switch(goal.mode()){
     case Grabber::Goal::Mode::IDLE:
-	Grabber::grabber_controller.setIdle() ;
-	break;
+		Grabber::grabber_controller.setIdle() ;
+		break;
     case Grabber::Goal::Mode::HOLD:
-	Grabber::grabber_controller.hold() ;
-	break;
+		Grabber::grabber_controller.hold() ;
+		break;
     case Grabber::Goal::Mode::CLOSE:
-	Grabber::grabber_controller.close() ;
-	break;
+		Grabber::grabber_controller.close() ;
+		break;
     case Grabber::Goal::Mode::OPEN:
-	Grabber::grabber_controller.open() ;
-	break;	
+		Grabber::grabber_controller.open() ;
+		break;	
     case Grabber::Goal::Mode::GO_TO_ANGLE:
-	Grabber::grabber_controller.moveToAngle(goal.target(), status.time) ;
-	break;
+		Grabber::grabber_controller.moveToAngle(goal.target(), status.time) ;
+		break;
     case Grabber::Goal::Mode::GO_TO_PRESET:
-	Grabber::grabber_controller.moveToAngle(goal.preset_target(), status.time) ;
-	break ;
-	break;
+		Grabber::grabber_controller.moveToAngle(goal.preset_target(), status.time) ;
+		break ;
     case Grabber::Goal::Mode::CALIBRATE:
-	break;
+		break;
     default:
-	assert(0);
+		assert(0);
     }
 
     //

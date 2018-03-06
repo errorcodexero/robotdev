@@ -117,12 +117,6 @@ Executive get_auto_mode(Next_mode_info info)
 		auto_program = info.in.ds_info.near_switch_left ? center_switch_left : center_switch_right ;
 		break;
     case 3:
-		auto_program = info.in.ds_info.scale_left ? right_scale_left : right_scale_right ;
-		break;
-    case 4:
-		auto_program = info.in.ds_info.scale_left ? left_scale_left : left_scale_right ;
-		break;
-    case 5:
 		if (info.in.ds_info.scale_left)
 			auto_program = left_scale_left ;
 		else if (info.in.ds_info.near_switch_left)
@@ -130,7 +124,15 @@ Executive get_auto_mode(Next_mode_info info)
 		else
 			auto_program = cross_line ;
 		break ;
-    case 6: 
+    case 4:
+		if (info.in.ds_info.near_switch_left)
+			auto_program = left_switch_left ;
+		else if (info.in.ds_info.scale_left)
+			auto_program = left_scale_left ;
+		else
+			auto_program = cross_line ;
+		break;
+    case 5: 
 		if (!info.in.ds_info.scale_left)
 			auto_program = right_scale_right ;
 		else if (!info.in.ds_info.near_switch_left)
@@ -138,13 +140,19 @@ Executive get_auto_mode(Next_mode_info info)
 		else
 			auto_program = cross_line ;
 		break ;
+    case 6:
+		if (!info.in.ds_info.near_switch_left)
+			auto_program = right_switch_right ;
+		else if (!info.in.ds_info.scale_left)
+			auto_program = right_scale_right ;
+		else
+			auto_program = cross_line ;
+		break;
     case 7:
 		break;
     case 8:
-		auto_program = two_cube_left ;
 		break ;
     case 9:
-		auto_program = two_cube_right ;
 		break ;
 
 	case 90:
