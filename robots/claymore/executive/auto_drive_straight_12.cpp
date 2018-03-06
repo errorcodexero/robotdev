@@ -12,7 +12,7 @@ using namespace std ;
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
 {
-    startAuto,
+    Step(StartAuto("drive_straight_12")),
     Step(Drive(12.0, false)),
     endAuto
 } ;

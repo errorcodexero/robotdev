@@ -12,7 +12,7 @@ using namespace std ;
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
 {
-	AUTO_PREAMBLE,
+	AUTO_PREAMBLE("left_switch_left"),
     startLifterExch,
     Step(Drive("auto:l_switch_l:segment1", 148, false)),
     rotate90pos,

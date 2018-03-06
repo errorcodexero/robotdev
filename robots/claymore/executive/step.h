@@ -99,7 +99,10 @@ public:
 
 class StartAuto: public Step_impl_inner<StartAuto>{
 public:
-    StartAuto() ;
+	std::string mProgramName ;
+	bool mInited ;
+	
+    StartAuto(const char *name_p) ;
     
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);

@@ -12,7 +12,7 @@ using namespace std ;
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps
 {
-    startAuto,
+    Step(StartAuto("lifter_move")),
     calibrateLifter,
     Step(Lifter_to_height(24.0)),
     Step(Wait(2.0)),

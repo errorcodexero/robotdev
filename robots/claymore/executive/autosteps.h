@@ -5,8 +5,6 @@
 // I don't really like this, but it fixes the problem.  We will do this better next
 // year with the new architecture
 //
-
-static Step startAuto = Step(StartAuto()) ;
 static Step endAuto = Step(EndAuto()) ;
 static Step calibrateLifter = Step(Calibrate_lifter()) ;
 static Step calibrateGrabber = Step(Calibrate_grabber()) ;
@@ -24,8 +22,8 @@ static Step waitForLifter = Step(Wait_for_lifter()) ;
 static Step eject = Step(Eject()) ;
 static Step dropGrabber = Step(Drop_grabber());
 
-#define AUTO_PREAMBLE \
-	startAuto,															\
+#define AUTO_PREAMBLE(name)												\
+	Step(StartAuto(name)),												\
 	calibrateLifter,													\
 	calibrateGrabber,													\
 	Step(Lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)), 	\
