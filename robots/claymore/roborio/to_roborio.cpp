@@ -53,46 +53,9 @@ int read_joysticks(Robot_inputs &r, frc::DriverStation& ds){
 	return 0;
 }
 
-/*
-void setoutputs_joysticks(Robot_inputs &r){
-	DriverStation *ds=DriverStation::GetInstance();
-	if(unsigned i=0;i<r.JOYSTICKS;i++){
-		r.joystick[i]=SetOutput(1,1);			 
-	}
-}
-*/
-
-/*DriverStationEnhancedIO &get_driver_station(){
-	DriverStation *ds=DriverStation::GetInstance();
-	if(!ds) return NULL;
-	return ds->GetEnhancedIO();
-}*/
-
-/*int read_driver_station(Driver_station_input& r){
-	DriverStation *ds=DriverStation::GetInstance();
-	if(!ds) return 2048;
-	//Cyprus board isn't supported and a replacement is not yet available.
-	//DriverStationEnhancedIO &en=ds->GetEnhancedIO();
-	for(unsigned i=0;i<r.ANALOG_INPUTS;i++){
-		r.analog[i]=0;//en.GetAnalogIn(i+1);//Causing a LOT of printouts when the DS is disconnected
-
-	}
-	for(unsigned i=0;i<r.DIGITAL_INPUTS;i++){
-		r.digital[i]=0;//en.GetDigital(i+1);//Same as above ^^
-	}
-	return 0;
-}*/
-
 //it might make sense to put this in the Robot_inputs structure.  
 Volt battery_voltage(){
 	auto &d=frc::DriverStation::GetInstance();
-	//AnalogModule *am=AnalogModule::GetInstance(DriverStation::kBatteryModuleNumber);
-	/*if(!d){
-		return 18; //this should look surprising
-		//but maybe should actually return NAN.
-	}*/
-	/*float f=am->GetAverageVoltage(DriverStation::kBatteryChannel);
-	return f * (1680.0 / 1000.0);//copied from WPIlib's DriverStation.cpp*/
 	return d.GetBatteryVoltage();
 }
 
@@ -126,11 +89,6 @@ class To_roborio
 	Pump_control pump_control;
 	//frc::Compressor *compressor;
 	frc::DriverStation& driver_station;
-#ifdef NEED_PIXY_CAM
-	Pixy::PixyUART uart;
-	Pixy::PixyCam camera;
-	bool cam_data_recieved;
-#endif
 	std::ofstream null_stream;
 public:
 To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
@@ -175,7 +133,6 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		dest_p = std::make_shared<messageDestStream>(std::cout) ;
 		logger.addDestination(dest_p) ;
 #endif
-
 		std::string flashdrive("/media/sda1") ;
 		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
 		logger.addDestination(dest_p) ;
@@ -190,7 +147,6 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 #ifdef THEREMIN
 		talon_srx_controls.set_inverted(2);
 		talon_srx_controls.set_inverted(3);
-
 #endif
 	
 #ifdef CLAYMORE
@@ -224,36 +180,6 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		Lifter::lifter_controller.setParams(params_p);
 		Grabber::grabber_controller.init() ;
 
-		/*
-		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
-			int r=digital_io[i].set_channel(i);
-			if(r) error_code|=256;
-			//digital_in[i]=new DigitalInput(i+1);
-		}*/
-		
-		/*lcd=DriverStationLCD::GetInstance();
-		if(!lcd) error_code|=512;*/
-
-		//table = NetworkTable::GetTable("crio");
-		/*gyro=new Gyro(1);
-		if(gyro){
-			//gyro->InitGyro();
-		}else{
-			//TODO: Note this somehow.
-		}*/
-
-		/*
-		compressor=new frc::Compressor();
-		if(compressor){
-			//for now I'm assuming that this means that it will run automatically.  I haven't seen any documentation that says what this does though.
-			compressor->Start();
-		}else{
-			error_code|=512;
-		}
-		*/
-		
-		//Slave
-		
 		cout<<"Initialization Complete."<<endl<<flush;
 	}
 	
@@ -292,19 +218,6 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 	Navx_input read_navx(){
 		return navx_control.get();
 	}
-
-#ifdef NEED_PIXY_CAM
-	Camera read_camera(Robot_inputs /*r*/){
-		Camera c;
-		camera.enable();
-		if(camera.isNewData()) {
-			cam_data_recieved=true;
-			c.blocks=camera.getBlocks();
-		}
-		c.enabled=cam_data_recieved;
-		return c;
-	}
-#endif
 
 	pair<Robot_inputs,int> read(Robot_mode robot_mode){
 		int error_code=0;
@@ -540,16 +453,6 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 #endif
 		
 		run(in);
-
-		/*              
-		// Network Table update:
-		enum DsMode_t { DS_OTHER = 0, DS_AUTO = 1, DS_TELE = 2 };
-		DsMode_t dsMode = 
-			(in.robot_mode.autonomous && in.robot_mode.enabled) ? DS_AUTO :
-			(in.robot_mode.enabled) ? DS_TELE : DS_OTHER;
-			table->PutBoolean ("isEnabled", in.robot_mode.enabled);
-			table->PutNumber  ("dsMode",    dsMode);*/
-	}
 };
 
 template<typename USER_CODE>
@@ -584,15 +487,29 @@ class Robot_adapter: public frc::SampleRobot{
 
 	void OperatorControl(void)
 	{
+		double looptime = 0.02 ;
+		
 		//should see what happens when we get rid of this loop.  
 		while (IsOperatorControl() && IsEnabled())
 		{
+			double start = frc::Timer::GetFPGATimestamp() ;
 			Robot_mode r;
 			r.enabled=IsEnabled();
 			u.run(r);
-			
+
+#ifdef OLD_LOOP_TIMING
 			//should see what happpens when this wait is removed.
 			frc::Wait(0.005);// Wait 5 ms so we don't hog CPU cycle time
+#else
+			double elapsed = frc::Timer::GetFPGATimestamp() - start ;
+			if (elapsed < looptime)
+				frc::Wait(looptime - elapsed) ;
+			else
+			{
+				std::cout << "Loop exceeded loop time, actual " << elapsed * 1000 << " msec" << std::endl ;
+				std::cout << std::endl << std::endl ;
+			}
+#endif			
 		}
 	}
 	
