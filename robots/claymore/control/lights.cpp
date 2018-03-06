@@ -341,7 +341,7 @@ Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Out
 	
 	r.primary_driver_station.digital[OI_light_addresses::Primary::COLLECT_OPEN] = out.collect_open;
 	r.primary_driver_station.digital[OI_light_addresses::Primary::COLLECT_CLOSED] = out.collect_closed;
-	r.primary_driver_station.digital[OI_light_addresses::Primary::COLLECT_CLOSED] = out.collect_closed;
+	r.primary_driver_station.digital[OI_light_addresses::Primary::HAS_CUBE] = out.has_cube;
 	r.primary_driver_station.digital[OI_light_addresses::Primary::WINGS_READY] = out.wings_ready;
 	
 	r.secondary_driver_station.digital[OI_light_addresses::Secondary::COLLECT_OPEN] = out.collect_open;

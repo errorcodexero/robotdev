@@ -370,7 +370,7 @@ struct Robot_inputs{
 
 	DS_info ds_info;
 
-	static const unsigned JOYSTICKS=3; //ports are 0-5, so there are actually six, but we only use the first three so we'll only consider them to limit print outs
+	static const unsigned JOYSTICKS=4; //ports are 0-5, so there are actually six, but we only use the first three so we'll only consider them to limit print outs
 	Checked_array<Joystick_data,JOYSTICKS> joystick;
 
 	Digital_inputs digital_io;	

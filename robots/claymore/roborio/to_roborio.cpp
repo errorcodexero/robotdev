@@ -402,6 +402,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		}
 		{	
 			frc::Joystick panel(OI_LIGHTS_PORT);
+			
 			for(unsigned i=0;i<Robot_outputs::SECONDARY_DRIVER_STATION_DIGITAL_OUTPUTS;i++){
 				panel.SetOutput(i+1, out.secondary_driver_station.digital[i]);
 			}
@@ -413,7 +414,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			}
 			talon_srx_controls.set(out.talon_srx,enable_all); 
 		}
-	
+
 		i2c_control.write(out.i2c);	
 	
 		pump_control.set(out.pump);
