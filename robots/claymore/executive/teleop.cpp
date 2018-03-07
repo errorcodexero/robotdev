@@ -107,7 +107,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 	logger << "HAS CUBE: ";
 	logger << (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube);
 
-    if(info.panel.climb_lock) {
+    if(info.panel.climb_disabled) {
 		//
 		// If the grabber tells us we collected a cube, perform teleop cube processing
 		//
@@ -232,11 +232,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		if(!prep_climb_done) {
 			logger << "    Climb - moving lifter to climb height\n";
 			lifter_goal = prep_climb_goal;
-		} else if(!info.panel.climb_lock) {
-			logger << "    Climb - climbing (climb lock is on)\n";
+		} else if(!info.panel.climb_disabled) {
+			logger << "    Climb - climbing (climb switch is enabled)\n";
 			lifter_goal = climb_goal ;
 		}
-    } else if(info.panel.climb_lock) {
+    } else if(info.panel.climb_disabled) {
 		if (info.panel.floor)
 		{
 			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
@@ -278,7 +278,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		lifter_goal = Lifter::Goal::lock(true);
     }	
 
-	if(info.panel.climb_lock) {
+	if(info.panel.climb_disabled) {
 		if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
 			logger << "    Lifter calibration requested from panel\n" ;
 			Lifter::lifter_controller.setCalibrate(true);
@@ -403,7 +403,7 @@ Toplevel::Goal Teleop::run(Run_info info)
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TELEOP);
     logger << "Teleop:\n";
 
-	if (info.panel.climb_lock)
+	if (info.panel.climb_disabled)
 		logger << "    climb lock is set, cannot climb\n" ;
 	else
 		logger << "    climb lock is clear, can climb\n" ;
@@ -413,7 +413,7 @@ Toplevel::Goal Teleop::run(Run_info info)
     runDrivebase(info, goals) ;
     runCollector(info, goals) ;
 
-	if(info.panel.wings && !info.panel.climb_lock) {
+	if(info.panel.wings && !info.panel.climb_disabled) {
 		logger << "    Unlocking wings\n";
 		goals.wings = Wings::Goal::UNLOCKED;
     }
