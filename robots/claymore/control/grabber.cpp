@@ -342,7 +342,7 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
     Grabber::grabber_controller.update(status.angle, status.has_cube, status.time, status.dt, out);
 
 	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug);
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
 	logger << "Grabber output: " << out;
 	logger.endMessage();
 

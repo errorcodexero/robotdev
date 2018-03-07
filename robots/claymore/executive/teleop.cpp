@@ -218,7 +218,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 	} else {
 		collector_mode = Collector_mode::STOW;
 	}
-    
+
     //
     // Process the panel for the lifter commands
     //
@@ -232,11 +232,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		if(!prep_climb_done) {
 			logger << "    Climb - moving lifter to climb height\n";
 			lifter_goal = prep_climb_goal;
-		} else if(info.panel.climb_lock) {
+		} else if(!info.panel.climb_lock) {
 			logger << "    Climb - climbing (climb lock is on)\n";
 			lifter_goal = climb_goal ;
 		}
-    } else if(!info.panel.climb_lock) {
+    } else if(info.panel.climb_lock) {
 		if (info.panel.floor)
 		{
 			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
@@ -247,7 +247,6 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		}
 		else if(info.panel.switch_)
 		{
-			logger << "    requested switch from panel\n" ;
 			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
 		}
 		else if(info.panel.scale)
@@ -275,10 +274,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     }
 
     if(info.status.lifter.at_climbed_height){
-		goals.lifter = Lifter::Goal::lock(true);
+		logger <<"    Climb - at climb height, enabling lock\n" ;
+		lifter_goal = Lifter::Goal::lock(true);
     }	
 
-	if(info.panel.climb_lock) { 
+	if(info.panel.climb_lock) {
 		if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
 			logger << "    Lifter calibration requested from panel\n" ;
 			Lifter::lifter_controller.setCalibrate(true);
@@ -402,6 +402,11 @@ Toplevel::Goal Teleop::run(Run_info info)
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TELEOP);
     logger << "Teleop:\n";
+
+	if (info.panel.climb_lock)
+		logger << "    climb lock is set, cannot climb\n" ;
+	else
+		logger << "    climb lock is clear, can climb\n" ;
     
     Toplevel::Goal goals;
     

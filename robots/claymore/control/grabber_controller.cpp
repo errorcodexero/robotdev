@@ -213,6 +213,7 @@ void GrabberController::update(double angle, bool cubesensor, double time, doubl
 
 void GrabberController::calibrate(double angle, double dt, double &out)
 {
+	out = 0.4 ;
 }
 
 void GrabberController::angleState(double angle, double time, double dt, double &out)

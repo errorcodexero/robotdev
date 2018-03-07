@@ -289,9 +289,6 @@ Robot_outputs Lifter::Output_applicator::operator()(Robot_outputs r, Lifter::Out
     r.solenoid[LIFTER_SHIFTER] = (out.gearing == Lifter::Output::Gearing::LOW) ;
     r.solenoid[LIFTER_LOCK_SOLENOID] = !out.lock;
 
-	if (r.solenoid[LIFTER_SHIFTER])
-		cout << "Low Gear" << endl ;
-
     auto set_encoder=[&](unsigned int a, unsigned int b,unsigned int loc){
 		r.digital_io[a] = Digital_out::encoder(loc,1);
 		r.digital_io[b] = Digital_out::encoder(loc,0);
@@ -361,7 +358,6 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
 
     if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) {
 	climb_goal = in.ticks - input_params->getValue("lifter:climbing_difference", 100.0);
-	cout << "Climb Goal: " << climb_goal << "  Ticks: " << in.ticks << endl;
     }
     last.at_climbed_height = (climb_goal > -9999.0) && (in.ticks < climb_goal);
     last_gearing = out.gearing;
@@ -417,7 +413,11 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     Lifter::Status s = status(status_detail);
 
     Lifter::Output out = {0.0, goal.gearing(), false};
-    if(s == Lifter::Status::ERROR) return out;
+    if(s == Lifter::Status::ERROR)
+	{
+		cout << "    aborting error" << endl ;
+		return out;
+	}
 
     if(Lifter::lifter_controller.runningInBackground() || goal.mode() == Lifter::Goal::Mode::BACKGROUND) {
 		Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
@@ -458,6 +458,7 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     case Lifter::Goal::Mode::LOCK:
 		out.power = 0.0;
 		out.lock = true;
+		cout << "Locking the lifter" << endl ;
 		break;
     default:
 		nyi
@@ -466,6 +467,7 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
     logger << "    Lifter status: " << status_detail.at_top << " " << status_detail.at_bottom << " " << out.power << "\n";
+	logger << "    Lifter lock: " << (out.lock ? "locked" : "unlocked") << "\n" ;
 
     if(goal.gearing() != Lifter::Goal::Gearing::LOW) {
         if((status_detail.upper_slowdown_range && out.power > 0.0) ||
@@ -475,29 +477,56 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 			logger << "    Lifter - applying slowdown\n" ;
 		}
 
-        if(((status_detail.at_top || status_detail.at_top_limit) && out.power > 0.0) ||
-           ((status_detail.at_bottom || status_detail.at_bottom_limit) && out.power < 0.0))
+        if ((status_detail.at_top || status_detail.at_top_limit) && out.power > 0.0)
+		{
             out.power = 0.0;
+			if (status_detail.at_top)
+				logger << "    Lifter - limiting upward movement due to encoders\n" ;
+			if (status_detail.at_top_limit)
+				logger << "    Lifter - limiting upward movement due to limit switch\n" ;
+		}
+		else if ((status_detail.at_bottom || status_detail.at_bottom_limit) && out.power < 0.0)
+		{
+            out.power = 0.0;
+			if (status_detail.at_bottom)
+				logger << "    Lifter - limiting downward movement due to encoders\n" ;
+			if (status_detail.at_bottom_limit)
+				logger << "    Lifter - limiting downward movement due to limit switch\n" ;
+		}
     } else {
+		//
+		// We are in low gear, make sure we don't run past the limit switches
+		//
 		if((status_detail.at_top_limit && out.power > 0.0) ||
 		   (status_detail.at_bottom_limit && out.power < 0.0))
 			out.power = 0.0;
 	}
 
-    logger << "After: " << out.power << "\n";
+    logger << "After: " << out.power << ", lock " << (out.lock ? "LOCKED" : "UNLOCKED") << "\n" ;
     logger.endMessage();
 
     return out;
 }
 
 Lifter::Status status(Lifter::Status_detail const& status_detail){
-    if(
-		(status_detail.at_top && status_detail.at_bottom) ||
-		(status_detail.at_top && status_detail.at_climbed_height) ||
-		(status_detail.at_bottom && status_detail.at_climbed_height)
-		){
+    if(status_detail.at_top && status_detail.at_bottom)
+	{
 		return Lifter::Status::ERROR;
-    } 
+	}
+
+	if (status_detail.at_top && status_detail.at_climbed_height)
+	{
+		return Lifter::Status::ERROR;
+	}
+
+#ifdef NOTYET
+	if (status_detail.at_bottom && status_detail.at_climbed_height)
+	{
+		cout << "ERROR 3" << endl ;
+		return Lifter::Status::ERROR;
+    }
+#endif	
+	
     if(status_detail.at_top){
 		return Lifter::Status::TOP;
     }
