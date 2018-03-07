@@ -47,4 +47,14 @@ SRC = \
 	params_parser.cpp\
 	main.cpp
 
+#
+# On Linux x86, build using native compiler instead of ARM cross-compiler.
+# Enable development on Ubuntu.  Final version built and deployed on Raspberry Pi.
+# This program will not run on the roboRIO.
+#
+ifeq ($(shell uname -a | awk '{print $$1$$12}') ,Linuxx86_64)
+	USE_NATIVE_COMPILER := yes
+endif
+
+
 include ../../../makefiles/compileapp.mk

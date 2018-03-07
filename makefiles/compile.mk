@@ -32,10 +32,12 @@ SHELL=bash
 EXTERNALSW = ../../../external
 
 #
-# Detect raspberry pi.  This field is not reliably set for other platforms.
+# Detect cases where we want to use the native compiler (raspberry pi)
+# Note project-specific makefile may have already set USE_NATIVE_COMPILER to yes.
 #
-UNAME2 := $(shell uname -a | awk '{print $$2}')
-
+ifeq ($(shell uname -a | awk '{print $$2}') ,raspberrypi)
+	USE_NATIVE_COMPILER := yes
+endif
 
 #
 # The compiler to use to build the robot code
@@ -71,7 +73,7 @@ EXEEXT=
 endif
 
 # Use native compiler on raspberry pi, else the cross compiler
-ifeq ($(UNAME2),raspberrypi)
+ifeq ($(USE_NATIVE_COMPILER),yes)
 COMPILER=/usr/bin/g++
 AR=
 else
