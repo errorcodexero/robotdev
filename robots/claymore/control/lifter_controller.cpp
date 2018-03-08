@@ -46,6 +46,7 @@ void LifterController::moveToHeight(double height, double current_height, double
     mTarget = height;
     mStartTime = time ;
     mManuallyAdjusted = false;
+	cout << "reseting manually adjusted in movetoheight" << endl ;
 
     double p, i, d, f, imax;
     if(current_height < height) {
@@ -99,6 +100,7 @@ void LifterController::setCalibrate(bool calibrate) {
 }
 
 void LifterController::setManuallyAdjusted() {
+	cout << "Setting manually adjusted" << endl; 
     mManuallyAdjusted = true;
 }
 
@@ -163,6 +165,12 @@ void LifterController::updateHeightOnChange(double height, double current_height
     // we consider valid for reaching our target height we do
     // not initialize for the new height
     //
+	cout << "updateHeightOnChagne called" << endl ;
+	if (mManuallyAdjusted)
+	{
+		cout << "manually adjusted in updateheight onchange" << endl ;
+		cout << "height " << height << ", current_height " << current_height << endl ;
+	}
     if (std::fabs(height - mLastTarget) > mHeightThreshold || mManuallyAdjusted) {
 		moveToHeight(height, current_height, time);
 		mLastTarget = height;
@@ -176,7 +184,7 @@ void LifterController::updateHeightOnChange(Preset preset, double current_height
 bool LifterController::finishedTarget(double target) {
     bool ret = false ;
 
-	if (mMode == Mode::IDLE && fabs(mTarget - target) < mHeightThreshold)
+	if (mMode == Mode::IDLE && fabs(mTarget - target) < mHeightThreshold && !mManuallyAdjusted)
 	{
 		ret = true ;
 	}

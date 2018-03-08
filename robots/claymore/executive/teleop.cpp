@@ -215,8 +215,6 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
 			intake_timer.set(0.5);
 		}
-	} else {
-		collector_mode = Collector_mode::STOW;
 	}
 
     //
@@ -273,10 +271,10 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		goals.lifter = Lifter::Goal::low_gear();
     }
 
-    if(info.status.lifter.at_climbed_height){
-		logger <<"    Climb - at climb height, enabling lock\n" ;
-		lifter_goal = Lifter::Goal::lock(true);
-    }	
+    if(info.status.lifter.at_climbed_height) {
+		logger <<"    Climb - at climb height, maintaining\n" ;
+		lifter_goal = Lifter::Goal::maintain_climb();
+    }
 
 	if(info.panel.climb_disabled) {
 		if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
@@ -339,13 +337,25 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		assert(0);
     }
 
+	if(lifter_goal == prep_climb_goal || prep_climb_done) {
+		logger << "    Climb - stowing the grabber\n" ;
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
+	}
+
     if(!info.panel.grabber_auto) {
 		//
 		// These override settings made by the collector mode
 		//
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::idle();
-		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::open();
-		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::close();
+		if(info.panel.grabber == Panel::Grabber::OPEN)
+		{
+			goals.grabber = Grabber::Goal::open();
+		}
+		
+		if(info.panel.grabber == Panel::Grabber::CLOSE)
+		{
+			goals.grabber = Grabber::Goal::close();
+		}
     }
     
     if(!info.panel.intake_auto) {

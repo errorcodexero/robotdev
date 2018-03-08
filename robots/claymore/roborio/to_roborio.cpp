@@ -532,7 +532,7 @@ class Robot_adapter: public frc::SampleRobot{
 
 	void OperatorControl(void)
 	{
-		double looptime = 0.02 ;
+		double looptime = 0.05 ;
 		
 		//should see what happens when we get rid of this loop.  
 		while (IsOperatorControl() && IsEnabled())
