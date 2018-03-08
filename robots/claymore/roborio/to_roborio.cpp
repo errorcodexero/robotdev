@@ -124,7 +124,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 
 		std::shared_ptr<messageLoggerDest> dest_p ;
 
-#ifdef DEBUG
+#ifdef NOTYET
 		//
 		// We only want printouts on COUT when we are debugging
 		// In competition mode, this information goes to a log file on
@@ -136,6 +136,50 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		std::string flashdrive("/media/sda1") ;
 		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
 		logger.addDestination(dest_p) ;
+
+		DriverStation &ds = DriverStation::GetInstance() ;
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "Match Specific Data:\n" ;
+		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n" ;
+		logger << "          Event Name: " << ds.GetEventName() << "\n" ;
+		logger << "          Match Type: " ;
+		switch(ds.GetMatchType())
+		{
+		case DriverStation::kNone:
+			logger << "kNone\n" ;
+			break ;
+		case DriverStation::kPractice:
+			logger << "kPractice\n" ;
+			break ;
+		case DriverStation::kQualification:
+			logger << "kQualification\n" ;
+			break ;
+		case DriverStation::kElimination:
+			logger << "kElimination\n" ;
+			break ;
+		default:
+			logger << "Unknown (bad data from driver station)\n" ;
+			break ;
+		} ;
+		logger << "        Match Number: " << ds.GetMatchNumber() << "\n" ;
+		
+		logger << "            Alliance: " ;
+		switch(ds.GetAlliance())
+		{
+		case DriverStation::kRed:
+			logger << "kRed\n" ;
+			break ;
+		case DriverStation::kBlue:
+			logger << "kBlue\n" ;
+			break ;
+		case DriverStation::kInvalid:
+			logger << "kInvalid\n" ;
+			break ;
+		default:
+			logger << "Unknown (bad data from driver station)\n" ;
+			break ;
+		}
+		logger << "            Location: " << ds.GetLocation() << "\n" ;
 
 		power = new frc::PowerDistributionPanel();
 
