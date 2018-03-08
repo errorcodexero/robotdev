@@ -271,10 +271,10 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		goals.lifter = Lifter::Goal::low_gear();
     }
 
-    if(info.status.lifter.at_climbed_height){
-		logger <<"    Climb - at climb height, enabling lock\n" ;
-		lifter_goal = Lifter::Goal::lock(true);
-    }	
+    if(info.status.lifter.at_climbed_height) {
+		logger <<"    Climb - at climb height, maintaining\n" ;
+		lifter_goal = Lifter::Goal::maintain_climb();
+    }
 
 	if(info.panel.climb_disabled) {
 		if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {

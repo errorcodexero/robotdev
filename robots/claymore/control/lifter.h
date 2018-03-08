@@ -16,7 +16,7 @@ struct Lifter{
 			#undef X
 		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE) X(LOW_GEAR) X(LOCK)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(MAINTAIN_CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE) X(LOW_GEAR) X(LOCK)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -43,6 +43,7 @@ struct Lifter{
 		std::string toString() const ;
 
 		static Goal climb();
+		static Goal maintain_climb();
 		static Goal go_to_height(double);
 		static Goal go_to_preset(LifterController::Preset);
 		static Goal up(bool);
@@ -82,10 +83,12 @@ struct Lifter{
 		bool upper_slowdown_range;
 		bool lower_slowdown_range;
 		double height;
+		double ticks;
+		double climb_goal;
 		double time, dt;
 	
 		Status_detail();
-		Status_detail(bool,bool,bool,bool,bool,bool,bool,double,double,double);
+		Status_detail(bool,bool,bool,bool,bool,bool,bool,double,double,double,double,double);
 	};
 
 	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR) X(CLIMBED)
