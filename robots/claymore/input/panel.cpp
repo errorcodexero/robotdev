@@ -9,7 +9,11 @@
 
 using namespace std;
 
-const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
+const unsigned GRABBER_AXIS = 2 ;
+const unsigned COLLECTOR_MODE_AXIS = 3 ;
+const unsigned INTAKE_AXIS = 4 ;
+const unsigned AUTO_GRABBER_AXIS = 5 ;
+const unsigned AUTO_SELECTOR_AXIS = 6;
 
 #define BUTTONS \
 	X(floor)\
@@ -147,7 +151,7 @@ Panel interpret_oi(Joystick_data d){
 	}
 	{//two position switches
 		p.grabber_auto = [&]{
-			float grabber_auto = d.axis[5];
+			float grabber_auto = d.axis[AUTO_GRABBER_AXIS];
 			return (grabber_auto < 0) ? false : true;
 		}();
 		p.intake_auto = d.button[10];
@@ -156,21 +160,21 @@ Panel interpret_oi(Joystick_data d){
 	}
 	{//three position switches
 		p.grabber = [&]{
-			float grabber = d.axis[2];
+			float grabber = d.axis[GRABBER_AXIS];
 			static const float CLOSE=-1,OFF=0,OPEN=1;
 			if(set_button(grabber,CLOSE,OFF,OPEN)) return Panel::Grabber::OFF;
 			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::CLOSE;
 			return Panel::Grabber::OPEN;
 		}();
 		p.intake = [&]{
-			float intake = d.axis[4];
+			float intake = d.axis[INTAKE_AXIS];
 			static const float IN=-1,OFF=0,OUT=1;
 			if(set_button(intake,IN,OFF,OUT)) return Panel::Intake::OFF;
 			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::IN;
 			return Panel::Intake::OUT;
 		}();
 		p.collector_mode = [&]{
-			float collector_mode = d.axis[3];
+			float collector_mode = d.axis[COLLECTOR_MODE_AXIS];
 			static const float NO_AUTO=-1,SEMI_AUTO=0,FULL_AUTO=1;
 			if(set_button(collector_mode,NO_AUTO,SEMI_AUTO,FULL_AUTO)) return Panel::Collector_mode::SEMI_AUTO;
 			if(set_button(collector_mode,SEMI_AUTO,FULL_AUTO,ARTIFICIAL_MAX)) return Panel::Collector_mode::FULL_AUTO;

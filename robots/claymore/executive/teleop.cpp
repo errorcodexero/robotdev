@@ -344,8 +344,15 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		// These override settings made by the collector mode
 		//
 		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::idle();
-		if(info.panel.grabber == Panel::Grabber::OPEN) goals.grabber = Grabber::Goal::open();
-		if(info.panel.grabber == Panel::Grabber::CLOSE) goals.grabber = Grabber::Goal::close();
+		if(info.panel.grabber == Panel::Grabber::OPEN)
+		{
+			goals.grabber = Grabber::Goal::open();
+		}
+		
+		if(info.panel.grabber == Panel::Grabber::CLOSE)
+		{
+			goals.grabber = Grabber::Goal::close();
+		}
     }
     
     if(!info.panel.intake_auto) {

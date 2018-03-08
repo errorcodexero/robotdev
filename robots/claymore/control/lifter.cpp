@@ -415,7 +415,6 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     Lifter::Output out = {0.0, goal.gearing(), false};
     if(s == Lifter::Status::ERROR)
 	{
-		cout << "    aborting error" << endl ;
 		return out;
 	}
 
@@ -458,7 +457,6 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     case Lifter::Goal::Mode::LOCK:
 		out.power = 0.0;
 		out.lock = true;
-		cout << "Locking the lifter" << endl ;
 		break;
     default:
 		nyi
@@ -522,7 +520,6 @@ Lifter::Status status(Lifter::Status_detail const& status_detail){
 #ifdef NOTYET
 	if (status_detail.at_bottom && status_detail.at_climbed_height)
 	{
-		cout << "ERROR 3" << endl ;
 		return Lifter::Status::ERROR;
     }
 #endif	

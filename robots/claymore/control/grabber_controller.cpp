@@ -2,6 +2,9 @@
 #include "message_logger.h"
 #include "../subsystems.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std ;
 
 GrabberController::GrabberController()
 {
@@ -213,7 +216,7 @@ void GrabberController::update(double angle, bool cubesensor, double time, doubl
 
 void GrabberController::calibrate(double angle, double dt, double &out)
 {
-	out = 0.4 ;
+	out = -0.4 ;
 }
 
 void GrabberController::angleState(double angle, double time, double dt, double &out)

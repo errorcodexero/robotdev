@@ -107,10 +107,10 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
-		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		// logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
-		//logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		logger.enableSubsystem(SUBSYSTEM_TELEOP);
 		//logger.enableSubsystem(SUBSYSTEM_PANEL);
 		//logger.enableSubsystem(SUBSYSTEM_SOLENOIDS);
 #else
@@ -488,7 +488,7 @@ class Robot_adapter: public frc::SampleRobot{
 
 	void OperatorControl(void)
 	{
-		double looptime = 0.02 ;
+		double looptime = 0.05 ;
 		
 		//should see what happens when we get rid of this loop.  
 		while (IsOperatorControl() && IsEnabled())
