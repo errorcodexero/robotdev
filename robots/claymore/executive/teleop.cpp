@@ -215,8 +215,6 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
 			intake_timer.set(0.5);
 		}
-	} else {
-		collector_mode = Collector_mode::STOW;
 	}
 
     //
@@ -338,6 +336,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     default:
 		assert(0);
     }
+
+	if(lifter_goal == prep_climb_goal || prep_climb_done) {
+		logger << "    Climb - stowing the grabber\n" ;
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
+	}
 
     if(!info.panel.grabber_auto) {
 		//
