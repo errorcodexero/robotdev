@@ -54,7 +54,7 @@ void GrabberController::moveToAngle(double angle, double time)
 	mAnglePID.Init(p, i, d, f, vmin, vmax, imax);
 	
 	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER_TUNING);
 	logger << "moveToAngle, angle = " << angle;
 	logger << ", pid " << p << " " << i << " " << d << " " << f ;
 	logger << "vmin " << vmin << " vmax " << vmax << " " << imax;
@@ -229,7 +229,7 @@ void GrabberController::angleState(double angle, double time, double dt, double 
 		mArmState = ArmState::IDLE ;
 		out = 0.0 ;
 	
-		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER_TUNING);
 		double elapsed= time - mStartTime ;
 		logger << "Grabber Reached Goal (SUCCESS) " ;
 		logger << elapsed << " seconds" ;
@@ -248,7 +248,7 @@ void GrabberController::angleState(double angle, double time, double dt, double 
 		}
 		mLastVoltage = out;
 	
-		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER_TUNING);
 		logger << "grabber:update(ANGLE)";
 		logger << ", time " << time;
 		logger << ", dt "<< dt;
@@ -262,7 +262,7 @@ void GrabberController::angleState(double angle, double time, double dt, double 
 void GrabberController::idleState(double angle, double time, double dt) {
     if (mDataDumpMode) {
 		messageLogger &logger = messageLogger::get();
-		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER_TUNING);
 		logger << "IDLE: dt " << dt;
 		logger << ", time " << time;
 		logger << ", angle " << angle;

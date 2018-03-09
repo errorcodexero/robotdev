@@ -8,10 +8,8 @@ using namespace std ;
 
 static vector<Step> steps =
 {
-    Step(StartAuto("calibrate_only")),
-    calibrateLifter,
-    calibrateGrabber,
-    endAuto
+    AUTO_PREAMBLE("calibrate_only"),
+	AUTO_POSTAMBLE
 } ;
 
 static Chain chain(steps, teleopex) ;

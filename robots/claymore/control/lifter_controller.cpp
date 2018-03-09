@@ -77,7 +77,7 @@ void LifterController::moveToHeight(double height, double current_height, double
     mHeightPID.Init(p, i, d, f, -0.8, 0.8, imax);
 
     messageLogger &logger = messageLogger::get();
-    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
     logger << "moveToHeight, height = " << height;
     logger << ", pid " << p << " " << i << " " << d << " " << f << " " << imax;
     logger.endMessage();
@@ -122,7 +122,7 @@ void LifterController::update(double height, double time, double dt, double& out
 	}
 	mLastVoltage = out;
 
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
 	logger << "lifter:update(HEIGHT)";
 	logger << ", time " << time;
 	logger << ", dt "<< dt;
@@ -147,7 +147,7 @@ void LifterController::update(double height, double time, double dt, double& out
 void LifterController::idle(double height, double time, double dt) {
     if (mDataDumpMode) {
 	messageLogger &logger = messageLogger::get();
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
 	logger << "IDLE: dt " << dt;
 	logger << ", time " << time;
 	logger << ", height " << height;

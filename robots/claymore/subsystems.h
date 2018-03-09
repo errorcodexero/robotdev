@@ -7,5 +7,7 @@
 #define SUBSYSTEM_PANEL                         (1 << 6)
 #define SUBSYSTEM_AUTONOMOUS			(1 << 7)
 #define SUBSYSTEM_SOLENOIDS                     (1 << 8)
+#define SUBSYSTEM_LIFTER_TUNING                 (1 << 9)
+#define SUBSYSTEM_GRABBER_TUNING                (1 << 10)
 
 #define SUBSYSTEM_ALL				(0xffffffffffffffff)

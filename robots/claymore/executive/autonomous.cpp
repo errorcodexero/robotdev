@@ -147,8 +147,13 @@ Executive get_auto_mode(Next_mode_info info)
 			auto_program = cross_line ;
 		break;
     case 7:
+		if (info.in.ds_info.near_switch_left)
+			auto_program = rotate_neg90;
+		else
+			auto_program = rotate_pos90;
 		break;
     case 8:
+		auto_program = rotate_both;
 		break ;
     case 9:
 		break ;
