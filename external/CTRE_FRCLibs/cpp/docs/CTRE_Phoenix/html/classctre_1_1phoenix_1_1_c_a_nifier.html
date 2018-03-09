@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">CTRE_Phoenix
-   &#160;<span id="projectnumber">2018_v10</span>
+   &#160;<span id="projectnumber">2018_v14</span>
    </div>
   </td>
  </tr>
@@ -145,6 +145,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8964ff8b592381812238eef27717eb43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2dca463f6920cb54becca85765f81b39"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#a2dca463f6920cb54becca85765f81b39">GetGeneralInput</a> (<a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#a19500f07bc0811a9da0993ff664eface">GeneralPin</a> inputPin)</td></tr>
 <tr class="separator:a2dca463f6920cb54becca85765f81b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1008a90c34c2e827fb88acdf57b6bd5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#ad1008a90c34c2e827fb88acdf57b6bd5">GetQuadraturePosition</a> ()</td></tr>
+<tr class="separator:ad1008a90c34c2e827fb88acdf57b6bd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeae2703071838d835f50f0c5fd2b50cf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#aeae2703071838d835f50f0c5fd2b50cf">GetQuadratureVelocity</a> ()</td></tr>
+<tr class="separator:aeae2703071838d835f50f0c5fd2b50cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f323b2046559d5be448e129b4293a27"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#a2f323b2046559d5be448e129b4293a27">SetQuadraturePosition</a> (int newPosition, int timeoutMs)</td></tr>
+<tr class="separator:a2f323b2046559d5be448e129b4293a27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ff4c7e745cf2a1e7e261a2ae143b437"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#a0ff4c7e745cf2a1e7e261a2ae143b437">ConfigVelocityMeasurementPeriod</a> (<a class="el" href="namespacectre_1_1phoenix.html#ad5e520886a38931369bef35679304366">CANifierVelocityMeasPeriod</a> period, int timeoutMs)</td></tr>
+<tr class="separator:a0ff4c7e745cf2a1e7e261a2ae143b437"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62217e9466ff0906c09bd58032f368d7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#a62217e9466ff0906c09bd58032f368d7">ConfigVelocityMeasurementWindow</a> (int windowSize, int timeoutMs)</td></tr>
+<tr class="separator:a62217e9466ff0906c09bd58032f368d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac72786465b9bde9c32e12b9587a2df93"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#ac72786465b9bde9c32e12b9587a2df93">GetBusVoltage</a> ()</td></tr>
 <tr class="separator:ac72786465b9bde9c32e12b9587a2df93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6f4c4a5613480d54bc9c8be17e348b8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171">ErrorCode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classctre_1_1phoenix_1_1_c_a_nifier.html#ab6f4c4a5613480d54bc9c8be17e348b8">GetLastError</a> ()</td></tr>
@@ -502,6 +512,86 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a0ff4c7e745cf2a1e7e261a2ae143b437"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ff4c7e745cf2a1e7e261a2ae143b437">&#9670;&nbsp;</a></span>ConfigVelocityMeasurementPeriod()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171">ErrorCode</a> ctre::phoenix::CANifier::ConfigVelocityMeasurementPeriod </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacectre_1_1phoenix.html#ad5e520886a38931369bef35679304366">CANifierVelocityMeasPeriod</a>&#160;</td>
+          <td class="paramname"><em>period</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeoutMs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Configures the period of each velocity sample. Every 1ms a position value is sampled, and the delta between that sample and the position sampled kPeriod ms ago is inserted into a filter. kPeriod is configured with this function.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">period</td><td>Desired period for the velocity measurement. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd>#VelocityMeasPeriod </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">timeoutMs</td><td>Timeout value in ms. If nonzero, function will wait for config success and report an error if it times out. If zero, no blocking or checking is performed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Error Code generated by function. 0 indicates no error. </dd></dl>
+
+</div>
+</div>
+<a id="a62217e9466ff0906c09bd58032f368d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62217e9466ff0906c09bd58032f368d7">&#9670;&nbsp;</a></span>ConfigVelocityMeasurementWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171">ErrorCode</a> ctre::phoenix::CANifier::ConfigVelocityMeasurementWindow </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>windowSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeoutMs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the number of velocity samples used in the rolling average velocity measurement.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">windowSize</td><td>Number of samples in the rolling average of velocity measurement. Valid values are 1,2,4,8,16,32. If another value is specified, it will truncate to nearest support value. </td></tr>
+    <tr><td class="paramname">timeoutMs</td><td>Timeout value in ms. If nonzero, function will wait for config success and report an error if it times out. If zero, no blocking or checking is performed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Error Code generated by function. 0 indicates no error. </dd></dl>
+
+</div>
+</div>
 <a id="aeceff0ea74d26f3a6b830e870e59c279"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeceff0ea74d26f3a6b830e870e59c279">&#9670;&nbsp;</a></span>EnablePWMOutput()</h2>
 
@@ -707,6 +797,42 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Error Code generated by function. 0 indicates no error. </dd></dl>
+
+</div>
+</div>
+<a id="ad1008a90c34c2e827fb88acdf57b6bd5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1008a90c34c2e827fb88acdf57b6bd5">&#9670;&nbsp;</a></span>GetQuadraturePosition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ctre::phoenix::CANifier::GetQuadraturePosition </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the position of the quadrature encoder. </p><dl class="section return"><dt>Returns</dt><dd>The Position of the encoder. </dd></dl>
+
+</div>
+</div>
+<a id="aeae2703071838d835f50f0c5fd2b50cf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeae2703071838d835f50f0c5fd2b50cf">&#9670;&nbsp;</a></span>GetQuadratureVelocity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ctre::phoenix::CANifier::GetQuadratureVelocity </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Gets the velocity of the quadrature encoder. </p><dl class="section return"><dt>Returns</dt><dd>The Velocity of the encoder. </dd></dl>
 
 </div>
 </div>
@@ -987,6 +1113,41 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Error Code generated by function. 0 indicates no error. </dd></dl>
+
+</div>
+</div>
+<a id="a2f323b2046559d5be448e129b4293a27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f323b2046559d5be448e129b4293a27">&#9670;&nbsp;</a></span>SetQuadraturePosition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171">ErrorCode</a> ctre::phoenix::CANifier::SetQuadraturePosition </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>newPosition</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeoutMs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Sets the position of the quadrature encoder. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">newPosition</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ErrorCode generated by function. 0 indicates no error. </dd></dl>
 
 </div>
 </div>

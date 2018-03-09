@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">CTRE_Phoenix
-   &#160;<span id="projectnumber">2018_v10</span>
+   &#160;<span id="projectnumber">2018_v14</span>
    </div>
   </td>
  </tr>
@@ -143,13 +143,17 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520ca829e620db67faa54c8ca8441f1239d41">ControlMode::Follower</a> = 5, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520ca88fbd988aeddc8939562a9364272b204">ControlMode::MotionProfile</a> = 6, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520ca68e2b0401fc71ab26bad42e12d9d06b6">ControlMode::MotionMagic</a> = 7, 
-<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520ca261cd8eccd5f0d2b742236b391300ea4">ControlMode::MotionMagicArc</a> = 8, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520ca2bf9593679102dd507467597c23034ce">ControlMode::MotionProfileArc</a> = 10, 
 <br />
-&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520ca2bf9593679102dd507467597c23034ce">ControlMode::MotionProfileArc</a> = 10, 
-<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520cab9f5c797ebbf55adccdd8539a65a0241">ControlMode::Disabled</a> = 15
+&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a005f39c5a73e9bd580bd62bcb116520cab9f5c797ebbf55adccdd8539a65a0241">ControlMode::Disabled</a> = 15
 <br />
  }</td></tr>
 <tr class="separator:a005f39c5a73e9bd580bd62bcb116520c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e1df45f3a34a455bde60488159acb12"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a1e1df45f3a34a455bde60488159acb12">DemandType</a> { <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a1e1df45f3a34a455bde60488159acb12a05bf5f64731c0a1b1c0a103c81b3e3ea">DemandType_Neutral</a> = 0, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a1e1df45f3a34a455bde60488159acb12ad4cd1e1051182fbf62bb7437d3a83dfd">DemandType_AuxPID</a> = 1, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a1e1df45f3a34a455bde60488159acb12a36fbe3d74d3229607e066e5014c16059">DemandType_ArbitraryFeedForward</a> = 2
+ }</td></tr>
+<tr class="separator:a1e1df45f3a34a455bde60488159acb12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76df6b51b79bdd3710ddcd6ef43050e7"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a76df6b51b79bdd3710ddcd6ef43050e7">FeedbackDevice</a> { <br />
 &#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a76df6b51b79bdd3710ddcd6ef43050e7a0f90901a8eaf937ebc07c9ab6285215c">None</a> = -1, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a76df6b51b79bdd3710ddcd6ef43050e7a6cb3ca51e1a0d491b0e19dab2a4e95db">QuadEncoder</a> = 0, 
@@ -179,6 +183,10 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:a6cd2a597679bc3b89d392bf484c7351f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14845a17b439c39b2ee1e3a311dc5cbb"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a14845a17b439c39b2ee1e3a311dc5cbb">FollowerType</a> { <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a14845a17b439c39b2ee1e3a311dc5cbbae58105d509d46e5f12bc888faa7f898f">FollowerType_PercentOutput</a> = 0, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a14845a17b439c39b2ee1e3a311dc5cbbae375965cc19c710caa288c3567fdf862">FollowerType_AuxOutput1</a>
+ }</td></tr>
+<tr class="separator:a14845a17b439c39b2ee1e3a311dc5cbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd232c45ffd137c1dc94b1efc7697bc9"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#afd232c45ffd137c1dc94b1efc7697bc9">LimitSwitchSource</a> { <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#afd232c45ffd137c1dc94b1efc7697bc9a71f8840c4c2d02b596e4e8466edd123d">LimitSwitchSource_FeedbackConnector</a> = 0, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#afd232c45ffd137c1dc94b1efc7697bc9a14125a487cc4b3423d6bb83a4c94a143">LimitSwitchSource_RemoteTalonSRX</a> = 1, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#afd232c45ffd137c1dc94b1efc7697bc9a6ff07a49659164901322f3e63804917d">LimitSwitchSource_RemoteCANifier</a> = 2, 
@@ -212,7 +220,11 @@ Enumerations</h2></td></tr>
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a5a30b4898399484281d7f793f01be9bda8fc52d85a70dfe06598f5c5efe81c8b4">RemoteSensorSource::RemoteSensorSource_CANifier_PWMInput1</a>, 
 <br />
 &#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a5a30b4898399484281d7f793f01be9bda521cf505400a843617dc5e4a93ca46c6">RemoteSensorSource::RemoteSensorSource_CANifier_PWMInput2</a>, 
-<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a5a30b4898399484281d7f793f01be9bdaf089438351098d3d3cefcae089c62bb8">RemoteSensorSource::RemoteSensorSource_CANifier_PWMInput3</a>
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a5a30b4898399484281d7f793f01be9bdaf089438351098d3d3cefcae089c62bb8">RemoteSensorSource::RemoteSensorSource_CANifier_PWMInput3</a>, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a5a30b4898399484281d7f793f01be9bda345e2c2663f4a727229ec0cef7abf9b4">RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Yaw</a>, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a5a30b4898399484281d7f793f01be9bdac04f41078ff13b398452e7d2ec4ebae5">RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Pitch</a>, 
+<br />
+&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a5a30b4898399484281d7f793f01be9bdaad05711c13b27e9b8a8a991c389a8fb8">RemoteSensorSource::RemoteSensorSource_GadgeteerPigeon_Roll</a>
 <br />
  }</td></tr>
 <tr class="separator:a5a30b4898399484281d7f793f01be9bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -231,14 +243,15 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ab18c5996851504e8a1d48d7a5ab8cc8d">Status_7_CommStatus</a> = 0x1580, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ab82021e7af32925ae915dcb4234856d8">Status_9_MotProfBuffer</a> = 0x1600, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0a29021eae76499ed09048d5dbaa203f70">Status_10_MotionMagic</a> = 0x1640, 
-<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0a9d03a99b17bd8a3ff2ee3f64cc5be5b9">Status_12_Feedback1</a> = 0x16C0, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0a2c9b9afa586aeca2faa23b66333a5c2b">Status_10_Targets</a> = 0x1640, 
 <br />
-&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ac08699540635886ef3b97885c9a1191b">Status_13_Base_PIDF0</a> = 0x1700, 
+&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0a9d03a99b17bd8a3ff2ee3f64cc5be5b9">Status_12_Feedback1</a> = 0x16C0, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ac08699540635886ef3b97885c9a1191b">Status_13_Base_PIDF0</a> = 0x1700, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0a42277cb6780a7f330790360059e34106">Status_14_Turn_PIDF1</a> = 0x1740, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0a4ed4f669bb7716f0f85447bcb2112dfa">Status_15_FirmareApiStatus</a> = 0x1780, 
-<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ab2a8489dca1eb94f6fdcff3f0ded86c4">Status_3_Quadrature</a> = 0x1480, 
 <br />
-&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ac053087f1ebb43bcbe7c52b10d1b43cc">Status_8_PulseWidth</a> = 0x15C0, 
+&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ab2a8489dca1eb94f6fdcff3f0ded86c4">Status_3_Quadrature</a> = 0x1480, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0ac053087f1ebb43bcbe7c52b10d1b43cc">Status_8_PulseWidth</a> = 0x15C0, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a2eb61fd8d8bfb6f8308a740f7d94abf0aae55b69c9a1c8fde63007175db80c08f">Status_11_UartGadgeteer</a> = 0x1680
 <br />
  }</td></tr>
@@ -252,9 +265,10 @@ Enumerations</h2></td></tr>
 &#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a7717ec90661154962e2ac37b89d8a857">Status_7_CommStatus_</a> = 0x1580, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087ab7efabad4c4d1bae1dd71cee542dfb42">Status_9_MotProfBuffer_</a> = 0x1600, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a5b24acdb45692eb629ab5d84d9fcffc9">Status_10_MotionMagic_</a> = 0x1640, 
-<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a6770a819b9ec9644cebf7e928663992c">Status_12_Feedback1_</a> = 0x16C0, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a0eb3125b153aab0bcd159bb966c89f6c">Status_10_Targets_</a> = 0x1640, 
 <br />
-&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a8448e03d894bece92124330a2a130342">Status_13_Base_PIDF0_</a> = 0x1700, 
+&#160;&#160;<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a6770a819b9ec9644cebf7e928663992c">Status_12_Feedback1_</a> = 0x16C0, 
+<a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a8448e03d894bece92124330a2a130342">Status_13_Base_PIDF0_</a> = 0x1700, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a0dc5e0cfd8f433d330a9b0c2e3c6f95b">Status_14_Turn_PIDF1_</a> = 0x1740, 
 <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#adbcb3ed785a15b4a47b54d1130467087a7f60c779ae05d0c4a34ef51c4d7de567">Status_15_FirmareApiStatus_</a> = 0x1780
 <br />
@@ -341,9 +355,34 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a005f39c5a73e9bd580bd62bcb116520ca829e620db67faa54c8ca8441f1239d41"></a>Follower&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a005f39c5a73e9bd580bd62bcb116520ca88fbd988aeddc8939562a9364272b204"></a>MotionProfile&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a005f39c5a73e9bd580bd62bcb116520ca68e2b0401fc71ab26bad42e12d9d06b6"></a>MotionMagic&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a005f39c5a73e9bd580bd62bcb116520ca261cd8eccd5f0d2b742236b391300ea4"></a>MotionMagicArc&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a005f39c5a73e9bd580bd62bcb116520ca2bf9593679102dd507467597c23034ce"></a>MotionProfileArc&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a005f39c5a73e9bd580bd62bcb116520cab9f5c797ebbf55adccdd8539a65a0241"></a>Disabled&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="a1e1df45f3a34a455bde60488159acb12"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e1df45f3a34a455bde60488159acb12">&#9670;&nbsp;</a></span>DemandType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a1e1df45f3a34a455bde60488159acb12">ctre::phoenix::motorcontrol::DemandType</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>How to interpret a demand value. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a1e1df45f3a34a455bde60488159acb12a05bf5f64731c0a1b1c0a103c81b3e3ea"></a>DemandType_Neutral&#160;</td><td class="fielddoc"><p>Ignore the demand value and apply neutral/no-change. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1e1df45f3a34a455bde60488159acb12ad4cd1e1051182fbf62bb7437d3a83dfd"></a>DemandType_AuxPID&#160;</td><td class="fielddoc"><p>Target value of PID loop 1. When f. </p>
+<p>When closed-looping, set the target of the aux PID loop to the demand value.</p>
+<p>When following, follow the processed output of the combined primary/aux PID output. The demand value is ignored. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a1e1df45f3a34a455bde60488159acb12a36fbe3d74d3229607e066e5014c16059"></a>DemandType_ArbitraryFeedForward&#160;</td><td class="fielddoc"><p>Simply add to the output. </p>
+<p>When closed-looping, add this arbitrarily to the closed-loop output. </p>
+</td></tr>
 </table>
 
 </div>
@@ -373,6 +412,24 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a76df6b51b79bdd3710ddcd6ef43050e7aa227c98eb600792bd4e43db990a2006d"></a>SoftwareEmulatedSensor&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a76df6b51b79bdd3710ddcd6ef43050e7a197a2f1ca72fcb88fb4f85ab4e6c3655"></a>CTRE_MagEncoder_Absolute&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a76df6b51b79bdd3710ddcd6ef43050e7a43f30decfa40a7e99d07d1214eaa44f9"></a>CTRE_MagEncoder_Relative&#160;</td><td class="fielddoc"></td></tr>
+</table>
+
+</div>
+</div>
+<a id="a14845a17b439c39b2ee1e3a311dc5cbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14845a17b439c39b2ee1e3a311dc5cbb">&#9670;&nbsp;</a></span>FollowerType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="namespacectre_1_1phoenix_1_1motorcontrol.html#a14845a17b439c39b2ee1e3a311dc5cbb">ctre::phoenix::motorcontrol::FollowerType</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a14845a17b439c39b2ee1e3a311dc5cbbae58105d509d46e5f12bc888faa7f898f"></a>FollowerType_PercentOutput&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a14845a17b439c39b2ee1e3a311dc5cbbae375965cc19c710caa288c3567fdf862"></a>FollowerType_AuxOutput1&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
@@ -509,6 +566,9 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a5a30b4898399484281d7f793f01be9bda8fc52d85a70dfe06598f5c5efe81c8b4"></a>RemoteSensorSource_CANifier_PWMInput1&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5a30b4898399484281d7f793f01be9bda521cf505400a843617dc5e4a93ca46c6"></a>RemoteSensorSource_CANifier_PWMInput2&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a5a30b4898399484281d7f793f01be9bdaf089438351098d3d3cefcae089c62bb8"></a>RemoteSensorSource_CANifier_PWMInput3&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5a30b4898399484281d7f793f01be9bda345e2c2663f4a727229ec0cef7abf9b4"></a>RemoteSensorSource_GadgeteerPigeon_Yaw&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5a30b4898399484281d7f793f01be9bdac04f41078ff13b398452e7d2ec4ebae5"></a>RemoteSensorSource_GadgeteerPigeon_Pitch&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a5a30b4898399484281d7f793f01be9bdaad05711c13b27e9b8a8a991c389a8fb8"></a>RemoteSensorSource_GadgeteerPigeon_Roll&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
 </div>
@@ -559,7 +619,10 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a71fd8e364a2a402b005c22889a03291d"></a>Status_6_Misc_&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a7717ec90661154962e2ac37b89d8a857"></a>Status_7_CommStatus_&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087ab7efabad4c4d1bae1dd71cee542dfb42"></a>Status_9_MotProfBuffer_&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a5b24acdb45692eb629ab5d84d9fcffc9"></a>Status_10_MotionMagic_&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a5b24acdb45692eb629ab5d84d9fcffc9"></a>Status_10_MotionMagic_&#160;</td><td class="fielddoc"><p>Old name for Status 10 Frame. Use Status_10_Targets instead. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a0eb3125b153aab0bcd159bb966c89f6c"></a>Status_10_Targets_&#160;</td><td class="fielddoc"><p>Correct name for Status 10 Frame. Functionally equivalent to Status_10_MotionMagic </p>
+</td></tr>
 <tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a6770a819b9ec9644cebf7e928663992c"></a>Status_12_Feedback1_&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a8448e03d894bece92124330a2a130342"></a>Status_13_Base_PIDF0_&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="adbcb3ed785a15b4a47b54d1130467087a0dc5e0cfd8f433d330a9b0c2e3c6f95b"></a>Status_14_Turn_PIDF1_&#160;</td><td class="fielddoc"></td></tr>
@@ -586,7 +649,10 @@ Enumerations</h2></td></tr>
 <tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0ab4f135fac0fd317ece47a29604187259"></a>Status_6_Misc&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0ab18c5996851504e8a1d48d7a5ab8cc8d"></a>Status_7_CommStatus&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0ab82021e7af32925ae915dcb4234856d8"></a>Status_9_MotProfBuffer&#160;</td><td class="fielddoc"></td></tr>
-<tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0a29021eae76499ed09048d5dbaa203f70"></a>Status_10_MotionMagic&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0a29021eae76499ed09048d5dbaa203f70"></a>Status_10_MotionMagic&#160;</td><td class="fielddoc"><p>Old name for Status 10 Frame. Use Status_10_Targets instead. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0a2c9b9afa586aeca2faa23b66333a5c2b"></a>Status_10_Targets&#160;</td><td class="fielddoc"><p>Correct name for Status 10 Frame. Functionally equivalent to Status_10_MotionMagic </p>
+</td></tr>
 <tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0a9d03a99b17bd8a3ff2ee3f64cc5be5b9"></a>Status_12_Feedback1&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0ac08699540635886ef3b97885c9a1191b"></a>Status_13_Base_PIDF0&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a2eb61fd8d8bfb6f8308a740f7d94abf0a42277cb6780a7f330790360059e34106"></a>Status_14_Turn_PIDF1&#160;</td><td class="fielddoc"></td></tr>

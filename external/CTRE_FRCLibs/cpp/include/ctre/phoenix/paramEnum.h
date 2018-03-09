@@ -15,6 +15,7 @@ enum ParamEnum
 	eQuadIdxPolarity=108,
 	eClearPositionOnIdx = 100,
     eMotionProfileHasUnderrunErr = 119,
+    eMotionProfileTrajectoryPointDurationMs = 120,
 	eClearPosOnLimitF = 144,
 	eClearPosOnLimitR = 145,
 
@@ -35,6 +36,7 @@ enum ParamEnum
 	eProfileParamSlot_IZone = 314,
 	eProfileParamSlot_AllowableErr = 315,
     eProfileParamSlot_MaxIAccum = 316,
+    eProfileParamSlot_PeakOutput = 317,
 
 	eClearPositionOnLimitF = 320,
 	eClearPositionOnLimitR = 321,
@@ -50,6 +52,9 @@ enum ParamEnum
 	eRemoteSensorDeviceID = 334, // [0,62] DeviceID
 	eSensorTerm = 335, // feedbackDevice_t (ordinal is the register)
 	eRemoteSensorClosedLoopDisableNeutralOnLOS = 336,
+	ePIDLoopPolarity = 337,
+	ePIDLoopPeriod = 338,
+	eSelectedSensorCoefficient = 339,
 
 	eForwardSoftLimitThreshold = 340,
 	eReverseSoftLimitThreshold = 341,
@@ -80,6 +85,10 @@ enum ParamEnum
 	eLimitSwitchNormClosedAndDis = 422, // ordinal (fwd=0,reverse=1). @see LimitSwitchNormClosedAndDis_t
 	eLimitSwitchDisableNeutralOnLOS = 423,
 	eLimitSwitchRemoteDevID = 424,
+	eSoftLimitDisableNeutralOnLOS = 425,
+
+	ePulseWidthPeriod_EdgesPerRot = 430,
+	ePulseWidthPeriod_FilterWindowSz = 431,
 
 	eYawOffset	=160,
 	eCompassOffset	= 161,

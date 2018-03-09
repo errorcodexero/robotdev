@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">CTRE_Phoenix
-   &#160;<span id="projectnumber">2018_v10</span>
+   &#160;<span id="projectnumber">2018_v14</span>
    </div>
   </td>
  </tr>
@@ -749,7 +749,7 @@ Static Public Member Functions</h2></td></tr>
 <p>Get Accelerometer tilt angles.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tiltAngles</td><td>Array to fill with x[0], y[1], and z[2] angles. </td></tr>
+    <tr><td class="paramname">tiltAngles</td><td>Array to fill with x[0], y[1], and z[2] angles in degrees. </td></tr>
   </table>
   </dd>
 </dl>
@@ -801,7 +801,7 @@ Static Public Member Functions</h2></td></tr>
 <p>Get Biased Accelerometer data.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ba_xyz</td><td>Array to fill with x[0], y[1], and z[2] data </td></tr>
+    <tr><td class="paramname">ba_xyz</td><td>Array to fill with x[0], y[1], and z[2] data These are in fixed point notation Q2.14. eg. 16384 = 1G </td></tr>
   </table>
   </dd>
 </dl>
@@ -827,7 +827,7 @@ Static Public Member Functions</h2></td></tr>
 <p>Get Biased Magnetometer data.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">bm_xyz</td><td>Array to fill with x[0], y[1], and z[2] data </td></tr>
+    <tr><td class="paramname">bm_xyz</td><td>Array to fill with x[0], y[1], and z[2] data Number is equal to 0.6 microTeslas per unit. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1073,7 +1073,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Get Biased Accelerometer data.</p>
+<p>Get Raw Gyro data.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">xyz_dps</td><td>Array to fill with x[0], y[1], and z[2] data in degrees per second. </td></tr>
@@ -1102,7 +1102,7 @@ Static Public Member Functions</h2></td></tr>
 <p>Get Raw Magnetometer data.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">rm_xyz</td><td>Array to fill with x[0], y[1], and z[2] data </td></tr>
+    <tr><td class="paramname">rm_xyz</td><td>Array to fill with x[0], y[1], and z[2] data Number is equal to 0.6 microTeslas per unit. </td></tr>
   </table>
   </dd>
 </dl>

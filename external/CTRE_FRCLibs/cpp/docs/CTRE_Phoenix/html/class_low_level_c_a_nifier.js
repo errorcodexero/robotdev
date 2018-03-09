@@ -15,6 +15,8 @@ var class_low_level_c_a_nifier =
     ] ],
     [ "LowLevelCANifier", "class_low_level_c_a_nifier.html#ab78de2e1ad287dca38b3d25988382132", null ],
     [ "ClearStickyFaults", "class_low_level_c_a_nifier.html#ac3f8f23302fdfb8c1c3115ebdf49f2b1", null ],
+    [ "ConfigVelocityMeasurementPeriod", "class_low_level_c_a_nifier.html#afba8c91afaa0fd9c4fd8f3bd4b12b357", null ],
+    [ "ConfigVelocityMeasurementWindow", "class_low_level_c_a_nifier.html#a8ac6468b58ceac613007bbe19e4568ce", null ],
     [ "EnablePWMOutput", "class_low_level_c_a_nifier.html#a3285ccef09ba446c901f8af0fb948fbd", null ],
     [ "GetBatteryVoltage", "class_low_level_c_a_nifier.html#ab5f5f7d863670130fcc58b405b2be1aa", null ],
     [ "GetFaults", "class_low_level_c_a_nifier.html#aa1e11aaf28bfbef367b7b63830da15b1", null ],
@@ -22,6 +24,9 @@ var class_low_level_c_a_nifier =
     [ "GetGeneralInputs", "class_low_level_c_a_nifier.html#a0c9bd4b84500eb996a55e845d49a0c66", null ],
     [ "GetLastError", "class_low_level_c_a_nifier.html#a14759e1b7993c3777d9a271d5e2a57c3", null ],
     [ "GetPWMInput", "class_low_level_c_a_nifier.html#a0e630dcacb1355f65f2ecc4c6e5971d7", null ],
+    [ "GetQuadraturePosition", "class_low_level_c_a_nifier.html#abfbb79cfeb264d4ca60d664cb4a6be12", null ],
+    [ "GetQuadratureSensor", "class_low_level_c_a_nifier.html#a802abdc3ce3ce5302572965f348090bb", null ],
+    [ "GetQuadratureVelocity", "class_low_level_c_a_nifier.html#a6c2a23005f6d7aa7797981a1f2de1a9c", null ],
     [ "GetStatusFramePeriod", "class_low_level_c_a_nifier.html#ae977281ee9564abb980df59ea4f8c090", null ],
     [ "GetStickyFaults", "class_low_level_c_a_nifier.html#ad1acb844c61c659b4ed8ab6f5548474c", null ],
     [ "SetControlFramePeriod", "class_low_level_c_a_nifier.html#a5b4e2b2167d53f6ac18909b671f86dc5", null ],
@@ -30,5 +35,6 @@ var class_low_level_c_a_nifier =
     [ "SetLastError", "class_low_level_c_a_nifier.html#a3325ac94770115ba5fae567a2a1b488f", null ],
     [ "SetLEDOutput", "class_low_level_c_a_nifier.html#ad6c714ae004631be8edaffab66ce0a89", null ],
     [ "SetPWMOutput", "class_low_level_c_a_nifier.html#a361a4a3838446ad39747e699feeb0b27", null ],
+    [ "SetQuadraturePosition", "class_low_level_c_a_nifier.html#a41d46b6bbf213b6ca8a0ddf0c57f7620", null ],
     [ "SetStatusFramePeriod", "class_low_level_c_a_nifier.html#a295535c9a60eed0c610a3e9b1c278184", null ]
 ];

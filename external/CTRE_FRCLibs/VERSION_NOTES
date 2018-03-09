@@ -1,9 +1,9 @@
 Current Phoenix Versions:
-	CTRE Phoenix Framework: 5.1.3.1
+	CTRE Phoenix Framework: 5.3.1.0
 	LifeBoat: 0.9.10.0
 	Phoenix NETMF: 4.4.0.29
 	HERO Native SDK: 1.10.0.0
-	CTRE FRC Java: 2018_v13
-	CTRE FRC Cpp: 2018_v10
-	CTRE FRC LabVIEW: 2018_v11
-	CTRE FRC CCI: 2018_v11
+	CTRE FRC Java: 2018_v17
+	CTRE FRC Cpp: 2018_v14
+	CTRE FRC LabVIEW: 2018_v15
+	CTRE FRC CCI: 2018_v15

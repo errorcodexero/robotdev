@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">CTRE_Phoenix
-   &#160;<span id="projectnumber">2018_v10</span>
+   &#160;<span id="projectnumber">2018_v14</span>
    </div>
   </td>
  </tr>
@@ -106,10 +106,14 @@ Public Attributes</h2></td></tr>
 <tr class="separator:acd90d8107680d794bed78467ac0509ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61f69f5baabc1f5ba7d22635116ee2d7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structctre_1_1phoenix_1_1motion_1_1_motion_profile_status.html#a61f69f5baabc1f5ba7d22635116ee2d7">isLast</a></td></tr>
 <tr class="separator:a61f69f5baabc1f5ba7d22635116ee2d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaebe5de181ea8912726f73568f5be5f8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structctre_1_1phoenix_1_1motion_1_1_motion_profile_status.html#aaebe5de181ea8912726f73568f5be5f8">profileSlotSelect</a></td></tr>
-<tr class="separator:aaebe5de181ea8912726f73568f5be5f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2515030dfb728aa55254954e7bdb34a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structctre_1_1phoenix_1_1motion_1_1_motion_profile_status.html#ac2515030dfb728aa55254954e7bdb34a">profileSlotSelect0</a></td></tr>
+<tr class="separator:ac2515030dfb728aa55254954e7bdb34a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40fda5c1801fa3da3820f87c4a38fcdc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structctre_1_1phoenix_1_1motion_1_1_motion_profile_status.html#a40fda5c1801fa3da3820f87c4a38fcdc">profileSlotSelect1</a></td></tr>
+<tr class="separator:a40fda5c1801fa3da3820f87c4a38fcdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52d9b541e96888f1271c2a4aa3e208ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacectre_1_1phoenix_1_1motion.html#ae14983694711f8fd190f3ba197eb9095">ctre::phoenix::motion::SetValueMotionProfile</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structctre_1_1phoenix_1_1motion_1_1_motion_profile_status.html#a52d9b541e96888f1271c2a4aa3e208ef">outputEnable</a></td></tr>
 <tr class="separator:a52d9b541e96888f1271c2a4aa3e208ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a850d1a0888bb36326c1c05bbfb72dd46"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structctre_1_1phoenix_1_1motion_1_1_motion_profile_status.html#a850d1a0888bb36326c1c05bbfb72dd46">timeDurMs</a></td></tr>
+<tr class="separator:a850d1a0888bb36326c1c05bbfb72dd46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Motion Profile Status This is simply a data transer object. </p>
@@ -203,17 +207,48 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aaebe5de181ea8912726f73568f5be5f8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaebe5de181ea8912726f73568f5be5f8">&#9670;&nbsp;</a></span>profileSlotSelect</h2>
+<a id="ac2515030dfb728aa55254954e7bdb34a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2515030dfb728aa55254954e7bdb34a">&#9670;&nbsp;</a></span>profileSlotSelect0</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ctre::phoenix::motion::MotionProfileStatus::profileSlotSelect</td>
+          <td class="memname">int ctre::phoenix::motion::MotionProfileStatus::profileSlotSelect0</td>
         </tr>
       </table>
 </div><div class="memdoc">
+<p>Selected slot for PID Loop 0 </p>
+
+</div>
+</div>
+<a id="a40fda5c1801fa3da3820f87c4a38fcdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40fda5c1801fa3da3820f87c4a38fcdc">&#9670;&nbsp;</a></span>profileSlotSelect1</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ctre::phoenix::motion::MotionProfileStatus::profileSlotSelect1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Selected slot for PID Loop 0 </p>
+
+</div>
+</div>
+<a id="a850d1a0888bb36326c1c05bbfb72dd46"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a850d1a0888bb36326c1c05bbfb72dd46">&#9670;&nbsp;</a></span>timeDurMs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ctre::phoenix::motion::MotionProfileStatus::timeDurMs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The applied duration of the active trajectory point </p>
 
 </div>
 </div>

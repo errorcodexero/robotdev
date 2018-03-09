@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['errorcode',['ErrorCode',['../namespacectre_1_1phoenix.html#ab3a22fd2d2cd99e3c672f37a054e3171',1,'ctre::phoenix']]]
+  ['demandtype',['DemandType',['../namespacectre_1_1phoenix_1_1motorcontrol.html#a1e1df45f3a34a455bde60488159acb12',1,'ctre::phoenix::motorcontrol']]]
 ];

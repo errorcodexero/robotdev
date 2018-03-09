@@ -9,6 +9,7 @@ var searchData=
   ['canifierfaults_2eh',['CANifierFaults.h',['../_c_a_nifier_faults_8h.html',1,'']]],
   ['canifierstatusframe_2eh',['CANifierStatusFrame.h',['../_c_a_nifier_status_frame_8h.html',1,'']]],
   ['canifierstickyfaults_2eh',['CANifierStickyFaults.h',['../_c_a_nifier_sticky_faults_8h.html',1,'']]],
+  ['canifiervelocitymeasperiod_2eh',['CANifierVelocityMeasPeriod.h',['../_c_a_nifier_velocity_meas_period_8h.html',1,'']]],
   ['com_5fctre_5fphoenix_5fcanifierjni_2eh',['com_ctre_phoenix_CANifierJNI.h',['../com__ctre__phoenix___c_a_nifier_j_n_i_8h.html',1,'']]],
   ['com_5fctre_5fphoenix_5fctrloggerjni_2eh',['com_ctre_phoenix_CTRLoggerJNI.h',['../com__ctre__phoenix___c_t_r_logger_j_n_i_8h.html',1,'']]],
   ['com_5fctre_5fphoenix_5fmotorcontrol_5fcan_5fmotcontrollerjni_2eh',['com_ctre_phoenix_MotorControl_CAN_MotControllerJNI.h',['../com__ctre__phoenix___motor_control___c_a_n___mot_controller_j_n_i_8h.html',1,'']]],

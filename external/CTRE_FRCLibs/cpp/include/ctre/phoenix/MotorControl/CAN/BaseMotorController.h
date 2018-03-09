@@ -1,11 +1,13 @@
-#pragma once
+﻿#pragma once
 
 #include "ctre/phoenix/ErrorCode.h"
 #include "ctre/phoenix/paramEnum.h"
 #include "ctre/phoenix/core/GadgeteerUartClient.h"
 #include "ctre/phoenix/MotorControl/IMotorController.h"
 #include "ctre/phoenix/MotorControl/ControlMode.h"
+#include "ctre/phoenix/MotorControl/DemandType.h"
 #include "ctre/phoenix/MotorControl/Faults.h"
+#include "ctre/phoenix/MotorControl/FollowerType.h"
 #include "ctre/phoenix/MotorControl/StickyFaults.h"
 #include "ctre/phoenix/MotorControl/VelocityMeasPeriod.h"
 #include "ctre/phoenix/Motion/TrajectoryPoint.h"
@@ -62,6 +64,7 @@ public:
 	int GetDeviceID();
 	virtual void Set(ControlMode Mode, double value);
 	virtual void Set(ControlMode mode, double demand0, double demand1);
+	virtual void Set(ControlMode mode, double demand0, DemandType demand1Type, double demand1);
 	virtual void NeutralOutput();
 	virtual void SetNeutralMode(NeutralMode neutralMode);
 	void EnableHeadingHold(bool enable);
@@ -99,6 +102,8 @@ public:
 			RemoteFeedbackDevice feedbackDevice, int pidIdx, int timeoutMs);
 	virtual ctre::phoenix::ErrorCode ConfigSelectedFeedbackSensor(
 			FeedbackDevice feedbackDevice, int pidIdx, int timeoutMs);
+	virtual ctre::phoenix::ErrorCode ConfigSelectedFeedbackCoefficient(
+			double coefficient, int pidIdx, int timeoutMs);
 	virtual ctre::phoenix::ErrorCode ConfigRemoteFeedbackFilter(int deviceID,
 			RemoteSensorSource remoteSensorSource, int remoteOrdinal,
 			int timeoutMs);
@@ -158,6 +163,10 @@ public:
 			int allowableCloseLoopError, int timeoutMs);
 	virtual ctre::phoenix::ErrorCode ConfigMaxIntegralAccumulator(int slotIdx, double iaccum,
 			int timeoutMs);
+	virtual ctre::phoenix::ErrorCode ConfigClosedLoopPeakOutput(int slotIdx, double percentOut, int timeoutMs);
+	virtual ctre::phoenix::ErrorCode ConfigClosedLoopPeriod(int slotIdx, int loopTimeMs, int timeoutMs);
+	virtual ctre::phoenix::ErrorCode ConfigAuxPIDPolarity(bool invert, int timeoutMs);
+
 	//------ Close loop State ----------//
 	virtual ctre::phoenix::ErrorCode SetIntegralAccumulator(double iaccum, int pidIdx,int timeoutMs);
 	virtual int GetClosedLoopError(int pidIdx);
@@ -171,13 +180,13 @@ public:
 	virtual int GetActiveTrajectoryVelocity();
 	virtual double GetActiveTrajectoryHeading();
 
-	//------ Motion Profile Settings used in Motion Magic and Motion Profile ----------//
+	//------ Motion Profile Settings used in Motion Magic  ----------//
 	virtual ctre::phoenix::ErrorCode ConfigMotionCruiseVelocity(int sensorUnitsPer100ms,
 			int timeoutMs);
 	virtual ctre::phoenix::ErrorCode ConfigMotionAcceleration(int sensorUnitsPer100msPerSec,
 			int timeoutMs);
 	//------ Motion Profile Buffer ----------//
-	virtual void ClearMotionProfileTrajectories();
+	virtual ErrorCode ClearMotionProfileTrajectories();
 	virtual int GetMotionProfileTopLevelBufferCount();
 	virtual ctre::phoenix::ErrorCode PushMotionProfileTrajectory(
 			const ctre::phoenix::motion::TrajectoryPoint & trajPt);
@@ -187,6 +196,7 @@ public:
 			ctre::phoenix::motion::MotionProfileStatus & statusToFill);
 	virtual ctre::phoenix::ErrorCode ClearMotionProfileHasUnderrun(int timeoutMs);
 	virtual ctre::phoenix::ErrorCode ChangeMotionControlFramePeriod(int periodMs);
+	virtual ctre::phoenix::ErrorCode ConfigMotionProfileTrajectoryPeriod(int baseTrajDurationMs, int timeoutMs);
 	//------ error ----------//
 	virtual ctre::phoenix::ErrorCode GetLastError();
 	//------ Faults ----------//
@@ -207,8 +217,9 @@ public:
 	virtual double ConfigGetParameter(ctre::phoenix::ParamEnum param, int ordinal, int timeoutMs);
 	//------ Misc. ----------//
 	virtual int GetBaseID();
-	ControlMode GetControlMode();
+	virtual ControlMode GetControlMode();
 	// ----- Follower ------//
+	void Follow(IMotorController & masterToFollow, ctre::phoenix::motorcontrol::FollowerType followerType);
 	virtual void Follow(IMotorController & masterToFollow);
 	virtual void ValueUpdated();
 
@@ -223,4 +234,3 @@ public:
 } // namespace motorcontrol
 } // namespace phoenix
 } // namespace ctre
-

@@ -106,7 +106,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 #ifdef DEBUG
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
-		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		logger.enableSubsystem(SUBSYSTEM_LIFTER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
@@ -124,7 +124,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 
 		std::shared_ptr<messageLoggerDest> dest_p ;
 
-#ifdef NOTYET
+//#ifdef NOTYET
 		//
 		// We only want printouts on COUT when we are debugging
 		// In competition mode, this information goes to a log file on
@@ -132,7 +132,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//
 		dest_p = std::make_shared<messageDestStream>(std::cout) ;
 		logger.addDestination(dest_p) ;
-#endif
+//#endif
 		std::string flashdrive("/media/sda1") ;
 		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
 		logger.addDestination(dest_p) ;
