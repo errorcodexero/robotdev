@@ -22,7 +22,9 @@ static vector<Step> steps
     Step(Drive("auto:c_switch_l:segment3", 56.0, true)),
     waitForLifter,
     eject,
-		AUTO_POSTAMBLE,
+    Step(Drive("auto:c_switch_r:segment1", -24, true)),
+	Step(Rotate(45.0)),
+	AUTO_POSTAMBLE,
 };
 
 static Chain chain(steps, teleopex) ;

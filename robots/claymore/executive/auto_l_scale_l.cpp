@@ -18,7 +18,9 @@ static vector<Step> steps =
     rotate90pos,
     Step(Lifter_to_height(89.6)),
     eject,
-    startLifterExch,
+	lifterToExch,
+	Step(Rotate(45.0)),
+    Step(Drive("auto:l_scale_l:segment2", 36, false)),
 	AUTO_POSTAMBLE,
 } ;
 
