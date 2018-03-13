@@ -107,6 +107,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_TIMING);
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER_TUNING);
@@ -126,7 +127,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 
 		std::shared_ptr<messageLoggerDest> dest_p ;
 
-#ifdef NOTYET
+#ifdef DEBUG
 		//
 		// We only want printouts on COUT when we are debugging
 		// In competition mode, this information goes to a log file on
@@ -135,7 +136,14 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		dest_p = std::make_shared<messageDestStream>(std::cout) ;
 		logger.addDestination(dest_p) ;
 #endif
-		std::string flashdrive("/media/sda1") ;
+		
+		//
+		// This is where the roborio places the first USB flashd drive it
+		// finds.  Other drives are placed at /V, /W, /X.  The devices are
+		// actually mounted at /media/sd*, and a symbolic link is created
+		// to /U.
+		//
+		std::string flashdrive("/u/") ;
 		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
 		logger.addDestination(dest_p) ;
 
@@ -182,6 +190,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			break ;
 		}
 		logger << "            Location: " << ds.GetLocation() << "\n" ;
+		logger.endMessage() ;
 
 		power = new frc::PowerDistributionPanel();
 
@@ -218,15 +227,25 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		paramsInput *params_p = paramsInput::get() ;
 
 		if (!params_p->readFile("/home/lvuser/params.txt"))
-			std::cout << "Parameters file read failed" << std::endl ;
+		{
+			logger.startMessage(messageLogger::messageType::info) ;
+			logger << "Parameters file read was sucessful" ;
+			logger.endMessage() ;
+		}
 		else
-			std::cout << "Parmeters file read sucessfully" << std::endl ;
+		{
+			logger.startMessage(messageLogger::messageType::error) ;
+			logger << "Parameters file read failed" ;
+			logger.endMessage() ;
+		}
 		
 		Drivebase::drivebase_controller.setParams(params_p);	
 		Lifter::lifter_controller.setParams(params_p);
 		Grabber::grabber_controller.init() ;
 
-		cout<<"Initialization Complete."<<endl<<flush;
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "Initialization complete" ;
+		logger.endMessage() ;
 	}
 	
 	int read_analog(Robot_inputs &r){
@@ -378,63 +397,60 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 	
 
 	void run(Robot_inputs in){
-		//std::ostream print_stream=cout;//(in.ds_info.connected && (print_num%PRINT_SPEED)==0)?cout:null_stream;
-
-#ifdef PRINT_TIME
-		double start = frc::Timer::GetFPGATimestamp() ;
-#endif
+		messageLogger &logger = messageLogger::get();
 		
+		
+		double start = frc::Timer::GetFPGATimestamp() ;
 		Robot_outputs out=main(in/*,print_stream*/);
 		
-#ifdef PRINT_TIME
 		double elapsed = frc::Timer::GetFPGATimestamp() - start  ;
-		std::cout << "process control " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "main robot loop " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		
 		start = frc::Timer::GetFPGATimestamp() ;
-#endif
-		
-		int x=set_outputs(out,in.robot_mode.enabled);
-		
-#ifdef PRINT_TIME
+		set_outputs(out,in.robot_mode.enabled);
 		elapsed = frc::Timer::GetFPGATimestamp() - start ;
-		std::cout << "set output " << elapsed * 1000 << " msec" << std::endl ;
-#endif
-		
-		if(x) cout<<"x was:"<<x<<"\n";
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "Set hardware outputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 	}
 	
 	void run(Robot_mode mode){
-#ifdef PRINT_TIME
+		messageLogger &logger = messageLogger::get();
 		double start = frc::Timer::GetFPGATimestamp() ;
 		double elapsed , last ;
-#endif
 		
 		pair<Robot_inputs,int> in1=read(mode);
 		
-#ifdef PRINT_TIME
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "---------------------------------------------------------------\n" ;
+		logger << "Reading hardware inputs" ;
+		logger.endMessage() ;
+
+		
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - start ;
-		std::cout << "    read base inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    read base inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
-#endif
 		
 		Robot_inputs in=in1.first;
 
 		in.navx=read_navx();
 		
-#ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    navx " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    navx " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
-#endif
 
 		error_code|=in1.second;
 		in.digital_io=digital_io.get();
 		
-		messageLogger &logger = messageLogger::get();
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DIGITALIO) ;
-
 		logger << "Ins: " ;
 		for(size_t i = 0 ; i < in.digital_io.in.size() ; i++)
 		{
@@ -469,34 +485,36 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		}
 		logger.endMessage() ;
 		
-#ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    digital io inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    digital io inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
+		
 		elapsed = last ;
-		std::cout << "dio: " << in.digital_io << "\n";
-#endif		
 		
 		in.talon_srx=talon_srx_controls.get();
 
-#ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    talon srx inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    talon srx inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
-#endif
 		
 		in.pump=pump_control.get();
-		
-#ifdef PRINT_TIME
+
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    pump inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    pump inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
 		
 		elapsed = elapsed - start ;
-		std::cout << "read inputs " << elapsed * 1000 << " msec" << std::endl ;
-#endif
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "read inputs total " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		
 		run(in);
 	}

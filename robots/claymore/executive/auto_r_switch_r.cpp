@@ -18,9 +18,14 @@ static vector<Step> steps =
     rotate90neg,
 	startLifterSwitch,
 	Step(Wait(0.5)),
-    Step(Drive("auto:r_switch_r:segment2", 18, true)),
-    waitForLifter,
+    Step(Drive("auto:r_switch_r:segment2", 18, true)), 
+	waitForLifter,
     eject,
+	startLifterExch,
+    Step(Drive("auto:r_switch_r:segment3", -18, true)),
+	rotate90pos,
+    Step(Drive("auto:r_switch_r:segment4", 36, true)), 
+    rotate90neg,
 	AUTO_POSTAMBLE
 } ;
 
