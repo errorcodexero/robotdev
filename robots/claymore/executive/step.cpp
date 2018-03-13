@@ -997,46 +997,6 @@ bool Drive_and_collect::operator==(Drive_and_collect const& b)const{
     return true;
 }
 
-/*
-//
-// Drive_back_from_collect: Drive back the distance driven while collecting
-//
-
-Drive_back_from_collect::Drive_back_from_collect():drive_step(Drive(0.0)),init(false){}
-
-Step::Status Drive_back_from_collect::done(Next_mode_info info){
-    Step::Status ret = drive_step.done(info);
-    if (ret == Step::Status::FINISHED_SUCCESS)
-    {
-        messageLogger &logger = messageLogger::get() ;
-        logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-        logger << "Drive back from collect step complete" ;
-        logger.endMessage() ;
-    }
-    return ret ;
-}
-
-Toplevel::Goal Drive_back_from_collect::run(Run_info info){
-    return run(info,{});
-}
-
-Toplevel::Goal Drive_back_from_collect::run(Run_info info,Toplevel::Goal goals){
-	if(!init) {
-		drive_step = Step(Drive(-Drive_and_collect::distance_travelled));
-		init = true;
-	}
-    return drive_step.run(info, goals);
-}
-
-unique_ptr<Step_impl> Drive_back_from_collect::clone()const{
-    return unique_ptr<Step_impl>(new Drive_back_from_collect(*this));
-}
-
-bool Drive_back_from_collect::operator==(Drive_back_from_collect const& b)const{
-    return true;
-}
-*/
-
 //
 // Drive_back_from_collect: Drive back the distance driven while collecting
 //
