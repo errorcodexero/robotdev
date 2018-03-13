@@ -948,6 +948,55 @@ bool Drop_grabber::operator==(Drop_grabber const& b)const{
     return true;
 }
 
+//
+// Drive_and_collect: Drive forward and collect until a cube is collected
+//
+
+double Drive_and_collect::distance_travelled;
+
+Drive_and_collect::Drive_and_collect():init(false){}
+
+Step::Status Drive_and_collect::done(Next_mode_info info){
+    Step::Status ret = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+    if (ret == Step::Status::FINISHED_SUCCESS) 
+    {
+		Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
+		distance_travelled = (distances_travelled.l + distances_travelled.r) / 2.0;
+
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Drive and collect step complete" ;
+		logger.endMessage() ;
+    }
+    return ret ;
+	
+}
+
+Toplevel::Goal Drive_and_collect::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Drive_and_collect::run(Run_info info,Toplevel::Goal goals){
+	if(!init) {
+		initial_distances = info.status.drive.distances;
+		init = true;
+	}
+
+	double drive_power = paramsInput::get()->getValue("step:drive_and_collect:drive_power", 0.4);
+	goals.drive = Drivebase::Goal::absolute(drive_power, drive_power);
+    goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+	goals.intake = Intake::Goal::in();
+    return goals;
+}
+
+unique_ptr<Step_impl> Drive_and_collect::clone()const{
+    return unique_ptr<Step_impl>(new Drive_and_collect(*this));
+}
+
+bool Drive_and_collect::operator==(Drive_and_collect const& b)const{
+    return true;
+}
+
 #ifdef STEP_TEST
 void test_step(Step a){
     PRINT(a);

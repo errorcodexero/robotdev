@@ -21,6 +21,7 @@ static Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCAL
 static Step waitForLifter = Step(Wait_for_lifter()) ;
 static Step eject = Step(Eject()) ;
 static Step dropGrabber = Step(Drop_grabber());
+static Step driveAndCollect = Step(Drive_and_collect());
 
 #define AUTO_PREAMBLE(name)												\
 	Step(StartAuto(name)),												\

@@ -32,6 +32,7 @@ extern Executive right_switch_right ;
 extern Executive two_cube_left ;
 extern Executive two_cube_right ;
 extern Executive lift_eject ;
+extern Executive collect_test ;
 
 const Executive auto_null{Teleop{}};
 
@@ -271,6 +272,13 @@ Executive get_auto_mode(Next_mode_info info)
 		// exchange height
 		//
 		auto_program = lift_eject ;
+		break ;
+
+	case 112:
+		//
+		// Eject the calibration cube, wait, and then drive forward and collect a cube
+		//
+		auto_program = collect_test ;
 		break ;
 
     case 120:

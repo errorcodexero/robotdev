@@ -352,4 +352,20 @@ struct Drop_grabber: Step_impl_inner<Drop_grabber>{
     bool operator==(Drop_grabber const&)const;
 };
 
+//Drive forward and collect until a cube is collected
+struct Drive_and_collect: Step_impl_inner<Drive_and_collect>{
+	static double distance_travelled;
+
+	Drivebase::Distances initial_distances;
+	bool init;
+
+	explicit Drive_and_collect();
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Drive_and_collect const&)const;
+};
+
 #endif
