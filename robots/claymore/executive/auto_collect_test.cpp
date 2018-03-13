@@ -7,7 +7,7 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////////////
 //
 // Start: N/A
-// Action: Test the step for collecting a cube
+// Action: Test the steps for collecting a cube and driving back
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
@@ -17,7 +17,9 @@ static vector<Step> steps =
 	calibrateGrabber,
 	eject,
 	Step(Wait(2.0)),
-	Step(Drive_and_collect()),
+	driveAndCollect,
+	Step(Wait(1.0)),
+	driveBackFromCollect,
 	endAuto
 };
 

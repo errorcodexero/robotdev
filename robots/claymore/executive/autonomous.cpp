@@ -276,7 +276,7 @@ Executive get_auto_mode(Next_mode_info info)
 
 	case 112:
 		//
-		// Eject the calibration cube, wait, and then drive forward and collect a cube
+		// Eject the calibration cube, wait, drive forward and collect a cube, and then drive back
 		//
 		auto_program = collect_test ;
 		break ;

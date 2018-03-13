@@ -22,6 +22,7 @@ static Step waitForLifter = Step(Wait_for_lifter()) ;
 static Step eject = Step(Eject()) ;
 static Step dropGrabber = Step(Drop_grabber());
 static Step driveAndCollect = Step(Drive_and_collect());
+static Step driveBackFromCollect = Step(Drive_back_from_collect());
 
 #define AUTO_PREAMBLE(name)												\
 	Step(StartAuto(name)),												\
