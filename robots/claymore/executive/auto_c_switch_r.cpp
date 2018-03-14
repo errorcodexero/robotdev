@@ -18,7 +18,9 @@ static vector<Step> steps =
     waitForLifter,
     eject,
     Step(Drive("auto:c_switch_r:segment1", -24, true)),
+	lifterToExch,
 	Step(Rotate(-45.0)),
+	lifterToFloor,
 	AUTO_POSTAMBLE,
 } ;
 
