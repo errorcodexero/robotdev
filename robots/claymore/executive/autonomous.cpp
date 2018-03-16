@@ -33,6 +33,7 @@ extern Executive two_cube_left ;
 extern Executive two_cube_right ;
 extern Executive lift_eject ;
 extern Executive collect_test ;
+extern Executive lifter_fail_test ;
 
 const Executive auto_null{Teleop{}};
 
@@ -280,6 +281,12 @@ Executive get_auto_mode(Next_mode_info info)
 		//
 		auto_program = collect_test ;
 		break ;
+
+	case 113:
+		//
+		// Try to raise the grabber and drive across the auto line if it doesn't work
+		//
+		auto_program = lifter_fail_test ;
 
     case 120:
 		//

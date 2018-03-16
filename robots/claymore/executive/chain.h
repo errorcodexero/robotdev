@@ -7,7 +7,7 @@
 struct Chain:Executive_impl<Chain>{
 	//enum class Failure_procedure{TREAT_AS_SUCCESS,ENTER_TELEOP,ABORT};
 	unsigned current_step;
-	std::vector<Step> steps;
+	std::vector<Step>* steps;
 	Executive next;
 
 	Chain(std::vector<Step>, Executive);
