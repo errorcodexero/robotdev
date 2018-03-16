@@ -26,12 +26,24 @@ ostream& operator<<(ostream& o,Step const& a){
 //
 
 
-Step::Step(Step const& a):impl(a.get().clone()){}
+Step::Step(Step const& a):impl(a.get().clone()),fail_branch(nullptr){}
+Step::Step(Step const& a, vector<Step> fail):Step(a){
+	fail_branch = &fail;
+}
 
 Step::Step(Step_impl const& a){
-    auto c=a.clone();
+	fail_branch = nullptr;
+	auto c=a.clone();
     if(!c)nyi
-			  impl=move(c);
+		impl=move(c);
+}
+
+Step::Step(Step_impl const& a, vector<Step> fail):Step(a){
+	fail_branch = &fail;
+}
+
+vector<Step>* Step::get_fail_branch(){
+	return fail_branch;
 }
 
 Toplevel::Goal Step::run(Run_info info, Toplevel::Goal goals){
@@ -631,7 +643,12 @@ Lifter_to_preset::Lifter_to_preset(LifterController::Preset preset, double time)
 }
 
 Step::Status Lifter_to_preset::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(mPreset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+    Step::Status ret = ready(status(info.status.lifter), Lifter::Goal::go_to_preset(mPreset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+
+	fail_timer.update(info.in.now, info.in.robot_mode.enabled);
+	if (fail_timer.done())
+		ret = Step::Status::FINISHED_FAILURE;
+
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
 		messageLogger &logger = messageLogger::get() ;
@@ -649,6 +666,7 @@ Toplevel::Goal Lifter_to_preset::run(Run_info info){
 Toplevel::Goal Lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!mInit) {
 		Lifter::lifter_controller.moveToHeight(mPreset, info.status.lifter.height, mTime);
+		fail_timer.set(5.0);
 		mInit = false;
     }
     goals.lifter = Lifter::Goal::go_to_preset(mPreset);

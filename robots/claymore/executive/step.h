@@ -14,11 +14,15 @@ public:
 
 private:
     std::unique_ptr<Step_impl> impl;
+	std::vector<Step>* fail_branch;
 
 public:
     explicit Step(Step_impl const&);
+	explicit Step(Step_impl const&, std::vector<Step>);
     Step(Step const&);
+	Step(Step const&, std::vector<Step>);
 
+	std::vector<Step>* get_fail_branch();
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Status done(Next_mode_info);
@@ -251,6 +255,7 @@ struct Lifter_to_preset: Step_impl_inner<Lifter_to_preset>
 {
     LifterController::Preset mPreset;
     double mTime;
+	Countdown_timer fail_timer;
     bool mInit;
 
     explicit Lifter_to_preset(LifterController::Preset, double);
