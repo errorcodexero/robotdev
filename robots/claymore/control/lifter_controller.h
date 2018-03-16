@@ -4,26 +4,32 @@
 #include "pidctrl.h"
 #include "params_parser.h"
 
+//
+//
+
 class LifterController {
 public:
-    // Butch - do we need switch low and switch high?
-    //         do we need scale low and scale high?
-    
     /// \brief the presets that the lifter already knows about.
     enum class Preset {
 	FLOOR,				///< Move the lifter to the floor
 	EXCHANGE,			///< Move the lifter to the exchange
-	DROP_GRABBER,                   ///< Move the lifter to a point where the grabber drops down
+	DROP_GRABBER,       ///< Move the lifter to a point where the grabber drops down
 	SWITCH,				///< Move the lifter to the height of the switch
-        SCALE,				///< Move the lifter to the height of the scale
+    SCALE,				///< Move the lifter to the height of the scale
+    SCALE_HIGH,			///< Move the lifter to the high scale position ready to shoot cube
 	PREP_CLIMB			///< Move the lifter to the climb position
     };
+
+	enum class Gear {
+		Low,
+		High
+	} ;
 
     /// \brief create the lift controller object
     LifterController();
 
-    /// \brief set the params object used to extract parameters from the params file
-    void setParams(paramsInput* input_params);
+	/// \brief initialize the lifter
+	void init() ;
 
     /// \brief get the params object used to extract parameters from the params file
     /// \returns the params object
@@ -60,7 +66,8 @@ public:
     /// \param time the current time in seconds
     /// \param dt the time that has elapsed since the last time this was called
     /// \param out the output voltage for the lifter motor
-    void update(double height, double time, double dt, double &out);
+	/// \param the gear the lifter should be using
+    void update(double height, double time, double dt, double &out, Gear &gear);
 
     /// \brief this method is called when the lifter is idle
     /// \param height the current height for the lifter
@@ -111,12 +118,26 @@ public:
     /// \brief returns true if the current height of the lifter is near the given preset
     bool nearPreset(Preset preset, double height, double tol) ;
 
+	/// \brief set the lifter in the climb mode
+	void climb()
+	{
+		mMode = Mode::CLIMB ;
+	}
+
+private:
+	void updateIdle(double time, double dt, double &out, Gear &gear) ;
+	void updateHeight(double time, double dt, double &out, Gear &gear) ;
+>>>>>>> Stashed changes
+
 private:
     // Indicates the mode of the lifter
     enum class Mode {
-	IDLE,			// Doing nothing
-        HEIGHT,			// Seeking a desired height
-	BACKGROUND              // Going to a height in the background
+		IDLE,			// Doing nothing
+		HEIGHT,			// Seeking a desired height
+		CLIMB,			// The lifter is climbing
+		MAINTAIN,		// The lifter is maintaining climb height
+		UP,
+		DOWN,
     };
 
     //
@@ -124,10 +145,20 @@ private:
     //
     Mode mMode;
 
+	//
+	// The gear we are currently in
+	//
+	Gear mGear ;
+
     //
     // The target height
     //
     double mTarget;
+
+	//
+	// The current height
+	//
+	double mCurrent ;
 
     //
     // The last target value that was applied
@@ -148,11 +179,6 @@ private:
     // The PID controller for seeking a given height
     //
     PIDCtrl mHeightPID;
-
-    //
-    // The global input params object
-    //
-    paramsInput* mInputParams;
 
     //
     // The last voltage returned for the motor

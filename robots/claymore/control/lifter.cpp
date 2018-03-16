@@ -420,21 +420,12 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     paramsInput* input_params = Lifter::lifter_controller.getParams();
 
     Lifter::Status s = status(status_detail);
-
     Lifter::Output out = {0.0, goal.gearing(), false};
-    if(s == Lifter::Status::ERROR)
-	{
-		return out;
-	}
-
-    if(Lifter::lifter_controller.runningInBackground() || goal.mode() == Lifter::Goal::Mode::BACKGROUND) {
-		Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
-		return out;
-    }
-
+	
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
-		out.power = -input_params->getValue("lifter:climb_power", 0.6);
+		Lifter::lifter_controller.climb() ;
+		// out.power = -input_params->getValue("lifter:climb_power", 0.6);
 		break;
 	case Lifter::Goal::Mode::MAINTAIN_CLIMB:
 		{
@@ -450,6 +441,9 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 				out.power = 0.0;
 			}
 		}
+	
+    switch(goal.mode()){
+    case Lifter::Goal::Mode::CLIMB:
 		break;
     case Lifter::Goal::Mode::UP:
 		out.power = goal.high_power() ? input_params->getValue("lifter:manual_power:high", 0.8) : input_params->getValue("lifter:manual_power:low", 0.4);

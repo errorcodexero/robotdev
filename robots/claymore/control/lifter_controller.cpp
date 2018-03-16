@@ -15,9 +15,9 @@ LifterController::LifterController() {
     mMaxChange = 6.0;
     mDataDumpMode = false;
     mDataDumpStartTime = 0.0;
-    mManuallyAdjusted = false;
     mCalibrating = false ;
     mCalibrated = false ;
+	mGear = Gear::High ;
 }
 
 bool LifterController::isCalibrated() const
@@ -25,9 +25,9 @@ bool LifterController::isCalibrated() const
     return mCalibrated ;
 }
 
-void LifterController::setParams(paramsInput* input_params) {
-    mInputParams = input_params;
-    mHeightThreshold = mInputParams->getValue("lifter:threshold", 1.0);
+void LifterController::init(paramsInput* input_params) {
+	paramsInput *p = paramsInput::get() ;
+    mHeightThreshold = p->getValue("lifter:threshold", 1.0);
 }
 
 paramsInput* LifterController::getParams() {
@@ -45,10 +45,9 @@ void LifterController::moveToHeight(double height, double current_height, double
     mMode = Mode::HEIGHT;
     mTarget = height;
     mStartTime = time ;
-    mManuallyAdjusted = false;
-	cout << "reseting manually adjusted in movetoheight" << endl ;
 
     double p, i, d, f, imax;
+	paramsInput *p = paramsInput::get() ;
     if(current_height < height) {
 		p = mInputParams->getValue("lifter:up:p", 0.01);
 		i = mInputParams->getValue("lifter:up:i", 0.0);
@@ -104,43 +103,77 @@ void LifterController::setManuallyAdjusted() {
     mManuallyAdjusted = true;
 }
 
-void LifterController::update(double height, double time, double dt, double& out) {
-    messageLogger &logger = messageLogger::get();
+void LifterController::udpateIdle(double time, double dt, double &out, Gear &gear)
+{
+	out = 0.0 ;
+	gear = mGear ;
+}
+
+void LifterController::updateHeight(double time, double dt, double &out, Gear &gear)
+{
+	messageLogger &logger = messageLogger::get();
 	
-    if(mMode == Mode::HEIGHT || mMode == Mode::BACKGROUND) {
-	if(std::fabs(mTarget - height) < mHeightThreshold)
-	    mMode = Mode::IDLE;
-
-	out = mHeightPID.getOutput(mTarget, height, dt);
-
-	double chg = std::fabs(out - mLastVoltage);
-	if (chg > mMaxChange * dt) {
-	    if (out > mLastVoltage)
-		out = mLastVoltage + mMaxChange * dt;
-	    else
-		out = mLastVoltage - mMaxChange * dt;
-	}
-	mLastVoltage = out;
-
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
-	logger << "lifter:update(HEIGHT)";
-	logger << ", time " << time;
-	logger << ", dt "<< dt;
-	logger << ", target " << mTarget;
-	logger << ", height " << height;
-	logger << ", out " << out;
-	if (mMode == Mode::IDLE)
+	logger.startMessage(messageLogger::messageType::debug, );
+	if (std::fabs(mTarget - mCurrent) < mHeightThreshold)
 	{
 	    double elapsed= time - mStartTime ;
-	    logger << ", SUCCESS , " << elapsed << " seconds" ;
+		logger << "Destination height reached in " ;
+		mMode = Mode::IDLE ;
+		mDataDumpMode = true;
+		mDataDumpStartTime = time;
+		
+		updateIdle(time, dt, out, gear) ;
 	}
-	logger.endMessage();
-    }
+	else
+	{
+		//
+		// Get the output from the PID controller
+		//
+		out = mHeightPID.getOutput(mTarget, height, dt);
+
+		//
+		// Don't left the motors change votlage to quickly to prevent any
+		// kind of brown out
+		//
+		double chg = std::fabs(out - mLastVoltage);
+		if (chg > mMaxChange * dt)
+		{
+			if (out > mLastVoltage)
+				out = mLastVoltage + mMaxChange * dt;
+			else
+				out = mLastVoltage - mMaxChange * dt;
+		}
+		mLastVoltage = out;
+		
+		logger.startMessage(messageLogger::messageType::debug);
+		logger << "lifter mode HEIGHT";
+		logger << ", time " << time;
+		logger << ", dt "<< dt;
+		logger << ", target " << mTarget;
+		logger << ", height " << height;
+		logger << ", out " << out;
+		logger.endMessage() ;
+	}
+}
+>>>>>>> Stashed changes
+
+void LifterController::update(double height, double time, double dt, double& out, Gear &gear)
+{
+	mCurrent = height ;
+	
+	switch(mMode)
+	{
+	case Mode::IDLE:
+		out = 0.0 ;
+		gear = mGear ;
+		break ;
+
+	case Mode::HEIGHT:
+		updateHeight(time, dt, out, gear) ;
+		break ;
 
     if(mMode == Mode::IDLE) {
 	out = 0.0;
-	mDataDumpMode = true;
-	mDataDumpStartTime = time;
     }
 }
 
@@ -209,20 +242,32 @@ bool LifterController::calibrating() {
 }
 
 double LifterController::presetToHeight(Preset preset) {
+	double ret = 11.375 ;
+	paramsInput *p = paramsInput::get() ;
+	
     double floor_height = mInputParams->getValue("lifter:height:floor", 0.0);
-    double exchange_height = mInputParams->getValue("lifter:height:exchange", 3.0);
+
+
+	double exchange_height = mInputParams->getValue("lifter:height:exchange", 3.0);
     double drop_grabber_height = mInputParams->getValue("lifter:height:drop_grabber", 6.0);
     double switch_height = mInputParams->getValue("lifter:height:switch", 19.0);
     double scale_height = mInputParams->getValue("lifter:height:scale", 72.0);
     double prep_climb_height = mInputParams->getValue("lifter:height:prep_climb", 84.0);
-
+	
     switch(preset) {
-    case Preset::FLOOR: return floor_height;
-    case Preset::EXCHANGE: return exchange_height;
-    case Preset::DROP_GRABBER: return drop_grabber_height;
+    case Preset::FLOOR:
+		ret = p->getValue("lifter:height:floor", 0.0);
+		break ;
+		
+    case Preset::EXCHANGE:
+		return exchange_height;
+    case Preset::DROP_GRABBER:
+		return drop_grabber_height;
     case Preset::SWITCH: return switch_height;
     case Preset::SCALE: return scale_height;
     case Preset::PREP_CLIMB: return prep_climb_height;
     default: assert(0);
     }
+
+	return ret ;
 }
