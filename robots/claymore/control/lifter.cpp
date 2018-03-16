@@ -24,13 +24,6 @@ const double COLLECTOR_OFFSET = 11.375; //inches
 
 LifterController Lifter::lifter_controller;
 
-ostream& operator<<(ostream& o, Lifter::Goal::Gearing a){
-#define X(GEARING) if(a==Lifter::Goal::Gearing::GEARING) return o<<""#GEARING;
-    LIFTER_GEARING_MODES
-#undef X
-		assert(0);
-}
-
 ostream& operator<<(ostream& o, Lifter::Goal::Mode a){
 #define X(MODE) if(a==Lifter::Goal::Mode::MODE) return o<<""#MODE;
     LIFTER_GOAL_MODES
@@ -48,10 +41,6 @@ double Lifter::Goal::target()const{
 
 double Lifter::Goal::tolerance()const{
     return tolerance_;
-}
-
-Lifter::Goal::Gearing Lifter::Goal::gearing()const{
-    return gearing_;
 }
 
 LifterController::Preset Lifter::Goal::preset_target()const{
@@ -72,24 +61,22 @@ std::string Lifter::Goal::toString() const
 
 Lifter::Goal::Goal():mode_(Lifter::Goal::Mode::STOP),target_(0.0),tolerance_(0.0),preset_target_(LifterController::Preset::FLOOR),high_power_(false){}
 
-Lifter::Goal Lifter::Goal::climb(){
+Lifter::Goal Lifter::Goal::climb()
+{
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::CLIMB;
-    a.gearing_ = Lifter::Goal::Gearing::LOW;
     return a;
 }
 
 Lifter::Goal Lifter::Goal::maintain_climb(){
 	Lifter::Goal a;
 	a.mode_ = Lifter::Goal::Mode::MAINTAIN_CLIMB;
-	a.gearing_ = Lifter::Goal::Gearing::LOW;
 	return a;
 }
 
 Lifter::Goal Lifter::Goal::up(bool high_power = false){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::UP;
-    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     a.high_power_ = high_power;
     return a;
 }
@@ -97,14 +84,12 @@ Lifter::Goal Lifter::Goal::up(bool high_power = false){
 Lifter::Goal Lifter::Goal::stop(){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::STOP;
-    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     return a;
 }
 
 Lifter::Goal Lifter::Goal::down(bool high_power = false){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::DOWN;
-    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     a.high_power_ = high_power;
     return a;
 }
@@ -112,7 +97,6 @@ Lifter::Goal Lifter::Goal::down(bool high_power = false){
 Lifter::Goal Lifter::Goal::go_to_height(double target){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::GO_TO_HEIGHT;
-    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     a.target_ = target;
     return a;
 }
@@ -120,7 +104,6 @@ Lifter::Goal Lifter::Goal::go_to_height(double target){
 Lifter::Goal Lifter::Goal::go_to_preset(LifterController::Preset preset){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::GO_TO_PRESET;
-    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     a.preset_target_ = preset;
     return a;
 }
@@ -128,28 +111,18 @@ Lifter::Goal Lifter::Goal::go_to_preset(LifterController::Preset preset){
 Lifter::Goal Lifter::Goal::background(){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::BACKGROUND;
-    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     return a;
 }
 
 Lifter::Goal Lifter::Goal::calibrate(){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::CALIBRATE;
-    a.gearing_ = Lifter::Goal::Gearing::HIGH;
     return a;
 }
 
 Lifter::Goal Lifter::Goal::low_gear(){
     Lifter::Goal a;
     a.mode_ = Lifter::Goal::Mode::LOW_GEAR;
-    a.gearing_ = Lifter::Goal::Gearing::LOW;
-    return a;
-}
-
-Lifter::Goal Lifter::Goal::lock(bool low_gear){
-    Lifter::Goal a;
-    a.mode_ = Lifter::Goal::Mode::LOCK;
-    a.gearing_ = low_gear ? Lifter::Goal::Gearing::LOW : Lifter::Goal::Gearing::HIGH;
     return a;
 }
 
@@ -159,11 +132,32 @@ Lifter::Output::Output():Output(0,Lifter::Output::Gearing::HIGH,false){}
 Lifter::Input::Input(bool b, bool t, int e):bottom_hall_effect(b),top_hall_effect(t),ticks(e){}
 Lifter::Input::Input():Input(false,false,0){}
 
-Lifter::Status_detail::Status_detail(bool b,bool bl,bool t,bool tl,bool c,bool usr,bool lsr,double h,double ticks,double cg,double ti,double dt):at_bottom(b),at_bottom_limit(bl),at_top(t),at_top_limit(tl),at_climbed_height(c),upper_slowdown_range(usr),lower_slowdown_range(lsr),height(h),ticks(ticks),climb_goal(cg),time(ti),dt(dt){}
-Lifter::Status_detail::Status_detail():Status_detail(false,false,false,false,false,false,false,0.0,0.0,0.0,0.0,0.0){}
+Lifter::Status_detail::Status_detail(bool bl, bool tl, int tk, double ti,double delt)
+{
+	at_bottom_limit = bl ;
+	at_top_limit = tl ;
+	ticks = tk ;
+	time = ti ;
+	dt = delt ;
+}
 
-Lifter::Estimator::Estimator(Lifter::Status_detail s,Output::Gearing g, double cg, int eo):last(s),last_gearing(g),climb_goal(cg),encoder_offset(eo){}
-Lifter::Estimator::Estimator():Estimator(Lifter::Status_detail{},Output::Gearing::HIGH,-9999.0,0.0){}
+Lifter::Status_detail::Status_detail()
+{
+	at_bottom_limit = false ;
+	at_top_limit = false ;
+	ticks = 0 ;
+	time = 0.0 ;
+	dt = 0.0 ;
+}
+
+Lifter::Estimator::Estimator(Lifter::Status_detail s)
+{
+	last = s ;
+}
+
+Lifter::Estimator::Estimator()
+{
+}
 
 #define CMP(VAR)								\
     if(a.VAR < b.VAR) return true;				\
@@ -233,7 +227,7 @@ bool operator!=(Lifter::Estimator const& a, Lifter::Estimator const& b){
 }
 
 bool operator==(Lifter::Goal const& a, Lifter::Goal const& b){
-    return a.mode() == b.mode() && a.gearing() == b.gearing() && a.target() == b.target() && a.tolerance() == b.tolerance() && a.preset_target() == b.preset_target();
+    return a.mode() == b.mode() && a.target() == b.target() && a.tolerance() == b.tolerance() && a.preset_target() == b.preset_target();
 }
 
 bool operator!=(Lifter::Goal const& a, Lifter::Goal const& b){
@@ -258,8 +252,10 @@ ostream& operator<<(ostream& o, Lifter::Goal const& a){
     return o;
 }
 
-bool operator==(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
-    return a.at_top == b.at_top && a.at_bottom == b.at_bottom && a.at_climbed_height == b.at_climbed_height && a.height == b.height;
+bool operator==(Lifter::Status_detail const& a,Lifter::Status_detail const& b)
+{
+	assert(false) ;
+    return true ;
 }
 
 bool operator!=(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
@@ -267,19 +263,17 @@ bool operator!=(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
 }
 
 bool operator<(Lifter::Status_detail const& a,Lifter::Status_detail const& b){
-    CMP(at_top)
-		CMP(at_bottom)
-		CMP(at_climbed_height)
-		CMP(height)
-		return false;
+	assert(false) ;
+	return false;
 }
 
 ostream& operator<<(ostream& o, Lifter::Status_detail const& a){
     o<<"(";
-    o<<"top:"<<a.at_top;
-    o<<" bottom:"<<a.at_bottom;
-    o<<" climbed:"<<a.at_climbed_height;
-    o<<" height:"<<a.height;
+	o << "at_bottom_limit " << a.at_bottom_limit ;
+	o << " at_top_limit " << a.at_top_limit ;
+	o << " ticks " << a.ticks ;
+	o << " time " << a.time ;
+	o << " dt " << a.dt ;
     o<<")";
     return o;
 }
@@ -337,56 +331,25 @@ void Lifter::Estimator::update(Time const& now, Lifter::Input const& in, Lifter:
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 
-    logger << "Lifter:\n";
-
-    paramsInput* input_params = Lifter::lifter_controller.getParams();
-
-    if (Lifter::lifter_controller.calibrating())
-	{
-		encoder_offset = in.ticks;
-		Lifter::lifter_controller.setCalibrate(false) ;
-		
-		logger << "    Lifter calibration: Grabbed encoder offset: " << encoder_offset << "\n";
-	}
-
-    last.height = (in.ticks - encoder_offset) * INCHES_PER_TICK_HIGH_GEAR + COLLECTOR_OFFSET;
 	last.ticks = in.ticks;
 
-    double top_limit = input_params->getValue("lifter:height:top_limit", 96.0);
-    double bottom_limit = input_params->getValue("lifter:collector_offset", 11.375) + 0.75;
-
-	last.at_bottom = last.height < bottom_limit;
     last.at_bottom_limit = in.bottom_hall_effect;
-	last.at_top = last.height > top_limit;
     last.at_top_limit = in.top_hall_effect;
 
-    double slowdown_range = input_params->getValue("lifter:slowdown_range", 6.0);
-    last.upper_slowdown_range = last.height > (top_limit - slowdown_range);
-    last.lower_slowdown_range = last.height < (bottom_limit + slowdown_range);
-
-    if(out.gearing == Output::Gearing::LOW && out.gearing != last_gearing) {
-		climb_goal = in.ticks - input_params->getValue("lifter:climbing_difference", 100.0);
-    }
-	last.climb_goal = climb_goal;
-    last.at_climbed_height = (climb_goal > -9999.0) && (in.ticks < climb_goal);
-    last_gearing = out.gearing;
-	
     last.dt = now - last.time;
     last.time = now;
-
-    logger << "    Limit Switches: Top: " << in.top_hall_effect << "   Bottom: " << in.bottom_hall_effect << "\n";
-    logger << "    Upper slowdown range: " << last.upper_slowdown_range << "   Lower slowdown range: " << last.lower_slowdown_range << "\n";
-    logger << "    At climb height: " << last.at_climbed_height;
-    logger << "    Ticks: " << in.ticks << "    Height: " << last.height;
+    logger << "Lifter: Limit Switches: Top: " << in.top_hall_effect << "   Bottom: " << in.bottom_hall_effect << "\n";
 
     logger.endMessage();
 }
 
-Lifter::Status_detail Lifter::Estimator::get()const{
+Lifter::Status_detail Lifter::Estimator::get()const
+{
     return last;
 }
 
-set<Lifter::Input> examples(Lifter::Input*){
+set<Lifter::Input> examples(Lifter::Input*)
+{
     return {
 		{false,false,0},
 		{true,false,0},
@@ -404,7 +367,7 @@ set<Lifter::Output> examples(Lifter::Output*){
 
 set<Lifter::Status_detail> examples(Lifter::Status_detail*){
     return {
-		{false,false,false,false,false,false,false,0.0,0.0,0.0,0.0,0.0},
+		{ false, false, 0, 0.0, 0.0 }
     };
 }
 
@@ -416,107 +379,62 @@ set<Lifter::Goal> examples(Lifter::Goal*){
     return {Lifter::Goal::climb(),Lifter::Goal::maintain_climb(),Lifter::Goal::up(),Lifter::Goal::stop(),Lifter::Goal::down(),Lifter::Goal::go_to_height(0.0)};
 }
 
-Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal const& goal){
-    paramsInput* input_params = Lifter::lifter_controller.getParams();
-
-    Lifter::Status s = status(status_detail);
-    Lifter::Output out = {0.0, goal.gearing(), false};
+Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal const& goal)
+{
+    // paramsInput* input_params = paramsInput::get() ;
+    Lifter::Output out = {0.0, Lifter::Output::Gearing::HIGH, false};
 	
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
 		Lifter::lifter_controller.climb() ;
-		// out.power = -input_params->getValue("lifter:climb_power", 0.6);
 		break;
 	case Lifter::Goal::Mode::MAINTAIN_CLIMB:
-		{
-			double maintainance_error = status_detail.ticks - status_detail.climb_goal;
-			double maintainance_threshold = input_params->getValue("lifter:maintain_climb_threshold", 50.0);
-			if(maintainance_error > maintainance_threshold) {
-				out.lock = false;
-
-				out.power = -1.0;
-			} else {
-				out.lock = true;
-				
-				out.power = 0.0;
-			}
-		}
-	
-    switch(goal.mode()){
-    case Lifter::Goal::Mode::CLIMB:
-		break;
+		Lifter::lifter_controller.maintain() ;
+		break ;
     case Lifter::Goal::Mode::UP:
-		out.power = goal.high_power() ? input_params->getValue("lifter:manual_power:high", 0.8) : input_params->getValue("lifter:manual_power:low", 0.4);
-		Lifter::lifter_controller.setManuallyAdjusted();
+		Lifter::lifter_controller.up(goal.high_power()) ;
 		break;
     case Lifter::Goal::Mode::DOWN:
-		out.power = goal.high_power() ? -input_params->getValue("lifter:manual_power:high", 0.8) : -input_params->getValue("lifter:manual_power:low", 0.4);
-		Lifter::lifter_controller.setManuallyAdjusted();
+		Lifter::lifter_controller.down(goal.high_power()) ;
 		break;
     case Lifter::Goal::Mode::STOP:
-		Lifter::lifter_controller.idle(status_detail.height, status_detail.time, status_detail.dt);
-		out.power = input_params->getValue("lifter:hold_power:high_gear", 0.1);
+		Lifter::lifter_controller.idle() ;
 		break; 
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
-		Lifter::lifter_controller.updateHeightOnChange(goal.target(), status_detail.height, status_detail.time);
-		Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
+		Lifter::lifter_controller.moveToHeight(goal.target(), status_detail.time);
 		break;
     case Lifter::Goal::Mode::GO_TO_PRESET:
-		Lifter::lifter_controller.updateHeightOnChange(goal.preset_target(), status_detail.height, status_detail.time);
-		Lifter::lifter_controller.update(status_detail.height, status_detail.time, status_detail.dt, out.power);
-		break;
-    case Lifter::Goal::Mode::BACKGROUND:
+		Lifter::lifter_controller.moveToHeight(goal.preset_target(), status_detail.time) ;
 		break;
     case Lifter::Goal::Mode::CALIBRATE:
+		Lifter::lifter_controller.calibrate() ;
 		break;
     case Lifter::Goal::Mode::LOW_GEAR:
-		out.power = input_params->getValue("lifter:hold_power:low_gear", 0.0);
-		break;
-    case Lifter::Goal::Mode::LOCK:
-		out.power = 0.0;
-		out.lock = true;
+		Lifter::lifter_controller.idle() ;
+		Lifter::lifter_controller.lowgear() ;
 		break;
     default:
-		nyi
-			}
+		nyi ;
+	}
 
+	LifterController::Gear g ;
+	bool brake ;
+	Lifter::lifter_controller.update(status_detail.ticks, status_detail.time, status_detail.dt, out.power, g, brake);
+	if (g == LifterController::Gear::LOW)
+		out.gearing = Lifter::Output::Gearing::LOW ;
+	out.lock = brake ;
+	
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
-    logger << "    Lifter status: " << status_detail.at_top << " " << status_detail.at_bottom << " " << out.power << "\n";
+    logger << "    Lifter status: " << out.power << "\n";
 	logger << "    Lifter lock: " << (out.lock ? "locked" : "unlocked") << "\n" ;
 
-    if(goal.gearing() != Lifter::Goal::Gearing::LOW) {
-        if((status_detail.upper_slowdown_range && out.power > 0.0) ||
-           (status_detail.lower_slowdown_range && out.power < 0.0))
-		{
-			out.power = copysign(min(fabs(out.power), input_params->getValue("lifter:slowdown_power", 0.2)), out.power);
-			logger << "    Lifter - applying slowdown\n" ;
-		}
-
-        if ((status_detail.at_top || status_detail.at_top_limit) && out.power > 0.0)
-		{
-            out.power = 0.0;
-			if (status_detail.at_top)
-				logger << "    Lifter - limiting upward movement due to encoders\n" ;
-			if (status_detail.at_top_limit)
-				logger << "    Lifter - limiting upward movement due to limit switch\n" ;
-		}
-		else if ((status_detail.at_bottom || status_detail.at_bottom_limit) && out.power < 0.0)
-		{
-            out.power = 0.0;
-			if (status_detail.at_bottom)
-				logger << "    Lifter - limiting downward movement due to encoders\n" ;
-			if (status_detail.at_bottom_limit)
-				logger << "    Lifter - limiting downward movement due to limit switch\n" ;
-		}
-    } else {
-		//
-		// We are in low gear, make sure we don't run past the limit switches
-		//
-		if((status_detail.at_top_limit && out.power > 0.0) ||
-		   (status_detail.at_bottom_limit && out.power < 0.0))
-			out.power = 0.0;
-	}
+	//
+	// Use the limit switches to ensure we dont exceed the bounds of the lifter
+	//
+	if((status_detail.at_top_limit && out.power > 0.0) ||
+	   (status_detail.at_bottom_limit && out.power < 0.0))
+		out.power = 0.0;
 
     logger << "After: " << out.power << ", lock " << (out.lock ? "LOCKED" : "UNLOCKED") << "\n" ;
     logger.endMessage();
@@ -524,43 +442,19 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
     return out;
 }
 
-Lifter::Status status(Lifter::Status_detail const& status_detail){
-    if(status_detail.at_top && status_detail.at_bottom)
-	{
-		return Lifter::Status::ERROR;
-	}
-
-	if (status_detail.at_top && status_detail.at_climbed_height)
-	{
-		return Lifter::Status::ERROR;
-	}
-
-#ifdef NOTYET
-	if (status_detail.at_bottom && status_detail.at_climbed_height)
-	{
-		return Lifter::Status::ERROR;
-    }
-#endif	
-	
-    if(status_detail.at_top){
-		return Lifter::Status::TOP;
-    }
-    if(status_detail.at_bottom){
-		return Lifter::Status::BOTTOM;
-    }
-    if(status_detail.at_climbed_height){
-		return Lifter::Status::CLIMBED;
-    }
+Lifter::Status status(Lifter::Status_detail const& status_detail)
+{
+	assert(0) ;
     return Lifter::Status::MIDDLE;
 }
 
 bool ready(Lifter::Status const& status,Lifter::Goal const& goal)
 {
-	bool ret = false ;
+	bool ret = true ;
 	
     switch(goal.mode()){
     case Lifter::Goal::Mode::CLIMB:
-		ret = status == Lifter::Status::CLIMBED;
+		ret = Lifter::lifter_controller.isClimbed() ;
 		break ;
 	case Lifter::Goal::Mode::MAINTAIN_CLIMB:
 		ret = false;
@@ -580,17 +474,11 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal)
     case Lifter::Goal::Mode::LOW_GEAR:
 		ret = true ;
 		break ;
-    case Lifter::Goal::Mode::LOCK:
-		ret = true ;
-		break ;
     case Lifter::Goal::Mode::GO_TO_HEIGHT:
-		ret = Lifter::lifter_controller.finishedTarget(goal.target());
+		ret = Lifter::lifter_controller.atHeight(goal.target());
 		break ;
     case Lifter::Goal::Mode::GO_TO_PRESET:
-		ret = Lifter::lifter_controller.finishedTarget(goal.preset_target());
-		break ;
-    case Lifter::Goal::Mode::BACKGROUND:
-		ret = Lifter::lifter_controller.done();
+		ret = Lifter::lifter_controller.atHeight(goal.preset_target());
 		break ;
     default:
 		assert(0) ;
