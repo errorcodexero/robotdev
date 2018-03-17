@@ -223,6 +223,11 @@ void GrabberController::calibrate(double angle, double dt, double &out)
 	out = -0.4 ;
 }
 
+void GrabberController::resetCalibration()
+{
+	mCalibrated = false;
+}
+
 void GrabberController::angleState(double angle, double time, double dt, double &out)
 {
     messageLogger &logger = messageLogger::get();

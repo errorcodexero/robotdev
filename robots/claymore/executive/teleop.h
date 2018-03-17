@@ -24,20 +24,21 @@ struct Teleop : Executive_impl<Teleop> {
 		#undef X
 	};
 
-#define TELEOP_ITEMS(X)					       \
+#define TELEOP_ITEMS(X)                                    \
 	X(SINGLE_ARG(std::array<Nudge,NUDGES>),nudges)	       \
+	X(Posedge_trigger, disable_trigger)                    \
 	X(Lifter::Goal, lifter_goal)                           \
-	X(Wings::Goal, wings_goal)			       \
-	X(Collector_mode, collector_mode)		       \
+	X(Wings::Goal, wings_goal)                             \
+	X(Collector_mode, collector_mode)                      \
 	X(Posedge_trigger, collect_open_trigger)               \
 	X(Posedge_trigger, collect_closed_trigger)             \
 	X(Countdown_timer, collect_delay_timer)                \
 	X(Posedge_trigger, collect_delay_trigger)              \
-	X(Countdown_timer, intake_timer)		       \
-	X(bool, started_intake_with_cube)		       \
+	X(Countdown_timer, intake_timer)                       \
+	X(bool, started_intake_with_cube)                      \
 	X(Posedge_trigger, calibrate_lifter_trigger)	       \
 	X(Posedge_trigger, calibrate_grabber_trigger)          \
-	X(Countdown_timer, cube_timer)		               \
+	X(Countdown_timer, cube_timer)                         \
 	X(bool, high_gear)				       
 	STRUCT_MEMBERS(TELEOP_ITEMS)
 

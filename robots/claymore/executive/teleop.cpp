@@ -105,6 +105,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 	logger << "HAS CUBE: ";
 	logger << (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube);
 
+	if(disable_trigger(!info.in.robot_mode.enabled)) {
+		Lifter::lifter_controller.resetCalibration();
+		Grabber::grabber_controller.resetCalibration();
+	}
+
     if(info.panel.climb_disabled)
 	{
 		//

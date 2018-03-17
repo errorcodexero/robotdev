@@ -488,6 +488,10 @@ void LifterController::update(int ticks, bool ulimit, bool blimit, double time, 
 	logger.endMessage() ;
 }
 
+void LifterController::resetCalibration() {
+	mCalibrated = false;
+}
+
 double LifterController::presetToHeight(Preset preset) const
 {
 	double ret = 11.375 ;

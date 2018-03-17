@@ -100,6 +100,9 @@ public:
     /// \param out the output voltage for the grabber motor
     void update(double angle, bool cubesensor, double time, double dt, double &out);
 
+	/// \brief reset the controller to an uncalibrated state
+    void resetCalibration();
+
     /// \brief returns true when the grabber has reached its desired angle
     /// \returns true when the grabber has reached its desired angle
     bool done();

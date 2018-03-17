@@ -72,6 +72,9 @@ public:
 	/// \param the state of the break, true is on
     void update(int ticks, bool ulimit, bool blimit, double time, double dt, double &out, Gear &gear, bool &brake);
 
+	/// \brief reset the controller to an uncalibrated state
+	void resetCalibration();
+
     /// \brief returns true if the lifter has reached the specified height
     /// \param height the height to check against
     /// \returns true if the lifter has reached the specified height
