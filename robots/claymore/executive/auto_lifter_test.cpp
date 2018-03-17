@@ -16,7 +16,7 @@ static vector<Step> steps
     calibrateLifter,
     startLifterSwitch,
     Step(Drive(50.0, false)),
-    waitForLifter,
+	lifterToSwitch,
     endAuto,
 };
 

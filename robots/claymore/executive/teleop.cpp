@@ -101,25 +101,28 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 {
     paramsInput *params_p = paramsInput::get() ;
     messageLogger &logger = messageLogger::get();
-    Lifter::Goal prep_climb_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
-    Lifter::Goal climb_goal = Lifter::Goal::climb();
 
 	logger << "HAS CUBE: ";
 	logger << (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube);
 
-    if(info.panel.climb_disabled) {
+    if(info.panel.climb_disabled)
+	{
+		//
+		// This side of the if is for when the climb lock switch has climbing disabled.  This is
+		// the normal operation for the majority of the match
+		//
+		
 		//
 		// If the grabber tells us we collected a cube, perform teleop cube processing
 		//
-		if (Grabber::grabber_controller.cubeStateTransition(GrabberController::CubeState::MaybeHasCube, GrabberController::CubeState::HasCube))
+		if (Grabber::grabber_controller.enterState(GrabberController::CubeState::HasCube))
 		{
 			logger << "    Performed aquire cube actions\n" ;
-			logger << "    Near preset: " << Lifter::lifter_controller.nearPreset(LifterController::Preset::FLOOR, info.status.lifter.height, 2.0) << "\n";
 			logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
 			
 			collector_mode = Collector_mode::HOLD_CUBE ;
 			double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::SWITCH) ;
-			if (info.status.lifter.height < exheight && Lifter::lifter_controller.isCalibrated())
+			if (Lifter::lifter_controller.getHeight() < exheight && Lifter::lifter_controller.isCalibrated())
 			{
 				//
 				// If we collected the cube witin a small tolerance of the floor height, we move the
@@ -140,14 +143,6 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 				
 				logger << "    Started exchange height timer\n" ;
 			}
-		}
-		else if (Grabber::grabber_controller.cubeStateTransition(GrabberController::CubeState::MaybeLostCube, GrabberController::CubeState::NoCube))
-		{
-			logger << "    Performed lost cube actions\n" ;
-			
-			//
-			// Perform an teleop processing we want where when the grabber tells us we lost a cube
-			//
 		}
 
 		//
@@ -197,9 +192,6 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		}
 		else if(info.panel.eject)
 		{
-			//
-			// BWG: Should these not alse be triggers?
-			//
 			logger << "    Collector to EJECT\n" ;
 			collector_mode = Collector_mode::EJECT;
 			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
@@ -207,34 +199,12 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		}
 		else if(info.panel.drop)
 		{
-			//
-			// BWG: Should these not alse be triggers?
-			//
 			logger << "    Collector to DROP\n" ;
 			collector_mode = Collector_mode::DROP;
 			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
 			intake_timer.set(0.5);
 		}
-	}
 
-    //
-    // Process the panel for the lifter commands
-    //
-    bool prep_climb_done = ready(status(info.status.lifter), prep_climb_goal);
-    if(info.panel.climb) {
-		//
-		// The climb buttons means one of two things.  The first time it is pressed
-		// prep_climb_done is false and we just move the lifter to climb height.  The
-		// second time it is pressed, we actually perform the climb.
-		//
-		if(!prep_climb_done) {
-			logger << "    Climb - moving lifter to climb height\n";
-			lifter_goal = prep_climb_goal;
-		} else if(!info.panel.climb_disabled) {
-			logger << "    Climb - climbing (climb switch is enabled)\n";
-			lifter_goal = climb_goal ;
-		}
-    } else if(info.panel.climb_disabled) {
 		if (info.panel.floor)
 		{
 			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
@@ -251,6 +221,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		{
 			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
 		}
+		else if(info.panel.climb)
+		{
+			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
+			collector_mode = Collector_mode::STOW ;
+		}
 		else if(info.panel.lifter == Panel::Lifter::UP)
 		{
 			lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
@@ -264,22 +239,9 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			logger << "    lifter reached goal, stopping\n" ;
 			lifter_goal = Lifter::Goal::stop();
 		}
-    }
-
-    if(lifter_goal == prep_climb_goal && prep_climb_done) {
-        logger << "    Climb - shifting to low gear\n" ;
-		goals.lifter = Lifter::Goal::low_gear();
-    }
-
-    if(info.status.lifter.at_climbed_height) {
-		logger <<"    Climb - at climb height, maintaining\n" ;
-		lifter_goal = Lifter::Goal::maintain_climb();
-    }
-
-	if(info.panel.climb_disabled) {
+		
 		if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
 			logger << "    Lifter calibration requested from panel\n" ;
-			Lifter::lifter_controller.setCalibrate(true);
 			goals.lifter = Lifter::Goal::calibrate();
 		}
 		
@@ -289,7 +251,50 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			collector_mode = Collector_mode::CALIBRATE;
 		} 
 	}
-    
+	else
+	{
+		//
+		// Switching the climb lock to unlock climbing does not do anything that
+		// cannot be reversed.  However, once you manually adjust the lift or press
+		// the climb button with climbing unlocked, you are in the low gear state
+		// until the end of the match
+		//
+		
+		//
+		// This side of the if is for when the climb lock has climbing enabled.  The
+		// behavior of the robot and the panel change when climbing is enabled at the
+		// endgame.
+		//
+		if (info.panel.climb)
+		{
+			//
+			// What conditions apply here?  If we are still calibrated we can
+			// check the lifter height
+			//
+
+			//
+			// Note, this goal will shift the lifter to low gear and reset the
+			// calibration
+			//
+			lifter_goal = Lifter::Goal::climb() ;
+		}
+		else if (info.panel.lifter == Panel::Lifter::UP)
+		{
+			Lifter::lifter_controller.lowgear() ;
+			lifter_goal = Lifter::Goal::up(info.panel.lifter_high_power);
+		}
+		else if (info.panel.lifter == Panel::Lifter::DOWN)
+		{
+			Lifter::lifter_controller.lowgear() ;
+			lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
+		}
+		else if(Lifter::lifter_controller.isClimbed())
+		{
+			logger <<"    Climb - climb completed, maintaining height\n" ;
+			lifter_goal = Lifter::Goal::maintain_climb();
+		}
+	}
+
     switch(collector_mode) {
     case Collector_mode::IDLE:
 		goals.grabber = Grabber::Goal::idle();
@@ -337,22 +342,19 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		assert(0);
     }
 
-	if(lifter_goal == prep_climb_goal || prep_climb_done) {
-		logger << "    Climb - stowing the grabber\n" ;
-		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
-	}
-
     if(!info.panel.grabber_auto) {
 		//
 		// These override settings made by the collector mode
 		//
-		if(info.panel.grabber == Panel::Grabber::OFF) goals.grabber = Grabber::Goal::idle();
-		if(info.panel.grabber == Panel::Grabber::OPEN)
+		if (info.panel.grabber == Panel::Grabber::OFF)
+		{
+			goals.grabber = Grabber::Goal::idle();
+		}
+		else if (info.panel.grabber == Panel::Grabber::OPEN)
 		{
 			goals.grabber = Grabber::Goal::open();
 		}
-		
-		if(info.panel.grabber == Panel::Grabber::CLOSE)
+		else if (info.panel.grabber == Panel::Grabber::CLOSE)
 		{
 			goals.grabber = Grabber::Goal::close();
 		}
@@ -362,9 +364,12 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		//
 		// These override settings made by the collector mode
 		//
-		if(info.panel.intake == Panel::Intake::OFF) goals.intake = Intake::Goal::off();
-		if(info.panel.intake == Panel::Intake::IN) goals.intake = Intake::Goal::in();
-		if(info.panel.intake == Panel::Intake::OUT) goals.intake = Intake::Goal::out();
+		if(info.panel.intake == Panel::Intake::OFF)
+			goals.intake = Intake::Goal::off();
+		else if(info.panel.intake == Panel::Intake::IN)
+			goals.intake = Intake::Goal::in();
+		else if(info.panel.intake == Panel::Intake::OUT)
+			goals.intake = Intake::Goal::out();
     }
 
 	goals.lifter = lifter_goal ;
@@ -377,7 +382,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 void Teleop::runLights(const Run_info &info, Toplevel::Goal &goals)
 {
     goals.lights.climbing = goals.lifter.preset_target() == LifterController::Preset::PREP_CLIMB;
-    goals.lights.lifter_height = (unsigned)info.status.lifter.height;
+    goals.lights.lifter_height = (unsigned)Lifter::lifter_controller.getHeight() ;
     goals.lights.drive_left = goals.drive.left();
     goals.lights.drive_right = goals.drive.right();
     goals.lights.has_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
@@ -423,7 +428,8 @@ Toplevel::Goal Teleop::run(Run_info info)
     runDrivebase(info, goals) ;
     runCollector(info, goals) ;
 
-	if(info.panel.wings && !info.panel.climb_disabled) {
+	if (info.panel.wings && !info.panel.climb_disabled)
+	{
 		logger << "    Unlocking wings\n";
 		goals.wings = Wings::Goal::UNLOCKED;
     }

@@ -19,7 +19,7 @@ static vector<Step> steps =
     startLifterSwitch,
     Step(Wait(0.5)),
     Step(Drive("auto:l_switch_l:segment2", 18, true)),
-    waitForLifter,
+	lifterToSwitch,
     eject,
 	startLifterExch,
     Step(Drive("auto:r_switch_r:segment3", -18, true)),

@@ -15,7 +15,7 @@ static vector<Step> steps =
     AUTO_PREAMBLE("center_switch_right"),
     startLifterSwitch,
     Step(Drive("auto:c_switch_r:segment1", 105, true)),
-    waitForLifter,
+	lifterToSwitch,
     eject,
     Step(Drive("auto:c_switch_r:segment2", -24, true)),
 	lifterToExch,

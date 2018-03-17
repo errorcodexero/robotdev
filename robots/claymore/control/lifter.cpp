@@ -469,7 +469,7 @@ bool ready(Lifter::Status const& status,Lifter::Goal const& goal)
 		ret = true ;
 		break ;
     case Lifter::Goal::Mode::CALIBRATE:
-		ret = true ;
+		ret = Lifter::lifter_controller.isCalibrated() ;
 		break ;
     case Lifter::Goal::Mode::LOW_GEAR:
 		ret = true ;

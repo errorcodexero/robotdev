@@ -19,7 +19,6 @@ static Step lifterToFloor = Step(Lifter_to_preset(LifterController::Preset::FLOO
 static Step lifterToExch = Step(Lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0)) ;
 static Step lifterToSwitch = Step(Lifter_to_preset(LifterController::Preset::SWITCH, 0.0)) ;
 static Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCALE, 0.0)) ;
-static Step waitForLifter = Step(Wait_for_lifter()) ;
 static Step eject = Step(Eject()) ;
 static Step dropGrabber = Step(Drop_grabber());
 static Step driveAndCollect = Step(Drive_and_collect());

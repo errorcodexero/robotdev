@@ -412,13 +412,17 @@ bool Ram::operator==(Ram const& b)const{
 // Rotate: Rotate the robot by a specified angle
 //
 
-Rotate::Rotate(double a):target_angle(a),init(false){}
+Rotate::Rotate(double a):target_angle(a),init(false)
+{
+}
 
-Toplevel::Goal Rotate::run(Run_info info){
+Toplevel::Goal Rotate::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals){
+Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
+{
     if(!init) {
 		Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0) ;
 		init = true;
@@ -428,7 +432,8 @@ Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals){
     return goals;
 }
 
-Step::Status Rotate::done(Next_mode_info info){
+Step::Status Rotate::done(Next_mode_info info)
+{
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
@@ -441,11 +446,13 @@ Step::Status Rotate::done(Next_mode_info info){
     return ret ;
 }
 
-std::unique_ptr<Step_impl> Rotate::clone()const{
+std::unique_ptr<Step_impl> Rotate::clone()const
+{
     return unique_ptr<Step_impl>(new Rotate(*this));
 }
 
-bool Rotate::operator==(Rotate const& b)const{
+bool Rotate::operator==(Rotate const& b)const
+{
     return target_angle == b.target_angle && init == b.init;
 }
 
@@ -453,9 +460,12 @@ bool Rotate::operator==(Rotate const& b)const{
 // Start_lifter_in_background: Start moving the lifter to a specified preset in the background
 //
 
-Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double time):preset(preset),time(time),init(false){}
+Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double time):preset(preset),time(time),init(false)
+{
+}
 
-Step::Status Background_lifter_to_preset::done(Next_mode_info){
+Step::Status Background_lifter_to_preset::done(Next_mode_info)
+{
     messageLogger &logger = messageLogger::get() ;
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
     logger << "Background_lifter_to_preset step complete" ;
@@ -463,103 +473,71 @@ Step::Status Background_lifter_to_preset::done(Next_mode_info){
     return Step::Status::FINISHED_SUCCESS;
 }
 
-Toplevel::Goal Background_lifter_to_preset::run(Run_info info){
+Toplevel::Goal Background_lifter_to_preset::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
-    if(!init) {
-		Lifter::lifter_controller.backgroundMoveToHeight(preset, info.status.lifter.height, time);
+Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goals)
+{
+    if(!init)
+	{
+		Lifter::lifter_controller.moveToHeight(preset, time);
 		init = false;
     }
     return goals;
 }
 
-unique_ptr<Step_impl> Background_lifter_to_preset::clone()const{
+unique_ptr<Step_impl> Background_lifter_to_preset::clone()const
+{
     return unique_ptr<Step_impl>(new Background_lifter_to_preset(*this));
 }
 
-bool Background_lifter_to_preset::operator==(Background_lifter_to_preset const& b)const{
+bool Background_lifter_to_preset::operator==(Background_lifter_to_preset const& b)const
+{
     return preset == b.preset && time == b.time && init == b.init;
-}
-
-//
-// Wait_for_lifter: Wait until the lifter has reached its goal
-//
-
-Wait_for_lifter::Wait_for_lifter(){}
-
-Step::Status Wait_for_lifter::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::background()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-    if (ret == Step::Status::FINISHED_SUCCESS)
-    {
-		messageLogger &logger = messageLogger::get() ;
-		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-		logger << "Wait For Lifter Step done" ;
-		logger.endMessage() ;
-    }
-
-    return ret ;
-}
-
-Toplevel::Goal Wait_for_lifter::run(Run_info info){
-    return run(info,{});
-}
-
-Toplevel::Goal Wait_for_lifter::run(Run_info info,Toplevel::Goal goals){
-    goals.lifter = Lifter::Goal::background();
-    return goals;
-}
-
-unique_ptr<Step_impl> Wait_for_lifter::clone()const{
-    return unique_ptr<Step_impl>(new Wait_for_lifter(*this));
-}
-
-bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
-    return true;
 }
 
 //
 // Calibrate_lifter: Calibrate the lifter at the current height
 //
 
-Calibrate_lifter::Calibrate_lifter(){
+Calibrate_lifter::Calibrate_lifter()
+{
 	mInited = false ;
 }
 
-Step::Status Calibrate_lifter::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+Step::Status Calibrate_lifter::done(Next_mode_info info)
+{
+    Step::Status ret = ready(status(info.status.lifter), Lifter::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
 		messageLogger &logger = messageLogger::get() ;
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
 		logger << "Calibrate Lifter Step done" ;
 		logger.endMessage() ;
-
-		Lifter::lifter_controller.setCalibrate(false);
     }
     return ret ;
 }
 
-Toplevel::Goal Calibrate_lifter::run(Run_info info){
+Toplevel::Goal Calibrate_lifter::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals){
-	if (!mInited)
-	{
-		Lifter::lifter_controller.setCalibrate(true);
-		mInited = true ;
-	}
+Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals)
+{
     goals.lifter = Lifter::Goal::calibrate();
     return goals;
 }
 
-unique_ptr<Step_impl> Calibrate_lifter::clone()const{
+unique_ptr<Step_impl> Calibrate_lifter::clone()const
+{
     return unique_ptr<Step_impl>(new Calibrate_lifter(*this));
 }
 
-bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const{
+bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const
+{
     return true;
 }
 
@@ -613,7 +591,7 @@ Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals)
 			mTargetHeight = params_p->getValue(mParamName, mTargetHeight) ;
 		}
 		
-		Lifter::lifter_controller.moveToHeight(mTargetHeight, info.status.lifter.height, info.in.now) ;
+		Lifter::lifter_controller.moveToHeight(mTargetHeight, info.in.now) ;
 		mInited = false ;
     }
     goals.lifter = Lifter::Goal::go_to_height(mTargetHeight);
@@ -665,7 +643,7 @@ Toplevel::Goal Lifter_to_preset::run(Run_info info){
 
 Toplevel::Goal Lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!mInit) {
-		Lifter::lifter_controller.moveToHeight(mPreset, info.status.lifter.height, mTime);
+		Lifter::lifter_controller.moveToHeight(mPreset, mTime);
 		fail_timer.set(5.0);
 		mInit = false;
     }
@@ -951,9 +929,10 @@ Toplevel::Goal Drop_grabber::run(Run_info info){
 Toplevel::Goal Drop_grabber::run(Run_info info,Toplevel::Goal goals){
     Lifter::Goal drop_grabber_goal = Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER);
     if(!ready(status(info.status.lifter), drop_grabber_goal))
-	goals.lifter = drop_grabber_goal;
+		goals.lifter = drop_grabber_goal;
     else
     	goals.lifter = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
+	
     goals.grabber = Grabber::Goal::hold();
     return goals;
 }

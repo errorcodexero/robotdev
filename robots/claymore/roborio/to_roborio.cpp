@@ -240,7 +240,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		}
 		
 		Drivebase::drivebase_controller.setParams(params_p);	
-		Lifter::lifter_controller.setParams(params_p);
+		Lifter::lifter_controller.init() ;
 		Grabber::grabber_controller.init() ;
 
 		logger.startMessage(messageLogger::messageType::info) ;

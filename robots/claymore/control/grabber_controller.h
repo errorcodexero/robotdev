@@ -110,9 +110,9 @@ public:
     double presetToAngle(Preset preset);
 
     /// \brief check for transitions of the cube state
-    bool cubeStateTransition(CubeState prev, CubeState current)
+    bool enterState(CubeState current)
     {
-		return mPrevCubeState == prev && mCubeState == current ;
+		return mPrevCubeState != current && mCubeState == current ;
     }
 					  
 

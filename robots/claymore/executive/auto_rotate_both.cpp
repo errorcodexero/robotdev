@@ -15,7 +15,7 @@ static vector<Step> steps =
     Step(StartAuto("rotate_both")),
     calibrateLifter,
     calibrateGrabber,
-    startLifterExch,
+	lifterToExch,
     rotate90pos,
     Step(Wait(2.0)),
     rotate90neg,

@@ -38,8 +38,16 @@ public:
 	/// \brief initialize the lifter
 	void init() ;
 
+	bool isCalibrated() const
+	{
+		return mCalibrated ;
+	}
+
 	/// \brief return the climbed state
-	bool isClimbed() const ;
+	bool isClimbed() const
+	{
+		return mMode == Mode::MAINTAIN ;
+	}
 
     /// \brief move the lifter to a specific height
     /// \param height the height in inches for the lifter
@@ -65,7 +73,7 @@ public:
     /// \brief returns true if the lifter has reached the specified height
     /// \param height the height to check against
     /// \returns true if the lifter has reached the specified height
-    bool atHeight(double height)
+    bool atHeight(double height) const
 	{
 		return mMode == Mode::IDLE && std::fabs(mCurrent -  height) < mHeightThreshold ;
 	}
@@ -73,10 +81,16 @@ public:
     /// \brief returns true if the lifter has reached the specified height
     /// \param preset the height to check against
     /// \returns true if the lifter has reached the specified height
-    bool atHeight(Preset preset)
+    bool atHeight(Preset preset) const
 	{
 		return atHeight(presetToHeight(preset)) ;
 	}
+
+	/// \brief returns the height of the lifter
+	double getHeight() const
+	{
+		return mCurrent ;
+	}		
 
     /// \brief returns true when the lifter has reached its desired height
     /// \returns true when the lifter has reached its desired height
@@ -84,7 +98,7 @@ public:
 
     /// \brief returns the height assocaited with a preset
     /// \param preset the preset of interest
-    double presetToHeight(Preset preset);
+    double presetToHeight(Preset preset) const ;
 
 	/// \brief set lifter to idle state
 	void idle()
@@ -128,11 +142,6 @@ public:
 		mHighPower = highpower ;
 	}
 
-	void lock()
-	{
-		mMode = Mode::LOCKED ;
-	}
-
 	void lowgear()
 	{
 		mGear = Gear::LOW ;
@@ -169,7 +178,6 @@ private:
 		MAINTAIN,		// The lifter is maintaining climb height
 		UP,				// Move the lifter up
 		DOWN,			// Move the lifter down
-		LOCKED,			// The lifter is locked in placea
     };
 
     //

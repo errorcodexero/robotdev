@@ -210,17 +210,6 @@ struct Background_lifter_to_preset: Step_impl_inner<Background_lifter_to_preset>
     bool operator==(Background_lifter_to_preset const&)const;
 };
 
-//Wait until the lifter has reached its goal
-struct Wait_for_lifter: Step_impl_inner<Wait_for_lifter>{
-    explicit Wait_for_lifter();
-
-    Toplevel::Goal run(Run_info,Toplevel::Goal);
-    Toplevel::Goal run(Run_info);
-    Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone()const;
-    bool operator==(Wait_for_lifter const&)const;
-};
-
 //Calibrate the lifter at the current height
 struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
 	bool mInited ;
