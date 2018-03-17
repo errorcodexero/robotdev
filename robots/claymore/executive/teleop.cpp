@@ -147,14 +147,28 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 
 		//
 		// Go to exchange height if the timer has expired.  This timer was setup when we saw
-		// the transition no cube to having a cube.  Basically it causes us to go to exchange height
+		// the transition no cube to having a cube.  Basically it causes us to go to the selected height
 		// when we detect a cube present
 		//
 		collect_delay_timer.update(info.in.now, info.in.robot_mode.enabled);
 		if(collect_delay_trigger(collect_delay_timer.done()))
 		{
-			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-			logger << "    Set lifter goal to exchange height\n" ;
+			switch(info.panel.collection_end_height) {
+			case Panel::Collection_end_height::EXCHANGE:
+				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+				logger << "    Set lifter goal to exchange height\n" ;
+				break;
+			case Panel::Collection_end_height::SWITCH:
+				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
+				logger << "    Set lifter goal to switch height\n" ;
+				break;
+			case Panel::Collection_end_height::SCALE:
+				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
+				logger << "    Set lifter goal to scale height\n" ;
+				break;
+			default:
+				assert(0);
+			}
 		}
 
 		//

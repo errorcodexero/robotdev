@@ -51,8 +51,8 @@ Gunner:
   Right     - 
   Pushed in - 
  R_Joy:
-  Up        - Full Auto
-  Down      - No Auto
+  Up        - Scale end collection height
+  Down      - Switch end collection height
   Left      - 
   Right     - 
   Pushed in - 

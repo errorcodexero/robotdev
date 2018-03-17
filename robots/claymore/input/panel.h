@@ -32,8 +32,8 @@ struct Panel{
 	Grabber grabber;
 	enum class Intake{IN,OFF,OUT};
 	Intake intake;
-	enum class Collector_mode{NO_AUTO,SEMI_AUTO,FULL_AUTO};
-	Collector_mode collector_mode;
+	enum class Collection_end_height{EXCHANGE,SWITCH,SCALE};
+	Collection_end_height collection_end_height;
 	enum class Lifter{DOWN,OFF,UP};
 	Lifter lifter;
 	//10 position switches:
