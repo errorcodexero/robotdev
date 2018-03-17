@@ -5,9 +5,13 @@ restore=0
 backup_params=false
 backup_log=false
 open_n=0
+address="none"
 
-while getopts ":t:r:plo:" opt; do
+while getopts ":a:t:r:plo:" opt; do
 	case $opt in
+		a)
+			address=$OPTARG
+			;;
 		t)
 			team=$OPTARG
 			;;
@@ -33,6 +37,10 @@ while getopts ":t:r:plo:" opt; do
 			;;
 	esac
 done
+
+if [ $address == "none" ]; then
+	address="roborio-$team-frc.local"
+fi
 
 if [ ! -d "backups" ]; then
 	mkdir backups
@@ -63,7 +71,7 @@ backup_file () {
 		exit 0
 	fi
 
-	scp lvuser@roborio-1425-frc.local:$1 ./backups/$2_$((file_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
+	scp lvuser@$address:$1 ./backups/$2_$((file_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
 	if [ $? -eq 0 ]; then
 		echo Saved as $2 file $((file_n+1)).
 	fi
@@ -89,7 +97,7 @@ elif [ $restore -gt $backup_n ]; then
 	echo "Backup ${restore} chosen, but only ${backup_n} backups present." >&2
 	exit 1
 elif [ $restore -eq 0 ]; then
-	scp admin@roboRIO-$team-FRC.local:/home/lvuser/FRCUserProgram ./backups/FRCUserProgram_$(($backup_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
+	scp lvuser@$address:FRCUserProgram ./backups/FRCUserProgram_$(($backup_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
 	if [ $? -eq 0 ]; then
 		echo "Saved as backup $(($backup_n+1))."
 	fi
