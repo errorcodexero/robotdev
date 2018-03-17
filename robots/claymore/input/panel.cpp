@@ -175,10 +175,10 @@ Panel interpret_oi(Joystick_data d){
 		}();
 		p.collection_end_height = [&]{
 			float collection_end_height = d.axis[COLLECTION_END_HEIGHT_AXIS];
-			static const float EXCHANGE=-1,SWITCH=0,SCALE=1;
-			if(set_button(collection_end_height,EXCHANGE,SWITCH,SCALE)) return Panel::Collection_end_height::SWITCH;
-			if(set_button(collection_end_height,SWITCH,SCALE,ARTIFICIAL_MAX)) return Panel::Collection_end_height::SCALE;
-			return Panel::Collection_end_height::EXCHANGE;
+			static const float SCALE=-1,SWITCH=0,EXCHANGE=1;
+			if(set_button(collection_end_height,SCALE,SWITCH,EXCHANGE)) return Panel::Collection_end_height::SWITCH;
+			if(set_button(collection_end_height,SWITCH,EXCHANGE,ARTIFICIAL_MAX)) return Panel::Collection_end_height::EXCHANGE;
+			return Panel::Collection_end_height::SCALE;
 		}();
 		p.lifter = [&]{
 			if(d.button[12]){
