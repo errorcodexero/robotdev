@@ -39,7 +39,7 @@ void GrabberController::moveToAngle(double angle, double time)
 {
     paramsInput *params_p = paramsInput::get() ;
 
-	mArmState = ArmState::ANGLE ;
+	setState(ArmState::ANGLE) ;
 	mTarget = angle;
 	mStartTime = time ;
 
@@ -237,6 +237,8 @@ void GrabberController::angleState(double angle, double time, double dt, double 
 		double elapsed= time - mStartTime ;
 		logger << "Grabber Reached Goal (SUCCESS) " ;
 		logger << elapsed << " seconds" ;
+		logger << ", target " << mTarget ;
+		logger << ", angle " << angle ;
 		logger.endMessage() ;
     }
     else
