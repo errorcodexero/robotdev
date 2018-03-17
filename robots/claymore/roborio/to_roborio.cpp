@@ -277,6 +277,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		ds_info.near_switch_left = game_data[0] == 'L';
 		ds_info.scale_left = game_data[1] == 'L';
 		ds_info.far_switch_left = game_data[2] == 'L';
+		ds_info.battery_voltage = driver_station.GetBatteryVoltage();
 		return ds_info;
 	}
 

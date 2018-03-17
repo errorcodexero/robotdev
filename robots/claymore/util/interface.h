@@ -329,7 +329,8 @@ struct DS_info{
 		X(int,location) \
 		X(bool,near_switch_left) \
 		X(bool,scale_left) \
-		X(bool,far_switch_left)
+		X(bool,far_switch_left) \
+		X(double,battery_voltage)
 	
 	STRUCT_MEMBERS(DS_INFO_ITEMS)
 
@@ -386,6 +387,7 @@ struct Robot_inputs{
 		
 	static const unsigned CURRENT=16;
 	Checked_array<double,CURRENT> current;
+
 	Pump_input pump;
 	paramsInput* input_params;
 
