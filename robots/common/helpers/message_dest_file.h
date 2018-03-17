@@ -11,13 +11,14 @@ class messageDestFile : public messageLoggerDest
 {
 public:
 	messageDestFile();
-	messageDestFile(const std::string &name, int timeout_limit);
+	messageDestFile(const std::string &name);
 	virtual ~messageDestFile();
 	void setTimeout(int timeout_limit);
 	bool setFile(const std::string &name);
 	virtual void displayMessage(const messageLogger::messageType &type, uint64_t subs, const std::string &msg);
 
 private:
+    void initialize();
     std::ofstream *m_strm_p ;
 	std::list<std::string> m_msg_q;
 	std::string m_filename;

@@ -23,7 +23,8 @@ SRC = \
 
 ifndef TESTS
 TESTS = \
-	data_logger_destination_server\
+	data_logger_destination_server \
+	message_dest_file \
 	motion_target_profile \
 	motor_current_monitor
 endif
