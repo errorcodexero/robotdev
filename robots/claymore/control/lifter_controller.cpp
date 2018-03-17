@@ -333,8 +333,14 @@ void LifterController::updateUp(double time, double dt, double &out, Gear &gear,
 	
 	gear = mGear ;
 	brake = false ;
-
-	if (mCurrent >= top_limit)
+	
+	if (!mCalibrated)
+	{
+		logger << ", uncalibrated" ;
+		out = params_p->getValue("lifter:manual_power:low", 0.4) ;
+		assert(out >= 0.0) ;
+	}
+	else if (mCurrent >= top_limit)
 	{
 		out = 0.0 ;
 		logger << ", top limit" ;
@@ -382,7 +388,13 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 	
 	gear = mGear ;
 	brake = false ;
-	if (mCurrent <= bottom_limit)
+	if (!mCalibrated)
+	{
+		logger << ", uncalibrated" ;
+		out = -params_p->getValue("lifter:manual_power:low", 0.4) ;
+		assert(out <= 0.0) ;
+	}
+	else if (mCurrent <= bottom_limit)
 	{
 		logger << ", bottom limit" ;
 		out = 0.0 ;
