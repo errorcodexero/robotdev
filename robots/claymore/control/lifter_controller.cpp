@@ -99,7 +99,9 @@ void LifterController::moveToHeight(double height, double time)
 		
 		messageLogger &logger = messageLogger::get();
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
-		logger << "moveToHeight, height = " << height;
+		logger << "moveToHeight" ;
+		logger << ", current " << mCurrent ;
+		logger << ", target " << height;
 		logger << ", pid " << p << " " << i << " " << d << " " << f << " " << imax;
 		logger << ", vmin " << vmin << ", vmax " << vmax ;
 		logger.endMessage();
@@ -111,7 +113,7 @@ void LifterController::moveToHeight(double height, double time)
 		logger << "moveToHeight, target = " << height ;
 		logger << ", current = " << mCurrent ;
 		logger << ", threshold = " << mHeightThreshold ;
-		logger << ", REQUEST IGNORED" ;
+		logger << ", already at requested height" ;
 		logger.endMessage();
 	}
 }
@@ -124,12 +126,17 @@ void LifterController::moveToHeight(Preset preset, double time)
 void LifterController::updateIdle(double time, double dt, double &out, Gear &gear, bool &brake)
 {
 	paramsInput *params_p = paramsInput::get() ;
+	messageLogger &logger = messageLogger::get();
+
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger << "Lifter: State is IDLE" ;
 
 	if (params_p->getValue("lifter:idle:use_brake", 0.0) > 0.5)
 	{
 		out = 0.0 ;
 		gear = mGear ;
 		brake = true ;
+		logger << ", applying brake" ;
 	}
 	else
 	{
@@ -139,10 +146,11 @@ void LifterController::updateIdle(double time, double dt, double &out, Gear &gea
 			out = params_p->getValue("lifter:hold_power:high_gear", 0.1) ;
 		
 		gear = mGear ;
+		logger << ", applying holding voltage" ;
 	}
+	logger.endMessage() ;
 	
     if (mDataDumpMode) {
-		messageLogger &logger = messageLogger::get();
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
 		logger << "lifter MODE idle, dt " << dt;
 		logger << ", time " << time;
@@ -175,7 +183,7 @@ void LifterController::updateCalibrate(double time, double dt, double &out, Gear
 	
 	messageLogger &logger = messageLogger::get();
 	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
-	logger << "Lifter calibrated at " << mBaseTicks << " ticks" ;
+	logger << "Lifter: State is CALIBRATE, baseticks " << mBaseTicks ;
 	logger.endMessage() ;
 }
 
@@ -197,7 +205,7 @@ void LifterController::updateHeight(double time, double dt, double &out, Gear &g
 		{
 			double elapsed= time - mStartTime ;
 			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
-			logger << "Destination height reached in " << elapsed << " secs" ;
+			logger << "Lifter: success, time = " << elapsed << " secs" ;
 			logger.endMessage() ;
 			
 			mMode = Mode::IDLE ;
@@ -238,16 +246,32 @@ void LifterController::updateHeight(double time, double dt, double &out, Gear &g
 			logger.endMessage() ;
 		}
 	}
+	else
+	{
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+		logger << "Lifter: State is HEIGHT, ignored, not calibrated" ;
+		logger.endMessage() ;
+	}
 }
 
 void LifterController::updateClimb(double time, double dt, double &out, Gear &gear, bool &brake)
 {
 	paramsInput *params_p = paramsInput::get() ;
+	messageLogger &logger = messageLogger::get();
+	
 	out = params_p->getValue("lifter:climb_power", -0.6) ;
 	gear = Gear::LOW ;
 	mCalibrated = false ;
 	
 	int climb_height_ticks = params_p->getValue("lifter::climbing_difference", 100) ;
+	
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger << "Lifter: State is CLIMB" ;
+	logger << ", ticks " << mTicks ;
+	logger << ", climbbase " << mClimbBase ;
+	logger << ", heightticks " << climb_height_ticks ;
+	logger.endMessage() ;
+		
 	if (mTicks < mClimbBase - climb_height_ticks)
 	{
 		//
@@ -260,8 +284,17 @@ void LifterController::updateClimb(double time, double dt, double &out, Gear &ge
 void LifterController::updateMaintain(double time, double dt, double &out, Gear &gear, bool &brake)
 {
 	paramsInput *params_p = paramsInput::get() ;
+	messageLogger &logger = messageLogger::get();
+	
 	int climb_height_ticks = params_p->getValue("lifter:climbing_difference", 100) ;
 	int threshold = static_cast<int>(params_p->getValue("lifter:maintain_climb_threshold", 10)) ;
+	
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger << "Lifter: State is MAINTAIN" ;
+	logger << ", ticks " << mTicks ;
+	logger << ", climbbase " << mClimbBase ;
+	logger << ", heightticks " << climb_height_ticks ;
+	logger << ", threshold " << threshold ;
 	
 	gear = Gear::LOW ;
 	mCalibrated = false ;
@@ -269,54 +302,100 @@ void LifterController::updateMaintain(double time, double dt, double &out, Gear 
 	{
 	    brake = false ;
 		out = params_p->getValue("lifter:climb_power", -0.6) ;
+		logger << ", applying climb power" ;
 	}
 	else
 	{
 	    brake = true ;
 		out = 0.0 ;
+		logger << ", braking" ;
 	}
+	logger.endMessage() ;
 }
 
 void LifterController::updateUp(double time, double dt, double &out, Gear &gear, bool &brake)
 {
 	paramsInput *params_p = paramsInput::get() ;
+	messageLogger &logger = messageLogger::get();
 	
 	double top_limit = params_p->getValue("lifter:height:top_limit", 96.0);
     double slowdown_range = params_p->getValue("lifter:slowdown_range", 6.0);
 
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger << "Lifter: State is UP" ;
+	
 	gear = mGear ;
 	brake = false ;
 
 	if (mCurrent >= top_limit)
+	{
 		out = 0.0 ;
+		logger << ", top limit" ;
+	}
 	else if (mCurrent > top_limit - slowdown_range)
+	{
+		logger << ", upper slowdown" ;
 		out = params_p->getValue("lifter:slowdown_power", 0.2) ;
+		assert(out >= 0.0) ;
+	}
 	else if (mHighPower)
+	{
+		logger << ", high power" ;
 		out = params_p->getValue("lifter:manual_power:high", 0.8) ;
+		assert(out >= 0.0) ;
+	}
 	else
+	{
+		logger << ", low power" ;
 		out = params_p->getValue("lifter:manual_power:low", 0.4) ;
+		assert(out >= 0.0) ;
+	}
+
+	logger << ", out " << out ;
+	logger.endMessage() ;
 }
 
 void LifterController::updateDown(double time, double dt, double &out, Gear &gear, bool &brake)
 {
 	paramsInput *params_p = paramsInput::get() ;
+	messageLogger &logger = messageLogger::get();
 	
     double bottom_limit = params_p->getValue("lifter:collector_offset", 11.375) ;
     double slowdown_range = params_p->getValue("lifter:slowdown_range", 6.0);
 	
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger << "Lifter: State is DOWN" ;
+	
 	gear = mGear ;
 	brake = false ;
 	if (mCurrent <= bottom_limit)
+	{
+		logger << ", bottom limit" ;
 		out = 0.0 ;
+	}
 	else if (mCurrent < bottom_limit + slowdown_range)
+	{
+		logger << ", lower slowdown" ;
 		out = -params_p->getValue("lifter:slowdown_power", 0.2) ;
+		assert(out <= 0.0) ;
+	}
 	else if (mHighPower)
+	{
+		logger << ", high power" ;
 		out = -params_p->getValue("lifter:manual_power:high", 0.8) ;
+		assert(out <= 0.0) ;
+	}
 	else
+	{
+		logger << ", low power" ;
 		out = -params_p->getValue("lifter:manual_power:low", 0.4) ;
+		assert(out <= 0.0) ;
+	}
+	logger << ", out " << out ;
+	logger.endMessage() ;
 }
 
-void LifterController::update(int ticks, double time, double dt, double& out, Gear &gear, bool &brake)
+void LifterController::update(int ticks, bool ulimit, bool blimit, double time, double dt, double& out, Gear &gear, bool &brake)
 {
 	//
 	// Remember the current ticks number
@@ -344,7 +423,6 @@ void LifterController::update(int ticks, double time, double dt, double& out, Ge
 	out = 0.0 ;
 	gear = mGear ;
 	brake = false ;
-
 	
 	switch(mMode)
 	{
@@ -376,6 +454,13 @@ void LifterController::update(int ticks, double time, double dt, double& out, Ge
 		updateDown(time, dt, out, gear, brake) ;
 		break ;
 	}
+
+	//
+	// If the limit switch is on and we are continuing to move in the wrong
+	// direction, we shut it down here
+	//
+	if ((ulimit && out > 0.0) || (blimit && out < 0.0))
+		out = 0.0 ;
 	
 }
 

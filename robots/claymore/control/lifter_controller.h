@@ -61,14 +61,15 @@ public:
 
     /// \brief this method is called each time the robot loop is run to update the lifer
     /// This method uses a PID controller to position the lifter to the desired location
-    /// \param height the current height of the lifter
-    /// \param time the current time in seconds
 	/// \param ticks the number of ticks at the encoder
+	/// \param ulimit the state of the upper limit switch
+	/// \param blimit the state of the lower limit switch
+    /// \param time the current time in seconds
     /// \param dt the time that has elapsed since the last time this was called
     /// \param out the output voltage for the lifter motor
 	/// \param the gear the lifter should be using
 	/// \param the state of the break, true is on
-    void update(int ticks, double time, double dt, double &out, Gear &gear, bool &brake);
+    void update(int ticks, bool ulimit, bool blimit, double time, double dt, double &out, Gear &gear, bool &brake);
 
     /// \brief returns true if the lifter has reached the specified height
     /// \param height the height to check against

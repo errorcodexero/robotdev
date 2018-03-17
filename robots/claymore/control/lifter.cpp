@@ -419,22 +419,18 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 
 	LifterController::Gear g ;
 	bool brake ;
-	Lifter::lifter_controller.update(status_detail.ticks, status_detail.time, status_detail.dt, out.power, g, brake);
+	Lifter::lifter_controller.update(status_detail.ticks, status_detail.at_top_limit, status_detail.at_bottom_limit,
+									 status_detail.time, status_detail.dt, out.power, g, brake);
+	
 	if (g == LifterController::Gear::LOW)
 		out.gearing = Lifter::Output::Gearing::LOW ;
+	
 	out.lock = brake ;
 	
     messageLogger &logger = messageLogger::get();
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
     logger << "    Lifter status: " << out.power << "\n";
 	logger << "    Lifter lock: " << (out.lock ? "locked" : "unlocked") << "\n" ;
-
-	//
-	// Use the limit switches to ensure we dont exceed the bounds of the lifter
-	//
-	if((status_detail.at_top_limit && out.power > 0.0) ||
-	   (status_detail.at_bottom_limit && out.power < 0.0))
-		out.power = 0.0;
 
     logger << "After: " << out.power << ", lock " << (out.lock ? "LOCKED" : "UNLOCKED") << "\n" ;
     logger.endMessage();
