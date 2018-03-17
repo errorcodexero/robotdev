@@ -4,6 +4,7 @@
 #include "pidctrl.h"
 #include "params_parser.h"
 #include <cmath>
+#include <iostream>
 
 //
 //
@@ -145,6 +146,7 @@ public:
 
 	void lowgear()
 	{
+		std::cout << "Set to low gear" << std::endl ;
 		mGear = Gear::LOW ;
 		mCalibrated = false ;
 	}

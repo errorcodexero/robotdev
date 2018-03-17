@@ -421,9 +421,16 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 	bool brake ;
 	Lifter::lifter_controller.update(status_detail.ticks, status_detail.at_top_limit, status_detail.at_bottom_limit,
 									 status_detail.time, status_detail.dt, out.power, g, brake);
+
 	
 	if (g == LifterController::Gear::LOW)
+	{
 		out.gearing = Lifter::Output::Gearing::LOW ;
+	}
+	else
+	{
+		out.gearing = Lifter::Output::Gearing::HIGH ;
+	}
 	
 	out.lock = brake ;
 	

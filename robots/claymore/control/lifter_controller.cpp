@@ -206,6 +206,8 @@ void LifterController::updateHeight(double time, double dt, double &out, Gear &g
 			double elapsed= time - mStartTime ;
 			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
 			logger << "Lifter: success, time = " << elapsed << " secs" ;
+			logger << ", delta " << mTarget - mCurrent ;
+			logger << ", threshold " << mHeightThreshold ;
 			logger.endMessage() ;
 			
 			mMode = Mode::IDLE ;
@@ -411,6 +413,8 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 
 void LifterController::update(int ticks, bool ulimit, bool blimit, double time, double dt, double& out, Gear &gear, bool &brake)
 {
+	messageLogger &logger = messageLogger::get();
+	
 	//
 	// Remember the current ticks number
 	//
@@ -475,7 +479,13 @@ void LifterController::update(int ticks, bool ulimit, bool blimit, double time, 
 	//
 	if ((ulimit && out > 0.0) || (blimit && out < 0.0))
 		out = 0.0 ;
-	
+
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
+	logger << "Lifter Output:" ;
+	logger << ", out " << out ;
+	logger << ", gear " << (gear == Gear::LOW ? "LOW" : "HIGH") ;
+	logger << ", brake " << (brake ? "ON" : "OFF") ;
+	logger.endMessage() ;
 }
 
 double LifterController::presetToHeight(Preset preset) const
