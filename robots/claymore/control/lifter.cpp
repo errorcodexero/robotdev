@@ -440,7 +440,6 @@ Lifter::Output control(Lifter::Status_detail const& status_detail, Lifter::Goal 
 
 Lifter::Status status(Lifter::Status_detail const& status_detail)
 {
-	assert(0) ;
     return Lifter::Status::MIDDLE;
 }
 

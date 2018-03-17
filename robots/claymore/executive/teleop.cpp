@@ -234,15 +234,14 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		{
 			lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 		}
-		else if(ready(status(info.status.lifter), lifter_goal))
+		else if (ready(status(info.status.lifter), lifter.goal))
 		{
-			logger << "    lifter reached goal, stopping\n" ;
-			lifter_goal = Lifter::Goal::stop();
+			lifter_goal = Lifter::Goal::stop() ;
 		}
 		
 		if(calibrate_lifter_trigger(info.panel.calibrate_lifter)) {
 			logger << "    Lifter calibration requested from panel\n" ;
-			goals.lifter = Lifter::Goal::calibrate();
+			lifter_goal = Lifter::Goal::calibrate();
 		}
 		
 		if(calibrate_grabber_trigger(info.panel.calibrate_grabber)) {
@@ -287,11 +286,6 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		{
 			Lifter::lifter_controller.lowgear() ;
 			lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
-		}
-		else if(Lifter::lifter_controller.isClimbed())
-		{
-			logger <<"    Climb - climb completed, maintaining height\n" ;
-			lifter_goal = Lifter::Goal::maintain_climb();
 		}
 	}
 

@@ -22,7 +22,7 @@ static vector<Step> steps
     Step(Drive("auto:c_switch_l:segment3", 56.0, true)),
 	lifterToSwitch,
     eject,
-    Step(Drive("auto:c_switch_r:segment1", -24, true)),
+    Step(Drive("auto:c_switch_l:segment4", -24, true)),
 	lifterToExch,
 	Step(Rotate(45.0)),
 	lifterToFloor,

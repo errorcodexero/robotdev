@@ -353,6 +353,8 @@ void LifterController::updateUp(double time, double dt, double &out, Gear &gear,
 
 	logger << ", out " << out ;
 	logger.endMessage() ;
+
+	mMode = Mode::IDLE ;
 }
 
 void LifterController::updateDown(double time, double dt, double &out, Gear &gear, bool &brake)
@@ -393,6 +395,8 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 	}
 	logger << ", out " << out ;
 	logger.endMessage() ;
+	
+	mMode = Mode::IDLE ;
 }
 
 void LifterController::update(int ticks, bool ulimit, bool blimit, double time, double dt, double& out, Gear &gear, bool &brake)
