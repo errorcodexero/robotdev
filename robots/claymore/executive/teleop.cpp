@@ -120,7 +120,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			logger << "    Performed aquire cube actions\n" ;
 			logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
 			
-			collector_mode = Collector_mode::HOLD_CUBE ;
+			collector_mode = Collector_mode::CLAMP_DOWN ;
 			double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::SWITCH) ;
 			if (Lifter::lifter_controller.getHeight() < exheight && Lifter::lifter_controller.isCalibrated())
 			{
@@ -311,6 +311,12 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     case Collector_mode::HOLD_CUBE:
 		goals.grabber = Grabber::Goal::hold();
 		goals.intake = Intake::Goal::off();
+		break;
+	case Collector_mode::CLAMP_DOWN:
+		goals.grabber = Grabber::Goal::clamp();
+		goals.intake = Intake::Goal::off();
+		if(ready(status(info.status.grabber), goals.grabber))
+			collector_mode = Collector_mode::HOLD_CUBE;
 		break;
     case Collector_mode::COLLECT_OPEN:
 		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);

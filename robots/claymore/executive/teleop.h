@@ -17,7 +17,7 @@ struct Teleop : Executive_impl<Teleop> {
 		Countdown_timer timer;
 	};
 
-    #define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(STOW) X(CALIBRATE)
+    #define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(CLAMP_DOWN) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(STOW) X(CALIBRATE)
 	enum class Collector_mode{
 		#define X(NAME) NAME,
 		COLLECTOR_MODES
@@ -61,7 +61,7 @@ double set_drive_speed(double,double,double);
 
 inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode mode)
 {
-	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(STOW) X(CALIBRATE)
+	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(CLAMP_DOWN) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(STOW) X(CALIBRATE)
 	
 	switch(mode)
 	{
@@ -71,6 +71,9 @@ inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode m
 	case Teleop::Collector_mode::HOLD_CUBE:
 		logger << "HOLD_CUBE" ;
 		break ;
+	case Teleop::Collector_mode::CLAMP_DOWN:
+		logger << "CLAMP_DOWN" ;
+		break;
 	case Teleop::Collector_mode::COLLECT_OPEN:
 		logger << "COLLECT_OPEN" ;
 		break ;

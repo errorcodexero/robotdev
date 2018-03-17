@@ -186,6 +186,10 @@ void GrabberController::update(double angle, bool cubesensor, double time, doubl
 		out = params_p->getValue("grabber:hold_power", -0.1) ;
 		break ;
 
+	case ArmState::CLAMP:
+		out = params_p->getValue("grabber::clamp_power", -0.3) ;
+		break;
+
     case ArmState::OPEN:
 		out = params_p->getValue("grabber:manual_power", 0.2) ;
 		break ;

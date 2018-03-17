@@ -59,6 +59,12 @@ Grabber::Goal Grabber::Goal::hold(){
     return a;
 }
 
+Grabber::Goal Grabber::Goal::clamp(){
+	Grabber::Goal a;
+	a.mode_ = Grabber::Goal::Mode::CLAMP;
+	return a;
+}
+
 Grabber::Goal Grabber::Goal::open(){
     Grabber::Goal a;
     a.mode_ = Grabber::Goal::Mode::OPEN;
@@ -101,14 +107,14 @@ Grabber::Estimator::Estimator():last(){}
 
 std::set<Grabber::Goal> examples(Grabber::Goal*){
     return {
-	Grabber::Goal::idle(),
-	    Grabber::Goal::hold(),
-	    Grabber::Goal::open(),
-	    Grabber::Goal::close(),
-	    Grabber::Goal::go_to_angle(0.0),
-	    Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED),
-	    Grabber::Goal::calibrate(),
-	    };
+		Grabber::Goal::idle(),
+		Grabber::Goal::hold(),
+		Grabber::Goal::open(),
+		Grabber::Goal::close(),
+		Grabber::Goal::go_to_angle(0.0),
+		Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED),
+		Grabber::Goal::calibrate(),
+	};
 }
 
 std::set<Grabber::Output> examples(Grabber::Output*){
@@ -117,14 +123,14 @@ std::set<Grabber::Output> examples(Grabber::Output*){
 
 std::set<Grabber::Input> examples(Grabber::Input*){
     return {
-	{0, false, false},
-	{1, false, false},
-	{0, false, true},
-	{1, false, true},
-	{0, true, false},
-	{1, true, false},
-	{0, true, true},
-	{1, true, true}
+		{0, false, false},
+		{1, false, false},
+		{0, false, true},
+		{1, false, true},
+		{0, true, false},
+		{1, true, false},
+		{0, true, true},
+		{1, true, true}
     };
 }
 
@@ -139,10 +145,10 @@ std::ostream& operator<<(std::ostream& o,Grabber::Input a){
 
 std::set<Grabber::Status_detail> examples(Grabber::Status_detail*){
     return {
-	{false, false, false, 0.0, 0.0, 0.0},
-	{false, true, false, 0.0, 0.0, 0.0},
-	{true, false, false, 0.0, 0.0, 0.0},
-	{true, true, false, 0.0, 0.0, 0.0}
+		{false, false, false, 0.0, 0.0, 0.0},
+		{false, true, false, 0.0, 0.0, 0.0},
+		{true, false, false, 0.0, 0.0, 0.0},
+		{true, true, false, 0.0, 0.0, 0.0}
     };
 }
 
@@ -318,6 +324,9 @@ Grabber::Output control(Grabber::Status_detail status,Grabber::Goal goal){
     case Grabber::Goal::Mode::HOLD:
 		Grabber::grabber_controller.hold() ;
 		break;
+	case Grabber::Goal::Mode::CLAMP:
+		Grabber::grabber_controller.clamp() ;
+		break;
     case Grabber::Goal::Mode::CLOSE:
 		Grabber::grabber_controller.close() ;
 		break;
@@ -360,12 +369,14 @@ bool ready(Grabber::Status status,Grabber::Goal goal){
     case Grabber::Goal::Mode::HOLD:
     case Grabber::Goal::Mode::OPEN:
     case Grabber::Goal::Mode::CLOSE:
-	return true;
+		return true;
+	case Grabber::Goal::Mode::CLAMP:
+		return status.angle < paramsInput::get()->getValue("grabber:clamp_angle", 20.0);
     case Grabber::Goal::Mode::GO_TO_ANGLE:
     case Grabber::Goal::Mode::GO_TO_PRESET:
-	return Grabber::grabber_controller.done();
+		return Grabber::grabber_controller.done();
     case Grabber::Goal::Mode::CALIBRATE:
-	return !Grabber::grabber_controller.isCalibrating();
+		return !Grabber::grabber_controller.isCalibrating();
     default:
 	assert(0);
     }

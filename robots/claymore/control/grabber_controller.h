@@ -26,6 +26,7 @@ public:
 		CALIBRATING,	       ///< Calibrating the grabber to establish position reference
 		IDLE,			       ///< Let the grabber be idle
 		HOLD,			       ///< Hold a cube in the grabber
+		CLAMP,                 ///< Clamp down after collecting a cube
 		ANGLE,			       ///< Move the grabber to a position
 		OPEN,			       ///< Manually open the grabber arm
 		CLOSE,			       ///< Manually close the grabber arm
@@ -59,6 +60,11 @@ public:
     {
 		mArmState = ArmState::HOLD ;
     }
+
+	void clamp()
+	{
+		mArmState = ArmState::CLAMP ;
+	}
 
     void open()
     {
@@ -137,6 +143,9 @@ private:
 		case ArmState::HOLD:
 			result = "HOLD" ;
 			break ;
+		case ArmState::CLAMP:
+			result = "CLAMP" ;
+			break;
 		case ArmState::ANGLE:
 			result = "ANGLE" ;
 			break ;
