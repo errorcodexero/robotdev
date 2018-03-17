@@ -234,7 +234,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		{
 			lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 		}
-		else if (ready(status(info.status.lifter), lifter.goal))
+		else if(ready(status(info.status.lifter), lifter_goal))
 		{
 			lifter_goal = Lifter::Goal::stop() ;
 		}
