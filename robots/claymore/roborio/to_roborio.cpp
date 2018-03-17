@@ -53,12 +53,6 @@ int read_joysticks(Robot_inputs &r, frc::DriverStation& ds){
 	return 0;
 }
 
-//it might make sense to put this in the Robot_inputs structure.  
-Volt battery_voltage(){
-	auto &d=frc::DriverStation::GetInstance();
-	return d.GetBatteryVoltage();
-}
-
 int demo(...){
 	cerr<<"In demo\n";
 	return 0;
