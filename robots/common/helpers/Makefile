@@ -15,6 +15,7 @@ SRC = \
 	udp_sync.cpp\
 	message_logger.cpp\
 	motion_target_profile.cpp\
+	motor_current_monitor.cpp\
 	data_logger.cpp\
 	data_logger_destination_server.cpp
 
@@ -23,7 +24,8 @@ SRC = \
 ifndef TESTS
 TESTS = \
 	data_logger_destination_server\
-	motion_target_profile
+	motion_target_profile \
+	motor_current_monitor
 endif
 
 #
