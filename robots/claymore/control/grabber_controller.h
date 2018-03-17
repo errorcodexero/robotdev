@@ -53,32 +53,32 @@ public:
     /// \brief set the arm state to idle
     void setIdle()
     {
-		mArmState = ArmState::IDLE ;
+		setState(ArmState::IDLE) ;
     }
-
+	
     void hold()
     {
-		mArmState = ArmState::HOLD ;
+		setState(ArmState::HOLD)  ;
     }
 
 	void clamp()
 	{
-		mArmState = ArmState::CLAMP ;
+		setState(ArmState::CLAMP) ;
 	}
 
     void open()
     {
-		mArmState = ArmState::OPEN ;
+		setState(ArmState::OPEN) ;
     }
 
     void close()
     {
-		mArmState = ArmState::CLOSE ;
+		setState(ArmState::CLOSE) ;
     }
 
     void calibrate()
     {
-		mArmState = ArmState::CALIBRATING ;
+		setState(ArmState::CALIBRATING) ;
     }
 
     /// \brief move the grabber to a specific angle
@@ -123,9 +123,13 @@ public:
     {
 		return mPrevCubeState != current && mCubeState == current ;
     }
-					  
 
 private:
+	void setState(ArmState st)
+	{
+		mArmState = st ;
+	}
+	
     void processCubeState(bool cubesensor, bool arms_in, double now) ;
     void idleState(double angle, double time, double dt) ;
     void calibrate(double angle, double dt, double &out) ;
