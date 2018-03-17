@@ -319,7 +319,11 @@ void LifterController::updateUp(double time, double dt, double &out, Gear &gear,
 	messageLogger &logger = messageLogger::get();
 	
 	double top_limit = params_p->getValue("lifter:height:top_limit", 96.0);
-    double slowdown_range = params_p->getValue("lifter:slowdown_range", 6.0);
+
+	if(mHighPower)
+		double slowdown_range = params_p->getValue("lifter:slowdown_range:high_power", 12.0);
+	else
+		double slowdown_range = params_p->getValue("lifter:slowdown_range:low_power", 6.0);
 
 	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 	logger << "Lifter: State is UP" ;
@@ -363,7 +367,11 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 	messageLogger &logger = messageLogger::get();
 	
     double bottom_limit = params_p->getValue("lifter:collector_offset", 11.375) ;
-    double slowdown_range = params_p->getValue("lifter:slowdown_range", 6.0);
+    
+	if(mHighPower)
+		double slowdown_range = params_p->getValue("lifter:slowdown_range:high_power", 12.0);
+	else
+		double slowdown_range = params_p->getValue("lifter:slowdown_range:low_power", 6.0);
 	
 	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 	logger << "Lifter: State is DOWN" ;
