@@ -111,6 +111,12 @@ public:
 		mMode = Mode::IDLE ;
 	}
 
+	/// \brief reset the climb base recorded flag
+	void resetClimbBase()
+	{
+		mClimbBaseRecorded = false ;
+	}
+
 	/// \brief set the lifter in the climb mode
 	void climb()
 	{

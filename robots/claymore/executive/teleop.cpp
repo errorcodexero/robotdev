@@ -113,6 +113,13 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
     if(info.panel.climb_disabled)
 	{
 		//
+		// If climbing is disabled, the lifter should be in high gear and we should
+		// reset the climb base tick amount
+		//
+		Lifter::lifter_controller.resetClimbBase() ;
+		Lifter::lifter_controller.highgear() ;
+		
+		//
 		// This side of the if is for when the climb lock switch has climbing disabled.  This is
 		// the normal operation for the majority of the match
 		//
@@ -151,9 +158,9 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		}
 
 		//
-		// Go to exchange height if the timer has expired.  This timer was setup when we saw
+		// Go to a preset height if the timer has expired.  This timer was setup when we saw
 		// the transition no cube to having a cube.  Basically it causes us to go to the selected height
-		// when we detect a cube present
+		// when we detect a cube present.
 		//
 		collect_delay_timer.update(info.in.now, info.in.robot_mode.enabled);
 		if(collect_delay_trigger(collect_delay_timer.done()))
@@ -177,11 +184,8 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		}
 
 		//
-		// Now process the panel inputs and decide what to do.
-		//
-
-		//
-		// TODO: What is the priority of these operations
+		// Now process the panel inputs and decide what to do.  Note, these
+		// actions may be overridden if we are in manual mode by code below.
 		//
 		if(collect_open_trigger(info.panel.collect_open))
 		{
@@ -242,6 +246,11 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		}
 		else if(info.panel.climb)
 		{
+			//
+			// This preset height is to go to the climbing height.  Therefore when we go to this
+			// height we also stow the grabber out of the way to ready for the alignment and
+			// climb.
+			//
 			lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::PREP_CLIMB);
 			collector_mode = Collector_mode::STOW ;
 		}
@@ -277,7 +286,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		// Switching the climb lock to unlock climbing does not do anything that
 		// cannot be reversed.  However, once you manually adjust the lift or press
 		// the climb button with climbing unlocked, you are in the low gear state
-		// until the end of the match
+		// until the end of the match (or until you recalibrate).
 		//
 		
 		//
