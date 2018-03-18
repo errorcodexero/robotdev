@@ -33,6 +33,7 @@ LifterController::LifterController()
     mDataDumpStartTime = 0.0;
 	
     mCalibrated = false ;
+	mClimbBaseRecorded = false ;
 	mGear = Gear::HIGH ;
 }
 

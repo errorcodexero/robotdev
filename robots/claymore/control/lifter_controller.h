@@ -118,8 +118,11 @@ public:
 		// If we are moving into the climb state, remember the number of ticks we are
 		// at as a reference for ending the climb
 		//
-		if (mMode != Mode::CLIMB)
+		if (!mClimbBaseRecorded)
+		{
 			mClimbBase = mTicks ;
+			mClimbBaseRecorded = true ;
+		}
 		
 		mMode = Mode::CLIMB ;
 	}
@@ -288,6 +291,11 @@ private:
     // that the lifter has been calibrated
     //
     bool mCalibrated ;
+
+	//
+	// If true, our base for climbing has been recorded
+	//
+	bool mClimbBaseRecorded ;
 };
 
 #endif
