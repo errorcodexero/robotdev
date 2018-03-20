@@ -9,9 +9,11 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
-
+#include "subsystems.h"
 #include "params_parser.h"
 #include "message_logger.h"
+#include "message_dest_dated_file.h"
+#include "message_dest_stream.h"
 
 using namespace std;
 
@@ -134,6 +136,99 @@ public:
 		logger.enableType(messageLogger::messageType::warning);
 		logger.enableType(messageLogger::messageType::info);
 		logger.enableType(messageLogger::messageType::debug);
+
+#ifdef DEBUG
+		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
+		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
+		//logger.enableSubsystem(SUBSYSTEM_TIMING);
+		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		//logger.enableSubsystem(SUBSYSTEM_GRABBER_TUNING);
+		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
+		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
+		logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		//logger.enableSubsystem(SUBSYSTEM_PANEL);
+		//logger.enableSubsystem(SUBSYSTEM_SOLENOIDS);
+#else
+		//
+		// In competition mode, we always want the drivebase and auto mode
+		// debug information
+		//
+		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
+		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
+#endif
+
+		std::shared_ptr<messageLoggerDest> dest_p;
+
+
+#ifdef DEBUG
+		//
+		// We only want printouts on COUT when we are debugging
+		// In competition mode, this information goes to a log file on
+		// the USB stick
+		//
+		dest_p = std::make_shared<messageDestStream>(std::cout);
+		logger.addDestination(dest_p);
+#endif
+
+		//
+		// This is where the roborio places the first USB flashd drive it
+		// finds.  Other drives are placed at /V, /W, /X.  The devices are
+		// actually mounted at /media/sd*, and a symbolic link is created
+		// to /U.
+		//
+		std::string flashdrive("/u/Vi/");
+		std::shared_ptr<messageDestDatedFile> dest_p2;
+		dest_p2 = std::make_shared<messageDestDatedFile>(flashdrive);
+		dest_p2->setTimeout(120000);
+		dest_p = dest_p2;
+		logger.addDestination(dest_p);
+
+		DriverStation &ds = DriverStation::GetInstance();
+		logger.startMessage(messageLogger::messageType::info);
+		logger << "Match Specific Data:\n";
+		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n";
+		logger << "          Event Name: " << ds.GetEventName() << "\n";
+		logger << "          Match Type: ";
+		switch (ds.GetMatchType())
+		{
+		case DriverStation::kNone:
+			logger << "kNone\n";
+			break;
+		case DriverStation::kPractice:
+			logger << "kPractice\n";
+			break;
+		case DriverStation::kQualification:
+			logger << "kQualification\n";
+			break;
+		case DriverStation::kElimination:
+			logger << "kElimination\n";
+			break;
+		default:
+			logger << "Unknown (bad data from driver station)\n";
+			break;
+		};
+		logger << "        Match Number: " << ds.GetMatchNumber() << "\n";
+
+		logger << "            Alliance: ";
+		switch (ds.GetAlliance())
+		{
+		case DriverStation::kRed:
+			logger << "kRed\n";
+			break;
+		case DriverStation::kBlue:
+			logger << "kBlue\n";
+			break;
+		case DriverStation::kInvalid:
+			logger << "kInvalid\n";
+			break;
+		default:
+			logger << "Unknown (bad data from driver station)\n";
+			break;
+		}
+		logger << "            Location: " << ds.GetLocation() << "\n";
+		logger.endMessage();
 
 		power = new frc::PowerDistributionPanel();
 

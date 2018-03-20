@@ -1,7 +1,7 @@
 #include "drivebase_controller.h"
 #include "message_logger.h"
 #include "UdpBroadcastSender.h"
-
+#include "subsystems.h"
 #include <cmath>
 #include <iostream>
 
@@ -65,7 +65,7 @@ void DrivebaseController::initDistance(double distance, double angle, double tim
     mStraightnessPid.Init(ap, ai, ad, af, -0.3, 0.3, aimax, false);
 
     messageLogger &logger = messageLogger::get();
-    logger.startMessage(messageLogger::messageType::debug);
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
     logger << "initDistance, distance = " << distance;
     logger << ", dpid " << p << " " << i << " " << d << " " << f << " " << imax;
     logger << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << imax;
@@ -91,7 +91,7 @@ void DrivebaseController::initAngle(double angle, double time) {
     mAnglePid.Init(ap, ai, ad, af, minvolts, maxvolts, aimax, false);
 
     messageLogger &logger = messageLogger::get();
-    logger.startMessage(messageLogger::messageType::debug);
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
     logger << "initAngle, angle = " << angle;
     logger << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << aimax;
 	logger << ", minv " << minvolts << ", maxv " << maxvolts ;
@@ -105,7 +105,7 @@ void DrivebaseController::idle(double distances_l, double distances_r, double an
 		double avg_dist = (distances_l + distances_r) / 2.0;
 
 		messageLogger &logger = messageLogger::get();
-		logger.startMessage(messageLogger::messageType::debug);
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 		logger << "IDLE: dt " << dt;
 		logger << ", time " << time;
 		logger << ", angle " << angle;
@@ -134,7 +134,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if (mDistanceHistory.size() > mNsamples)
 				mDistanceHistory.pop_front();
 
-			logger.startMessage(messageLogger::messageType::debug);
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 			if (!mResetPid && mDistanceHistory.size() == mNsamples && (mDistanceHistory.back() - mDistanceHistory.front()) < mPidResetThreshold) {
 				logger << "SWITCHED PID CONSTANTS\n";
 

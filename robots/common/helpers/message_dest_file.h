@@ -13,7 +13,7 @@ public:
 	messageDestFile();
 	messageDestFile(const std::string &name);
 	virtual ~messageDestFile();
-	void setTimeout(int timeout_limit);
+	void setTimeout(unsigned long int timeout_limit);
 	bool setFile(const std::string &name);
 	virtual void displayMessage(const messageLogger::messageType &type, uint64_t subs, const std::string &msg);
 
