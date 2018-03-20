@@ -93,14 +93,25 @@ Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const
 	return all;
 }
 
-Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)const{
-	return Drivebase::Input{
+Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)const{	
+	Drivebase::Input input = Drivebase::Input(
 		{
 			-ticks_to_inches(encoderconv(in.digital_io.encoder[L_ENCODER_LOC])),
 			ticks_to_inches(encoderconv(in.digital_io.encoder[R_ENCODER_LOC]))
 		},
 		in.navx.angle
-	};
+	);
+	
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE_RAW_DATA);
+	logger << "Left ticks: " << encoderconv(in.digital_io.encoder[L_ENCODER_LOC]);
+	logger << " Right ticks: " << encoderconv(in.digital_io.encoder[R_ENCODER_LOC]);
+	logger << "\nLeft Distance: " << input.distances.l;
+	logger << " Right Distance: " << input.distances.r;
+	logger << "\nAngle: " << input.angle;
+	logger.endMessage();
+
+	return input;
 }
 
 Drivebase::Encoder_ticks operator+(Drivebase::Encoder_ticks const& a,Drivebase::Encoder_ticks const& b){
@@ -450,7 +461,7 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 			last.high_gear_recommended = true;
 	}*/
 	last.high_gear_recommended = false;
-
+	
 	last.dt = now - last.now;
 	last.now = now;
 }
@@ -491,7 +502,7 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 		robot.digital_io[b] = Digital_out::encoder(loc,0);
 	};
 	set_encoder(L_ENCODER_PORTS,L_ENCODER_LOC);
-	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);
+	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);	
 
 	return robot;
 }
@@ -532,6 +543,14 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::ABSOLUTE:
 			out = Drivebase::Output{goal.left(), goal.right(), false, goal.brake()};
+
+			{
+			messageLogger &logger = messageLogger::get();
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE_RAW_DATA);
+			logger << "Left Output: " << out.l;
+			logger << " Right Output: " << out.r;
+			logger.endMessage();
+			}
 
 			if(goal.gear() == Drivebase::Goal::Gear::AUTO)
 				out.high_gear = status.high_gear_recommended;

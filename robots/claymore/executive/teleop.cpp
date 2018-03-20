@@ -316,7 +316,13 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			lifter_goal = Lifter::Goal::down(info.panel.lifter_high_power);
 		}
 
-		if (lifter_goal != Lifter::Goal::climb() && info.panel.lifter == Panel::Lifter::OFF) {
+		if (lifter_goal == Lifter::Goal::climb() && Lifter::lifter_controller.isClimbed()) {
+			lifter_goal = Lifter::Goal::maintain_climb();
+		}
+
+		if ((lifter_goal == Lifter::Goal::up(true) || lifter_goal == Lifter::Goal::up(false)
+		    || lifter_goal == Lifter::Goal::down(true) || lifter_goal == Lifter::Goal::down(false))
+		   && info.panel.lifter == Panel::Lifter::OFF) {
 			Lifter::lifter_controller.lowgear() ;
 			lifter_goal = Lifter::Goal::stop() ;
 		}

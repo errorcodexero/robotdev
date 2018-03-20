@@ -10,5 +10,6 @@
 #define SUBSYSTEM_LIFTER_TUNING                 (1 << 9)
 #define SUBSYSTEM_GRABBER_TUNING                (1 << 10)
 #define SUBSYSTEM_TIMING						(1 << 11)
+#define SUBSYSTEM_DRIVEBASE_RAW_DATA            (1 << 12)
 
 #define SUBSYSTEM_ALL				(0xffffffffffffffff)

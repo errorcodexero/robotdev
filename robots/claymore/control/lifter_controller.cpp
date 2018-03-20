@@ -266,22 +266,24 @@ void LifterController::updateClimb(double time, double dt, double &out, Gear &ge
 	gear = Gear::LOW ;
 	mCalibrated = false ;
 	
-	int climb_height_ticks = params_p->getValue("lifter::climbing_difference", 100) ;
+	int climb_height_ticks = params_p->getValue("lifter:climbing_difference", 100) ;
 	
 	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 	logger << "Lifter: State is CLIMB" ;
 	logger << ", ticks " << mTicks ;
 	logger << ", climbbase " << mClimbBase ;
 	logger << ", heightticks " << climb_height_ticks ;
-	logger.endMessage() ;
 		
 	if (mTicks < mClimbBase - climb_height_ticks)
 	{
+		logger << "\nGOING INTO MAINTAIN";
+
 		//
 		// We have reached our climb goal, move to the maintain state
 		//
 		mMode = Mode::MAINTAIN ;
 	}
+	logger.endMessage() ;
 }
 
 void LifterController::updateMaintain(double time, double dt, double &out, Gear &gear, bool &brake)
@@ -343,6 +345,7 @@ void LifterController::updateUp(double time, double dt, double &out, Gear &gear,
 	}
 	else if (mCurrent >= top_limit)
 	{
+		brake = true;
 		out = 0.0 ;
 		logger << ", top limit" ;
 	}
@@ -397,6 +400,7 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 	}
 	else if (mCurrent <= bottom_limit)
 	{
+		brake = true;
 		logger << ", bottom limit" ;
 		out = 0.0 ;
 	}
@@ -490,8 +494,10 @@ void LifterController::update(int ticks, bool ulimit, bool blimit, double time, 
 	// If the limit switch is on and we are continuing to move in the wrong
 	// direction, we shut it down here
 	//
-	if ((ulimit && out > 0.0) || (blimit && out < 0.0))
+	if ((ulimit && out > 0.0) || (blimit && out < 0.0)) {
+		brake = true;
 		out = 0.0 ;
+	}
 
 	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER);
 	logger << "Lifter Output:" ;
