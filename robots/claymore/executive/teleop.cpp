@@ -132,7 +132,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			logger << "    Performed aquire cube actions\n" ;
 			logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
 			
-			collector_mode = Collector_mode::CLAMP_DOWN ;
+			//collector_mode = Collector_mode::CLAMP_DOWN ;
 			double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::SWITCH) ;
 			if (Lifter::lifter_controller.getHeight() < exheight && Lifter::lifter_controller.isCalibrated())
 			{

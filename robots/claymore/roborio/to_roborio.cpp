@@ -101,10 +101,10 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
 		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE_RAW_DATA);
-		logger.enableSubsystem(SUBSYSTEM_LIFTER);
-		logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_TIMING);
-		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);

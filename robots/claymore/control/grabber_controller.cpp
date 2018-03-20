@@ -84,6 +84,12 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 {
 	paramsInput* params = paramsInput::get();
 	double delay ;
+
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+	logger << "Cube state: ";
+	logger << (int) mCubeState;
+	logger.endMessage();
 	
     mPrevCubeState = mCubeState;
     switch(mCubeState)
@@ -128,7 +134,7 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 		//
 		// TODO - add code to deal with losing the cube detect sensor
 		//
-		
+
 		if (std::fabs(mAngle - mCloseCollectAngle) < mAngleThreshold)
 		{
 			mCubeState = CubeState::HasCube ;
