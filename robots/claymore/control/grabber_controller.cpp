@@ -82,6 +82,9 @@ void GrabberController::moveToAngle(Preset preset, double time)
 //
 void GrabberController::processCubeState(bool cubesensor, bool arms_in, double now)
 {
+	paramsInput* params = paramsInput::get();
+	double delay ;
+	
     mPrevCubeState = mCubeState;
     switch(mCubeState)
     {
@@ -94,10 +97,11 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 			// sensor signal sticks around
 			//
 			mCubeState = CubeState::MaybeHasCube ;
-			mCubeStateTimer.set(0.25) ;
+			delay = params->getValue("grabber:maybecube", 0.25) ;
+			mCubeStateTimer.set(delay) ;
 		}
 		break ;
-	
+
     case CubeState::MaybeHasCube:
 		if (!cubesensor)
 		{
@@ -113,9 +117,34 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 			// The timer for the has cube status has expired, assume we really
 			// have a cube.
 			//
-			mCubeState = CubeState::HasCube ;
+			mCubeState = CubeState::GraspCube ;
+			mArmState = ArmState::CLAMP ;
+			delay = params->getValue("grabber:graspingcube", 0.5) ;
+			mCubeStateTimer.set(delay) ;
 		}
 		break ;
+
+	case CubeState::GraspCube:
+		//
+		// TODO - add code to deal with losing the cube detect sensor
+		//
+		
+		if (std::fabs(mAngle - mCloseCollectAngle) < mAngleThreshold)
+		{
+			mCubeState = CubeState::HasCube ;
+			mArmState = ArmState::HOLD ;
+		}
+		else if (mCubeStateTimer.done())
+		{
+			//
+			// We waited for the grasper to close, but it has not, just assume we
+			// are ok
+			//
+			mCubeState = CubeState::HasCube ;
+			mArmState = ArmState::HOLD ;
+		}
+		break ;
+		
     case CubeState::HasCube:
 		if (!cubesensor)
 		{
@@ -124,7 +153,6 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 			// signal may have just disappeared temporarily.  Start a timer to see if the
 			// cube is really gone
 			//
-			//paramsInput* input_params = paramsInput::get();
 			mCubeStateTimer.set(0.5) ;
 			mCubeState = CubeState::MaybeLostCube ;
 		}
@@ -155,6 +183,8 @@ void GrabberController::update(double angle, bool cubesensor, double time, doubl
 {
 	messageLogger &logger = messageLogger::get();
 	paramsInput *params_p = paramsInput::get() ;
+
+	mAngle = angle ;
 
 	if (mPrevArmState != mArmState)
 	{

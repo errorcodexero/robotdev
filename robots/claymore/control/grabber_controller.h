@@ -18,6 +18,7 @@ public:
     enum class CubeState {
 		NoCube,
 		MaybeHasCube,
+		GraspCube,
 		HasCube,
 		MaybeLostCube,
 	} ;
@@ -171,8 +172,8 @@ private:
     // Indicates the mode of the grabber
     enum class Mode {
 		IDLE,			// Doing nothing
-			ANGLE			// Seeking a desired angle
-			};
+		ANGLE			// Seeking a desired angle
+	};
 
     //
     // The current mode for the grabber
@@ -183,6 +184,11 @@ private:
     // The target angle
     //
     double mTarget;
+
+	//
+	// THe last angle for the grabber
+	//
+	double mAngle ;
 
     //
     // The last target value that was applied
