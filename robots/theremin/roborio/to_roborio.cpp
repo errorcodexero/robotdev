@@ -14,6 +14,9 @@
 #include "message_logger.h"
 #include "message_dest_dated_file.h"
 #include "message_dest_stream.h"
+#include "llvm/Twine.h"
+#include <ctime>
+#include <iomanip>
 
 using namespace std;
 
@@ -181,11 +184,14 @@ public:
 		std::string flashdrive("/u/Vi/");
 		std::shared_ptr<messageDestDatedFile> dest_p2;
 		dest_p2 = std::make_shared<messageDestDatedFile>(flashdrive);
-		dest_p2->setTimeout(120000);
+		dest_p2->setTimeout(10000);
 		dest_p = dest_p2;
 		logger.addDestination(dest_p);
 
 		DriverStation &ds = DriverStation::GetInstance();
+		auto currentTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		ds.ReportError("Test error"+std::to_string(std::put_time(std::localtime(&currentTime), "%Y-%m-%d %X")));
+		ds.ReportWarning("Test Warning");
 		logger.startMessage(messageLogger::messageType::info);
 		logger << "Match Specific Data:\n";
 		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n";
