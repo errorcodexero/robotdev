@@ -16,7 +16,6 @@
 #include "message_dest_stream.h"
 #include "llvm/Twine.h"
 #include <ctime>
-#include <iomanip>
 
 using namespace std;
 
@@ -189,8 +188,11 @@ public:
 		logger.addDestination(dest_p);
 
 		DriverStation &ds = DriverStation::GetInstance();
-		auto currentTime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		ds.ReportError("Test error"+std::to_string(std::put_time(std::localtime(&currentTime), "%Y-%m-%d %X")));
+		char currentTime[26];
+		//time_t t = time(NULL);
+		//ctime_s(currentTime, sizeof(currentTime), &t);
+		time_t t = time(NULL);
+		ds.ReportError("Test error" + std::string(std::ctime(&t)));
 		ds.ReportWarning("Test Warning");
 		logger.startMessage(messageLogger::messageType::info);
 		logger << "Match Specific Data:\n";
