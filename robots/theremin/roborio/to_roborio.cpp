@@ -14,6 +14,7 @@
 #include "message_logger.h"
 #include "message_dest_dated_file.h"
 #include "message_dest_stream.h"
+#include "message_dest_DS.h"
 #include "llvm/Twine.h"
 #include <ctime>
 
@@ -180,6 +181,21 @@ public:
 		// actually mounted at /media/sd*, and a symbolic link is created
 		// to /U.
 		//
+		
+		DriverStation &ds = DriverStation::GetInstance();
+		
+		time_t t = time(NULL);
+		std::string errStr("Test error " + std::string(ctime(&t)) + '\n');
+		std::string wrnStr("Test warning " + std::string(ctime(&t)) + '\n');
+		std::shared_ptr<messageDestDS> destDS_p = std::make_shared<messageDestDS>(&ds);
+		logger.addDestination(destDS_p);
+		logger.startMessage(messageLogger::messageType::error);
+		logger << errStr;
+		logger.endMessage();
+		logger.removeDestination(destDS_p);
+		
+		std::cerr << "CERR\n";
+
 		std::string flashdrive("/u/Vi/");
 		std::shared_ptr<messageDestDatedFile> dest_p2;
 		dest_p2 = std::make_shared<messageDestDatedFile>(flashdrive);
@@ -187,13 +203,8 @@ public:
 		dest_p = dest_p2;
 		logger.addDestination(dest_p);
 
-		DriverStation &ds = DriverStation::GetInstance();
-		char currentTime[26];
 		//time_t t = time(NULL);
 		//ctime_s(currentTime, sizeof(currentTime), &t);
-		time_t t = time(NULL);
-		ds.ReportError("Test error" + std::string(std::ctime(&t)));
-		ds.ReportWarning("Test Warning");
 		logger.startMessage(messageLogger::messageType::info);
 		logger << "Match Specific Data:\n";
 		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n";
@@ -529,6 +540,8 @@ public:
 		elapsed = elapsed - start ;
 		std::cout << "read inputs " << elapsed * 1000 << " msec" << std::endl ;
 #endif
+		
+		
 		
 		run(in);
 

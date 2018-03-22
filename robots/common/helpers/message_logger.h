@@ -97,6 +97,10 @@ public:
     {
 	m_destinations.push_back(dest_p) ;
     }
+	void removeDestination(std::shared_ptr<messageLoggerDest> dest_p)			//For testing
+	{
+		m_destinations.remove(dest_p);
+	}
 
 private:
     // The single message logger
