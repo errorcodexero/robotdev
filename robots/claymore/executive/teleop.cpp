@@ -99,7 +99,6 @@ void Teleop::runDrivebase(const Run_info &info, Toplevel::Goal &goals)
 
 void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 {
-    paramsInput *params_p = paramsInput::get() ;
     messageLogger &logger = messageLogger::get();
 
 	logger << "HAS CUBE: ";
@@ -136,51 +135,27 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::SWITCH) ;
 			if (Lifter::lifter_controller.getHeight() < exheight && Lifter::lifter_controller.isCalibrated())
 			{
-				//
-				// If we collected the cube witin a small tolerance of the floor height, we move the
-				// lifter up to EXCHANGE height.  Note, if we collect the cube at any other height
-				// it is already off the floor and we let the drive team deal with height.
-				//
-				// Also, if the lifter has not been calibrated, we never move the lifter.  We want it
-				// to stay on the floor until the lifter is calibrated.
-				//
-				double delay = params_p->getValue("teleop:collection_delay", 0.5) ;
-
-				//
-				// Start a timer for moving to exchange height.  This ensure that is we are collecting
-				// from OPEN mode, the grabber arms have time to completely grasp the cube before we
-				// start raising the lifter
-				//
-				collect_delay_timer.set(delay);
-				
-				logger << "    Started exchange height timer\n" ;
+				switch(info.panel.collection_end_height) {
+				case Panel::Collection_end_height::EXCHANGE:
+					lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
+					logger << "    Set lifter goal to exchange height\n" ;
+					break;
+				case Panel::Collection_end_height::SWITCH:
+					lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
+					logger << "    Set lifter goal to switch height\n" ;
+					break;
+				case Panel::Collection_end_height::SCALE:
+					lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
+					logger << "    Set lifter goal to scale height\n" ;
+					break;
+				default:
+					assert(0);
+				}
 			}
 		}
 
-		//
-		// Go to a preset height if the timer has expired.  This timer was setup when we saw
-		// the transition no cube to having a cube.  Basically it causes us to go to the selected height
-		// when we detect a cube present.
-		//
-		collect_delay_timer.update(info.in.now, info.in.robot_mode.enabled);
-		if(collect_delay_trigger(collect_delay_timer.done()))
-		{
-			switch(info.panel.collection_end_height) {
-			case Panel::Collection_end_height::EXCHANGE:
-				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-				logger << "    Set lifter goal to exchange height\n" ;
-				break;
-			case Panel::Collection_end_height::SWITCH:
-				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
-				logger << "    Set lifter goal to switch height\n" ;
-				break;
-			case Panel::Collection_end_height::SCALE:
-				lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
-				logger << "    Set lifter goal to scale height\n" ;
-				break;
-			default:
-				assert(0);
-			}
+		if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube) {
+			collector_mode = Collector_mode::CLAMP_DOWN;
 		}
 
 		//
@@ -340,7 +315,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 	case Collector_mode::CLAMP_DOWN:
 		goals.grabber = Grabber::Goal::clamp();
 		goals.intake = Intake::Goal::off();
-		if(ready(status(info.status.grabber), goals.grabber))
+		if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
 			collector_mode = Collector_mode::HOLD_CUBE;
 		break;
     case Collector_mode::COLLECT_OPEN:

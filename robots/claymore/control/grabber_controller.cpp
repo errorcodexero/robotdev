@@ -87,6 +87,7 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 
 	messageLogger &logger = messageLogger::get();
 	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_GRABBER);
+	logger << "time: " << now << "\n";
 	logger << "Cube state: ";
 	logger << (int) mCubeState;
 	logger.endMessage();
@@ -137,6 +138,7 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 
 		if (std::fabs(mAngle - mCloseCollectAngle) < mAngleThreshold)
 		{
+			std::cout << "Grasp switched due to angle: " << mAngle << "     " << mCloseCollectAngle << "\n";
 			mCubeState = CubeState::HasCube ;
 			mArmState = ArmState::HOLD ;
 		}
@@ -146,6 +148,7 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 			// We waited for the grasper to close, but it has not, just assume we
 			// are ok
 			//
+			std::cout << "Grasp switched due to timer\n";
 			mCubeState = CubeState::HasCube ;
 			mArmState = ArmState::HOLD ;
 		}
@@ -159,7 +162,7 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 			// signal may have just disappeared temporarily.  Start a timer to see if the
 			// cube is really gone
 			//
-			mCubeStateTimer.set(0.5) ;
+			mCubeStateTimer.set(params->getValue("grabber:maybelostcube", 0.5)) ;
 			mCubeState = CubeState::MaybeLostCube ;
 		}
 		break ;

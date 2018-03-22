@@ -32,8 +32,6 @@ struct Teleop : Executive_impl<Teleop> {
 	X(Collector_mode, collector_mode)                      \
 	X(Posedge_trigger, collect_open_trigger)               \
 	X(Posedge_trigger, collect_closed_trigger)             \
-	X(Countdown_timer, collect_delay_timer)                \
-	X(Posedge_trigger, collect_delay_trigger)              \
 	X(Countdown_timer, intake_timer)                       \
 	X(bool, started_intake_with_cube)                      \
 	X(Posedge_trigger, calibrate_lifter_trigger)	       \

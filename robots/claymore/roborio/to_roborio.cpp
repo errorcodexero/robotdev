@@ -108,7 +108,7 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
-		//logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		logger.enableSubsystem(SUBSYSTEM_TELEOP);
 		//logger.enableSubsystem(SUBSYSTEM_PANEL);
 		//logger.enableSubsystem(SUBSYSTEM_SOLENOIDS);
 #else
