@@ -97,8 +97,11 @@ public:
     {
 	m_destinations.push_back(dest_p) ;
     }
-	void removeDestination(std::shared_ptr<messageLoggerDest> dest_p)			//For testing
-	{
+
+	/// \brief Remove matching destinations.
+	/// \param dest_p the destination to remove
+	void removeDestination(std::shared_ptr<messageLoggerDest> dest_p)			
+	{	
 		m_destinations.remove(dest_p);
 	}
 

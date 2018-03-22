@@ -187,7 +187,7 @@ public:
 		time_t t = time(NULL);
 		std::string errStr("Test error " + std::string(ctime(&t)) + '\n');
 		std::string wrnStr("Test warning " + std::string(ctime(&t)) + '\n');
-		std::shared_ptr<messageDestDS> destDS_p = std::make_shared<messageDestDS>(&ds);
+		std::shared_ptr<messageDestDS> destDS_p = std::make_shared<messageDestDS>();
 		logger.addDestination(destDS_p);
 		logger.startMessage(messageLogger::messageType::error);
 		logger << errStr;
