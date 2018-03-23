@@ -25,7 +25,6 @@ bool paramsInput::readFile(const std::string &filename)
     std::ifstream f(filename) ;
     if (f.is_open())
     {
-		std::cout << "Opened file " << filename << " successfully" << std::endl;
 		std::string buffer;
 	
 		while (!f.eof())

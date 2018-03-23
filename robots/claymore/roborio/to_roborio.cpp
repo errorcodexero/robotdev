@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <iostream>
 
+const char *param_file_name_p = "/home/lvuser/params.txt" ;
 
 using namespace std;
 
@@ -105,11 +106,11 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_TIMING);
-		logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
-		logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		//logger.enableSubsystem(SUBSYSTEM_TELEOP);
 		//logger.enableSubsystem(SUBSYSTEM_PANEL);
 		//logger.enableSubsystem(SUBSYSTEM_SOLENOIDS);
 #else
@@ -228,16 +229,18 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 
 		paramsInput *params_p = paramsInput::get() ;
 
-		if (params_p->readFile("/home/lvuser/params.txt"))
+		if (params_p->readFile(param_file_name_p))
 		{
 			logger.startMessage(messageLogger::messageType::info) ;
-			logger << "Parameters file read was sucessful" ;
+			logger << "Parameters file '" ;
+			logger << param_file_name_p << "' was read sucessfully" ;
 			logger.endMessage() ;
 		}
 		else
 		{
 			logger.startMessage(messageLogger::messageType::error) ;
-			logger << "Parameters file read failed" ;
+			logger << "Parameters file '" ;
+			logger << param_file_name_p << "' read failed" ;
 			logger.endMessage() ;
 		}
 		
