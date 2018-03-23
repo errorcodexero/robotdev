@@ -11,6 +11,7 @@
 #include "params_parser.h"
 #include "message_logger.h"
 #include "message_dest_dated_file.h"
+#include "message_dest_DS.h"
 #include "message_dest_stream.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -140,6 +141,12 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		//
 		std::string flashdrive("/u/") ;
 		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
+		logger.addDestination(dest_p) ;
+
+		//
+		// Send warnings and errors to the driver station
+		//
+		dest_p = std::make_shared<messageDestDS>() ;
 		logger.addDestination(dest_p) ;
 
 		DriverStation &ds = DriverStation::GetInstance() ;
