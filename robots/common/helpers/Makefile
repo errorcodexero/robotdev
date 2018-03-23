@@ -6,7 +6,7 @@
 # define our target library
 #
 TARGET=helpers.a
-
+WPILIB=true
 #
 # define the source code files
 #

@@ -22,7 +22,7 @@ messageDestFile::~messageDestFile()
 		delete m_strm_p;
 }
 
-void messageDestFile::setTimeout(int timeout_limit) {
+void messageDestFile::setTimeout(unsigned long int timeout_limit) {
 	m_timeout_limit = timeout_limit;
 }
 
