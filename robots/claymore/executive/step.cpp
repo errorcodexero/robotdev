@@ -1013,32 +1013,6 @@ bool Drive_and_collect::operator==(Drive_and_collect const& b)const{
     return true;
 }
 
-//
-// Drive_back_from_collect: Drive back the distance driven while collecting
-//
-
-Drive_back_from_collect::Drive_back_from_collect():Drive(0.0) {}
-
-Step::Status Drive_back_from_collect::done(Next_mode_info info) {
-	cout << "Drive back done called\n";
-	if(!mInited) return Step::Status::UNFINISHED;
-	return Drive::done(info);
-}
-
-Toplevel::Goal Drive_back_from_collect::run(Run_info info,Toplevel::Goal goals) {
-	cout << "Drive back run called\n";
-	if(!mInited) {
-		mTargetDistance = -Drive_and_collect::distance_travelled;
-		cout << "Target distance: " << mTargetDistance << "\n";
-	}
-
-	return Drive::run(info, goals);
-}
-
-Toplevel::Goal Drive_back_from_collect::run(Run_info info) {
-	return run(info, {});
-}
-
 #ifdef STEP_TEST
 void test_step(Step a){
     PRINT(a);

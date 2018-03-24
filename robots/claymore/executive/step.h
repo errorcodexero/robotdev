@@ -367,13 +367,4 @@ struct Drive_and_collect: Step_impl_inner<Drive_and_collect>{
 	bool operator==(Drive_and_collect const&)const;
 };
 
-//Drive back the distance driven while collecting
-struct Drive_back_from_collect: Drive {
-	explicit Drive_back_from_collect();
-
-	Toplevel::Goal run(Run_info,Toplevel::Goal);
-	Toplevel::Goal run(Run_info);
-	Step::Status done(Next_mode_info);
-};
-
 #endif

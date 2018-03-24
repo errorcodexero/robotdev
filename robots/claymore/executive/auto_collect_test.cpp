@@ -19,7 +19,7 @@ static vector<Step> steps =
 	Step(Wait(2.0)),
 	driveAndCollect,
 	lifterToExch,
-	Step(Drive(true)),
+	driveBackFromCollect,
 	endAuto
 };
 

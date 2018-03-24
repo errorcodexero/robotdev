@@ -22,7 +22,7 @@ static Step lifterToScale = Step(Lifter_to_preset(LifterController::Preset::SCAL
 static Step eject = Step(Eject()) ;
 static Step dropGrabber = Step(Drop_grabber());
 static Step driveAndCollect = Step(Drive_and_collect());
-static Step driveBackFromCollect = Step(Drive_back_from_collect());
+static Step driveBackFromCollect = Step(Drive(true));
 
 static Step lifterToExchFail = Step(lifterToExch, {
 	Step(Drive("auto:c_switch_r:segment1", 105, true)),
