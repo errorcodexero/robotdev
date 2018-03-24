@@ -131,14 +131,17 @@ public:
 class Drive:public Step_impl_inner<Drive>{
 protected:
     Inch mTargetDistance;
+	Inch mReturnOffset;
 	std::string mParamName ;
     bool mEndOnStall ;
+	bool mReturnFromCollect ;
     bool mInited ;
 
 public:
     explicit Drive(Inch dist, bool end_on_stall=false);
     explicit Drive(const char *param_p, Inch dist, bool end_on_stall=false);
     explicit Drive(const std::string &param, Inch dist, bool end_on_stall=false);
+	explicit Drive(bool dummy, Inch return_offset=0);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -351,6 +354,7 @@ struct Drop_grabber: Step_impl_inner<Drop_grabber>{
 struct Drive_and_collect: Step_impl_inner<Drive_and_collect>{
 	static double distance_travelled;
 
+	Countdown_timer timeout_timer;
 	Drivebase::Distances initial_distances;
 	bool init;
 
@@ -368,6 +372,8 @@ struct Drive_back_from_collect: Drive {
 	explicit Drive_back_from_collect();
 
 	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
 };
 
 #endif

@@ -3,12 +3,8 @@
 
 using namespace std;
 
-Chain::Chain(vector<Step> s, Executive n):current_step(0),steps(&s),next(n){}
-Chain::Chain(Step s, Executive n):Chain(vector<Step>{s},n){}
-
-/*Chain::Chain(Chain const& a):step(a.step){
-	if(a.next)nyi
-}*/
+Chain::Chain(vector<Step>& s, Executive n):current_step(0),steps(&s),next(n){}
+//Chain::Chain(Step& s, Executive n):Chain(vector<Step>{s},n){}
 
 Toplevel::Goal Chain::run(Run_info info){
 	if(current_step>=steps->size()) return Toplevel::Goal();

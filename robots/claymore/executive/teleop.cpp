@@ -52,6 +52,8 @@ IMPL_STRUCT(Teleop::Teleop,TELEOP_ITEMS)
 
 Teleop::Teleop():lifter_goal(Lifter::Goal::stop()),wings_goal(Wings::Goal::LOCKED),collector_mode(Collector_mode::IDLE),started_intake_with_cube(false),high_gear(false)
 {
+	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+		collector_mode = Collector_mode::HOLD_CUBE;
 }
 
 void Teleop::runDrivebase(const Run_info &info, Toplevel::Goal &goals)

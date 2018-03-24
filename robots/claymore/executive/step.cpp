@@ -260,6 +260,7 @@ Drive::Drive(Inch dist, bool end_on_stall)
 {
 	mTargetDistance = dist ;
 	mEndOnStall = end_on_stall ;
+	mReturnFromCollect = false;
 	mInited = false ;
 }
 
@@ -268,6 +269,7 @@ Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
 	mParamName = param_p ;
 	mTargetDistance = dist ;
 	mEndOnStall = end_on_stall ;
+	mReturnFromCollect = false;
 	mInited = false ;
 }
 
@@ -276,7 +278,15 @@ Drive::Drive(const std::string &param, Inch dist, bool end_on_stall)
 	mParamName = param ;
 	mTargetDistance = dist ;
 	mEndOnStall = end_on_stall ;
+	mReturnFromCollect = false;
 	mInited = false ;
+}
+
+Drive::Drive(bool, Inch return_offset)
+{
+	mReturnOffset = return_offset;
+	mReturnFromCollect = true;
+	mInited = false;
 }
 
 Step::Status Drive::done(Next_mode_info info)
@@ -309,6 +319,8 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals)
 			//
 			paramsInput *params_p = paramsInput::get() ;
 			mTargetDistance = params_p->getValue(mParamName, mTargetDistance) ;
+		} else if (mReturnFromCollect) {
+			mTargetDistance = -(Drive_and_collect::distance_travelled + mReturnOffset);
 		}
 		
 		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
@@ -482,7 +494,7 @@ Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goa
 {
     if(!init)
 	{
-		Lifter::lifter_controller.moveToHeight(preset, time);
+		Lifter::lifter_controller.moveToHeight(preset, time, true);
 		init = false;
     }
     return goals;
@@ -773,7 +785,7 @@ Toplevel::Goal Collect::run(Run_info info,Toplevel::Goal goals){
 		init = false;
     }
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
-    return goals;
+	return goals;
 }
 
 unique_ptr<Step_impl> Collect::clone()const{
@@ -954,7 +966,7 @@ double Drive_and_collect::distance_travelled;
 Drive_and_collect::Drive_and_collect():init(false){}
 
 Step::Status Drive_and_collect::done(Next_mode_info info){
-    Step::Status ret = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+    Step::Status ret = timeout_timer.done() || (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS) 
     {
 		Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
@@ -974,15 +986,22 @@ Toplevel::Goal Drive_and_collect::run(Run_info info){
 }
 
 Toplevel::Goal Drive_and_collect::run(Run_info info,Toplevel::Goal goals){
+	paramsInput* input_params = paramsInput::get();
+
 	if(!init) {
 		initial_distances = info.status.drive.distances;
+		timeout_timer.set(input_params->getValue("step:drive_and_collect:timeout", 5.0));
 		init = true;
 	}
 
-	double drive_power = paramsInput::get()->getValue("step:drive_and_collect:drive_power", 0.4);
+	timeout_timer.update(info.in.now, true);
+	double drive_power = input_params->getValue("step:drive_and_collect:drive_power", 0.4);
 	goals.drive = Drivebase::Goal::absolute(drive_power, drive_power);
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
 	goals.intake = Intake::Goal::in();
+	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube) {
+		goals.grabber = Grabber::Goal::clamp();
+	}
     return goals;
 }
 
@@ -1000,12 +1019,24 @@ bool Drive_and_collect::operator==(Drive_and_collect const& b)const{
 
 Drive_back_from_collect::Drive_back_from_collect():Drive(0.0) {}
 
+Step::Status Drive_back_from_collect::done(Next_mode_info info) {
+	cout << "Drive back done called\n";
+	if(!mInited) return Step::Status::UNFINISHED;
+	return Drive::done(info);
+}
+
 Toplevel::Goal Drive_back_from_collect::run(Run_info info,Toplevel::Goal goals) {
+	cout << "Drive back run called\n";
 	if(!mInited) {
 		mTargetDistance = -Drive_and_collect::distance_travelled;
+		cout << "Target distance: " << mTargetDistance << "\n";
 	}
 
 	return Drive::run(info, goals);
+}
+
+Toplevel::Goal Drive_back_from_collect::run(Run_info info) {
+	return run(info, {});
 }
 
 #ifdef STEP_TEST

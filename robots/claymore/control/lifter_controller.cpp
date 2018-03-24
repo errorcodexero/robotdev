@@ -43,10 +43,12 @@ void LifterController::init()
     mHeightThreshold = p->getValue("lifter:threshold", 1.0);
 }
 
-void LifterController::moveToHeight(double height, double time)
+void LifterController::moveToHeight(double height, double time, bool background)
 {
 	if (std::fabs(height - mCurrent) > mHeightThreshold)
 	{
+		mBackground = background;
+
 		double p, i, d, f, imax;
 		double vmin, vmax ;
 		paramsInput *params_p = paramsInput::get() ;
@@ -119,9 +121,9 @@ void LifterController::moveToHeight(double height, double time)
 	}
 }
 
-void LifterController::moveToHeight(Preset preset, double time)
+void LifterController::moveToHeight(Preset preset, double time, bool background)
 {
-    moveToHeight(presetToHeight(preset), time);
+    moveToHeight(presetToHeight(preset), time, background);
 }
 
 void LifterController::updateIdle(double time, double dt, double &out, Gear &gear, bool &brake)
@@ -212,6 +214,7 @@ void LifterController::updateHeight(double time, double dt, double &out, Gear &g
 			logger.endMessage() ;
 			
 			mMode = Mode::IDLE ;
+			mBackground = false;
 			updateIdle(time, dt, out, gear, brake) ;
 			
 			mDataDumpMode = true;

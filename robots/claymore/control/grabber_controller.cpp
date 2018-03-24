@@ -138,7 +138,6 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 
 		if (std::fabs(mAngle - mCloseCollectAngle) < mAngleThreshold)
 		{
-			std::cout << "Grasp switched due to angle: " << mAngle << "     " << mCloseCollectAngle << "\n";
 			mCubeState = CubeState::HasCube ;
 			mArmState = ArmState::HOLD ;
 		}
@@ -148,7 +147,6 @@ void GrabberController::processCubeState(bool cubesensor, bool arms_in, double n
 			// We waited for the grasper to close, but it has not, just assume we
 			// are ok
 			//
-			std::cout << "Grasp switched due to timer\n";
 			mCubeState = CubeState::HasCube ;
 			mArmState = ArmState::HOLD ;
 		}

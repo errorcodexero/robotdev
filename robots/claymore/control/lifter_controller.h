@@ -53,12 +53,12 @@ public:
     /// \brief move the lifter to a specific height
     /// \param height the height in inches for the lifter
     /// \param the start time of this operation
-    void moveToHeight(double height, double time);
+    void moveToHeight(double height, double time, bool background=false);
 
     /// \brief move the lifter to a preset position
     /// \param preset the preset for the lifter height
     /// \param time the start time of this operation
-    void moveToHeight(Preset preset, double time);
+    void moveToHeight(Preset preset, double time, bool background=false);
 
     /// \brief this method is called each time the robot loop is run to update the lifer
     /// This method uses a PID controller to position the lifter to the desired location
@@ -108,7 +108,8 @@ public:
 	/// \brief set lifter to idle state
 	void idle()
 	{
-		mMode = Mode::IDLE ;
+		if(!mBackground) 
+			mMode = Mode::IDLE ;
 	}
 
 	/// \brief reset the climb base recorded flag
@@ -146,12 +147,14 @@ public:
 
 	void up(bool highpower)
 	{
+		mBackground = false;
 		mMode = Mode::UP ;
 		mHighPower = highpower ;
 	}
 
 	void down(bool highpower)
 	{
+		mBackground = false;
 		mMode = Mode::DOWN ;
 		mHighPower = highpower ;
 	}
@@ -302,6 +305,8 @@ private:
 	// If true, our base for climbing has been recorded
 	//
 	bool mClimbBaseRecorded ;
+	
+	bool mBackground;
 };
 
 #endif
