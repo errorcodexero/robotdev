@@ -183,28 +183,14 @@ public:
 		//
 		
 		DriverStation &ds = DriverStation::GetInstance();
-		
-		time_t t = time(NULL);
-		std::string errStr("Test error " + std::string(ctime(&t)) + '\n');
-		std::string wrnStr("Test warning " + std::string(ctime(&t)) + '\n');
-		std::shared_ptr<messageDestDS> destDS_p = std::make_shared<messageDestDS>();
-		logger.addDestination(destDS_p);
-		logger.startMessage(messageLogger::messageType::error);
-		logger << errStr;
-		logger.endMessage();
-		logger.removeDestination(destDS_p);
-		
-		std::cerr << "CERR\n";
 
-		std::string flashdrive("/u/Vi/");
+		std::string flashdrive("/u/");
 		std::shared_ptr<messageDestDatedFile> dest_p2;
 		dest_p2 = std::make_shared<messageDestDatedFile>(flashdrive);
 		dest_p2->setTimeout(10000);
 		dest_p = dest_p2;
 		logger.addDestination(dest_p);
 
-		//time_t t = time(NULL);
-		//ctime_s(currentTime, sizeof(currentTime), &t);
 		logger.startMessage(messageLogger::messageType::info);
 		logger << "Match Specific Data:\n";
 		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n";
