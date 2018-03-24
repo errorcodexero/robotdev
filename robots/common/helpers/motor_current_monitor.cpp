@@ -6,6 +6,7 @@
 
 #include "motor_current_monitor.h"
 
+
 MotorCurrentMonitor::MotorCurrentMonitor(unsigned int n_motors)
 {
     assert(n_motors != UNSPECIFIED);
@@ -41,7 +42,7 @@ void MotorCurrentMonitor::validate() const
     }
 }
 
-void MotorCurrentMonitor::logNewMeasurement(const Measurement motor_currents)
+void MotorCurrentMonitor::logNewMeasurement(const Measurement& motor_currents)
 {
     validate();
     assert(n_motors_ == motor_currents.size());
@@ -59,11 +60,12 @@ void MotorCurrentMonitor::logNewMeasurement(const Measurement motor_currents)
         measurements_.pop_front();
     }
     measurements_.push_back(motor_currents);
-    checkViolation();
+    (void)checkViolation();
 }
 
-void MotorCurrentMonitor::checkViolation() const
+bool MotorCurrentMonitor::checkViolation() const
 {
+    bool violation_found(false);
     assert(measurements_.size() <= n_measurements_to_average_);
 
     // Only check if we have enough data logged
@@ -77,6 +79,7 @@ void MotorCurrentMonitor::checkViolation() const
                 // Check if motor exceeds threshold
                 if (max_current_ != UNSPECIFIED) {
                     if (val > max_current_) {
+  		        violation_found = true;
                         std::cout << "Motor " << i << " may have failed. ";
                         std::cout << std::setprecision(2) << std::fixed;
                         std::cout << "Current = " << val << ". ";
@@ -87,6 +90,7 @@ void MotorCurrentMonitor::checkViolation() const
                 // Check variance between motors
                 double deviation = std::fabs(val-average)/average;
                 if (deviation > variance_threshold_) {
+		    violation_found = true;
                     std::cout << "Motor " << i << " may have failed. ";
                     std::cout << std::setprecision(2) << std::fixed;
                     std::cout << "Current = " << val << ". ";
@@ -96,6 +100,7 @@ void MotorCurrentMonitor::checkViolation() const
             }
         }
     }
+    return violation_found;
 }
 
 
