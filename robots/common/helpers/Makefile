@@ -30,6 +30,9 @@ TESTS = \
 	motor_current_monitor
 endif
 
+#	message_logger \
+
+
 #
 # include a central make file that defines our compilation recipe
 #

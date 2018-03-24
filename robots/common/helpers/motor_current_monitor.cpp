@@ -4,6 +4,8 @@
 #include <iomanip>
 #include <cmath>
 
+#include "message_dest_stream.h"
+#include "message_logger.h"
 #include "motor_current_monitor.h"
 
 
@@ -75,27 +77,32 @@ bool MotorCurrentMonitor::checkViolation() const
         if (average != 0) {
             for (unsigned int i=0; i<total_per_motor_.size(); ++i) {
                 double val = total_per_motor_[i] / measurements_.size();
-
                 // Check if motor exceeds threshold
                 if (max_current_ != UNSPECIFIED) {
                     if (val > max_current_) {
-  		        violation_found = true;
-                        std::cout << "Motor " << i << " may have failed. ";
-                        std::cout << std::setprecision(2) << std::fixed;
-                        std::cout << "Current = " << val << ". ";
-                        std::cout << "Threshold = " << max_current_ << "." << std::endl;
+                        violation_found = true;
+                        messageLogger& logger = messageLogger::get();
+                        logger.startMessage(messageLogger::messageType::warning);
+                        logger << "Motor " << static_cast<int>(i) << " may have failed. ";
+                        //logger << std::setprecision(2) << std::fixed;
+                        logger << "Current = " << val << ". ";
+                        logger << "Threshold = " << max_current_ << ".";
+                        logger.endMessage();
                     }
                 }
 
                 // Check variance between motors
                 double deviation = std::fabs(val-average)/average;
                 if (deviation > variance_threshold_) {
-		    violation_found = true;
-                    std::cout << "Motor " << i << " may have failed. ";
-                    std::cout << std::setprecision(2) << std::fixed;
-                    std::cout << "Current = " << val << ". ";
-                    std::cout << "Average of motors = " << average << ". ";
-                    std::cout << "(" << deviation*100.0 << "% > " << variance_threshold_*100.0 << "% threshold.)" << std::endl;
+                    violation_found = true;
+                    messageLogger& logger = messageLogger::get();
+                    logger.startMessage(messageLogger::messageType::warning);
+                    logger << "Motor " << static_cast<int>(i) << " may have failed. ";
+                    //logger << std::setprecision(2) << std::fixed;
+                    logger << "Current = " << val << ". ";
+                    logger << "Average of motors = " << average << ". ";
+                    logger << "(" << deviation*100.0 << "% > " << variance_threshold_*100.0 << "% threshold.)";
+                    logger.endMessage();
                 }
             }
         }
@@ -106,23 +113,53 @@ bool MotorCurrentMonitor::checkViolation() const
 
 #ifdef MOTOR_CURRENT_MONITOR_TEST
 
+
+#include "message_logger.cpp"
+
+
+
 int main()
 {
+    messageLogger& logger = messageLogger::get();
+    logger.enableType(messageLogger::messageType::error);
+    logger.enableType(messageLogger::messageType::warning);
+    logger.enableType(messageLogger::messageType::info);
+    logger.enableType(messageLogger::messageType::debug);
+    std::shared_ptr<messageDestStream> dest_p = std::make_shared<messageDestStream>(std::cout);
+    logger.addDestination(dest_p);
     MotorCurrentMonitor m(2);
     m.setMeasurementsToAverage(2);
-    std::cout << "Logging measurement #1" << std::endl;
+        
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "Logging measurement #1";
+    logger.endMessage();
     m.logNewMeasurement( std::vector<double>{10, 10} );
-    std::cout << "Logging measurement #2" << std::endl;
+        
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "Logging measurement #2";
+    logger.endMessage();
     m.logNewMeasurement( std::vector<double>{10, 20} );
-    std::cout << "Logging measurement #3" << std::endl;
+    
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "Logging measurement #3";
+    logger.endMessage();
     m.logNewMeasurement( std::vector<double>{10, 30} );
-    std::cout << "Logging measurement #4" << std::endl;
+    
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "Logging measurement #4";
+    logger.endMessage();
     m.logNewMeasurement( std::vector<double>{10, 90} );
 
     m.setMaxCurrent(100);
-    std::cout << "Logging measurement #5" << std::endl;
+    
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "Logging measurement #5";
+    logger.endMessage();
     m.logNewMeasurement( std::vector<double>{10, 90} );
-    std::cout << "Logging measurement #6" << std::endl;
+    
+    logger.startMessage(messageLogger::messageType::info);
+    logger << "Logging measurement #6";
+    logger.endMessage();
     m.logNewMeasurement( std::vector<double>{10, 200} );
     return 0;
 }

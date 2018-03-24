@@ -128,6 +128,7 @@ messageLogger& messageLogger::operator<<(double value)
 		mCurrentMessage.append(std::to_string(value));
     return *this;
 }
+
 #ifdef MESSAGE_LOGGER_TEST
 
 void test_logger()
