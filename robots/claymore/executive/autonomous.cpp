@@ -34,6 +34,7 @@ extern Executive two_cube_right ;
 extern Executive lift_eject ;
 extern Executive collect_test ;
 extern Executive lifter_fail_test ;
+extern Executive curve_test ;
 
 const Executive auto_null{Teleop{}};
 
@@ -287,6 +288,12 @@ Executive get_auto_mode(Next_mode_info info)
 		// Try to raise the grabber and drive across the auto line if it doesn't work
 		//
 		auto_program = lifter_fail_test ;
+
+	case 114:
+		//
+		// Drive forward with a curve
+		//
+		auto_program = curve_test;
 
     case 120:
 		//

@@ -108,6 +108,14 @@ void DrivebaseController::initDistance(double distance, double angle, double tim
     logger.endMessage();
 }
 
+
+void DrivebaseController::initCurve(double current_dist, double target_dist, double current_angle, double target_angle_offset, double time, bool end_on_stall, bool forward) {
+	initDistance(target_dist, current_angle, time, end_on_stall, forward);
+	mMode = Mode::CURVE;
+	mInitialDistance = current_dist;
+	mTargetCurveAngleOffset = target_angle_offset;
+}
+
 void DrivebaseController::initAngle(double angle, double time, bool posangle) {
 	double ap, ai, ad, af, aimax, minvolts, maxvolts ;
 	
@@ -186,7 +194,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
     if ((mCurrentCycle % mCycleInterval) == 0)
     {
 		double avg_dist = (distances_l + distances_r) / 2.0;
-		if (mMode == Mode::DISTANCE) {
+		if (mMode == Mode::DISTANCE || mMode == Mode::CURVE) {
 			double howclose = mTarget - avg_dist ;
 			if (mForward)
 			{
@@ -237,8 +245,13 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			}
 #endif
 
+			double target_angle = mTargetCorrectionAngle;
+			if(mMode == Mode::CURVE) {
+				target_angle += mTargetCurveAngleOffset * (mInitialDistance / (mTarget - mInitialDistance));
+			}
+
 			mLastVoltage = base;
-			double offset = mStraightnessPid.getOutput(mTargetCorrectionAngle, angle, dt);
+			double offset = mStraightnessPid.getOutput(target_angle, angle, dt);
 			out_l = base - offset;
 			out_r = base + offset;
 

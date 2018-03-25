@@ -260,8 +260,18 @@ Drive::Drive(Inch dist, bool end_on_stall)
 {
 	mTargetDistance = dist ;
 	mEndOnStall = end_on_stall ;
+	mCurve = false;
 	mReturnFromCollect = false;
 	mInited = false ;
+}
+
+Drive::Drive(Inch dist, double angle_offset, bool end_on_stall)
+{
+	mTargetDistance = dist ;
+	mTargetAngleOffset = angle_offset;
+	mCurve = true;
+	mEndOnStall = end_on_stall;
+	mInited = false;
 }
 
 Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
@@ -269,6 +279,7 @@ Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
 	mParamName = param_p ;
 	mTargetDistance = dist ;
 	mEndOnStall = end_on_stall ;
+	mCurve = false;
 	mReturnFromCollect = false;
 	mInited = false ;
 }
@@ -278,6 +289,7 @@ Drive::Drive(const std::string &param, Inch dist, bool end_on_stall)
 	mParamName = param ;
 	mTargetDistance = dist ;
 	mEndOnStall = end_on_stall ;
+	mCurve = false;
 	mReturnFromCollect = false;
 	mInited = false ;
 }
@@ -285,6 +297,7 @@ Drive::Drive(const std::string &param, Inch dist, bool end_on_stall)
 Drive::Drive(bool, Inch return_offset)
 {
 	mReturnOffset = return_offset;
+	mCurve = false;
 	mReturnFromCollect = true;
 	mInited = false;
 }
@@ -324,8 +337,12 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals)
 		}
 		
 		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-		Drivebase::drivebase_controller.initDistance(avg_status + mTargetDistance, info.status.drive.angle,
+		if(!mCurve) {
+			Drivebase::drivebase_controller.initDistance(avg_status + mTargetDistance, info.status.drive.angle,
 													 info.in.now, mEndOnStall, mTargetDistance >= 0.0);
+		} else {
+			Drivebase::drivebase_controller.initCurve(avg_status, avg_status + mTargetDistance, info.status.drive.angle, mTargetAngleOffset, info.in.now, mEndOnStall, mTargetDistance >= 0.0);
+		}
 		mInited = true ;
     }
     goals.drive = Drivebase::Goal::drive_straight();

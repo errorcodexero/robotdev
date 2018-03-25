@@ -131,14 +131,17 @@ public:
 class Drive:public Step_impl_inner<Drive>{
 protected:
     Inch mTargetDistance;
+	Inch mTargetAngleOffset;
 	Inch mReturnOffset;
 	std::string mParamName ;
     bool mEndOnStall ;
+	bool mCurve;
 	bool mReturnFromCollect ;
     bool mInited ;
 
 public:
     explicit Drive(Inch dist, bool end_on_stall=false);
+	explicit Drive(Inch dist, double angle_offset, bool end_on_stall=false);
     explicit Drive(const char *param_p, Inch dist, bool end_on_stall=false);
     explicit Drive(const std::string &param, Inch dist, bool end_on_stall=false);
 	explicit Drive(bool dummy, Inch return_offset=0);

@@ -35,6 +35,8 @@ public:
     /// \param angle the angle to maintain while driving
     /// \param the time when this was requested
     void initDistance(double dist, double angle, double time, bool end_on_stall, bool forward);
+	
+	void initCurve(double current_dist, double target_dist, double current_angle, double target_angle_offset, double time, bool end_on_stall, bool forward);
 
     /// \brief rotate to the given angle
     /// \param angle the angle to rotate to
@@ -65,10 +67,11 @@ public:
 	
 private:
     enum class Mode {
-	IDLE,
+		IDLE,
 	    DISTANCE,
+		CURVE,
 	    ANGLE
-	    };
+	};
 
     //
     // The current mode of the drivebase.  Either trying to acheive a distance, or an
@@ -96,6 +99,10 @@ private:
     // The starting angle, that we are trying to maintain, while driving straight
     //
     double mTargetCorrectionAngle;
+
+	double mTargetCurveAngleOffset;
+
+	double mInitialDistance;
 
     //
     // The threshold for declaring a distance target met.
