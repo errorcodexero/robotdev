@@ -13,6 +13,7 @@
 #include "message_dest_dated_file.h"
 #include "message_dest_DS.h"
 #include "message_dest_stream.h"
+#include "motor_current_monitor.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -85,15 +86,57 @@ class To_roborio
 	Pump_control pump_control;
 	//frc::Compressor *compressor;
 	frc::DriverStation& driver_station;
+	MotorCurrentMonitor dbl_monitor ;
+	MotorCurrentMonitor dbr_monitor ;
+	MotorCurrentMonitor grabber_monitor ;
+	MotorCurrentMonitor lift_monitor ;
+	MotorCurrentMonitor lin_monitor ;
+	MotorCurrentMonitor rin_monitor ;
 	std::ofstream null_stream;
+	
 public:
-To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
+	To_roborio():error_code(0),
+				 navx_control(frc::SPI::Port::kMXP),
+				 i2c_control(8),
+				 driver_station(frc::DriverStation::GetInstance()),
+				 dbl_monitor(3),
+				 dbr_monitor(3),
+				 grabber_monitor(1),
+				 lift_monitor(2),
+				 lin_monitor(1),
+				 rin_monitor(1),
+			 null_stream("/dev/null")
 	{
 		messageLogger &logger = messageLogger::get();
 		logger.enableType(messageLogger::messageType::error);
 		logger.enableType(messageLogger::messageType::warning);
 		logger.enableType(messageLogger::messageType::info);
 		logger.enableType(messageLogger::messageType::debug);
+
+		//
+		// Setup the motor monitors
+		//
+		dbl_monitor.setMeasurementsToAverage(5) ;
+		dbl_monitor.setVarianceThreshold(0.25) ;
+		dbl_monitor.setMaxCurrent(10.0) ;
+		
+		dbr_monitor.setMeasurementsToAverage(5) ;
+		dbr_monitor.setVarianceThreshold(0.25) ;
+		dbr_monitor.setMaxCurrent(10.0) ;
+
+		grabber_monitor.setMeasurementsToAverage(5) ;
+		grabber_monitor.setMaxCurrent(10.0) ;
+
+		lift_monitor.setMeasurementsToAverage(5) ;
+		lift_monitor.setVarianceThreshold(0.25) ;
+		lift_monitor.setMaxCurrent(10.0) ;
+
+		lin_monitor.setMeasurementsToAverage(5) ;
+		lin_monitor.setMaxCurrent(10.0) ;
+
+		rin_monitor.setMeasurementsToAverage(5) ;
+		rin_monitor.setMaxCurrent(10.0) ;
+
 
 		//
 		// Decide what subsystems you want to see
@@ -324,6 +367,25 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			logger << i << "=" << current[i] ;
 		}
 		logger.endMessage() ;
+
+		dbl_monitor.logNewMeasurement(std::vector<double>{current[13], current[14], current[15]}) ;
+		dbl_monitor.checkViolation() ;
+		
+		dbr_monitor.logNewMeasurement(std::vector<double>{current[0], current[1], current[2]}) ;
+		dbr_monitor.checkViolation() ;
+		
+		grabber_monitor.logNewMeasurement(std::vector<double>{current[10]}) ;
+		grabber_monitor.checkViolation() ;
+
+		lift_monitor.logNewMeasurement(std::vector<double>{current[3], current[12]}) ;
+		lift_monitor.checkViolation() ;
+
+		lin_monitor.logNewMeasurement(std::vector<double>{current[11]}) ;
+		lin_monitor.checkViolation() ;
+
+		rin_monitor.logNewMeasurement(std::vector<double>{current[4]}) ;
+		rin_monitor.checkViolation() ;
+		
 		return current;
 	}
 	int set_solenoid(unsigned i,Solenoid_output v){
