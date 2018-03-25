@@ -107,35 +107,15 @@ public:
 				 rin_monitor(1),
 			 null_stream("/dev/null")
 	{
+		//////////////////////////////////////////////////////////////////////
+		// Initialize the message logger
+		//////////////////////////////////////////////////////////////////////
+		
 		messageLogger &logger = messageLogger::get();
 		logger.enableType(messageLogger::messageType::error);
 		logger.enableType(messageLogger::messageType::warning);
 		logger.enableType(messageLogger::messageType::info);
 		logger.enableType(messageLogger::messageType::debug);
-
-		//
-		// Setup the motor monitors
-		//
-		dbl_monitor.setMeasurementsToAverage(5) ;
-		dbl_monitor.setVarianceThreshold(0.25) ;
-		dbl_monitor.setMaxCurrent(10.0) ;
-		
-		dbr_monitor.setMeasurementsToAverage(5) ;
-		dbr_monitor.setVarianceThreshold(0.25) ;
-		dbr_monitor.setMaxCurrent(10.0) ;
-
-		grabber_monitor.setMeasurementsToAverage(5) ;
-		grabber_monitor.setMaxCurrent(10.0) ;
-
-		lift_monitor.setMeasurementsToAverage(5) ;
-		lift_monitor.setVarianceThreshold(0.25) ;
-		lift_monitor.setMaxCurrent(10.0) ;
-
-		lin_monitor.setMeasurementsToAverage(5) ;
-		lin_monitor.setMaxCurrent(10.0) ;
-
-		rin_monitor.setMeasurementsToAverage(5) ;
-		rin_monitor.setMaxCurrent(10.0) ;
 
 
 		//
@@ -193,6 +173,9 @@ public:
 		dest_p = std::make_shared<messageDestDS>() ;
 		logger.addDestination(dest_p) ;
 
+		//////////////////////////////////////////////////////////////////////
+		// Send match information to the message logger
+		//////////////////////////////////////////////////////////////////////
 		DriverStation &ds = DriverStation::GetInstance() ;
 		logger.startMessage(messageLogger::messageType::info) ;
 		logger << "Match Specific Data:\n" ;
@@ -238,6 +221,10 @@ public:
 		logger << "            Location: " << ds.GetLocation() << "\n" ;
 		logger.endMessage() ;
 
+		//////////////////////////////////////////////////////////////////////
+		// Initialize the hardware
+		//////////////////////////////////////////////////////////////////////
+
 		power = new frc::PowerDistributionPanel();
 
 		for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
@@ -270,6 +257,10 @@ public:
 			if(!analog_in[i]) error_code|=8;
 		}
 
+		//////////////////////////////////////////////////////////////////////
+		// Read the parameters file
+		//////////////////////////////////////////////////////////////////////
+		
 		paramsInput *params_p = paramsInput::get() ;
 
 		if (params_p->readFile(param_file_name_p))
@@ -286,7 +277,46 @@ public:
 			logger << param_file_name_p << "' read failed" ;
 			logger.endMessage() ;
 		}
+
+		//////////////////////////////////////////////////////////////////////
+		// Setup the motor monitors
+		//////////////////////////////////////////////////////////////////////
+		double val ;
 		
+		dbl_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:drivebase:left:variance", 0.25) ;
+		dbl_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:drivebase:left:max", 10.0) ;
+		dbl_monitor.setMaxCurrent(10.0) ;
+		
+		dbr_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:drivebase:right:variance", 0.25) ;
+		dbr_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:drivebase:right:max", 10.0) ;
+		dbr_monitor.setMaxCurrent(10.0) ;
+
+		grabber_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:grabber:max", 10.0) ;
+		grabber_monitor.setMaxCurrent(val) ;
+
+		lift_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:lifter:variance", 0.25) ;
+		lift_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:liter:max", 10.0) ;
+		lift_monitor.setMaxCurrent(val) ;
+
+		lin_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:intake:left:max", 10.0) ;
+		lin_monitor.setMaxCurrent(val) ;
+
+		rin_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:intake:right:max", 10.0) ;
+		rin_monitor.setMaxCurrent(val) ;
+
+
+		//////////////////////////////////////////////////////////////////////
+		// Initialize subsystems that have controllers
+		//////////////////////////////////////////////////////////////////////
 		Drivebase::drivebase_controller.setParams(params_p);	
 		Lifter::lifter_controller.init() ;
 		Grabber::grabber_controller.init() ;
