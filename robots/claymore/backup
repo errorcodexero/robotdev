@@ -49,11 +49,6 @@ fi
 backup_file () {
 	file_n=$(find backups -type f -name $2_\* | wc -l)	
 
-	scp lvuser@$address:$1 ./backups/$2_$((file_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
-	if [ $? -eq 0 ]; then
-		echo Saved as $2 file $((file_n+1)).
-	fi
-
 	file_n=$(find backups -type f -name $2_\* | wc -l)	
 	if [ $open_n -gt 0 ]; then
 		if [ $open_n -gt $file_n ]; then
@@ -75,6 +70,11 @@ backup_file () {
 		fi
 
 		exit 0
+	fi
+
+	scp lvuser@$address:$1 ./backups/$2_$((file_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
+	if [ $? -eq 0 ]; then
+		echo Saved as $2 file $((file_n+1)).
 	fi
 }
 
