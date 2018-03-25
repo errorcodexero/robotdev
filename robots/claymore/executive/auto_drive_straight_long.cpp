@@ -6,16 +6,16 @@ using namespace std ;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
-// Start: Center
-// Action: Score on right switch
+// Start: N/A
+// Action: Drive straight far enough to activate high gear
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
 {
-    Step(StartAuto("drive_straight_300")),
-    Step(Drive(300.0, false)),
-    endAuto
+    AUTO_PREAMBLE("drive_straight_long"),
+    Step(Drive(290.0, false)),
+    AUTO_POSTAMBLE
 } ;
 
 static Chain chain(steps, teleopex) ;
-Executive drive_straight_300(chain) ;
+Executive drive_straight_long(chain) ;

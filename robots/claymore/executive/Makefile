@@ -41,7 +41,7 @@ DEBUG_AUTOMODES = \
 	auto_rotate_pos90.cpp\
 	auto_rotate_neg90.cpp\
 	auto_rotate_both.cpp\
-	auto_drive_straight_300.cpp\
+	auto_drive_straight_long.cpp\
 	auto_drive_straight_120.cpp\
 	auto_drive_straight_12.cpp\
 	auto_drive_straight_neg30.cpp\

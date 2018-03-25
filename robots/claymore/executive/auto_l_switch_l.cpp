@@ -22,9 +22,9 @@ static vector<Step> steps =
 	lifterToSwitch,
     eject,
 	startLifterExch,
-    Step(Drive("auto:r_switch_r:segment3", -18, true)),
+    Step(Drive("auto:l_switch_l:segment3", -18, true)),
 	rotate90neg,
-    Step(Drive("auto:r_switch_r:segment4", 36, true)), 
+    Step(Drive("auto:l_switch_l:segment4", 36, true)), 
     rotate90pos,
 	AUTO_POSTAMBLE,
 } ;

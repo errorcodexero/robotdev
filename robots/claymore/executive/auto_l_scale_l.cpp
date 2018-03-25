@@ -16,11 +16,12 @@ static vector<Step> steps =
     startLifterExch,
     Step(Drive("auto:l_scale_l:segment1", 306, false)),
     rotate90pos,
-    Step(Lifter_to_height(89.6)),
+	Step(Drive("auto:l_scale_l:segment2", -6, false)),
+    Step(Lifter_to_height(85.6)),
     eject,
 	lifterToExch,
 	Step(Rotate(45.0)),
-    Step(Drive("auto:l_scale_l:segment2", 36, false)),
+    //Step(Drive("auto:l_scale_l:segment3", 36, false)),
 	AUTO_POSTAMBLE,
 } ;
 

@@ -12,9 +12,9 @@ using namespace std ;
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> steps =
 {
-    Step(StartAuto("drive_straight_120")),
+    AUTO_PREAMBLE("drive_straight_120"),
     Step(Drive(120.0, false)),
-    endAuto
+    AUTO_POSTAMBLE
 } ;
 
 static Chain chain(steps, teleopex) ;

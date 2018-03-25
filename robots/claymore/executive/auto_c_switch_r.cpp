@@ -24,7 +24,7 @@ static vector<Step> steps =
 	driveAndCollect,
 	lifterToExch,
 	Step(Drive(true, -10)),
-	Step(Rotate(80.0)),
+	Step(Rotate(90.0)),
 	startLifterSwitch,
 	Step(Drive("auto:c_switch_r:segment3", 24, true)),
 	lifterToSwitch,

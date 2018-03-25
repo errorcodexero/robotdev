@@ -11,7 +11,7 @@ using namespace std;
 //
 extern Executive drive_straight_120 ;
 extern Executive drive_straight_12 ;
-extern Executive drive_straight_300 ;
+extern Executive drive_straight_long ;
 extern Executive drive_straight_neg30 ;
 extern Executive rotate_pos90 ;
 extern Executive rotate_neg90 ;
@@ -159,6 +159,7 @@ Executive get_auto_mode(Next_mode_info info)
 		auto_program = rotate_both;
 		break ;
     case 9:
+		auto_program = drive_straight_long;
 		break ;
 
 	case 90:
@@ -216,7 +217,7 @@ Executive get_auto_mode(Next_mode_info info)
 		//
 		// drive straight for 12 inches (1 foot)
 		//
-		auto_program = drive_straight_300 ;
+		auto_program = drive_straight_long ;
 		break ;
 
     case 104:
