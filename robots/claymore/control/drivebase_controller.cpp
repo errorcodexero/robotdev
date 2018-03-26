@@ -22,7 +22,7 @@ DrivebaseController::DrivebaseController() {
     mTarget = 0.0;
     mTargetCorrectionAngle = 0.0;
     mDistanceThreshold = 0.0;
-    mAngleThreshold = 0.0;
+    mAngleThreshold = 5.0;
     mAngleVThreshold = 0.0;
     mLastDistance = 0.0;
     mLastAngle = 0.0;
@@ -116,8 +116,11 @@ void DrivebaseController::initCurve(double current_dist, double target_dist, dou
 	mTargetCurveAngleOffset = target_angle_offset;
 }
 
-void DrivebaseController::initAngle(double angle, double time, bool posangle) {
+void DrivebaseController::initAngle(double angle, double time, bool posangle, double tol) {
 	double ap, ai, ad, af, aimax, minvolts, maxvolts ;
+	
+	mAngleCurrentThreshold = tol ;
+	mAngleStartCaptured = false ;
 	
     mMode = Mode::ANGLE;
     mTarget = angle;
@@ -164,6 +167,10 @@ void DrivebaseController::initAngle(double angle, double time, bool posangle) {
     logger << ", apid " << ap << " " << ai << " " << ad << " " << af << " " << aimax;
     logger << ", minv " << minvolts << ", maxv " << maxvolts ;
     logger.endMessage();
+}
+
+void DrivebaseController::initAngle(double angle, double time, bool posangle) {
+	initAngle(angle, time, posangle, mAngleThreshold) ;
 }
 
 void DrivebaseController::idle(double distances_l, double distances_r, double angle, double dt, double time)
@@ -306,12 +313,19 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 		}
 		else if (mMode == Mode::ANGLE) {
 
+			if (!mAngleStartCaptured)
+			{
+				mAngleStartCaptured = true ;
+				mAngleStart = angle ;
+			}
+
 			mHistory.push_back(angle) ;
 			if (mHistory.size() > mNsamples)
 				mHistory.pop_front() ;
 			
 			double angular_v = (angle - mLastAngle) / dt;
-			if (fabs(mTarget - angle) < mAngleThreshold && fabs(angular_v) < mAngleVThreshold) {
+			if (fabs(mTarget - angle) < mAngleCurrentThreshold && fabs(angular_v) < mAngleVThreshold) {
+				mAngleLastActual = angle - mAngleStart ;
 				mMode = Mode::IDLE;
 			}
 

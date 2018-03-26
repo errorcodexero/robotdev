@@ -41,7 +41,15 @@ public:
     /// \brief rotate to the given angle
     /// \param angle the angle to rotate to
     /// \param the time when this was requested
+	/// \param posangle if true, the desired angle is a positive angle
     void initAngle(double angle, double time, bool posangle);
+	
+    /// \brief rotate to the given angle
+    /// \param angle the angle to rotate to
+    /// \param the time when this was requested
+	/// \param posangle if true, the desired angle is a positive angle
+	/// \param tol the tolerance of the turn
+    void initAngle(double angle, double time, bool posangle, double tol);
 
     /// \brief update the left and right motor values to acheive the desired goal
     /// \param dl the distance traveled by the left wheel
@@ -64,6 +72,12 @@ public:
 
     /// \brief returns true when the robot has reached its distance or angle goal
     bool done();
+
+	/// \brief returns the actual last angle rotation
+	double getLastAngle()
+	{
+		return mAngleLastActual ;
+	}
 	
 private:
     enum class Mode {
@@ -110,9 +124,23 @@ private:
     double mDistanceThreshold;
 
     //
-    // The threshold for declaring an angle target met
+    // The threshold for declaring an angle target met, from the params file and used
+	// by default
     //
     double mAngleThreshold ;
+
+	bool mAngleStartCaptured ;
+	double mAngleStart ;
+
+	//
+	// The threshold for declaring the current angle target met.
+	//
+	double mAngleCurrentThreshold ;
+
+	//
+	// The actual angle from the last rotate operation
+	//
+	double mAngleLastActual ;
 
     //
     // The velocity threshold for declaring an angle target met.  The rotational
