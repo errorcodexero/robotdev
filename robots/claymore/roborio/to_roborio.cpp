@@ -13,6 +13,7 @@
 #include "message_dest_dated_file.h"
 #include "message_dest_DS.h"
 #include "message_dest_stream.h"
+#include "motor_current_monitor.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -85,15 +86,37 @@ class To_roborio
 	Pump_control pump_control;
 	//frc::Compressor *compressor;
 	frc::DriverStation& driver_station;
+	MotorCurrentMonitor dbl_monitor ;
+	MotorCurrentMonitor dbr_monitor ;
+	MotorCurrentMonitor grabber_monitor ;
+	MotorCurrentMonitor lift_monitor ;
+	MotorCurrentMonitor lin_monitor ;
+	MotorCurrentMonitor rin_monitor ;
 	std::ofstream null_stream;
+	
 public:
-To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
+	To_roborio():error_code(0),
+				 navx_control(frc::SPI::Port::kMXP),
+				 i2c_control(8),
+				 driver_station(frc::DriverStation::GetInstance()),
+				 dbl_monitor(3),
+				 dbr_monitor(3),
+				 grabber_monitor(1),
+				 lift_monitor(2),
+				 lin_monitor(1),
+				 rin_monitor(1),
+			 null_stream("/dev/null")
 	{
+		//////////////////////////////////////////////////////////////////////
+		// Initialize the message logger
+		//////////////////////////////////////////////////////////////////////
+		
 		messageLogger &logger = messageLogger::get();
 		logger.enableType(messageLogger::messageType::error);
 		logger.enableType(messageLogger::messageType::warning);
 		logger.enableType(messageLogger::messageType::info);
 		logger.enableType(messageLogger::messageType::debug);
+
 
 		//
 		// Decide what subsystems you want to see
@@ -150,6 +173,9 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		dest_p = std::make_shared<messageDestDS>() ;
 		logger.addDestination(dest_p) ;
 
+		//////////////////////////////////////////////////////////////////////
+		// Send match information to the message logger
+		//////////////////////////////////////////////////////////////////////
 		DriverStation &ds = DriverStation::GetInstance() ;
 		logger.startMessage(messageLogger::messageType::info) ;
 		logger << "Match Specific Data:\n" ;
@@ -195,6 +221,10 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		logger << "            Location: " << ds.GetLocation() << "\n" ;
 		logger.endMessage() ;
 
+		//////////////////////////////////////////////////////////////////////
+		// Initialize the hardware
+		//////////////////////////////////////////////////////////////////////
+
 		power = new frc::PowerDistributionPanel();
 
 		for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
@@ -227,6 +257,10 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			if(!analog_in[i]) error_code|=8;
 		}
 
+		//////////////////////////////////////////////////////////////////////
+		// Read the parameters file
+		//////////////////////////////////////////////////////////////////////
+		
 		paramsInput *params_p = paramsInput::get() ;
 
 		if (params_p->readFile(param_file_name_p))
@@ -243,7 +277,46 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			logger << param_file_name_p << "' read failed" ;
 			logger.endMessage() ;
 		}
+
+		//////////////////////////////////////////////////////////////////////
+		// Setup the motor monitors
+		//////////////////////////////////////////////////////////////////////
+		double val ;
 		
+		dbl_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:drivebase:left:variance", 0.25) ;
+		dbl_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:drivebase:left:max", 10.0) ;
+		dbl_monitor.setMaxCurrent(10.0) ;
+		
+		dbr_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:drivebase:right:variance", 0.25) ;
+		dbr_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:drivebase:right:max", 10.0) ;
+		dbr_monitor.setMaxCurrent(10.0) ;
+
+		grabber_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:grabber:max", 10.0) ;
+		grabber_monitor.setMaxCurrent(val) ;
+
+		lift_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:lifter:variance", 0.25) ;
+		lift_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:liter:max", 10.0) ;
+		lift_monitor.setMaxCurrent(val) ;
+
+		lin_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:intake:left:max", 10.0) ;
+		lin_monitor.setMaxCurrent(val) ;
+
+		rin_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:intake:right:max", 10.0) ;
+		rin_monitor.setMaxCurrent(val) ;
+
+
+		//////////////////////////////////////////////////////////////////////
+		// Initialize subsystems that have controllers
+		//////////////////////////////////////////////////////////////////////
 		Drivebase::drivebase_controller.setParams(params_p);	
 		Lifter::lifter_controller.init() ;
 		Grabber::grabber_controller.init() ;
@@ -324,6 +397,25 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			logger << i << "=" << current[i] ;
 		}
 		logger.endMessage() ;
+
+		dbl_monitor.logNewMeasurement(std::vector<double>{current[13], current[14], current[15]}) ;
+		dbl_monitor.checkViolation() ;
+		
+		dbr_monitor.logNewMeasurement(std::vector<double>{current[0], current[1], current[2]}) ;
+		dbr_monitor.checkViolation() ;
+		
+		grabber_monitor.logNewMeasurement(std::vector<double>{current[10]}) ;
+		grabber_monitor.checkViolation() ;
+
+		lift_monitor.logNewMeasurement(std::vector<double>{current[3], current[12]}) ;
+		lift_monitor.checkViolation() ;
+
+		lin_monitor.logNewMeasurement(std::vector<double>{current[11]}) ;
+		lin_monitor.checkViolation() ;
+
+		rin_monitor.logNewMeasurement(std::vector<double>{current[4]}) ;
+		rin_monitor.checkViolation() ;
+		
 		return current;
 	}
 	int set_solenoid(unsigned i,Solenoid_output v){
