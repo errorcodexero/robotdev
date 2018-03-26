@@ -36,7 +36,7 @@ public:
     /// \param the time when this was requested
     void initDistance(double dist, double angle, double time, bool end_on_stall, bool forward);
 	
-	void initCurve(double current_dist, double target_dist, double current_angle, double target_angle_offset, double time, bool end_on_stall, bool forward);
+	void initCurve(double current_dist, double target_dist, double curve_start, double current_angle, double target_angle_offset, double time, bool end_on_stall, bool forward);
 
     /// \brief rotate to the given angle
     /// \param angle the angle to rotate to
@@ -117,6 +117,8 @@ private:
 	double mTargetCurveAngleOffset;
 
 	double mInitialDistance;
+
+	double mCurveStart ;
 
     //
     // The threshold for declaring a distance target met.

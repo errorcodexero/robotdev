@@ -13,7 +13,7 @@ using namespace std ;
 static vector<Step> steps =
 {
     AUTO_PREAMBLE("drive_straight_long"),
-    Step(Drive(290.0, false)),
+    Step(Drive(290.0, 40.0, 30.0, false)),
     AUTO_POSTAMBLE
 } ;
 

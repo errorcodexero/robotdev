@@ -136,12 +136,13 @@ protected:
 	std::string mParamName ;
     bool mEndOnStall ;
 	bool mCurve;
+	Inch mCurveStart ;
 	bool mReturnFromCollect ;
     bool mInited ;
 
 public:
     explicit Drive(Inch dist, bool end_on_stall=false);
-	explicit Drive(Inch dist, double angle_offset, bool end_on_stall=false);
+	explicit Drive(Inch dist, double curve_start, double angle_offset, bool end_on_stall=false);
     explicit Drive(const char *param_p, Inch dist, bool end_on_stall=false);
     explicit Drive(const std::string &param, Inch dist, bool end_on_stall=false);
 	explicit Drive(bool dummy, Inch return_offset=0);
@@ -226,9 +227,12 @@ struct Rotate_finish: Step_impl_inner<Rotate_finish>{
 struct Rotate_back: Step_impl_inner<Rotate_back>{
     bool init;
 	double mOffset ;
+	double mTolerance ;
+	bool mTolSpecified ;
 
     explicit Rotate_back() ;
 	explicit Rotate_back(double offset) ;
+	explicit Rotate_back(double offset, double tolerance) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -369,6 +373,7 @@ struct Eject: Step_impl_inner<Eject>
 	
 	EjectState mState ;
     Countdown_timer eject_timer;
+	double mStart ;
 
     explicit Eject();
 	
@@ -394,6 +399,7 @@ struct Drop_grabber: Step_impl_inner<Drop_grabber>{
 struct Close_collect_no_cube: Step_impl_inner<Close_collect_no_cube>{
 	bool mInit ;
 	double mTime ;
+	double mStart ;
 	Countdown_timer timeout_timer;
 	
 	explicit Close_collect_no_cube(double length);
@@ -412,6 +418,7 @@ struct Drive_and_collect: Step_impl_inner<Drive_and_collect>{
 	Countdown_timer timeout_timer;
 	Drivebase::Distances initial_distances;
 	bool init;
+	double mStart ;
 	double maxdistance ;
 
 	explicit Drive_and_collect();

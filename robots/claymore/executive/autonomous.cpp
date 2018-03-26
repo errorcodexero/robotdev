@@ -158,6 +158,7 @@ Executive get_auto_mode(Next_mode_info info)
     case 8:
 		auto_program = rotate_both;
 		break ;
+		
     case 9:
 		auto_program = drive_straight_long;
 		break ;
