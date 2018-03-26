@@ -460,6 +460,7 @@ Toplevel::Goal Rotate::run(Run_info info)
     return run(info,{});
 }
 
+double lastrotate ;
 Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
 {
     if(!init) {
@@ -471,6 +472,8 @@ Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
 		{
 			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0) ;
 		}
+		lastrotate = info.status.drive.angle ;
+		cout << "LastRotate in rotate" << lastrotate << endl ;
 		init = true;
     }
 
@@ -511,6 +514,16 @@ Rotate_finish::Rotate_finish(double prev, double a)
 	prev_angle = prev ;
 	target_angle = a ;
 	init = false ;
+	tolprovided = false ;
+}
+
+Rotate_finish::Rotate_finish(double prev, double a, double tol)
+{
+	prev_angle = prev ;
+	target_angle = a ;
+	tolerance = tol ;
+	init = false ;
+	tolprovided = true ;
 }
 
 Toplevel::Goal Rotate_finish::run(Run_info info)
@@ -521,9 +534,17 @@ Toplevel::Goal Rotate_finish::run(Run_info info)
 Toplevel::Goal Rotate_finish::run(Run_info info,Toplevel::Goal goals)
 {
     if(!init) {
-		double last = Drivebase::drivebase_controller.getLastAngle() ;
-		double target = prev_angle - last + info.status.drive.angle + target_angle ;
-		Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0) ;
+		// double last = Drivebase::drivebase_controller.getLastAngle() ;
+		// double target = prev_angle - last + info.status.drive.angle + target_angle ;
+		double target = lastrotate + target_angle + prev_angle ;
+		cout << "last angle " << lastrotate << endl ;
+		cout << "target angle" << target_angle << endl; 
+		cout << "previous angle " << prev_angle << endl ;
+		
+		if (tolprovided)
+			Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0, tolerance) ;
+		else
+			Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0) ;
 		init = true;
     }
 
@@ -561,6 +582,13 @@ bool Rotate_finish::operator==(Rotate_finish const& b)const
 Rotate_back::Rotate_back()
 {
 	init = false ;
+	mOffset = 0 ;
+}
+
+Rotate_back::Rotate_back(double offset)
+{
+	init = false ;
+	mOffset = offset ;
 }
 
 Toplevel::Goal Rotate_back::run(Run_info info)
@@ -572,7 +600,7 @@ Toplevel::Goal Rotate_back::run(Run_info info,Toplevel::Goal goals)
 {
     if(!init) {
 		double target = -Drivebase::drivebase_controller.getLastAngle() ;
-		Drivebase::drivebase_controller.initAngle(target, info.in.now, target > 0) ;
+		Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target + mOffset, info.in.now, target > 0) ;
 		init = true;
     }
 
@@ -1101,13 +1129,29 @@ bool Drop_grabber::operator==(Drop_grabber const& b)const{
 
 double Drive_and_collect::distance_travelled;
 
-Drive_and_collect::Drive_and_collect():init(false){}
+Drive_and_collect::Drive_and_collect():init(false)
+{
+	maxdistance = std::numeric_limits<double>::max() ;
+}
+
+Drive_and_collect::Drive_and_collect(double maxdist):init(false)
+{
+	maxdistance = maxdist ;
+}
 
 Step::Status Drive_and_collect::done(Next_mode_info info){
-    Step::Status ret = timeout_timer.done() || (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+	Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
+	double dist = (distances_travelled.l + distances_travelled.r) / 2.0;
+
+    Step::Status ret = Step::Status::UNFINISHED ;
+
+	if (timeout_timer.done() ||
+		dist > maxdistance ||
+		Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+		ret = Step::Status::FINISHED_SUCCESS ;
+	
     if (ret == Step::Status::FINISHED_SUCCESS) 
     {
-		Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
 		distance_travelled = (distances_travelled.l + distances_travelled.r) / 2.0;
 
 		messageLogger &logger = messageLogger::get() ;
@@ -1151,6 +1195,62 @@ bool Drive_and_collect::operator==(Drive_and_collect const& b)const{
     return true;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+Close_collect_no_cube::Close_collect_no_cube(double len)
+{
+	mInit = false ;
+	mTime = len ;
+}
+
+Step::Status Close_collect_no_cube::done(Next_mode_info info)
+{
+    Step::Status ret = Step::Status::UNFINISHED ;
+	if (timeout_timer.done() || Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+		ret = Step::Status::FINISHED_SUCCESS ;
+	
+    if (ret == Step::Status::FINISHED_SUCCESS) 
+    {
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Close_collect_no_cube step complete"  ;
+		if (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+			logger << " - has cube" ;
+		else
+			logger << " - timed out" ;
+		logger.endMessage() ;
+    }
+    return ret ;
+	
+}
+
+Toplevel::Goal Close_collect_no_cube::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Close_collect_no_cube::run(Run_info info,Toplevel::Goal goals){
+	if(!mInit) {
+		timeout_timer.set(mTime) ;
+		mInit = true ;
+	}
+
+	timeout_timer.update(info.in.now, true);
+    goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+	goals.intake = Intake::Goal::in();
+	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube)
+		goals.grabber = Grabber::Goal::clamp();
+	
+    return goals;
+}
+
+unique_ptr<Step_impl> Close_collect_no_cube::clone()const{
+    return unique_ptr<Step_impl>(new Close_collect_no_cube(*this));
+}
+
+bool Close_collect_no_cube::operator==(Close_collect_no_cube const& b)const{
+    return true;
+}
+
+///////////////////////////////////////////////////////////////////////////
 #ifdef STEP_TEST
 void test_step(Step a){
     PRINT(a);
