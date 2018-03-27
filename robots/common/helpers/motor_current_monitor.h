@@ -25,17 +25,18 @@
 ///
 
 class MotorCurrentMonitor {
+public:
+    /// \brief One instantaneous measurement set for all motors operating in lockstep. 
+    typedef std::vector<double> Measurement;
+
+private:
     /// \brief Sentinel to indicate that a variable of type "unsigned int" is unspecified.
     const unsigned int UNSPECIFIED = std::numeric_limits<unsigned int>::max();
 
-    /// \brief One instantaneous measurement set for all motors operating in lockstep. 
-    typedef std::vector<double> Measurement;
-    
     /// \brief Trailing list of last "N" sets of measurements.
     typedef std::list<Measurement> Measurements;
 
-    public:
-    
+public:
     /// \brief Constructor must specify the number of motors in that group of lockstep motors.
     MotorCurrentMonitor(unsigned int n_motors);
     

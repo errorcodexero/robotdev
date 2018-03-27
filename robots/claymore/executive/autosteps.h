@@ -23,7 +23,6 @@ static Step eject = Step(Eject()) ;
 static Step dropGrabber = Step(Drop_grabber());
 static Step driveAndCollect = Step(Drive_and_collect());
 static Step driveBackFromCollect = Step(Drive(true));
-static Step rotateBack = Step(Rotate_back()) ;
 
 static Step lifterToExchFail = Step(lifterToExch, {
 	Step(Drive("auto:c_switch_r:segment1", 105, true)),
@@ -34,7 +33,7 @@ static Step lifterToExchFail = Step(lifterToExch, {
 	Step(StartAuto(name)),												\
 	calibrateLifter,													\
 	calibrateGrabber,													\
-	Step(Lifter_to_preset(LifterController::Preset::EXCHANGE, 0.0))
+	startLifterExch
 
 		
 #define AUTO_POSTAMBLE \

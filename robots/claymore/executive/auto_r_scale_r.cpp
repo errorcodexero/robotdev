@@ -2,9 +2,10 @@
 #include "chain.h"
 #include <vector>
 
+
 using namespace std ;
 
-///////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 //
 // Start: Right
 // Action: Score on right scale
@@ -13,24 +14,41 @@ using namespace std ;
 static vector<Step> steps =
 {
     AUTO_PREAMBLE("right_scale_right"),
-    startLifterExch,
-    Step(Drive("auto:r_scale_r:segment1", 306, false)),
-	Step(Rotate(-90, 15.0)),
-    Step(Lifter_to_height(85.6)),
+#ifdef OLD
+	Step(Drive(290, false)),
+	Step(Rotate(-90, 8.0)),
+    Step(Lifter_to_height(85.0)),
     eject,
-	lifterToExch,
-	Step(Rotate_finish(-90, -60)),
-#ifdef NOTYET
 	lifterToFloor,
-	driveAndCollect,
+    Step(Rotate_finish(-90, -67, 3.0)),
+	Step(Drive_and_collect(114.0)),
+	Step(Close_collect_no_cube(1.0)),
+	Step(Drive(-6.0)),
+	Step(Close_collect_no_cube(0.5)),
 	lifterToExch,
-	driveBackFromCollect,
-	rotateBack,
-    Step(Lifter_to_height(85.6)),
-	AUTO_POSTAMBLE,
+	Step(Drive(true, -30)),
+	Step(Rotate_back(0.0, 10.0)),
+	lifterToScale,
     eject,
+	lifterToExch,
+#else
+	Step(Drive(244.0, 100.0, -140.0, false)),
+    Step(Lifter_to_height(85.0)),
+	Step(Eject(0.7)),
+	lifterToFloor,
+	Step(Rotate(-106)),
+	Step(Drive_and_collect(57.0)),
+	Step(Close_collect_no_cube(1.0)),
+	Step(Drive(-6.0)),
+	Step(Close_collect_no_cube(0.5)),
+	Step(Background_lifter_to_preset(85.0, 0.0)),
+	Step(Drive(true, -6.0)),
+	Step(Rotate_back(-30.0, 10.0)),
+    Step(Lifter_to_height(85.0)),
+	eject,
 	lifterToExch,
 #endif
+	AUTO_POSTAMBLE,
 } ;
 
 static Chain chain(steps, teleopex) ;

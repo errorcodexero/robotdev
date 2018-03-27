@@ -7,6 +7,8 @@
 #include <cmath>
 #include <iostream>
 
+#define LIMIT_VOLTAGE_CHANGE 
+
 #ifdef TUNING
 std::string DrivebaseController::AngleTargetName("angle-target") ;
 std::string DrivebaseController::AngleActualName("angle-actual") ;
@@ -109,11 +111,21 @@ void DrivebaseController::initDistance(double distance, double angle, double tim
 }
 
 
-void DrivebaseController::initCurve(double current_dist, double target_dist, double current_angle, double target_angle_offset, double time, bool end_on_stall, bool forward) {
+void DrivebaseController::initCurve(double current_dist, double target_dist, double curve_start, double current_angle, double target_angle_offset, double time, bool end_on_stall, bool forward)
+{
+    messageLogger &logger = messageLogger::get();
+    logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
+    logger << "initCurve, start = " << curve_start ;
+	logger << ", angle_offset = " << target_angle_offset ;
+	logger << ", target_dist " << target_dist ;
+    logger.endMessage();
+	
 	initDistance(target_dist, current_angle, time, end_on_stall, forward);
+	
 	mMode = Mode::CURVE;
 	mInitialDistance = current_dist;
 	mTargetCurveAngleOffset = target_angle_offset;
+	mCurveStart = curve_start ;
 }
 
 void DrivebaseController::initAngle(double angle, double time, bool posangle, double tol) {
@@ -253,8 +265,11 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 #endif
 
 			double target_angle = mTargetCorrectionAngle;
-			if(mMode == Mode::CURVE) {
-				target_angle += mTargetCurveAngleOffset * (mInitialDistance / (mTarget - mInitialDistance));
+			if(mMode == Mode::CURVE && howclose < mCurveStart) {
+				std::cout << "Doing curve, howclose " << howclose << ", mCurveStart " << mCurveStart ;
+				std::cout << std::endl ;
+				double delta = mCurveStart - howclose ;
+				target_angle = mTargetCorrectionAngle + mTargetCurveAngleOffset / mCurveStart * delta ;
 			}
 
 			mLastVoltage = base;

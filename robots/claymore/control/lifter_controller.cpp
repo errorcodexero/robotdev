@@ -49,6 +49,7 @@ void LifterController::moveToHeight(double height, double time, bool background)
 	{
 		mBackground = background;
 
+		bool bNewReq = false ;
 		double p, i, d, f, imax;
 		double vmin, vmax ;
 		paramsInput *params_p = paramsInput::get() ;
@@ -62,6 +63,8 @@ void LifterController::moveToHeight(double height, double time, bool background)
 			// when the move request was initiated
 			//
 			mStartTime = time ;
+			cout << "Lifter: Start Time Changed " << mStartTime << endl ;
+			bNewReq = true ;
 		}
 		
 		mMode = Mode::HEIGHT;
@@ -97,17 +100,20 @@ void LifterController::moveToHeight(double height, double time, bool background)
 			vmin = params_p->getValue("lifter:downsmall:vmin", -0.8) ;
 			vmax = params_p->getValue("lifter:downsmall:vmax", 0.8) ;
 		}
-		
+			
 		mHeightPID.Init(p, i, d, f, vmin, vmax, imax);
-		
-		messageLogger &logger = messageLogger::get();
-		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
-		logger << "moveToHeight" ;
-		logger << ", current " << mCurrent ;
-		logger << ", target " << height;
-		logger << ", pid " << p << " " << i << " " << d << " " << f << " " << imax;
-		logger << ", vmin " << vmin << ", vmax " << vmax ;
-		logger.endMessage();
+
+		if (bNewReq)
+		{
+			messageLogger &logger = messageLogger::get();
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
+			logger << "moveToHeight" ;
+			logger << ", current " << mCurrent ;
+			logger << ", target " << height;
+			logger << ", pid " << p << " " << i << " " << d << " " << f << " " << imax;
+			logger << ", vmin " << vmin << ", vmax " << vmax ;
+			logger.endMessage();
+		}
 	}
 	else
 	{
@@ -208,7 +214,9 @@ void LifterController::updateHeight(double time, double dt, double &out, Gear &g
 		{
 			double elapsed= time - mStartTime ;
 			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_LIFTER_TUNING);
-			logger << "Lifter: success, time = " << elapsed << " secs" ;
+			logger << "Lifter: success, " ;
+			logger << "current " << time ;
+			logger << ", elapsed = " << elapsed << " secs" ;
 			logger << ", delta " << mTarget - mCurrent ;
 			logger << ", threshold " << mHeightThreshold ;
 			logger.endMessage() ;

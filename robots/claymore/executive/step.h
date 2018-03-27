@@ -136,12 +136,13 @@ protected:
 	std::string mParamName ;
     bool mEndOnStall ;
 	bool mCurve;
+	Inch mCurveStart ;
 	bool mReturnFromCollect ;
     bool mInited ;
 
 public:
     explicit Drive(Inch dist, bool end_on_stall=false);
-	explicit Drive(Inch dist, double angle_offset, bool end_on_stall=false);
+	explicit Drive(Inch dist, double curve_start, double angle_offset, bool end_on_stall=false);
     explicit Drive(const char *param_p, Inch dist, bool end_on_stall=false);
     explicit Drive(const std::string &param, Inch dist, bool end_on_stall=false);
 	explicit Drive(bool dummy, Inch return_offset=0);
@@ -208,9 +209,12 @@ struct Rotate: Step_impl_inner<Rotate>{
 struct Rotate_finish: Step_impl_inner<Rotate_finish>{
     double target_angle;
 	double prev_angle ;
+	double tolerance ;
     bool init;
+	bool tolprovided ;
 
     explicit Rotate_finish(double prevangle, double angle);
+    explicit Rotate_finish(double prevangle, double angle, double tol);
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -222,8 +226,13 @@ struct Rotate_finish: Step_impl_inner<Rotate_finish>{
 //Rotate the robot by a specified angle
 struct Rotate_back: Step_impl_inner<Rotate_back>{
     bool init;
+	double mOffset ;
+	double mTolerance ;
+	bool mTolSpecified ;
 
     explicit Rotate_back() ;
+	explicit Rotate_back(double offset) ;
+	explicit Rotate_back(double offset, double tolerance) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -237,9 +246,14 @@ struct Rotate_back: Step_impl_inner<Rotate_back>{
 struct Background_lifter_to_preset: Step_impl_inner<Background_lifter_to_preset>{
     LifterController::Preset preset;
     double time;
+	double delay ;
+	double height ;
+	bool heightgiven ;
     bool init;
 
     explicit Background_lifter_to_preset(LifterController::Preset, double);
+    explicit Background_lifter_to_preset(double, double);
+    explicit Background_lifter_to_preset(LifterController::Preset, double, double);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -364,8 +378,12 @@ struct Eject: Step_impl_inner<Eject>
 	
 	EjectState mState ;
     Countdown_timer eject_timer;
+	double mStart ;
+	bool mPowerApplied ;
+	double mPower ;
 
     explicit Eject();
+	explicit Eject(double power) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -386,14 +404,33 @@ struct Drop_grabber: Step_impl_inner<Drop_grabber>{
 };
 
 //Drive forward and collect until a cube is collected
+struct Close_collect_no_cube: Step_impl_inner<Close_collect_no_cube>{
+	bool mInit ;
+	double mTime ;
+	double mStart ;
+	Countdown_timer timeout_timer;
+	
+	explicit Close_collect_no_cube(double length);
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Close_collect_no_cube const&)const;
+};
+
+//Drive forward and collect until a cube is collected
 struct Drive_and_collect: Step_impl_inner<Drive_and_collect>{
 	static double distance_travelled;
 
 	Countdown_timer timeout_timer;
 	Drivebase::Distances initial_distances;
 	bool init;
+	double mStart ;
+	double maxdistance ;
 
 	explicit Drive_and_collect();
+	explicit Drive_and_collect(double maxdist) ;
 
 	Toplevel::Goal run(Run_info,Toplevel::Goal);
 	Toplevel::Goal run(Run_info);

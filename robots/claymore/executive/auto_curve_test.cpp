@@ -13,7 +13,7 @@ using namespace std ;
 static vector<Step> steps
 {
     Step(StartAuto("curve_test")),
-	Step(Drive(120.0, 30.0, false)),
+	Step(Drive(120.0, 30.0, 0.0, false)),
     endAuto,
 };
 

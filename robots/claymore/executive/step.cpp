@@ -23,8 +23,6 @@ ostream& operator<<(ostream& o,Step const& a){
     a.display(o);
     return o;
 }
-//
-
 
 Step::Step(Step const& a):impl(a.get().clone()),fail_branch(nullptr){}
 Step::Step(Step const& a, vector<Step> fail):Step(a){
@@ -265,13 +263,15 @@ Drive::Drive(Inch dist, bool end_on_stall)
 	mInited = false ;
 }
 
-Drive::Drive(Inch dist, double angle_offset, bool end_on_stall)
+Drive::Drive(Inch dist, double curve_start, double angle_offset, bool end_on_stall)
 {
 	mTargetDistance = dist ;
 	mTargetAngleOffset = angle_offset;
 	mCurve = true;
+	mCurveStart = curve_start ;
 	mEndOnStall = end_on_stall;
 	mInited = false;
+	mReturnFromCollect = false;
 }
 
 Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
@@ -341,7 +341,8 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals)
 			Drivebase::drivebase_controller.initDistance(avg_status + mTargetDistance, info.status.drive.angle,
 													 info.in.now, mEndOnStall, mTargetDistance >= 0.0);
 		} else {
-			Drivebase::drivebase_controller.initCurve(avg_status, avg_status + mTargetDistance, info.status.drive.angle, mTargetAngleOffset, info.in.now, mEndOnStall, mTargetDistance >= 0.0);
+			Drivebase::drivebase_controller.initCurve(avg_status, avg_status + mTargetDistance, mCurveStart, info.status.drive.angle,
+													  mTargetAngleOffset, info.in.now, mEndOnStall, mTargetDistance >= 0.0);
 		}
 		mInited = true ;
     }
@@ -460,6 +461,7 @@ Toplevel::Goal Rotate::run(Run_info info)
     return run(info,{});
 }
 
+double lastrotate ;
 Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
 {
     if(!init) {
@@ -471,6 +473,8 @@ Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
 		{
 			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0) ;
 		}
+		lastrotate = info.status.drive.angle ;
+		cout << "LastRotate in rotate" << lastrotate << endl ;
 		init = true;
     }
 
@@ -511,6 +515,16 @@ Rotate_finish::Rotate_finish(double prev, double a)
 	prev_angle = prev ;
 	target_angle = a ;
 	init = false ;
+	tolprovided = false ;
+}
+
+Rotate_finish::Rotate_finish(double prev, double a, double tol)
+{
+	prev_angle = prev ;
+	target_angle = a ;
+	tolerance = tol ;
+	init = false ;
+	tolprovided = true ;
 }
 
 Toplevel::Goal Rotate_finish::run(Run_info info)
@@ -521,9 +535,17 @@ Toplevel::Goal Rotate_finish::run(Run_info info)
 Toplevel::Goal Rotate_finish::run(Run_info info,Toplevel::Goal goals)
 {
     if(!init) {
-		double last = Drivebase::drivebase_controller.getLastAngle() ;
-		double target = prev_angle - last + info.status.drive.angle + target_angle ;
-		Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0) ;
+		// double last = Drivebase::drivebase_controller.getLastAngle() ;
+		// double target = prev_angle - last + info.status.drive.angle + target_angle ;
+		double target = lastrotate + target_angle + prev_angle ;
+		cout << "last angle " << lastrotate << endl ;
+		cout << "target angle" << target_angle << endl; 
+		cout << "previous angle " << prev_angle << endl ;
+		
+		if (tolprovided)
+			Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0, tolerance) ;
+		else
+			Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0) ;
 		init = true;
     }
 
@@ -561,6 +583,23 @@ bool Rotate_finish::operator==(Rotate_finish const& b)const
 Rotate_back::Rotate_back()
 {
 	init = false ;
+	mOffset = 0 ;
+	mTolSpecified = false ;
+}
+
+Rotate_back::Rotate_back(double offset)
+{
+	init = false ;
+	mOffset = offset ;
+	mTolSpecified = false ;
+}
+
+Rotate_back::Rotate_back(double offset, double tolval)
+{
+	init = false ;
+	mOffset = offset ;
+	mTolSpecified = true ;
+	mTolerance = tolval ;
 }
 
 Toplevel::Goal Rotate_back::run(Run_info info)
@@ -572,7 +611,10 @@ Toplevel::Goal Rotate_back::run(Run_info info,Toplevel::Goal goals)
 {
     if(!init) {
 		double target = -Drivebase::drivebase_controller.getLastAngle() ;
-		Drivebase::drivebase_controller.initAngle(target, info.in.now, target > 0) ;
+		if (mTolSpecified)
+			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target + mOffset, info.in.now, target > 0, mTolerance) ;
+		else
+			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target + mOffset, info.in.now, target > 0) ;
 		init = true;
     }
 
@@ -612,6 +654,21 @@ bool Rotate_back::operator==(Rotate_back const& b)const
 
 Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double time):preset(preset),time(time),init(false)
 {
+	delay = 0.0 ;
+	heightgiven = false ;
+}
+
+Background_lifter_to_preset::Background_lifter_to_preset(double h, double time):time(time),init(false)
+{
+	delay = 0.0 ;
+	heightgiven = true ;
+	height = h ;
+}
+
+Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double del, double time):preset(preset),time(time),init(false)
+{
+	delay = del ;
+	heightgiven = false ;
 }
 
 Step::Status Background_lifter_to_preset::done(Next_mode_info)
@@ -632,7 +689,11 @@ Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goa
 {
     if(!init)
 	{
-		Lifter::lifter_controller.moveToHeight(preset, time, true);
+		if (heightgiven)
+			Lifter::lifter_controller.moveToHeight(height, info.in.now, true);
+		else
+			Lifter::lifter_controller.moveToHeight(preset, info.in.now, true);
+		
 		init = false;
     }
     return goals;
@@ -793,7 +854,7 @@ Toplevel::Goal Lifter_to_preset::run(Run_info info){
 
 Toplevel::Goal Lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!mInit) {
-		Lifter::lifter_controller.moveToHeight(mPreset, mTime);
+		Lifter::lifter_controller.moveToHeight(mPreset, info.in.now);
 		fail_timer.set(5.0);
 		mInit = false;
     }
@@ -941,6 +1002,13 @@ bool Collect::operator==(Collect const& b)const{
 Eject::Eject()
 {
 	mState = EjectState::Start ;
+	mPowerApplied = false ;
+}
+
+Eject::Eject(double power)
+{
+	mPower = power ;
+	mPowerApplied = true ;
 }
 
 Step::Status Eject::done(Next_mode_info info)
@@ -953,7 +1021,7 @@ Step::Status Eject::done(Next_mode_info info)
     {
 		messageLogger &logger = messageLogger::get() ;
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-		logger << "Eject step complete" ;
+		logger << "Eject step complete, elapsed " << info.in.now - mStart ;
 		logger.endMessage() ;
     }
     return ret ;
@@ -968,6 +1036,7 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
 	switch(mState)
 	{
 	case EjectState::Start:
+		mStart = info.in.now ;
 		if (info.status.grabber.has_cube)
 		{
 			//
@@ -1004,7 +1073,7 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
 			// in eject mode for a little longer to be sure the cube is fully
 			// ejected
 			//
-			eject_timer.set(0.50) ;
+			eject_timer.set(0.05) ;
 			mState = EjectState::WaitingOnTime ;
 		}
 		else if (eject_timer.done())
@@ -1041,7 +1110,10 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
     // Tell the grabber/intake to eject the cube
     //
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-    goals.intake = Intake::Goal::out();
+	if (mPowerApplied)
+		goals.intake = Intake::Goal::out(mPower);
+	else
+		goals.intake = Intake::Goal::out();
     
     return goals;
 }
@@ -1101,18 +1173,34 @@ bool Drop_grabber::operator==(Drop_grabber const& b)const{
 
 double Drive_and_collect::distance_travelled;
 
-Drive_and_collect::Drive_and_collect():init(false){}
+Drive_and_collect::Drive_and_collect():init(false)
+{
+	maxdistance = std::numeric_limits<double>::max() ;
+}
+
+Drive_and_collect::Drive_and_collect(double maxdist):init(false)
+{
+	maxdistance = maxdist ;
+}
 
 Step::Status Drive_and_collect::done(Next_mode_info info){
-    Step::Status ret = timeout_timer.done() || (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+	Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
+	double dist = (distances_travelled.l + distances_travelled.r) / 2.0;
+
+    Step::Status ret = Step::Status::UNFINISHED ;
+
+	if (timeout_timer.done() ||
+		dist > maxdistance ||
+		Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+		ret = Step::Status::FINISHED_SUCCESS ;
+	
     if (ret == Step::Status::FINISHED_SUCCESS) 
     {
-		Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
 		distance_travelled = (distances_travelled.l + distances_travelled.r) / 2.0;
 
 		messageLogger &logger = messageLogger::get() ;
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-		logger << "Drive and collect step complete" ;
+		logger << "Drive and collect step complete, elapsed " << info.in.now - mStart ;
 		logger.endMessage() ;
     }
     return ret ;
@@ -1130,10 +1218,12 @@ Toplevel::Goal Drive_and_collect::run(Run_info info,Toplevel::Goal goals){
 		initial_distances = info.status.drive.distances;
 		timeout_timer.set(input_params->getValue("step:drive_and_collect:timeout", 5.0));
 		init = true;
+		mStart = info.in.now ;
 	}
 
 	timeout_timer.update(info.in.now, true);
 	double drive_power = input_params->getValue("step:drive_and_collect:drive_power", 0.4);
+	cout << "drive power for drive and collect " << drive_power << endl ;
 	goals.drive = Drivebase::Goal::absolute(drive_power, drive_power);
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
 	goals.intake = Intake::Goal::in();
@@ -1151,6 +1241,66 @@ bool Drive_and_collect::operator==(Drive_and_collect const& b)const{
     return true;
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+Close_collect_no_cube::Close_collect_no_cube(double len)
+{
+	mInit = false ;
+	mTime = len ;
+}
+
+Step::Status Close_collect_no_cube::done(Next_mode_info info)
+{
+    Step::Status ret = Step::Status::UNFINISHED ;
+	if (timeout_timer.done() || Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+		ret = Step::Status::FINISHED_SUCCESS ;
+	
+    if (ret == Step::Status::FINISHED_SUCCESS) 
+    {
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Close_collect_no_cube step complete"  ;
+		if (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+			logger << " - has cube" ;
+		else
+			logger << " - timed out" ;
+
+		logger << "\n" ;
+		logger << "    Time " << info.in.now - mStart ;
+		logger.endMessage() ;
+    }
+    return ret ;
+	
+}
+
+Toplevel::Goal Close_collect_no_cube::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Close_collect_no_cube::run(Run_info info,Toplevel::Goal goals){
+	if(!mInit) {
+		timeout_timer.set(mTime) ;
+		mInit = true ;
+		mStart = info.in.now ;
+	}
+
+	timeout_timer.update(info.in.now, true);
+    goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+	goals.intake = Intake::Goal::in();
+	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube)
+		goals.grabber = Grabber::Goal::clamp();
+	
+    return goals;
+}
+
+unique_ptr<Step_impl> Close_collect_no_cube::clone()const{
+    return unique_ptr<Step_impl>(new Close_collect_no_cube(*this));
+}
+
+bool Close_collect_no_cube::operator==(Close_collect_no_cube const& b)const{
+    return true;
+}
+
+///////////////////////////////////////////////////////////////////////////
 #ifdef STEP_TEST
 void test_step(Step a){
     PRINT(a);

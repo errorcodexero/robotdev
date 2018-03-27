@@ -125,9 +125,9 @@ public:
 #ifdef DEBUG
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
-		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE_RAW_DATA);
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
-		//logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
+		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE_RAW_DATA);
+		logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_TIMING);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER_TUNING);
@@ -398,23 +398,14 @@ public:
 		}
 		logger.endMessage() ;
 
-		dbl_monitor.logNewMeasurement(std::vector<double>{current[13], current[14], current[15]}) ;
-		dbl_monitor.checkViolation() ;
-		
-		dbr_monitor.logNewMeasurement(std::vector<double>{current[0], current[1], current[2]}) ;
-		dbr_monitor.checkViolation() ;
-		
-		grabber_monitor.logNewMeasurement(std::vector<double>{current[10]}) ;
-		grabber_monitor.checkViolation() ;
-
-		lift_monitor.logNewMeasurement(std::vector<double>{current[3], current[12]}) ;
-		lift_monitor.checkViolation() ;
-
-		lin_monitor.logNewMeasurement(std::vector<double>{current[11]}) ;
-		lin_monitor.checkViolation() ;
-
-		rin_monitor.logNewMeasurement(std::vector<double>{current[4]}) ;
-		rin_monitor.checkViolation() ;
+#ifdef CHECK_MOTORS
+		dbl_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[13], current[14], current[15]}) ;
+		dbr_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[0], current[1], current[2]}) ;
+		grabber_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[10]}) ;
+		lift_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[3], current[12]}) ;
+		lin_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[11]}) ;
+		rin_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[4]}) ;
+#endif
 		
 		return current;
 	}

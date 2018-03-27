@@ -566,7 +566,6 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 		default:
 			nyi
 	}
-
 	return out;
 }
 
