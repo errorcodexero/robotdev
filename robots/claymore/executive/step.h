@@ -5,12 +5,18 @@
 #include "motion_profile.h"
 #include "settable_constant.h"
 #include "robot_constants.h"
+#include <string>
 
 using Inch=double;
 
 struct Step_impl;
 
-class Step{
+class Step
+{
+private:
+	double mStartTime ;
+	std::string mStepName ;
+	
 public:
     enum class Status
 	{
@@ -19,83 +25,61 @@ public:
 		FINISHED_FAILURE
 	};
 
-private:
-    std::unique_ptr<Step_impl> impl;
-	std::vector<Step>* fail_branch;
-
 public:
-    explicit Step(Step_impl const&);
-	explicit Step(Step_impl const&, std::vector<Step>);
-    Step(Step const&);
-	Step(Step const&, std::vector<Step>);
+	Step(const char *name_p)
+	{
+		mStepName = name_p ;
+	}
+	
+	virtual void init(const Robot_inputs &in, Toplevel::Status_detail &status)
+	{
+	}
+			
+    virtual Toplevel::Goal run(Run_info,Toplevel::Goal) = 0 ;
+    virtual Toplevel::Goal run(Run_info) = 0 ;
+    virtual Status done(Next_mode_info) = 0 ;
 
-	std::vector<Step>* get_fail_branch();
-    Toplevel::Goal run(Run_info,Toplevel::Goal);
-    Toplevel::Goal run(Run_info);
-    Status done(Next_mode_info);
-    Step_impl const& get()const;
-    void display(std::ostream&)const;
-    bool operator==(Step const&)const;
-    bool operator<(Step const&)const;
+	virtual void startStep(double time)
+	{
+		mStartTime = time ;
+	}
+	
+	virtual void finishStep(double time)
+	{
+	}
 };
 
 std::ostream& operator<<(std::ostream&,Step const&);
 
-struct Step_impl
-{
-    virtual ~Step_impl();
-
-    virtual Toplevel::Goal run(Run_info,Toplevel::Goal)=0;
-    virtual Toplevel::Goal run(Run_info)=0;
-    virtual Step::Status done(Next_mode_info)=0;//could try to make this const.
-    virtual std::unique_ptr<Step_impl> clone()const=0;
-    virtual void display(std::ostream&)const;
-    virtual bool operator<(Step const&)const=0;
-    virtual bool operator==(Step const&)const=0;
-};
-
-template<typename T>
-struct Step_impl_inner:Step_impl
-{
-    std::unique_ptr<Step_impl> clone()const
-	{
-		T const& t=dynamic_cast<T const&>(*this);
-		return std::unique_ptr<Step_impl>(new T(t));
-    }
-	
-    void display(std::ostream& o)const
-	{
-		o<<type(*(T*)this);
-    }
-
-    bool operator==(Step const& a)const
-	{
-		T const& t=dynamic_cast<T const&>(a.get());
-		return operator==(t);
-    }
-
-    virtual bool operator==(T const&)const=0;
-
-    bool operator<(Step const&)const
-	{
-		nyi ;
-	}
-};
-
-
 //Run two steps simultaneously
-class Combo: public Step_impl_inner<Combo>{
-    Step step_a;
-    Step step_b;
+class Combo: public Step
+{
+    Step &step_a;
+    Step &step_b;
+	
 public:
-    explicit Combo(Step,Step);//the second step will overwrite goals from the first one if they both modify the same parts of the robot
+    explicit Combo(Step &, Step &);
+	explicit Combo(const char *name_p, Step &, Step &);
 
+	virtual void init(const Robot_inputs &in, Toplevel::Status_detail &status);
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
-    void display(std::ostream& o)const;
-    std::unique_ptr<Step_impl> clone()const;
-    bool operator==(Combo const&)const;
+
+	virtual void startStep(double time)
+	{
+		step_a.startStep(time) ;
+		step_b.startStep(time) ;
+		Step::startStep(time) ;
+	}
+	
+	virtual void finishStep(double time)
+	{
+		step_a.finishStep(time) ;
+		step_b.finishStep(time) ;
+		Step::finishStep(time) ;
+	}
+	
 };
 
 

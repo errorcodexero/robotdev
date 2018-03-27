@@ -1,6 +1,6 @@
 #include "calibratelifter.h"
 
-Calibrate_lifter::Calibrate_lifter()
+Calibrate_lifter::Calibrate_lifter() : Step("calibratelifter")
 {
 	mInited = false ;
 }
@@ -28,14 +28,3 @@ Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals)
     goals.lifter = Lifter::Goal::calibrate();
     return goals;
 }
-
-std::unique_ptr<Step_impl> Calibrate_lifter::clone()const
-{
-    return std::unique_ptr<Step_impl>(new Calibrate_lifter(*this));
-}
-
-bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const
-{
-    return true;
-}
-

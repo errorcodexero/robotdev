@@ -1,7 +1,7 @@
 #include "calibrategrabber.h"
 
 
-Calibrate_grabber::Calibrate_grabber()
+Calibrate_grabber::Calibrate_grabber() : Step("calibrategrabber")
 {
     mInited = false ;
 }
@@ -33,14 +33,4 @@ Toplevel::Goal Calibrate_grabber::run(Run_info info,Toplevel::Goal goals)
     }
     goals.grabber = Grabber::Goal::calibrate();
     return goals;
-}
-
-std::unique_ptr<Step_impl> Calibrate_grabber::clone()const
-{
-    return std::unique_ptr<Step_impl>(new Calibrate_grabber(*this));
-}
-
-bool Calibrate_grabber::operator==(Calibrate_grabber const& b)const
-{
-    return true;
 }

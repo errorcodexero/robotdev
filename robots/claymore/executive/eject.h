@@ -1,8 +1,9 @@
 #include "step.h"
 
 //Eject a cube
-struct Eject: Step_impl_inner<Eject>
+class Eject: public Step
 {
+private:
 	enum class EjectState
 	{
 		//
@@ -32,13 +33,13 @@ struct Eject: Step_impl_inner<Eject>
 	bool mPowerApplied ;
 	double mPower ;
 
+public:
+
     explicit Eject();
 	explicit Eject(double power) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone()const;
-    bool operator==(Eject const&)const;
 };
 

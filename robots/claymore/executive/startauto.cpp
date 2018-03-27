@@ -5,7 +5,7 @@ double autoStartTime ;
 //
 // Start auto, mark the start of the auto program
 //
-StartAuto::StartAuto(const char *name_p)
+StartAuto::StartAuto(const char *name_p) : Step("startauto")
 {
 	mProgramName = name_p ;
 	mInited = false ;
@@ -32,12 +32,4 @@ Toplevel::Goal StartAuto::run(Run_info info,Toplevel::Goal goals)
 		mInited = true ;
 	}
     return goals;
-}
-
-std::unique_ptr<Step_impl> StartAuto::clone()const{
-    return std::unique_ptr<Step_impl>(new StartAuto(*this));
-}
-
-bool StartAuto::operator==(StartAuto const& b)const{
-    return true ;
 }

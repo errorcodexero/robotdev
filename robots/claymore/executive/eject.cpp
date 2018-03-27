@@ -1,12 +1,12 @@
 #include "eject.h"
 
-Eject::Eject()
+Eject::Eject() : Step("eject")
 {
 	mState = EjectState::Start ;
 	mPowerApplied = false ;
 }
 
-Eject::Eject(double power)
+Eject::Eject(double power) : Step("eject(power)")
 {
 	mPower = power ;
 	mPowerApplied = true ;
@@ -118,14 +118,3 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
     
     return goals;
 }
-
-std::unique_ptr<Step_impl> Eject::clone()const
-{
-    return std::unique_ptr<Step_impl>(new Eject(*this));
-}
-
-bool Eject::operator==(Eject const& b)const
-{
-    return eject_timer == b.eject_timer;
-}
-

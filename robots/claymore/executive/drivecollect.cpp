@@ -7,14 +7,23 @@
 
 double Drive_and_collect::distance_travelled;
 
-Drive_and_collect::Drive_and_collect():init(false)
+Drive_and_collect::Drive_and_collect() : Step("drivecollect")
 {
 	maxdistance = std::numeric_limits<double>::max() ;
 }
 
-Drive_and_collect::Drive_and_collect(double maxdist):init(false)
+Drive_and_collect::Drive_and_collect(double maxdist) : Step("drivecollect(dist)")
 {
 	maxdistance = maxdist ;
+}
+
+void Drive_and_collect::init(const Robot_inputs &in, Toplevel::Status_detail &status)
+{
+	paramsInput* input_params = paramsInput::get();
+
+	initial_distances = status.drive.distances;
+	timeout_timer.set(input_params->getValue("step:drive_and_collect:timeout", 5.0));
+	mStart = in.now ;
 }
 
 Step::Status Drive_and_collect::done(Next_mode_info info)
@@ -50,34 +59,15 @@ Toplevel::Goal Drive_and_collect::run(Run_info info)
 Toplevel::Goal Drive_and_collect::run(Run_info info,Toplevel::Goal goals)
 {
 	paramsInput* input_params = paramsInput::get();
-
-	if(!init)
-	{
-		initial_distances = info.status.drive.distances;
-		timeout_timer.set(input_params->getValue("step:drive_and_collect:timeout", 5.0));
-		init = true;
-		mStart = info.in.now ;
-	}
-
+	
 	timeout_timer.update(info.in.now, true);
 	double drive_power = input_params->getValue("step:drive_and_collect:drive_power", 0.4);
 	goals.drive = Drivebase::Goal::absolute(drive_power, drive_power);
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
 	goals.intake = Intake::Goal::in();
+	
 	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube)
-	{
 		goals.grabber = Grabber::Goal::clamp();
-	}
+
     return goals;
 }
-
-std::unique_ptr<Step_impl> Drive_and_collect::clone()const
-{
-    return std::unique_ptr<Step_impl>(new Drive_and_collect(*this));
-}
-
-bool Drive_and_collect::operator==(Drive_and_collect const& b)const
-{
-    return true;
-}
-

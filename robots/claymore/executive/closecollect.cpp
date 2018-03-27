@@ -1,6 +1,6 @@
 #include "closecollect.h"
 
-Close_collect::Close_collect(double len)
+Close_collect::Close_collect(double len) : Step("closecollect")
 {
 	mInit = false ;
 	mTime = len ;
@@ -48,12 +48,4 @@ Toplevel::Goal Close_collect::run(Run_info info,Toplevel::Goal goals){
 		goals.grabber = Grabber::Goal::clamp();
 	
     return goals;
-}
-
-std::unique_ptr<Step_impl> Close_collect::clone()const{
-    return std::unique_ptr<Step_impl>(new Close_collect(*this));
-}
-
-bool Close_collect::operator==(Close_collect const& b)const{
-    return true;
 }

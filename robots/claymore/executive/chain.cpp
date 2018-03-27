@@ -3,42 +3,42 @@
 
 using namespace std;
 
-Chain::Chain(vector<Step>& s, Executive n):current_step(0),steps(&s),next(n){}
-//Chain::Chain(Step& s, Executive n):Chain(vector<Step>{s},n){}
+Chain::Chain(vector<Step>& s, Executive n):current_step(0),steps(&s),next(n)
+{
+}
 
-Toplevel::Goal Chain::run(Run_info info){
+Toplevel::Goal Chain::run(Run_info info)
+{
 	if(current_step>=steps->size()) return Toplevel::Goal();
 	return (*steps)[current_step].run(info);
 }
 
-Executive Chain::next_mode(Next_mode_info a){
-	if(!a.autonomous) return Executive{Teleop()};
+Executive Chain::next_mode(Next_mode_info a)
+{
+	if(!a.autonomous)
+		return Executive{Teleop()};
 
-	if(current_step >= steps->size()) return next;
-	switch((*steps)[current_step].done(a)){
+	if(current_step >= steps->size())
+		return next;
+
+	Step &current = (*steps)[current_step] ;
+	switch(current.done(a))
+	{
 		case Step::Status::FINISHED_SUCCESS:
+			current.finishStep(a.in.now) ;
 			current_step++;
-			if(current_step==steps->size()) return next;
+			if(current_step==steps->size())
+				return next;
+
+			//
+			// Initialize the next step
+			//
+			(*steps)[current_step].startStep(a.in.now) ;
+			(*steps)[current_step].init(a.in, a.status) ;
 			return Executive{*this};
 		case Step::Status::FINISHED_FAILURE:
-		{
-			messageLogger &logger = messageLogger::get();
-			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS);
-			logger << "Step " << current_step << " failed, switching to fail branch";
-			logger.endMessage();
-
-			vector<Step>* fail_branch = (*steps)[current_step].get_fail_branch();
-			if(!fail_branch) {
-				logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS);
-				logger << "No failure branch given, staying on original branch";
-				logger.endMessage();
-				return Executive{*this};
-			}
-
-			steps = fail_branch;
-			current_step = 0;
-			return Executive{*this};
-		}
+			return Executive{Teleop()} ;
+			break ;
 		case Step::Status::UNFINISHED:
 			return Executive{*this};
 		default:

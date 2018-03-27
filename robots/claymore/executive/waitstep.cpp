@@ -4,7 +4,8 @@
 // Wait: Wait for a specified amount of time
 //
 
-Wait::Wait(Time wait_time){
+Wait::Wait(Time wait_time) : Step("wait")
+{
     wait_timer.set(wait_time);
 }
 
@@ -29,12 +30,3 @@ Toplevel::Goal Wait::run(Run_info info,Toplevel::Goal goals){
     wait_timer.update(info.in.now,info.in.robot_mode.enabled);
     return goals;
 }
-
-std::unique_ptr<Step_impl> Wait::clone()const{
-    return std::unique_ptr<Step_impl>(new Wait(*this));
-}
-
-bool Wait::operator==(Wait const& b)const{
-    return wait_timer == b.wait_timer;
-}
-

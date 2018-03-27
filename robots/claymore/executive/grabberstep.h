@@ -2,21 +2,23 @@
 #include <string>
 
 //Move the grabber to a sepecified angle preset
-struct GrabberStep: Step_impl_inner<GrabberStep>{
-
+class GrabberStep: Step
+{
+private:
 	bool anglegiven ;
 	double angle ;
 	std::string param ;
     GrabberController::Preset preset;
-    bool init;
 
+public:
     explicit GrabberStep(GrabberController::Preset p);
     explicit GrabberStep(double a);
 	explicit GrabberStep(const char *param_p, double a) ;
 
+	void init(const Robot_inputs &in, Toplevel::Status_detail &status) ;
+
+
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone()const;
-    bool operator==(GrabberStep const&)const;
 };

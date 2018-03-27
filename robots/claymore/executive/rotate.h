@@ -1,18 +1,20 @@
 #include "step.h"
 
 //Rotate the robot by a specified angle
-struct Rotate: Step_impl_inner<Rotate>{
+class Rotate: public Step
+{
+private:
     double target_angle;
-    bool init;
 	double tolerance ;
 	bool tolprovided ;
+
+public:
 
     explicit Rotate(double angle);
 	explicit Rotate(double angle, double tolerance) ;
 	
+	void init(const Robot_inputs &in, Toplevel::Status_detail &status) ;
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone()const;
-    bool operator==(Rotate const&)const;
 };

@@ -1,8 +1,9 @@
 #include "step.h"
 
 //Drive straight a specified distance
-class Drive:public Step_impl_inner<Drive>{
-protected:
+class Drive:public Step
+{
+private:
     Inch mTargetDistance;
 	Inch mTargetAngleOffset;
 	Inch mReturnOffset;
@@ -23,7 +24,5 @@ public:
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone()const;
-    bool operator==(Drive const&)const;
 };
 

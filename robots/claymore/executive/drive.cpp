@@ -6,7 +6,7 @@
 // Drive: Drive straight a specified distance
 //
 
-Drive::Drive(Inch dist, bool end_on_stall)
+Drive::Drive(Inch dist, bool end_on_stall) : Step("drive(dist)")
 {
 	mTargetDistance = dist ;
 	mEndOnStall = end_on_stall ;
@@ -15,7 +15,7 @@ Drive::Drive(Inch dist, bool end_on_stall)
 	mInited = false ;
 }
 
-Drive::Drive(Inch dist, double curve_start, double angle_offset, bool end_on_stall)
+Drive::Drive(Inch dist, double curve_start, double angle_offset, bool end_on_stall) : Step("drive(dist, curve, angle)")
 {
 	mTargetDistance = dist ;
 	mTargetAngleOffset = angle_offset;
@@ -26,7 +26,7 @@ Drive::Drive(Inch dist, double curve_start, double angle_offset, bool end_on_sta
 	mReturnFromCollect = false;
 }
 
-Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
+Drive::Drive(const char *param_p, Inch dist, bool end_on_stall) : Step("drive(param)")
 {
 	mParamName = param_p ;
 	mTargetDistance = dist ;
@@ -36,7 +36,7 @@ Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
 	mInited = false ;
 }
 
-Drive::Drive(const std::string &param, Inch dist, bool end_on_stall)
+Drive::Drive(const std::string &param, Inch dist, bool end_on_stall) : Step("drive(param)")
 {
 	mParamName = param ;
 	mTargetDistance = dist ;
@@ -46,7 +46,7 @@ Drive::Drive(const std::string &param, Inch dist, bool end_on_stall)
 	mInited = false ;
 }
 
-Drive::Drive(bool, Inch return_offset)
+Drive::Drive(bool, Inch return_offset) : Step("drive(return)")
 {
 	mReturnOffset = return_offset;
 	mCurve = false;
@@ -101,14 +101,3 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals)
     goals.drive = Drivebase::Goal::drive_straight();
     return goals;
 }
-
-std::unique_ptr<Step_impl> Drive::clone()const
-{
-    return std::unique_ptr<Step_impl>(new Drive(*this));
-}
-
-bool Drive::operator==(Drive const& a)const
-{
-    return mTargetDistance == a.mTargetDistance && mEndOnStall == a.mEndOnStall && mInited == a.mInited ;
-}
-

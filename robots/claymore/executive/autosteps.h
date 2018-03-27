@@ -17,32 +17,33 @@
 // year with the new architecture
 //
 
-static Step endAuto = Step(EndAuto()) ;
-static Step calibrateLifter = Step(Calibrate_lifter()) ;
-static Step calibrateGrabber = Step(Calibrate_grabber()) ;
-static Step rotate90pos = Step(Rotate(90.0)) ;
-static Step rotate90neg = Step(Rotate(-90.0)) ;
-static Step startLifterFloor = Step(LifterStep(LifterController::Preset::FLOOR, true)) ;
-static Step startLifterExch = Step(LifterStep(LifterController::Preset::EXCHANGE, true)) ;
-static Step startLifterSwitch = Step(LifterStep(LifterController::Preset::SWITCH, true)) ;
-static Step startLifterScale = Step(LifterStep(LifterController::Preset::SCALE, true)) ;
-static Step lifterToFloor = Step(LifterStep(LifterController::Preset::FLOOR)) ;
-static Step lifterToExch = Step(LifterStep(LifterController::Preset::EXCHANGE)) ;
-static Step lifterToSwitch = Step(LifterStep(LifterController::Preset::SWITCH)) ;
-static Step lifterToScale = Step(LifterStep(LifterController::Preset::SCALE)) ;
-static Step eject = Step(Eject()) ;
-static Step driveAndCollect = Step(Drive_and_collect());
-static Step driveBackFromCollect = Step(Drive(true));
+static EndAuto endAuto ;
+static Calibrate_lifter calibrateLifter ;
+static Calibrate_grabber calibrateGrabber ;
+static Rotate rotate90pos(90.0) ;
+static Rotate rotate90neg(-90) ;
+static LifterStep startLifterFloor(LifterController::Preset::FLOOR, true) ;
+static LifterStep startLifterExch(LifterController::Preset::EXCHANGE, true) ;
+static LifterStep startLifterSwitch(LifterController::Preset::SWITCH, true) ;
+static LifterStep startLifterScale(LifterController::Preset::SCALE, true) ;
+static LifterStep lifterToFloor(LifterController::Preset::FLOOR) ;
+static LifterStep lifterToExch(LifterController::Preset::EXCHANGE) ;
+static LifterStep lifterToSwitch(LifterController::Preset::SWITCH) ;
+static LifterStep lifterToScale(LifterController::Preset::SCALE) ;
+static Eject eject ;
+static Drive_and_collect driveAndCollect ;
+static Drive driveBackFromCollect(true) ;
 
-static Step lifterToExchFail = Step(lifterToExch, {
-	Step(Drive("auto:c_switch_r:segment1", 105, true)),
-	endAuto
-});
+#define AUTO_PREAMBLE(name)					\
+	calibrateLifter,						\
+	calibrateGrabber,						\
+	startLifterExch
 
-#define AUTO_PREAMBLE(name)												\
-	Step(StartAuto(name)),												\
-	calibrateLifter,													\
-	calibrateGrabber,													\
+
+#define AUTO_PREAMBLE_x(name)					\
+	StartAuto(name),						\
+	calibrateLifter,						\
+	calibrateGrabber,						\
 	startLifterExch
 
 		

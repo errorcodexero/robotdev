@@ -1,29 +1,42 @@
 #include "lifterstep.h"
 
 
-LifterStep::LifterStep(LifterController::Preset pre, bool back)
+LifterStep::LifterStep(LifterController::Preset pre, bool back) : Step("lifterstep(preset)")
 {
-	init = false ;
 	preset = pre ;
 	heightgiven = false ;
 	background = back ;
 }
 
-LifterStep::LifterStep(double h, bool back)
+LifterStep::LifterStep(double h, bool back) : Step("lifterstep(height)")
 {
-	init = false ;
 	heightgiven = true ;
 	height = h ;
 	background = back ;
 }
 
-LifterStep::LifterStep(const char *name_p, double def, bool back)
+LifterStep::LifterStep(const char *name_p, double def, bool back) : Step("lifterstep(param)")
 {
-	init = false ;
 	height = def ;
 	param = name_p ;
 	background = back ;
 	heightgiven = false ;
+}
+
+void LifterStep::init(const Robot_inputs &in, Toplevel::Status_detail &status)
+{
+	if (heightgiven)
+	{
+		Lifter::lifter_controller.moveToHeight(height, in.now, background);
+	}
+	else if (param.length() > 0)
+	{
+		paramsInput *params_p = paramsInput::get() ;
+		height = params_p->getValue(param, height) ;
+		Lifter::lifter_controller.moveToHeight(height, in.now, background);
+	}
+	else
+		Lifter::lifter_controller.moveToHeight(preset, in.now, background);
 }
 
 Step::Status LifterStep::done(Next_mode_info info)
@@ -78,38 +91,5 @@ Toplevel::Goal LifterStep::run(Run_info info)
 
 Toplevel::Goal LifterStep::run(Run_info info,Toplevel::Goal goals)
 {
-    if(!init)
-	{
-		if (heightgiven)
-		{
-			Lifter::lifter_controller.moveToHeight(height, info.in.now, background);
-		}
-		else if (param.length() > 0)
-		{
-			paramsInput *params_p = paramsInput::get() ;
-			height = params_p->getValue(param, height) ;
-			Lifter::lifter_controller.moveToHeight(height, info.in.now, background);
-		}
-		else
-			Lifter::lifter_controller.moveToHeight(preset, info.in.now, background);
-		
-		init = false;
-    }
-	
     return goals;
-}
-
-std::unique_ptr<Step_impl> LifterStep::clone()const
-{
-    return std::unique_ptr<Step_impl>(new LifterStep(*this));
-}
-
-bool LifterStep::operator==(LifterStep const& b)const
-{
-	//
-	// Not sure why we have these, going to remove operators that are not useful if
-	// possible
-	//
-	assert(0) ;
-	return true ;
 }

@@ -2,26 +2,32 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-Rotate_back::Rotate_back()
+Rotate_back::Rotate_back() : Step("rotate_back")
 {
-	init = false ;
 	mOffset = 0 ;
 	mTolSpecified = false ;
 }
 
-Rotate_back::Rotate_back(double offset)
+Rotate_back::Rotate_back(double offset) : Step("rotate_back(offset)")
 {
-	init = false ;
 	mOffset = offset ;
 	mTolSpecified = false ;
 }
 
-Rotate_back::Rotate_back(double offset, double tolval)
+Rotate_back::Rotate_back(double offset, double tolval) : Step("rotate_back(offset, tolerance)")
 {
-	init = false ;
 	mOffset = offset ;
 	mTolSpecified = true ;
 	mTolerance = tolval ;
+}
+
+void Rotate_back::init(const Robot_inputs &in, Toplevel::Status_detail &status)
+{
+	double target = -Drivebase::drivebase_controller.getLastAngle() ;
+	if (mTolSpecified)
+		Drivebase::drivebase_controller.initAngle(status.drive.angle + target + mOffset, in.now, target > 0, mTolerance) ;
+	else
+		Drivebase::drivebase_controller.initAngle(status.drive.angle + target + mOffset, in.now, target > 0) ;
 }
 
 Toplevel::Goal Rotate_back::run(Run_info info)
@@ -31,15 +37,6 @@ Toplevel::Goal Rotate_back::run(Run_info info)
 
 Toplevel::Goal Rotate_back::run(Run_info info,Toplevel::Goal goals)
 {
-    if(!init) {
-		double target = -Drivebase::drivebase_controller.getLastAngle() ;
-		if (mTolSpecified)
-			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target + mOffset, info.in.now, target > 0, mTolerance) ;
-		else
-			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target + mOffset, info.in.now, target > 0) ;
-		init = true;
-    }
-
     goals.drive = Drivebase::Goal::rotate();
     return goals;
 }
@@ -57,14 +54,3 @@ Step::Status Rotate_back::done(Next_mode_info info)
 
     return ret ;
 }
-
-std::unique_ptr<Step_impl> Rotate_back::clone()const
-{
-    return std::unique_ptr<Step_impl>(new Rotate_back(*this));
-}
-
-bool Rotate_back::operator==(Rotate_back const& b)const
-{
-    return true ;
-}
-
