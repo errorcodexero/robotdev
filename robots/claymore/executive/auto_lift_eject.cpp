@@ -15,7 +15,7 @@ static vector<Step> steps =
     Step(StartAuto("lift_eject")),
     calibrateLifter,
     calibrateGrabber,
-    Step(Lifter_to_height(89.3)),
+    Step(LifterStep(89.3)),
     eject,
     lifterToExch,
     endAuto,

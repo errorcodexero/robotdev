@@ -38,6 +38,7 @@ endif
 #
 
 DEBUG_AUTOMODES = \
+	auto_calibonly.cpp\
 	auto_rotate_pos90.cpp\
 	auto_rotate_neg90.cpp\
 	auto_rotate_both.cpp\
@@ -66,16 +67,33 @@ COMPETITION_AUTOMODES = \
 	auto_l_two_cube.cpp\
 	auto_r_two_cube.cpp
 
+STEPS = \
+	step.cpp\
+	waitstep.cpp\
+	drive.cpp\
+	startauto.cpp\
+	endauto.cpp\
+	rotate.cpp\
+	rotatefinish.cpp\
+	rotateback.cpp\
+	lifterstep.cpp\
+	grabberstep.cpp\
+	calibratelifter.cpp\
+	calibrategrabber.cpp\
+	eject.cpp\
+	collect.cpp\
+	drivecollect.cpp\
+	closecollect.cpp
+
 
 SRC = \
 	autonomous.cpp\
 	chain.cpp\
 	executive.cpp\
-	step.cpp\
 	teleop.cpp\
 	test.cpp\
 	timed.cpp\
-	auto_calibonly.cpp\
+	$(STEPS)\
 	$(DEBUG_AUTOMODES)\
 	$(COMPETITION_AUTOMODES)
 

@@ -14,11 +14,11 @@ static vector<Step> steps
 {
     Step(StartAuto("lifter_move")),
     calibrateLifter,
-    Step(Lifter_to_height(24.0)),
+    Step(LifterStep(24.0)),
     Step(Wait(2.0)),
-    Step(Lifter_to_height(43.5)),
+    Step(LifterStep(43.5)),
     Step(Wait(2.0)),
-    Step(Lifter_to_height(24.0)),
+    Step(LifterStep(24.0)),
     endAuto,
 };
 

@@ -13,15 +13,42 @@ using namespace std ;
 static vector<Step> steps =
 {
     AUTO_PREAMBLE("left_scale_left"),
-    startLifterExch,
-    Step(Drive("auto:l_scale_l:segment1", 306, false)),
-    rotate90pos,
-	Step(Drive("auto:l_scale_l:segment2", -6, false)),
-    Step(Lifter_to_height(85.6)),
+	
+#ifdef CONSERVATIVE
+	Step(Drive(290, false)),
+	Step(Rotate(90, 8.0)),
+    Step(LifterStep(85.0)),
+    eject,
+	lifterToFloor,
+    Step(Rotate_finish(90, 67, 3.0)),
+	Step(Drive_and_collect(114.0)),
+	Step(Close_collect(1.0)),
+	Step(Drive(-6.0)),
+	Step(Close_collect(0.5)),
+	lifterToExch,
+	Step(Drive(true, -30)),
+	Step(Rotate_back(0.0, -10.0)),
+	lifterToScale,
     eject,
 	lifterToExch,
-	Step(Rotate(45.0)),
-    //Step(Drive("auto:l_scale_l:segment3", 36, false)),
+#else
+	Step(Drive(244.0, 100.0, 140.0, false)),
+    Step(LifterStep(85.0)),
+	Step(Eject(0.7)),
+	lifterToFloor,
+	Step(Rotate(106)),
+	Step(Drive_and_collect(57.0)),
+	Step(Close_collect(1.0)),
+	Step(Drive(-6.0)),
+	Step(Close_collect(0.5)),
+	Step(LifterStep(85.0, true)),
+	Step(Drive(true, -6.0)),
+	Step(Rotate_back(30.0, 10.0)),
+    Step(LifterStep(85.0)),
+	eject,
+	lifterToExch,
+#endif
+
 	AUTO_POSTAMBLE,
 } ;
 
