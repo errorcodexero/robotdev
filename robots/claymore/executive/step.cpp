@@ -23,8 +23,6 @@ ostream& operator<<(ostream& o,Step const& a){
     a.display(o);
     return o;
 }
-//
-
 
 Step::Step(Step const& a):impl(a.get().clone()),fail_branch(nullptr){}
 Step::Step(Step const& a, vector<Step> fail):Step(a){
@@ -273,8 +271,7 @@ Drive::Drive(Inch dist, double curve_start, double angle_offset, bool end_on_sta
 	mCurveStart = curve_start ;
 	mEndOnStall = end_on_stall;
 	mInited = false;
-
-	cout << "Initing curve " << dist << " " << curve_start << " " << angle_offset << endl ;
+	mReturnFromCollect = false;
 }
 
 Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
@@ -344,9 +341,8 @@ Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals)
 			Drivebase::drivebase_controller.initDistance(avg_status + mTargetDistance, info.status.drive.angle,
 													 info.in.now, mEndOnStall, mTargetDistance >= 0.0);
 		} else {
-			cout << "mTargetDistance " << mTargetDistance << endl ;
-			Drivebase::drivebase_controller.initCurve(avg_status, avg_status + mTargetDistance, info.status.drive.angle,
-													  mCurveStart, mTargetAngleOffset, info.in.now, mEndOnStall, mTargetDistance >= 0.0);
+			Drivebase::drivebase_controller.initCurve(avg_status, avg_status + mTargetDistance, mCurveStart, info.status.drive.angle,
+													  mTargetAngleOffset, info.in.now, mEndOnStall, mTargetDistance >= 0.0);
 		}
 		mInited = true ;
     }
@@ -658,6 +654,21 @@ bool Rotate_back::operator==(Rotate_back const& b)const
 
 Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double time):preset(preset),time(time),init(false)
 {
+	delay = 0.0 ;
+	heightgiven = false ;
+}
+
+Background_lifter_to_preset::Background_lifter_to_preset(double h, double time):time(time),init(false)
+{
+	delay = 0.0 ;
+	heightgiven = true ;
+	height = h ;
+}
+
+Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double del, double time):preset(preset),time(time),init(false)
+{
+	delay = del ;
+	heightgiven = false ;
 }
 
 Step::Status Background_lifter_to_preset::done(Next_mode_info)
@@ -678,7 +689,11 @@ Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goa
 {
     if(!init)
 	{
-		Lifter::lifter_controller.moveToHeight(preset, info.in.now, true);
+		if (heightgiven)
+			Lifter::lifter_controller.moveToHeight(height, info.in.now, true);
+		else
+			Lifter::lifter_controller.moveToHeight(preset, info.in.now, true);
+		
 		init = false;
     }
     return goals;
@@ -987,6 +1002,13 @@ bool Collect::operator==(Collect const& b)const{
 Eject::Eject()
 {
 	mState = EjectState::Start ;
+	mPowerApplied = false ;
+}
+
+Eject::Eject(double power)
+{
+	mPower = power ;
+	mPowerApplied = true ;
 }
 
 Step::Status Eject::done(Next_mode_info info)
@@ -1088,7 +1110,10 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
     // Tell the grabber/intake to eject the cube
     //
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-    goals.intake = Intake::Goal::out();
+	if (mPowerApplied)
+		goals.intake = Intake::Goal::out(mPower);
+	else
+		goals.intake = Intake::Goal::out();
     
     return goals;
 }

@@ -266,7 +266,10 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 
 			double target_angle = mTargetCorrectionAngle;
 			if(mMode == Mode::CURVE && howclose < mCurveStart) {
-				target_angle += mTargetCurveAngleOffset * (mInitialDistance / (mTarget - mInitialDistance));
+				std::cout << "Doing curve, howclose " << howclose << ", mCurveStart " << mCurveStart ;
+				std::cout << std::endl ;
+				double delta = mCurveStart - howclose ;
+				target_angle = mTargetCorrectionAngle + mTargetCurveAngleOffset / mCurveStart * delta ;
 			}
 
 			mLastVoltage = base;

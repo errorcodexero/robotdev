@@ -246,9 +246,14 @@ struct Rotate_back: Step_impl_inner<Rotate_back>{
 struct Background_lifter_to_preset: Step_impl_inner<Background_lifter_to_preset>{
     LifterController::Preset preset;
     double time;
+	double delay ;
+	double height ;
+	bool heightgiven ;
     bool init;
 
     explicit Background_lifter_to_preset(LifterController::Preset, double);
+    explicit Background_lifter_to_preset(double, double);
+    explicit Background_lifter_to_preset(LifterController::Preset, double, double);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -374,8 +379,11 @@ struct Eject: Step_impl_inner<Eject>
 	EjectState mState ;
     Countdown_timer eject_timer;
 	double mStart ;
+	bool mPowerApplied ;
+	double mPower ;
 
     explicit Eject();
+	explicit Eject(double power) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
