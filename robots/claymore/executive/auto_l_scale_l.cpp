@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "closecollect.h"
 #include "chain.h"
 #include <vector>
 
