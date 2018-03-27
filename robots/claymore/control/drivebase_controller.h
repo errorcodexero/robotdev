@@ -34,7 +34,7 @@ public:
     /// \param dist the absolute distance to drive to
     /// \param angle the angle to maintain while driving
     /// \param the time when this was requested
-    void initDistance(double dist, double angle, double time, bool end_on_stall, bool forward);
+    void initDistance(double dist, double angle, double time, bool end_on_stall, bool forward, bool valet = false);
 	
 	void initCurve(double current_dist, double target_dist, double curve_start, double current_angle, double target_angle_offset, double time, bool end_on_stall, bool forward);
 
@@ -70,6 +70,11 @@ public:
     /// \param time the absolute time value
     void idle(double dl, double dr, double angle, double dt, double time);
 
+	void abort()
+	{
+		mAbort = true ;
+	}
+
     /// \brief returns true when the robot has reached its distance or angle goal
     bool done();
 
@@ -103,6 +108,16 @@ private:
 	// If true, we are driving straight forward (increasing distance)
 	//
 	bool mForward ;
+
+	//
+	// If true, abort the drive on the next update
+	//
+	bool mAbort ;
+
+	//
+	// if true, we are in valet mode, you cannot shift into high gear and go fast
+	//
+	bool mValet ;
 
     //
     // The time we started our search for the target distance or angle

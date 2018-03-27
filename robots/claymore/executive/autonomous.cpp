@@ -25,8 +25,6 @@ extern Executive right_scale_right ;
 extern Executive right_scale_left ;
 extern Executive left_scale_right ;
 extern Executive left_scale_left ;
-extern Executive center_switch_right ;
-extern Executive center_switch_left ;
 extern Executive left_switch_left ;
 extern Executive right_switch_right ;
 extern Executive two_cube_left ;
@@ -35,6 +33,13 @@ extern Executive lift_eject ;
 extern Executive collect_test ;
 extern Executive lifter_fail_test ;
 extern Executive curve_test ;
+
+extern Executive center_switch_right_two ;
+extern Executive center_switch_left_two ;
+extern Executive center_switch_right_scale_right ;
+extern Executive center_switch_left_scale_right ;
+extern Executive center_switch_right_scale_left ;
+extern Executive center_switch_left_scale_left ;
 
 const Executive auto_null{Teleop{}};
 
@@ -114,8 +119,21 @@ Executive get_auto_mode(Next_mode_info info)
     case 1:
 		auto_program = cross_line ;
 		break ;
-    case 2: 
-		auto_program = info.in.ds_info.near_switch_left ? center_switch_left : center_switch_right ;
+    case 2:
+		if (info.in.ds_info.near_switch_left)
+		{
+			if (info.in.ds_info.scale_left)
+				auto_program = center_switch_left_scale_left ;
+			else
+				auto_program = center_switch_left_scale_right ;
+		}
+		else
+		{
+			if (info.in.ds_info.scale_left)
+				auto_program = center_switch_right_scale_left ;
+			else
+				auto_program = center_switch_right_scale_right ;
+		}
 		break;
     case 3:
 		if (info.in.ds_info.scale_left)
@@ -155,20 +173,19 @@ Executive get_auto_mode(Next_mode_info info)
 		else
 			auto_program = rotate_pos90;
 		break;
-    case 8:
-		auto_program = rotate_both;
-		break ;
+		
+    case 8: 
+		auto_program = info.in.ds_info.near_switch_left ? center_switch_left_two : center_switch_right_two ;
+		break;
 		
     case 9:
-		auto_program = drive_straight_long;
+		auto_program = info.in.ds_info.scale_left ? left_scale_left : left_scale_right ;
 		break ;
 
 	case 90:
-		auto_program = center_switch_right ;
 		break ;
 		
 	case 91:
-		auto_program = center_switch_left ;
 		break ;
 
 	case 92:
@@ -301,14 +318,12 @@ Executive get_auto_mode(Next_mode_info info)
 		//
 		// Competition auto program, start in center, score on right side of switch
 		//
-		auto_program = center_switch_right ;
 		break ;
 
     case 121:
 		//
 		// Competition auto program, start in center, score on left side of switch
 		//
-		auto_program = center_switch_left ;
 		break ;
 
     case 122:

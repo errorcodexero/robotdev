@@ -19,8 +19,10 @@ std::string DrivebaseController::AngleDName("angle-d") ;
 std::string DrivebaseController::AngleTimeName("angle-time") ;
 #endif
 
-DrivebaseController::DrivebaseController() {
+DrivebaseController::DrivebaseController()
+{
     mMode = Mode::IDLE;
+	mValet = false ;
     mTarget = 0.0;
     mTargetCorrectionAngle = 0.0;
     mDistanceThreshold = 0.0;
@@ -66,8 +68,9 @@ paramsInput* DrivebaseController::getParams() {
     return mInputParams;
 }
 
-void DrivebaseController::initDistance(double distance, double angle, double time, bool end_on_stall, bool forward) {
-
+void DrivebaseController::initDistance(double distance, double angle, double time, bool end_on_stall, bool forward, bool valet)
+{
+	mAbort = false ;
     mMode = Mode::DISTANCE;
     mTarget = distance;
     mTargetCorrectionAngle = angle;
@@ -75,6 +78,8 @@ void DrivebaseController::initDistance(double distance, double angle, double tim
     mHistory.clear();
     mTargetStartTime = time ;
 	mForward = forward ;
+	mStalled = false ;
+	mValet = valet ;
 
     mCurrentCycle = 0 ;
     mLastLeftVoltage = 0.0 ;
@@ -217,12 +222,12 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			double howclose = mTarget - avg_dist ;
 			if (mForward)
 			{
-				if (howclose < mDistanceThreshold)
+				if (howclose < mDistanceThreshold || mAbort)
 					mMode = Mode::IDLE;
 			}
 			else
 			{
-				if (howclose > -mDistanceThreshold)
+				if (howclose > -mDistanceThreshold || mAbort)
 					mMode = Mode::IDLE ;
 			}
 
@@ -292,7 +297,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 					}
 					mHighGear = false;
 				}
-				if(remaining_distance > high_gear_threshold) {
+				if(remaining_distance > high_gear_threshold && !mValet) {
 					if(!mHighGear)
 					{
 						logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);

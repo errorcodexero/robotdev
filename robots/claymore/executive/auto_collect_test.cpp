@@ -17,7 +17,7 @@ static vector<Step> steps =
 	calibrateGrabber,
 	eject,
 	Step(Wait(2.0)),
-	driveAndCollect,
+	Step(Drive_and_collect(48.0)),
 	lifterToExch,
 	driveBackFromCollect,
 	endAuto

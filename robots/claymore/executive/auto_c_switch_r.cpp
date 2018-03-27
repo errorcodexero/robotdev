@@ -10,28 +10,75 @@ using namespace std ;
 // Action: Score on right switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> steps =
+static vector<Step> two_switch_steps =
 {
-    AUTO_PREAMBLE("center_switch_right"),
+    AUTO_PREAMBLE("center_switch_right_two_switch"),
     startLifterSwitch,
     Step(Drive("auto:c_switch_r:segment1", 105, true)),
 	lifterToSwitch,
     eject,
-    Step(Drive("auto:c_switch_r:segment2", -24, true)),
+    Step(Drive("auto:c_switch_r:segment2", -24, false)),
 	lifterToExch,
 	Step(Rotate(-90.0)),
 	lifterToFloor,
-	driveAndCollect,
+	Step(Drive_and_collect(200.0)),
 	lifterToExch,
 	Step(Drive(true, -10)),
 	Step(Rotate(90.0)),
 	startLifterSwitch,
-	Step(Drive("auto:c_switch_r:segment3", 24, true)),
+	Step(Drive("auto:c_switch_r:segment3", 24, false)),
 	lifterToSwitch,
 	eject,
-	Step(Drive("auto_c_switch_r:segment4", -24, true)),
+	Step(Drive("auto_c_switch_r:segment4", -8, true)),
+	lifterToExch,
+	Step(Rotate(-90.0)),
+	lifterToFloor,
+	Step(Drive_and_collect(200.0)),
+	lifterToExch,
 	AUTO_POSTAMBLE,
 } ;
 
-static Chain chain(steps, teleopex) ;
-Executive center_switch_right(chain) ;
+static Chain two_switch_chain(two_switch_steps, teleopex) ;
+Executive center_switch_right_two(two_switch_chain) ;
+
+static vector<Step> scale_right =
+{
+    AUTO_PREAMBLE("center_switch_right_scale_right"),
+    startLifterSwitch,
+    Step(Drive("auto:c_switch_r:segment1", 105, true)),
+	lifterToSwitch,
+    eject,
+    Step(Drive("auto:c_switch_r:segment2", -24, false)),
+	lifterToExch,
+	Step(Rotate(-90.0)),
+	lifterToFloor,
+	Step(Drive_and_collect(200.0)),
+	lifterToExch,
+	Step(Drive(true, 72.0)),
+	Step(Rotate(90.0)),
+	AUTO_POSTAMBLE,
+} ;
+static Chain scale_right_chain(scale_right, teleopex) ;
+Executive center_switch_right_scale_right(scale_right_chain) ;
+
+static vector<Step> scale_left =
+{
+    AUTO_PREAMBLE("center_switch_right_scale_left"),
+    startLifterSwitch,
+    Step(Drive("auto:c_switch_r:segment1", 105, true)),
+	lifterToSwitch,
+    eject,
+    Step(Drive("auto:c_switch_r:segment2", -24, false)),
+	lifterToExch,
+	Step(Rotate(-90.0)),
+	lifterToFloor,
+	Step(Drive_and_collect(200.0)),
+	lifterToExch,
+	Step(Drive(true, -160)),
+	Step(Rotate(90.0)),
+	AUTO_POSTAMBLE,
+} ;
+
+static Chain scale_left_chain(scale_left, teleopex) ;
+Executive center_switch_right_scale_left(scale_left_chain) ;
+

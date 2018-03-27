@@ -1173,11 +1173,6 @@ bool Drop_grabber::operator==(Drop_grabber const& b)const{
 
 double Drive_and_collect::distance_travelled;
 
-Drive_and_collect::Drive_and_collect():init(false)
-{
-	maxdistance = std::numeric_limits<double>::max() ;
-}
-
 Drive_and_collect::Drive_and_collect(double maxdist):init(false)
 {
 	maxdistance = maxdist ;
@@ -1185,13 +1180,11 @@ Drive_and_collect::Drive_and_collect(double maxdist):init(false)
 
 Step::Status Drive_and_collect::done(Next_mode_info info){
 	Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
-	double dist = (distances_travelled.l + distances_travelled.r) / 2.0;
 
     Step::Status ret = Step::Status::UNFINISHED ;
 
-	if (timeout_timer.done() ||
-		dist > maxdistance ||
-		Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+    bool distdone =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ;
+	if (distdone || Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
 		ret = Step::Status::FINISHED_SUCCESS ;
 	
     if (ret == Step::Status::FINISHED_SUCCESS) 
@@ -1212,24 +1205,22 @@ Toplevel::Goal Drive_and_collect::run(Run_info info){
 }
 
 Toplevel::Goal Drive_and_collect::run(Run_info info,Toplevel::Goal goals){
-	paramsInput* input_params = paramsInput::get();
 
 	if(!init) {
-		initial_distances = info.status.drive.distances;
-		timeout_timer.set(input_params->getValue("step:drive_and_collect:timeout", 5.0));
-		init = true;
 		mStart = info.in.now ;
+		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+		Drivebase::drivebase_controller.initDistance(avg_status + maxdistance, info.status.drive.angle,
+													 info.in.now, false, true, true) ;
+		initial_distances = info.status.drive.distances;
+		init = true;
 	}
 
-	timeout_timer.update(info.in.now, true);
-	double drive_power = input_params->getValue("step:drive_and_collect:drive_power", 0.4);
-	cout << "drive power for drive and collect " << drive_power << endl ;
-	goals.drive = Drivebase::Goal::absolute(drive_power, drive_power);
+    goals.drive = Drivebase::Goal::drive_straight();
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
 	goals.intake = Intake::Goal::in();
-	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube) {
+	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube)
 		goals.grabber = Grabber::Goal::clamp();
-	}
+	
     return goals;
 }
 
