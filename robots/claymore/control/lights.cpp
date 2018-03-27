@@ -13,9 +13,13 @@ struct OI_light_addresses{
 	static const unsigned WINGS_DEPLOYED = 3; 
 	static const unsigned ENABLED = 4;
 	
+	static const unsigned CUBE_COLLECTED_SIGNAL = 5;
+	
+	/*
 	static const unsigned LIFTER_STATUS_BINARY_A = 5;
 	static const unsigned LIFTER_STATUS_BINARY_B = 6;
 	static const unsigned LIFTER_STATUS_BINARY_C = 7;
+	*/
 };
 
 Lights::Goal::Goal(
@@ -312,6 +316,8 @@ Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.blinky_light_info = r.i2c.data;
 	
+	out.has_cube = r.driver_station.digital[OI_light_addresses::CUBE_COLLECTED_SIGNAL];
+	
 	/*	
 	out.collector_open = r.driver_station.digital[OI_light_addresses::COLLECTOR_OPEN];
 	out.collector_closed = r.driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED];
@@ -328,6 +334,9 @@ Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.i2c.data = out.blinky_light_info;
+	
+	r.driver_station.digital[OI_light_addresses::CUBE_COLLECTED_SIGNAL] = out.has_cube;;
+	
 	/*
 	r.driver_station.digital[OI_light_addresses::COLLECTOR_OPEN] = out.collector_open;
 	r.driver_station.digital[OI_light_addresses::COLLECTOR_CLOSED] = out.collector_closed;
