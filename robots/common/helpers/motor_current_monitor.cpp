@@ -11,6 +11,7 @@
 
 MotorCurrentMonitor::MotorCurrentMonitor(unsigned int n_motors)
 {
+	name_ = "Unnamed";
     assert(n_motors != UNSPECIFIED);
     n_motors_ = n_motors;
     max_current_ = UNSPECIFIED;
@@ -18,6 +19,18 @@ MotorCurrentMonitor::MotorCurrentMonitor(unsigned int n_motors)
     variance_threshold_ = 0.20; // Default to 20% variance
     total_per_motor_.resize(n_motors);
     assert(measurements_.empty());
+}
+
+MotorCurrentMonitor::MotorCurrentMonitor(unsigned int n_motors, std::string name)
+{
+	name_ = name;
+	assert(n_motors != UNSPECIFIED);
+	n_motors_ = n_motors;
+	max_current_ = UNSPECIFIED;
+	n_measurements_to_average_ = 40;  // Default to 40 == (2 seconds / 50 ms loop)
+	variance_threshold_ = 0.20; // Default to 20% variance
+	total_per_motor_.resize(n_motors);
+	assert(measurements_.empty());
 }
 
 void MotorCurrentMonitor::setMaxCurrent(double max_current)
@@ -83,6 +96,7 @@ bool MotorCurrentMonitor::checkViolation() const
                         violation_found = true;
                         messageLogger& logger = messageLogger::get();
                         logger.startMessage(messageLogger::messageType::warning);
+						logger << "Motor set: " << name_ << "/";
                         logger << "Motor " << static_cast<int>(i) << " may have failed. ";
                         //logger << std::setprecision(2) << std::fixed;
                         logger << "Current = " << val << ". ";
@@ -97,6 +111,7 @@ bool MotorCurrentMonitor::checkViolation() const
                     violation_found = true;
                     messageLogger& logger = messageLogger::get();
                     logger.startMessage(messageLogger::messageType::warning);
+					logger << "Motor set: " << name_ << "/";
                     logger << "Motor " << static_cast<int>(i) << " may have failed. ";
                     //logger << std::setprecision(2) << std::fixed;
                     logger << "Current = " << val << ". ";
@@ -127,7 +142,7 @@ int main()
     logger.enableType(messageLogger::messageType::debug);
     std::shared_ptr<messageDestStream> dest_p = std::make_shared<messageDestStream>(std::cout);
     logger.addDestination(dest_p);
-    MotorCurrentMonitor m(2);
+    MotorCurrentMonitor m(2, "John Cena");
     m.setMeasurementsToAverage(2);
         
     logger.startMessage(messageLogger::messageType::info);
