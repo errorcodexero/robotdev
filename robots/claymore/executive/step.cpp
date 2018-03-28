@@ -441,16 +441,18 @@ bool Ram::operator==(Ram const& b)const{
 //
 // Rotate: Rotate the robot by a specified angle
 //
-Rotate::Rotate(double a)
+Rotate::Rotate(double a, bool open_grabber)
 {
 	target_angle = a ;
+	opengrabber = open_grabber;
 	init = false ;
 	tolprovided = false ;
 }
 
-Rotate::Rotate(double a, double tol)
+Rotate::Rotate(double a, double tol, bool open_grabber)
 {
 	target_angle = a ;
+	opengrabber = open_grabber;
 	init = false ;
 	tolprovided = true ;
 	tolerance = tol ;
@@ -478,6 +480,8 @@ Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
     }
 
     goals.drive = Drivebase::Goal::rotate();
+	if(opengrabber)
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
     return goals;
 }
 
@@ -1202,7 +1206,6 @@ Toplevel::Goal Drive_and_collect::run(Run_info info){
 }
 
 Toplevel::Goal Drive_and_collect::run(Run_info info,Toplevel::Goal goals){
-
 	if(!init) {
 		mStart = info.in.now ;
 		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;

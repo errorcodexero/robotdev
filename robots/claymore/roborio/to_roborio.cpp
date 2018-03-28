@@ -302,7 +302,7 @@ public:
 		lift_monitor.setMeasurementsToAverage(5) ;
 		val = params_p->getValue("power:lifter:variance", 0.25) ;
 		lift_monitor.setVarianceThreshold(val) ;
-		val = params_p->getValue("power:liter:max", 10.0) ;
+		val = params_p->getValue("power:lifter:max", 10.0) ;
 		lift_monitor.setMaxCurrent(val) ;
 
 		lin_monitor.setMeasurementsToAverage(5) ;

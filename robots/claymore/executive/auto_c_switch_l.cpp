@@ -4,7 +4,7 @@
 
 using namespace std ;
 
-static constexpr double angletol = 8.0 ;
+static constexpr double angletol = 5.0 ;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
@@ -15,6 +15,8 @@ static constexpr double angletol = 8.0 ;
 static vector<Step> two_switch_steps
 {
 	AUTO_PREAMBLE("center_switch_left_two_switch"),
+	lifterToFloor,
+	startLifterExch,
     Step(Drive("auto:c_switch_l:segment1", 52.0, false)),
 	Step(Rotate(-90,angletol)),
 	Step(Drive("auto:c_switch_l:segment2", 100.0, false)),
@@ -25,11 +27,10 @@ static vector<Step> two_switch_steps
     eject,
     Step(Drive("auto:c_switch_l:segment4", -24, false)),
 	lifterToExch,
-	Step(Rotate(90,angletol)),
+	Step(Rotate(90, angletol, true)),
 	lifterToFloor,
 	Step(Drive_and_collect(170.0)),
 	lifterToExch,
-
 	AUTO_POSTAMBLE,
 };
 
@@ -39,6 +40,8 @@ Executive center_switch_left_two(two_switch_chain) ;
 static vector<Step> scale_right
 {
 	AUTO_PREAMBLE("center_switch_left_scale_right"),
+	lifterToFloor,
+	startLifterExch,
     Step(Drive("auto:c_switch_l:segment1", 52.0, false)),
 	Step(Rotate(-90,angletol)),
 	Step(Drive("auto:c_switch_l:segment2", 100.0, false)),
@@ -49,7 +52,7 @@ static vector<Step> scale_right
     eject,
     Step(Drive("auto:c_switch_l:segment4", -24, false)),
 	lifterToExch,
-	Step(Rotate(90,angletol)),
+	Step(Rotate(90, angletol, true)),
 	lifterToFloor,
 	Step(Drive_and_collect(170.0)),
 	lifterToExch,
@@ -64,6 +67,8 @@ Executive center_switch_left_scale_right(scale_right_chain) ;
 static vector<Step> scale_left
 {
 	AUTO_PREAMBLE("center_switch_left_scale_left"),
+	lifterToFloor,
+	startLifterExch,
     Step(Drive("auto:c_switch_l:segment1", 52.0, false)),
 	Step(Rotate(-90,angletol)),
 	Step(Drive("auto:c_switch_l:segment2", 100.0, false)),
@@ -74,7 +79,7 @@ static vector<Step> scale_left
     eject,
     Step(Drive("auto:c_switch_l:segment4", -24, false)),
 	lifterToExch,
-	Step(Rotate(90,angletol)),
+	Step(Rotate(90, angletol, true)),
 	lifterToFloor,
 	Step(Drive_and_collect(170.0)),
 	lifterToExch,

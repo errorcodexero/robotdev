@@ -194,9 +194,10 @@ struct Rotate: Step_impl_inner<Rotate>{
     bool init;
 	double tolerance ;
 	bool tolprovided ;
+	bool opengrabber;
 
-    explicit Rotate(double angle);
-	explicit Rotate(double angle, double tolerance) ;
+    explicit Rotate(double angle, bool open_grabber=false);
+	explicit Rotate(double angle, double tolerance, bool open_grabber=false) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);

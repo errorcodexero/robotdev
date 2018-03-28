@@ -32,8 +32,7 @@ static Step lifterToExchFail = Step(lifterToExch, {
 	Step(StartAuto(name)),												\
 	calibrateLifter,													\
 	calibrateGrabber,													\
-	startLifterExch
-
+	Step(Background_lifter_to_preset(6.0, 0.0))
 		
 #define AUTO_POSTAMBLE \
 	endAuto

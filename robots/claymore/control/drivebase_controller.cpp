@@ -235,10 +235,13 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if (mHistory.size() > mNsamples)
 				mHistory.pop_front();
 
-			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 			if (mHistory.size() == mNsamples && fabs(mHistory.back() - mHistory.front()) < mPidResetThreshold) {
+				logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 				if(!mResetPid) {
 					logger << "DRIVEBASE stalled - switched to alternate distance PID constants\n" ;
+					logger << "Back: " << mHistory.back() << "    Front: " << mHistory.front();
+					logger << "     Difference: " << fabs(mHistory.back() - mHistory.front()) << "\n";
+					logger << "Threshold: " << mPidResetThreshold << "\n";
 
 					double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
 					double i = mInputParams->getValue("drivebase:distance:reset:i", 0.15);
@@ -253,8 +256,8 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 					logger << "drivebase stalled with alternate distance PID constants\n" ;
 					mStalled = true;
 				}
+				logger.endMessage() ;
 			}
-			logger.endMessage() ;
 
 			double base = mDistPid.getOutput(mTarget, avg_dist, dt);
 
@@ -356,6 +359,9 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 				if (!mResetPid) {
 					logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 					logger << "DRIVEBASE stalled - switched to alternate angle PID constants\n" ;
+					logger << "Back: " << mHistory.back() << "    Front: " << mHistory.front();
+					logger << "     Difference: " << fabs(mHistory.back() - mHistory.front()) << "\n";
+					logger << "Threshold: " << mPidResetThreshold << "\n";
 					logger.endMessage() ;
 					
 					double p = mInputParams->getValue("drivebase:angle:reset:p", 0.0);
