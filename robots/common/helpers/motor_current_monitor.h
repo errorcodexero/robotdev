@@ -35,10 +35,7 @@ public:
 	/// \brief Trailing list of last "N" sets of measurements.
 	typedef std::list<Measurement> Measurements;
 
-	/// \brief Constructor must specify the number of motors in that group of lockstep motors.
-	MotorCurrentMonitor(unsigned int n_motors);
-
-	/// \brief Constructor for named motors set
+	/// \brief Constructor must specify the number of motors in that group of lockstep motors and the motor group name.
 	MotorCurrentMonitor(unsigned int n_motors, std::string name);
 
 	/// \brief Specify the max current allowed through a motor. This is checked against the trailing average.

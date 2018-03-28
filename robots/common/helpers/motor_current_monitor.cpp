@@ -9,17 +9,6 @@
 #include "motor_current_monitor.h"
 
 
-MotorCurrentMonitor::MotorCurrentMonitor(unsigned int n_motors)
-{
-	name_ = "Unnamed";
-    assert(n_motors != UNSPECIFIED);
-    n_motors_ = n_motors;
-    max_current_ = UNSPECIFIED;
-    n_measurements_to_average_ = 40;  // Default to 40 == (2 seconds / 50 ms loop)
-    variance_threshold_ = 0.20; // Default to 20% variance
-    total_per_motor_.resize(n_motors);
-    assert(measurements_.empty());
-}
 
 MotorCurrentMonitor::MotorCurrentMonitor(unsigned int n_motors, std::string name)
 {
