@@ -14,7 +14,8 @@ using namespace std ;
 static vector<Step> steps =
 {
     AUTO_PREAMBLE("right_scale_right"),
-#ifdef OLD
+	
+#ifdef SAFE_TWO_CUBE
 	Step(Drive(290, false)),
 	Step(Rotate(-90, 8.0)),
     Step(Lifter_to_height(85.0)),
@@ -37,7 +38,7 @@ static vector<Step> steps =
 	Step(Eject(0.7)),
 	lifterToFloor,
 	Step(Rotate(-106)),
-	Step(Drive_and_collect(57.0)),
+	Step(Drive_and_collect(60.0)),
 	Step(Close_collect_no_cube(1.0)),
 	Step(Drive(-6.0)),
 	Step(Close_collect_no_cube(0.5)),
@@ -53,3 +54,45 @@ static vector<Step> steps =
 
 static Chain chain(steps, teleopex) ;
 Executive right_scale_right(chain) ;
+
+static vector<Step> steps_switch =
+{
+    AUTO_PREAMBLE("right_scale_right_switch_right"),
+	
+#ifdef SAFE_TWO_CUBE
+	Step(Drive(290, false)),
+	Step(Rotate(-90, 8.0)),
+    Step(Lifter_to_height(85.0)),
+    eject,
+	lifterToFloor,
+    Step(Rotate_finish(-90, -67, 3.0)),
+	Step(Drive_and_collect(114.0)),
+	Step(Close_collect_no_cube(1.0)),
+	Step(Drive(-6.0)),
+	Step(Close_collect_no_cube(0.5)),
+	lifterToSwitch,
+	Step(Drive(12.0)),
+    eject,
+	Step(Drive(-6.0)),
+	lifterToExch,
+#else
+	Step(Drive(244.0, 100.0, -140.0, false)),
+    Step(Lifter_to_height(85.0)),
+	Step(Eject(0.7)),
+	lifterToFloor,
+	Step(Rotate(-106)),
+	Step(Drive_and_collect(60.0)),
+	Step(Close_collect_no_cube(1.0)),
+	Step(Drive(-6.0)),
+	Step(Close_collect_no_cube(0.5)),
+	lifterToSwitch,
+	Step(Drive(20.0)),
+    eject,
+	Step(Drive(-6.0)),
+	lifterToExch,
+#endif
+	AUTO_POSTAMBLE,
+} ;
+
+static Chain chain_switch(steps_switch, teleopex) ;
+Executive right_scale_right_switch_right(chain_switch) ;

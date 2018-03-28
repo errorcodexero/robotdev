@@ -474,7 +474,6 @@ Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
 			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0) ;
 		}
 		lastrotate = info.status.drive.angle ;
-		cout << "LastRotate in rotate" << lastrotate << endl ;
 		init = true;
     }
 
@@ -538,9 +537,6 @@ Toplevel::Goal Rotate_finish::run(Run_info info,Toplevel::Goal goals)
 		// double last = Drivebase::drivebase_controller.getLastAngle() ;
 		// double target = prev_angle - last + info.status.drive.angle + target_angle ;
 		double target = lastrotate + target_angle + prev_angle ;
-		cout << "last angle " << lastrotate << endl ;
-		cout << "target angle" << target_angle << endl; 
-		cout << "previous angle " << prev_angle << endl ;
 		
 		if (tolprovided)
 			Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0, tolerance) ;
@@ -1007,6 +1003,7 @@ Eject::Eject()
 
 Eject::Eject(double power)
 {
+	mState = EjectState::Start ;
 	mPower = power ;
 	mPowerApplied = true ;
 }

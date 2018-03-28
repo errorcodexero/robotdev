@@ -34,6 +34,8 @@ extern Executive collect_test ;
 extern Executive lifter_fail_test ;
 extern Executive curve_test ;
 
+extern Executive left_scale_left_switch_left ;
+extern Executive right_scale_right_switch_right ;
 extern Executive center_switch_right_two ;
 extern Executive center_switch_left_two ;
 extern Executive center_switch_right_scale_right ;
@@ -114,28 +116,32 @@ Executive get_auto_mode(Next_mode_info info)
     switch(automode)
     {
     case 0:
-		auto_program = calibrate_only ;
+		//auto_program = calibrate_only ;
+		auto_program = rotate_neg90 ;
 		break;
-    case 1:
-		auto_program = cross_line ;
-		break ;
-    case 2:
-		if (info.in.ds_info.near_switch_left)
-		{
-			if (info.in.ds_info.scale_left)
-				auto_program = center_switch_left_scale_left ;
-			else
-				auto_program = center_switch_left_scale_right ;
-		}
+		
+    case 1:			// Start In Center
+		
+		if (info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = center_switch_left_scale_left ;
+		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
+			auto_program = center_switch_left_scale_right ;
 		else
-		{
-			if (info.in.ds_info.scale_left)
-				auto_program = center_switch_right_scale_left ;
-			else
-				auto_program = center_switch_right_scale_right ;
-		}
+			auto_program = center_switch_right_two ;
+		break ;
+		
+    case 2:			// Start In Center
+		if (info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = center_switch_left_scale_left ;
+		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
+			auto_program = center_switch_left_scale_right ;
+		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = center_switch_right_scale_left ;
+		else
+			auto_program = center_switch_right_scale_right ;
 		break;
-    case 3:
+		
+    case 3:			// Start On Left
 		if (info.in.ds_info.scale_left)
 			auto_program = left_scale_left ;
 		else if (info.in.ds_info.near_switch_left)
@@ -143,7 +149,8 @@ Executive get_auto_mode(Next_mode_info info)
 		else
 			auto_program = cross_line ;
 		break ;
-    case 4:
+		
+    case 4:			// Start On Left
 		if (info.in.ds_info.near_switch_left)
 			auto_program = left_switch_left ;
 		else if (info.in.ds_info.scale_left)
@@ -151,7 +158,8 @@ Executive get_auto_mode(Next_mode_info info)
 		else
 			auto_program = cross_line ;
 		break;
-    case 5: 
+		
+    case 5: 		// Start On Right
 		if (!info.in.ds_info.scale_left)
 			auto_program = right_scale_right ;
 		else if (!info.in.ds_info.near_switch_left)
@@ -159,7 +167,8 @@ Executive get_auto_mode(Next_mode_info info)
 		else
 			auto_program = cross_line ;
 		break ;
-    case 6:
+		
+    case 6:			// Start On Right
 		if (!info.in.ds_info.near_switch_left)
 			auto_program = right_switch_right ;
 		else if (!info.in.ds_info.scale_left)
@@ -167,15 +176,27 @@ Executive get_auto_mode(Next_mode_info info)
 		else
 			auto_program = cross_line ;
 		break;
-    case 7:
-		if (info.in.ds_info.near_switch_left)
-			auto_program = rotate_neg90;
+		
+    case 7:			// Start On Left
+		if (info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = left_scale_left_switch_left ;
+		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
+			auto_program = left_scale_right ;
+		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = left_scale_left ;
 		else
-			auto_program = rotate_pos90;
+			auto_program = left_scale_right ;
 		break;
 		
-    case 8: 
-		auto_program = info.in.ds_info.near_switch_left ? center_switch_left_two : center_switch_right_two ;
+    case 8:			// Start On Right
+		if (info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = right_scale_left ;
+		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
+			auto_program = right_scale_right ;
+		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = left_scale_left ;
+		else
+			auto_program = right_scale_right_switch_right ;
 		break;
 		
     case 9:

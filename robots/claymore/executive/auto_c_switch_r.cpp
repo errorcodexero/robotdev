@@ -30,11 +30,9 @@ static vector<Step> two_switch_steps =
 	lifterToSwitch,
 	eject,
 	Step(Drive("auto_c_switch_r:segment4", -8, true)),
-	lifterToExch,
+	startLifterFloor,
 	Step(Rotate(-90.0)),
 	lifterToFloor,
-	Step(Drive_and_collect(200.0)),
-	lifterToExch,
 	AUTO_POSTAMBLE,
 } ;
 

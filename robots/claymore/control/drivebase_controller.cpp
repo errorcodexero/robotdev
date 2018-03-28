@@ -294,6 +294,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 					{
 						logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 						logger << "SHIFTED INTO LOW GEAR\n";
+						logger.endMessage() ;
 					}
 					mHighGear = false;
 				}
@@ -302,6 +303,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 					{
 						logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 						logger << "SHIFTED INTO HIGH GEAR\n";
+						logger.endMessage() ;
 					}
 					mHighGear = true;
 				}
