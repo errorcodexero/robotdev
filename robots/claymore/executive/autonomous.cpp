@@ -43,6 +43,9 @@ extern Executive center_switch_left_scale_right ;
 extern Executive center_switch_right_scale_left ;
 extern Executive center_switch_left_scale_left ;
 
+extern Executive square_left ;
+extern Executive square_right ;
+
 const Executive auto_null{Teleop{}};
 
 //
@@ -116,8 +119,14 @@ Executive get_auto_mode(Next_mode_info info)
     switch(automode)
     {
     case 0:
-		//auto_program = calibrate_only ;
-		auto_program = rotate_neg90 ;
+		if (info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = square_left ;
+		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
+			auto_program = square_right ;
+		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
+			auto_program = rotate_pos90 ;
+		else
+			auto_program = rotate_neg90 ;
 		break;
 		
     case 1:			// Start In Center
@@ -194,13 +203,13 @@ Executive get_auto_mode(Next_mode_info info)
 		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
 			auto_program = right_scale_right ;
 		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
-			auto_program = left_scale_left ;
+			auto_program = right_scale_left ;
 		else
 			auto_program = right_scale_right_switch_right ;
 		break;
 		
     case 9:
-		auto_program = info.in.ds_info.scale_left ? left_scale_left : left_scale_right ;
+		auto_program = cross_line ;
 		break ;
 
 	case 90:
