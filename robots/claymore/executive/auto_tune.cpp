@@ -11,13 +11,13 @@ static vector<Step> steps_right =
     calibrateGrabber,
 	lifterToExch,
 	Step(Drive("tune:square", 120, false)),
-    rotate90pos,
+	Step(Rotate(90.0, 3.0)),
 	Step(Drive("tune:square", 120, false)),
-    rotate90pos,
+	Step(Rotate(90.0, 3.0)),
 	Step(Drive("tune:square", 120, false)),
-    rotate90pos,
+	Step(Rotate(90.0, 3.0)),
 	Step(Drive("tune:square", 120, false)),
-    rotate90pos,
+	Step(Rotate(90.0, 3.0)),
     endAuto
 } ;
 
@@ -31,12 +31,16 @@ static vector<Step> steps_left =
     calibrateGrabber,
 	lifterToExch,
 	Step(Drive("tune:square", 120, false)),
+	Step(Wait(1.0)),
     rotate90neg,
 	Step(Drive("tune:square", 120, false)),
+	Step(Wait(1.0)),
     rotate90neg,
 	Step(Drive("tune:square", 120, false)),
+	Step(Wait(1.0)),
     rotate90neg,
 	Step(Drive("tune:square", 120, false)),
+	Step(Wait(1.0)),
     rotate90neg,
     endAuto
 } ;
