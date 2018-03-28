@@ -13,13 +13,14 @@ using namespace std ;
 static vector<Step> two_switch_steps =
 {
     AUTO_PREAMBLE("center_switch_right_two_switch"),
+	lifterToFloor,
     startLifterSwitch,
     Step(Drive("auto:c_switch_r:segment1", 105, true)),
 	lifterToSwitch,
     eject,
     Step(Drive("auto:c_switch_r:segment2", -24, false)),
 	lifterToExch,
-	Step(Rotate(-90.0)),
+	Step(Rotate(-90.0, true)),
 	lifterToFloor,
 	Step(Drive_and_collect(200.0)),
 	lifterToExch,
@@ -42,17 +43,18 @@ Executive center_switch_right_two(two_switch_chain) ;
 static vector<Step> scale_right =
 {
     AUTO_PREAMBLE("center_switch_right_scale_right"),
+	lifterToFloor,
     startLifterSwitch,
     Step(Drive("auto:c_switch_r:segment1", 105, true)),
 	lifterToSwitch,
     eject,
     Step(Drive("auto:c_switch_r:segment2", -24, false)),
 	lifterToExch,
-	Step(Rotate(-90.0)),
+	Step(Rotate(-90.0, true)),
 	lifterToFloor,
 	Step(Drive_and_collect(200.0)),
 	lifterToExch,
-	Step(Drive(true, 72.0)),
+	Step(Drive(true, 54.0)),
 	Step(Rotate(90.0)),
 	AUTO_POSTAMBLE,
 } ;
@@ -62,13 +64,14 @@ Executive center_switch_right_scale_right(scale_right_chain) ;
 static vector<Step> scale_left =
 {
     AUTO_PREAMBLE("center_switch_right_scale_left"),
+	lifterToFloor,
     startLifterSwitch,
     Step(Drive("auto:c_switch_r:segment1", 105, true)),
 	lifterToSwitch,
     eject,
     Step(Drive("auto:c_switch_r:segment2", -24, false)),
 	lifterToExch,
-	Step(Rotate(-90.0)),
+	Step(Rotate(-90.0, true)),
 	lifterToFloor,
 	Step(Drive_and_collect(200.0)),
 	lifterToExch,

@@ -235,7 +235,7 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if (mHistory.size() > mNsamples)
 				mHistory.pop_front();
 
-			if (mHistory.size() == mNsamples && fabs(mHistory.back() - mHistory.front()) < mPidResetThreshold) {
+			if (mHistory.size() == mNsamples && (*max_element(mHistory.begin(), mHistory.end()) - *min_element(mHistory.begin(), mHistory.end())) < mPidResetThreshold) {
 				logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 				if(!mResetPid) {
 					logger << "DRIVEBASE stalled - switched to alternate distance PID constants\n" ;
