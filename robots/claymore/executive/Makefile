@@ -63,9 +63,7 @@ COMPETITION_AUTOMODES = \
 	auto_c_switch_r.cpp\
 	auto_c_switch_l.cpp\
 	auto_l_switch_l.cpp\
-	auto_r_switch_r.cpp\
-	auto_l_two_cube.cpp\
-	auto_r_two_cube.cpp
+	auto_r_switch_r.cpp
 
 
 SRC = \

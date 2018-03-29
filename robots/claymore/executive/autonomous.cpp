@@ -27,8 +27,6 @@ extern Executive left_scale_right ;
 extern Executive left_scale_left ;
 extern Executive left_switch_left ;
 extern Executive right_switch_right ;
-extern Executive two_cube_left ;
-extern Executive two_cube_right ;
 extern Executive lift_eject ;
 extern Executive collect_test ;
 extern Executive lifter_fail_test ;
