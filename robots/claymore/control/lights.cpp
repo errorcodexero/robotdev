@@ -335,7 +335,7 @@ Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.i2c.data = out.blinky_light_info;
 	
-	r.driver_station.digital[OI_light_addresses::CUBE_COLLECTED_SIGNAL] = out.has_cube;;
+	r.driver_station.digital[OI_light_addresses::CUBE_COLLECTED_SIGNAL] = out.has_cube;
 	
 	/*
 	r.driver_station.digital[OI_light_addresses::COLLECTOR_OPEN] = out.collector_open;

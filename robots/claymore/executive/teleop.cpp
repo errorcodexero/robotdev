@@ -401,7 +401,7 @@ void Teleop::runLights(const Run_info &info, Toplevel::Goal &goals)
     goals.lights.lifter_height = (unsigned)Lifter::lifter_controller.getHeight() ;
     goals.lights.drive_left = goals.drive.left();
     goals.lights.drive_right = goals.drive.right();
-    goals.lights.has_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
+    goals.lights.has_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube) ;
 
     goals.lights.collector_open = collector_mode == Collector_mode::COLLECT_OPEN;
     goals.lights.collector_closed = collector_mode == Collector_mode::COLLECT_CLOSED;
