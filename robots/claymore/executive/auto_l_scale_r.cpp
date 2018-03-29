@@ -23,7 +23,7 @@ static vector<Step> steps =
     Step(Lifter_to_height(85.0)),
     eject,
 	lifterToFloor,
-	Step(Rotate(-67.0)),
+	Step(Rotate(-57.0)),
 	Step(Drive_and_collect(106.0)),
 	Step(Close_collect_no_cube(1.0)),
 	Step(Drive(-6.0)),

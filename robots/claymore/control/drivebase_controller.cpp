@@ -235,13 +235,15 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 			if (mHistory.size() > mNsamples)
 				mHistory.pop_front();
 
-			if (mHistory.size() == mNsamples && (*max_element(mHistory.begin(), mHistory.end()) - *min_element(mHistory.begin(), mHistory.end())) < mPidResetThreshold) {
+			double max = *max_element(mHistory.begin(), mHistory.end());
+			double min = *min_element(mHistory.begin(), mHistory.end());
+			if (mHistory.size() == mNsamples && (max - min) < mPidResetThreshold) {
 				logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 				if(!mResetPid) {
 					logger << "DRIVEBASE stalled - switched to alternate distance PID constants\n" ;
-					logger << "Back: " << mHistory.back() << "    Front: " << mHistory.front();
-					logger << "     Difference: " << fabs(mHistory.back() - mHistory.front()) << "\n";
-					logger << "Threshold: " << mPidResetThreshold << "\n";
+					logger << "Max: " << max << "    Min: " << min << "\n";
+					logger << "Difference: " << (max - min);
+					logger << "      Threshold: " << mPidResetThreshold;
 
 					double p = mInputParams->getValue("drivebase:distance:reset:p", 0.0);
 					double i = mInputParams->getValue("drivebase:distance:reset:i", 0.15);
@@ -354,14 +356,16 @@ void DrivebaseController::update(double distances_l, double distances_r, double 
 				mMode = Mode::IDLE;
 			}
 
-			if (mHistory.size() == mNsamples && fabs(mHistory.back() - mHistory.front()) < mPidResetThreshold)
+			double max = *max_element(mHistory.begin(), mHistory.end());
+			double min = *min_element(mHistory.begin(), mHistory.end());
+			if (mHistory.size() == mNsamples && (max - min) < mPidResetThreshold)
 			{
 				if (!mResetPid) {
 					logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE);
 					logger << "DRIVEBASE stalled - switched to alternate angle PID constants\n" ;
-					logger << "Back: " << mHistory.back() << "    Front: " << mHistory.front();
-					logger << "     Difference: " << fabs(mHistory.back() - mHistory.front()) << "\n";
-					logger << "Threshold: " << mPidResetThreshold << "\n";
+					logger << "Max: " << max << "    Min: " << min << "\n";
+					logger << "Difference: " << (max - min);
+					logger << "      Threshold: " << mPidResetThreshold;
 					logger.endMessage() ;
 					
 					double p = mInputParams->getValue("drivebase:angle:reset:p", 0.0);

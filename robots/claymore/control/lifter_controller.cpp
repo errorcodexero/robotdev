@@ -514,7 +514,8 @@ void LifterController::update(int ticks, bool ulimit, bool blimit, double time, 
 	logger << "Lifter Output:" ;
 	logger << ", out " << out ;
 	logger << ", gear " << (gear == Gear::LOW ? "LOW" : "HIGH") ;
-	logger << ", brake " << (brake ? "ON" : "OFF") ;
+	logger << ", brake " << (brake ? "ON" : "OFF") << "\n" ;
+	logger << " Lifter Height: " << mCurrent << "\n";
 	logger.endMessage() ;
 }
 
