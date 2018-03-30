@@ -130,30 +130,34 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		//
 		if (Grabber::grabber_controller.enterState(GrabberController::CubeState::HasCube))
 		{
-			logger << "    Performed aquire cube actions\n" ;
+			logger << "    Performed acquire cube actions\n" ;
 			logger << "    Is Calibrated: " << Lifter::lifter_controller.isCalibrated() << "\n";
-			
-			//collector_mode = Collector_mode::CLAMP_DOWN ;
-			double exheight = Lifter::lifter_controller.presetToHeight(LifterController::Preset::SWITCH) ;
+
+			LifterController::Preset end_height_preset;
+			string preset_str;
+			switch(info.panel.collection_end_height) {
+			case Panel::Collection_end_height::EXCHANGE:
+				end_height_preset = LifterController::Preset::EXCHANGE;
+				preset_str = "exchange";
+				break;
+			case Panel::Collection_end_height::SWITCH:
+				end_height_preset = LifterController::Preset::SWITCH;
+				preset_str = "switch";
+				break;
+			case Panel::Collection_end_height::SCALE:
+				end_height_preset = LifterController::Preset::SCALE;
+				preset_str = "scale";
+				break;
+			default:
+				assert(0);
+			}
+
+			double exheight = Lifter::lifter_controller.presetToHeight(end_height_preset) ;
 			if (Lifter::lifter_controller.getHeight() < exheight && Lifter::lifter_controller.isCalibrated())
 			{
-				switch(info.panel.collection_end_height) {
-				case Panel::Collection_end_height::EXCHANGE:
-					lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::EXCHANGE);
-					logger << "    Set lifter goal to exchange height\n" ;
-					break;
-				case Panel::Collection_end_height::SWITCH:
-					lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SWITCH);
-					logger << "    Set lifter goal to switch height\n" ;
-					break;
-				case Panel::Collection_end_height::SCALE:
-					lifter_goal = Lifter::Goal::go_to_preset(LifterController::Preset::SCALE);
-					logger << "    Set lifter goal to scale height\n" ;
-					break;
-				default:
-					assert(0);
-				}
-			}
+				lifter_goal = Lifter::Goal::go_to_preset(end_height_preset);
+				logger << "    Set lifter goal to " << preset_str << " height\n";
+			}	
 		}
 
 		if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube) {
