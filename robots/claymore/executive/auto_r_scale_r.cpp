@@ -82,7 +82,7 @@ static vector<Step> steps_switch =
 	Step(Background_lifter_to_preset(85.0, 0.0)),
 	Step(Drive(262.0, 120.0, -25.0, false)),
     Step(Lifter_to_height(85.0)),
-	Step(Eject(0.4)),
+	Step(Eject(0.7)),
 	lifterToFloor,
 	Step(Rotate(-112)),
 	Step(Drive_and_collect(67.0)),
