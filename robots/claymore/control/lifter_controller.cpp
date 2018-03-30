@@ -409,12 +409,12 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 		out = -params_p->getValue("lifter:manual_power:low", 0.4) ;
 		assert(out <= 0.0) ;
 	}
-	else if (mCurrent <= bottom_limit)
+	/*else if (mCurrent <= bottom_limit)
 	{
 		brake = true;
 		logger << ", bottom limit" ;
 		out = 0.0 ;
-	}
+	}*/
 	else if (mCurrent < bottom_limit + slowdown_range)
 	{
 		logger << ", lower slowdown" ;
