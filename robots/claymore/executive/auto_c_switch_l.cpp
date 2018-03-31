@@ -4,7 +4,7 @@
 
 using namespace std ;
 
-static constexpr double angletol = 5.0 ;
+static constexpr double angletol = 8.0 ;
 
 ///////////////////////////////////////////////////////////////////////////////////////
 //
