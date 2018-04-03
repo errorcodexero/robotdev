@@ -33,7 +33,7 @@ bool messageDestFile::setFile(const std::string &name)
 	if (!m_strm_p->is_open())
 	{
 		if (!m_ref_established) {
-			start = std::chrono::steady_clock::now();
+			T.setRef();
 			m_ref_established = true;
     		std::cout << "Warning: Could not open log file '" << name << "' for writing. Will keep trying to reopen it." << std::endl;
 		}
@@ -67,7 +67,7 @@ void messageDestFile::displayMessage(const messageLogger::messageType &type, uin
 		}
 		else {
 			m_msg_q.push_back(appended_msg);
-			auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count();
+			auto elapsed = T.getElapsed();
 			if (elapsed > m_timeout_limit) {
 				std::cout << "Logging disabled. Timeout reached and log file still not successfully opened." << std::endl;
 				m_enabled = false;

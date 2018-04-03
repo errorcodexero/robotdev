@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 #include <chrono>
-
+#include "Timer.h"
 
 
 class messageDestFile : public messageLoggerDest
@@ -18,6 +18,7 @@ public:
 	virtual void displayMessage(const messageLogger::messageType &type, uint64_t subs, const std::string &msg);
 
 private:
+	Timer T;
     void initialize();
     std::ofstream *m_strm_p ;
 	std::list<std::string> m_msg_q;

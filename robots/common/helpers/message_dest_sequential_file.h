@@ -17,7 +17,7 @@ public:
 			filename = prefix + std::to_string(i) + ext;
 			i++;
 			struct stat buffer;
-			opened = stat(filename.c_str(), &buffer);
+			opened = (stat(filename.c_str(), &buffer)==0);
 		} while (opened);
 		setFile(filename);
 	}
