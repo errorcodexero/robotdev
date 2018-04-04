@@ -22,5 +22,20 @@ namespace xero
 
 			return ret;
 		}
+
+		inline Rotation getDirection(const Position &pos)
+		{
+			return Rotation(pos.getX(), pos.getY());
+		}
+
+		inline double getSign(double v)
+		{
+			if (v < 0.0)
+				return -1.0;
+			else if (v > 0.0)
+				return 1.0;
+
+			return 0.0;
+		}
 	}
 }

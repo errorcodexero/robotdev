@@ -1,6 +1,7 @@
 #include "MotionProfile.h"
 #include <cmath>
 #include <algorithm>
+#include <memory>
 
 namespace xero
 {
@@ -54,18 +55,18 @@ namespace xero
 			return true;
 		}
 
-		std::unique_ptr<State> MotionProfile::stateByTime(double t)
+		std::shared_ptr<State> MotionProfile::stateByTime(double t)
 		{
 			if (t < getStartTime() && t + kDelta >= getStartTime())
-				return std::make_unique<State>(getStartState());
+				return std::make_shared<State>(getStartState());
 
 			if (t > getEndTime() && t - kDelta <= getEndTime())
-				return std::make_unique<State>(getEndState());
+				return std::make_shared<State>(getEndState());
 
 			for (const Segment &seg : m_segments)
 			{
 				if (seg.containsTime(t))
-					return std::make_unique<State>(seg.getStart().extrapolate(t));
+					return std::make_shared<State>(seg.getStart().extrapolate(t));
 			}
 
 			return nullptr;
@@ -87,20 +88,20 @@ namespace xero
 			throw std::runtime_error("should not get here");
 		}
 
-		std::unique_ptr<State> MotionProfile::firstStateByPosition(double pos)
+		std::shared_ptr<State> MotionProfile::firstStateByPosition(double pos)
 		{
 			for (const Segment &seg : m_segments)
 			{
 				if (seg.containsPosition(pos))
 				{
 					if (std::fabs(seg.getEnd().getPosition() - pos) < kDelta)
-						return std::make_unique<State>(seg.getEnd());
+						return std::make_shared<State>(seg.getEnd());
 
 					double t = std::min(seg.getStart().nextTimeAtPosition(pos), seg.getEnd().getTime());
 					if (std::isinf(t))
 						return nullptr;
 
-					return std::make_unique<State>(seg.getStart().extrapolate(t));
+					return std::make_shared<State>(seg.getStart().extrapolate(t));
 				}
 			}
 

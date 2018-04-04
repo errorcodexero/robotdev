@@ -8,6 +8,7 @@ namespace xero
 		{
 			const double kSegmentCompletionTolerance = 0.1;
 			const double kPathFollowingMaxAccel = 120.0;
+			const double kMaxAdaptivePursuitArcRadius = 1e6;
 		}
 	}
 }

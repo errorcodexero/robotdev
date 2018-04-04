@@ -17,6 +17,16 @@ namespace xero
 			double m_delta_speed;
 
 		public:
+			Lookahead()
+			{
+				m_min_distance = 0;
+				m_max_distance = 0;
+				m_min_speed = 0;
+				m_max_speed = 0;
+				m_delta_distance = 0;
+				m_delta_speed = 0;
+			}
+
 			Lookahead(double mindist, double maxdist, double minspeed, double maxspeed)
 			{
 				m_min_distance = mindist;

@@ -8,7 +8,7 @@ namespace xero
 		std::shared_ptr<MotionProfile> ProfileGenerator::generateProfile(const Constraints &con, const ProfileGoal &goal, const State &curr)
 		{
 			double delta = goal.getPosition() - curr.getPosition();
-			if (delta < 0.0 || delta == 0.0 && curr.getVelocity() < 0.0)
+			if (delta <= 0.0 || (delta == 0.0 &&  curr.getVelocity() < 0.0))
 				return generateFlippedProfile(con, goal, curr);
 
 			double vel = std::copysign(std::min(std::fabs(curr.getVelocity()), con.getMaxVelocity()), curr.getVelocity());

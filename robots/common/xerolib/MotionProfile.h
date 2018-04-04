@@ -144,11 +144,11 @@ namespace xero
 
 			bool isValid() const;
 
-			std::unique_ptr<State> stateByTime(double t);
+			std::shared_ptr<State> stateByTime(double t);
 
 			State stateByTimeClamped(double t);
 
-			std::unique_ptr<State> firstStateByPosition(double pos);
+			std::shared_ptr<State> firstStateByPosition(double pos);
 
 			void trimBeforeTime(double t);
 

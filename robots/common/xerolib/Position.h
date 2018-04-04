@@ -107,7 +107,7 @@ namespace xero
 			/// \param p the second position
 			/// \param x the percent distance between the point
 			/// \returns the position between the current point and the given point
-			Position interpolate(const Position &p, double x)
+			Position interpolate(const Position &p, double x) const
 			{
 				Position ret;
 
@@ -133,7 +133,7 @@ namespace xero
 			/// \param p the second position
 			/// \param x the percent distance between the point
 			/// \returns the position between the current point and the given point
-			Position extrapolate(const Position &p, double x)
+			Position extrapolate(const Position &p, double x) const
 			{
 				return Position(m_x + (p.getX() - m_x) * x, m_y + (p.getY() - m_y) * x);
 			}

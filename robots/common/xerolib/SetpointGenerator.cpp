@@ -28,7 +28,7 @@ namespace xero
 
 			if (!regen && !m_profile_p->isEmpty())
 			{
-				std::unique_ptr<State> state_p = m_profile_p->stateByTime(prev.getTime());
+				std::shared_ptr<State> state_p = m_profile_p->stateByTime(prev.getTime());
 				if (state_p == nullptr || *state_p != prev)
 					regen = true;
 			}
