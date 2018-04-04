@@ -71,8 +71,6 @@
   <ItemGroup>
     <ClCompile Include="AdaptivePurePursuitController.cpp" />
     <ClCompile Include="AutoDelay.cpp" />
-    <ClCompile Include="AutoDriveBaseChar.cpp" />
-    <ClCompile Include="AutoDriveDistance.cpp" />
     <ClCompile Include="AutonomousControllerBase.cpp" />
     <ClCompile Include="AutonomousStepBase.cpp" />
     <ClCompile Include="AutoSetMotorVoltage.cpp" />
@@ -110,8 +108,6 @@
     <ClInclude Include="AgedTrapezoidSpeedProfile.h" />
     <ClInclude Include="AngleMeasurementDevice.h" />
     <ClInclude Include="AutoDelay.h" />
-    <ClInclude Include="AutoDriveBaseChar.h" />
-    <ClInclude Include="AutoDriveDistance.h" />
     <ClInclude Include="AutonomousControllerBase.h" />
     <ClInclude Include="AutonomousStepBase.h" />
     <ClInclude Include="AutoSetMotorVoltage.h" />

@@ -62,6 +62,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="GPG3MotorController.h" />
     <ClInclude Include="WPILib.h" />
+    <ClInclude Include="WPI_TalonSRX.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DriverStation.cpp" />
@@ -74,6 +75,7 @@
     <ClCompile Include="Servo.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="GPG3MotorController.cpp" />
+    <ClCompile Include="WPI_TalonSRX.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>

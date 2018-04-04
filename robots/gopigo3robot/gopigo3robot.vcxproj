@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoSetServoPosition.h" />
+    <ClInclude Include="DriveSquarePathContainer.h" />
     <ClInclude Include="RobotGPG3Consts.h" />
     <ClInclude Include="ServoSubsystem.h" />
     <ClInclude Include="XeroGPG3Robot.h" />
@@ -20,6 +21,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoSetServoPosition.cpp" />
+    <ClCompile Include="DriveSquarePathContainer.cpp" />
     <ClCompile Include="RobotGPG3Consts.cpp" />
     <ClCompile Include="ServoSubsystem.cpp" />
     <ClCompile Include="XeroGPG3Robot.cpp" />

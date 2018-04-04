@@ -40,12 +40,6 @@
     <ClCompile Include="AutoDelay.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AutoDriveBaseChar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AutoDriveDistance.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AutonomousControllerBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -172,12 +166,6 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="AutoDelay.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="AutoDriveBaseChar.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="AutoDriveDistance.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="AutonomousControllerBase.h">

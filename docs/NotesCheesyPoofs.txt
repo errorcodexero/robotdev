@@ -1,0 +1,25 @@
+Drivebase Hardware
+- motors
+- encoders connected to the cantalons
+- navx
+- solenoid for shifting
+
+DriveBase modes
+- OpenLoop
+- VelocitySetpoint
+- PathFolowing
+- TurnToHeading
+- DriveTorwardsGoalCourseAlign
+- DriveTowardGoalApproach
+
+CanTalons
+- CtreMagEncoders connected to the CanTalons
+- In PercentVBUSmode
+- Additional CANTalon controllers are slaves on each side to the master
+- PID loops run in the cantalon controllers
+
+Misc
+- They start in high gear
+- They run an indepdent thread running the drivebase
+- They write debug information to smart dashboard
+
