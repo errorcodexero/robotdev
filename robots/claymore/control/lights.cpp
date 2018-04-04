@@ -13,7 +13,7 @@ struct OI_light_addresses{
 	static const unsigned WINGS_DEPLOYED = 3; 
 	static const unsigned ENABLED = 4;
 	
-	static const unsigned CUBE_COLLECTED_SIGNAL = 5;
+	static const unsigned CUBE_COLLECTED_SIGNAL = 4;
 	
 	/*
 	static const unsigned LIFTER_STATUS_BINARY_A = 5;
