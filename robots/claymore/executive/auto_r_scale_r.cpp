@@ -33,7 +33,7 @@ static vector<Step> steps =
 	lifterToExch,
 #else
 	Step(Background_lifter_to_preset(85.0, 0.0)),
-	Step(Drive(264.0, 100.0, -25.0, false)),
+	Step(Drive(267.0, 100.0, -25.0, false)),
     Step(Lifter_to_height(85.0)),
 	Step(Eject(0.7)),
 	lifterToFloor,
@@ -76,7 +76,7 @@ static vector<Step> steps_switch =
 	lifterToExch,
 #else
 	Step(Background_lifter_to_preset(85.0, 0.0)),
-	Step(Drive(262.0, 120.0, -25.0, false)),
+	Step(Drive(265.0, 120.0, -25.0, false)),
     Step(Lifter_to_height(85.0)),
 	Step(Eject(0.7)),
 	lifterToFloor,

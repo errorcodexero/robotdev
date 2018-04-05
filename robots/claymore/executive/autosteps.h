@@ -37,7 +37,7 @@ static Step lifterToExchFail = Step(lifterToExch, {
 #define AUTO_PREAMBLE_LOWER(name)                                       \
 	AUTO_PREAMBLE(name),                                                \
 	lifterToFloor,                                                      \
-	startLifterSwitch
+	startLifterExch
 		
 #define AUTO_POSTAMBLE \
 	endAuto
