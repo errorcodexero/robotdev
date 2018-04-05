@@ -14,9 +14,7 @@ static constexpr double angletol = 8.0 ;
 ///////////////////////////////////////////////////////////////////////////////////////
 static vector<Step> two_switch_steps
 {
-	AUTO_PREAMBLE("center_switch_left_two_switch"),
-	lifterToFloor,
-	startLifterExch,
+	AUTO_PREAMBLE_LOWER("center_switch_left_two_switch"),
     Step(Drive("auto:c_switch_l:segment1", 52.0, false)),
 	Step(Rotate(-90,angletol)),
 	Step(Drive("auto:c_switch_l:segment2", 100.0, false)),
@@ -39,9 +37,7 @@ Executive center_switch_left_two(two_switch_chain) ;
 
 static vector<Step> scale_right
 {
-	AUTO_PREAMBLE("center_switch_left_scale_right"),
-	lifterToFloor,
-	startLifterExch,
+	AUTO_PREAMBLE_LOWER("center_switch_left_scale_right"),
     Step(Drive("auto:c_switch_l:segment1", 52.0, false)),
 	Step(Rotate(-90,angletol)),
 	Step(Drive("auto:c_switch_l:segment2", 100.0, false)),
@@ -66,9 +62,7 @@ Executive center_switch_left_scale_right(scale_right_chain) ;
 
 static vector<Step> scale_left
 {
-	AUTO_PREAMBLE("center_switch_left_scale_left"),
-	lifterToFloor,
-	startLifterExch,
+	AUTO_PREAMBLE_LOWER("center_switch_left_scale_left"),
     Step(Drive("auto:c_switch_l:segment1", 52.0, false)),
 	Step(Rotate(-90,angletol)),
 	Step(Drive("auto:c_switch_l:segment2", 100.0, false)),
