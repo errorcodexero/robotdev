@@ -33,6 +33,11 @@ static Step lifterToExchFail = Step(lifterToExch, {
 	calibrateLifter,													\
 	calibrateGrabber,													\
 	startLifterExch
+
+#define AUTO_PREAMBLE_LOWER(name)                                       \
+	AUTO_PREAMBLE(name),                                                \
+	lifterToFloor,                                                      \
+	startLifterSwitch
 		
 #define AUTO_POSTAMBLE \
 	endAuto

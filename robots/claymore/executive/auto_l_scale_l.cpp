@@ -13,8 +13,6 @@ using namespace std ;
 static vector<Step> steps =
 {
     AUTO_PREAMBLE("left_scale_left"),
-	lifterToFloor,
-	startLifterExch,
 #ifdef SAFE_TWO_CUBE
 	Step(Drive(290, false)),
 	Step(Rotate(90, 8.0)),
@@ -59,8 +57,6 @@ Executive left_scale_left(chain) ;
 static vector<Step> steps_switch =
 {
     AUTO_PREAMBLE("left_scale_left_switch_left"),
-	lifterToFloor,
-	startLifterExch,	
 #ifdef SAFE_TWO_CUBE
 	Step(Drive(290, false)),
 	Step(Rotate(90, 8.0)),
