@@ -44,7 +44,7 @@ static vector<Step> steps =
 	Step(Close_collect_no_cube(0.5)),
 	Step(Background_lifter_to_preset(85.0, 0.0)),
 	Step(Drive(true, -6.0)),
-	Step(Rotate_back(-35.0, 10.0)),
+	Step(Rotate_back(-40.0, 10.0)),
     Step(Lifter_to_height(85.0)),
 	eject,
 	lifterToExch,
