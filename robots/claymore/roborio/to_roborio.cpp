@@ -10,7 +10,7 @@
 #include "subsystems.h"
 #include "params_parser.h"
 #include "message_logger.h"
-#include "message_dest_dated_file.h"
+#include "message_dest_seq_file.h"
 #include "message_dest_DS.h"
 #include "message_dest_stream.h"
 #include "motor_current_monitor.h"
@@ -164,7 +164,8 @@ public:
 		// to /U.
 		//
 		std::string flashdrive("/u/") ;
-		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
+		std::string logname("logfile_") ;
+		dest_p = std::make_shared<messageDestSeqFile>(flashdrive,logname) ;
 		logger.addDestination(dest_p) ;
 
 		//

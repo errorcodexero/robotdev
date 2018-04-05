@@ -15,6 +15,7 @@ SRC = \
 	udp_sync.cpp\
 	message_logger.cpp\
 	message_dest_file.cpp\
+	message_dest_seq_file.cpp\
 	motion_target_profile.cpp\
 	motor_current_monitor.cpp\
 	data_logger.cpp\
