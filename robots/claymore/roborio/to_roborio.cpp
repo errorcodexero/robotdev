@@ -174,53 +174,6 @@ public:
 		dest_p = std::make_shared<messageDestDS>() ;
 		logger.addDestination(dest_p) ;
 
-		//////////////////////////////////////////////////////////////////////
-		// Send match information to the message logger
-		//////////////////////////////////////////////////////////////////////
-		DriverStation &ds = DriverStation::GetInstance() ;
-		logger.startMessage(messageLogger::messageType::info) ;
-		logger << "Match Specific Data:\n" ;
-		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n" ;
-		logger << "          Event Name: " << ds.GetEventName() << "\n" ;
-		logger << "          Match Type: " ;
-		switch(ds.GetMatchType())
-		{
-		case DriverStation::kNone:
-			logger << "kNone\n" ;
-			break ;
-		case DriverStation::kPractice:
-			logger << "kPractice\n" ;
-			break ;
-		case DriverStation::kQualification:
-			logger << "kQualification\n" ;
-			break ;
-		case DriverStation::kElimination:
-			logger << "kElimination\n" ;
-			break ;
-		default:
-			logger << "Unknown (bad data from driver station)\n" ;
-			break ;
-		} ;
-		logger << "        Match Number: " << ds.GetMatchNumber() << "\n" ;
-		
-		logger << "            Alliance: " ;
-		switch(ds.GetAlliance())
-		{
-		case DriverStation::kRed:
-			logger << "kRed\n" ;
-			break ;
-		case DriverStation::kBlue:
-			logger << "kBlue\n" ;
-			break ;
-		case DriverStation::kInvalid:
-			logger << "kInvalid\n" ;
-			break ;
-		default:
-			logger << "Unknown (bad data from driver station)\n" ;
-			break ;
-		}
-		logger << "            Location: " << ds.GetLocation() << "\n" ;
-		logger.endMessage() ;
 
 		//////////////////////////////////////////////////////////////////////
 		// Initialize the hardware
@@ -620,6 +573,55 @@ class Robot_adapter: public frc::SampleRobot{
 	
 	void Autonomous(void)
 	{
+		//////////////////////////////////////////////////////////////////////
+		// Send match information to the message logger
+		//////////////////////////////////////////////////////////////////////
+		messageLogger &logger = messageLogger::get();
+		DriverStation &ds = DriverStation::GetInstance() ;
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "Match Specific Data:\n" ;
+		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n" ;
+		logger << "          Event Name: " << ds.GetEventName() << "\n" ;
+		logger << "          Match Type: " ;
+		switch(ds.GetMatchType())
+		{
+		case DriverStation::kNone:
+			logger << "kNone\n" ;
+			break ;
+		case DriverStation::kPractice:
+			logger << "kPractice\n" ;
+			break ;
+		case DriverStation::kQualification:
+			logger << "kQualification\n" ;
+			break ;
+		case DriverStation::kElimination:
+			logger << "kElimination\n" ;
+			break ;
+		default:
+			logger << "Unknown (bad data from driver station)\n" ;
+			break ;
+		} ;
+		logger << "        Match Number: " << ds.GetMatchNumber() << "\n" ;
+		
+		logger << "            Alliance: " ;
+		switch(ds.GetAlliance())
+		{
+		case DriverStation::kRed:
+			logger << "kRed\n" ;
+			break ;
+		case DriverStation::kBlue:
+			logger << "kBlue\n" ;
+			break ;
+		case DriverStation::kInvalid:
+			logger << "kInvalid\n" ;
+			break ;
+		default:
+			logger << "Unknown (bad data from driver station)\n" ;
+			break ;
+		}
+		logger << "            Location: " << ds.GetLocation() << "\n" ;
+		logger.endMessage() ;
+		
 		while(IsAutonomous() && IsEnabled()){
 			//might need a loop here
 
