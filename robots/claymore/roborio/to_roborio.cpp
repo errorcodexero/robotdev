@@ -153,8 +153,8 @@ public:
 		// In competition mode, this information goes to a log file on
 		// the USB stick
 		//
-		//dest_p = std::make_shared<messageDestStream>(std::cout) ;
-		//logger.addDestination(dest_p) ;
+		dest_p = std::make_shared<messageDestStream>(std::cout) ;
+		logger.addDestination(dest_p) ;
 #endif
 		
 		//

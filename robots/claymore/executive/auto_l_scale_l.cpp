@@ -61,22 +61,11 @@ Executive left_scale_left_switch_left(chain_switch) ;
 static vector<Step> steps_comp =
 {
     AUTO_PREAMBLE("left_scale_left_comp"),
-	Step(Background_lifter_to_preset(85.0, 0.0)),
-	Step(Drive(253.0, 100.0, 30.0, false)),
-    Step(Lifter_to_height(85.0)),
-	Step(Eject(0.7)),
-	lifterToFloor,
-	Step(Rotate(115)),
-	Step(Drive_and_collect(56.0)),
-	Step(Close_collect_no_cube(1.0)),
-	Step(Drive(-6.0)),
-	Step(Close_collect_no_cube(0.5)),
-	Step(Background_lifter_to_preset(85.0, 0.0)),
-	Step(Drive(true, -6.0)),
-	Step(Rotate_back(25.0, 10.0)),
-    Step(Lifter_to_height(85.0)),
+	Step(Drive(300, false)),
+	Step(Rotate(90, 8.0)),
+    Step(Lifter_to_height(80.0)),
 	eject,
-	lifterToExch,
+	lifterToFloor,
 	AUTO_POSTAMBLE,
 } ;
 
