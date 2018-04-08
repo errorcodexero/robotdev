@@ -41,6 +41,9 @@ extern Executive center_switch_left_scale_right ;
 extern Executive center_switch_right_scale_left ;
 extern Executive center_switch_left_scale_left ;
 
+extern Executive left_scale_left_comp ;
+extern Executive right_scale_right_comp ;
+
 extern Executive square_left ;
 extern Executive square_right ;
 
@@ -186,7 +189,7 @@ Executive get_auto_mode(Next_mode_info info)
 		
     case 7:			// Start On Left
 		if (info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
-			auto_program = left_scale_left_switch_left ;
+			auto_program = left_scale_left_comp ;
 		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
 			auto_program = left_scale_right ;
 		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
@@ -203,7 +206,7 @@ Executive get_auto_mode(Next_mode_info info)
 		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
 			auto_program = right_scale_left ;
 		else
-			auto_program = right_scale_right_switch_right ;
+			auto_program = right_scale_right_comp;
 		break;
 		
     case 9:
