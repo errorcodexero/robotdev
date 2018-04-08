@@ -193,7 +193,7 @@ Executive get_auto_mode(Next_mode_info info)
 		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
 			auto_program = left_scale_right ;
 		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
-			auto_program = left_scale_left ;
+			auto_program = left_scale_left_comp ;
 		else
 			auto_program = left_scale_right ;
 		break;
@@ -202,7 +202,7 @@ Executive get_auto_mode(Next_mode_info info)
 		if (info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
 			auto_program = right_scale_left ;
 		else if (info.in.ds_info.near_switch_left && !info.in.ds_info.scale_left)
-			auto_program = right_scale_right ;
+			auto_program = right_scale_right_comp ;
 		else if (!info.in.ds_info.near_switch_left && info.in.ds_info.scale_left)
 			auto_program = right_scale_left ;
 		else
