@@ -18,10 +18,12 @@ Grabber::Grabber(xerolib::XeroRobotBase &robot,
 	m_open_angle = params.getValue("grabber:open") ;
 	m_closed_angle = params.getValue("grabber::closed") ;
 	m_stowed_angle = params.getValue("grabber::stowed") ;
+	m_folded_angle = params.getValue("grabber::folded") ;
 
 	m_holding_voltage = params.getValue("grabber::holding_voltage") ;
+	m_grasping_voltage = params.getValue("grabber::grasping_voltage") ;
 
-	m_calibration_threshold = static_cast<int32_t>(params.getValue("grebber::calibration_threshold") + 0.5) ;
+	m_stationary_threshold = static_cast<int32_t>(params.getValue("grebber::stationary_threshold") + 0.5) ;
 
 	double p = params.getValue("grabber:p") ;
 	double i = params.getValue("grabber:i") ;
@@ -51,43 +53,6 @@ Grabber::~Grabber()
 
 void Grabber::getInputs()
 {
-	if (m_calibrated)
-	{
-		int32_t ticks = m_encoder_p->Get() ;
-		m_angle = (ticks - m_encoder_base) * kDegreesPerTick ;
-	}
-}
-
-void Grabber::setOutputs()
-{
-	switch(m_state)
-	{
-	case State::Idle:
-		setMotorVoltage(0.0) ;
-		break ;
-	case State::Calibrating:
-		doCalibration() ;
-		break ;
-	case State::Hold:
-		setMotorVoltage(m_holding_voltage) ;
-		break ;
-	case State::Angle:
-		doAngle() ;
-		break ;
-	}
-}
-
-void Grabber::setMotorVoltage(double v)
-{
-	if (std::isnan(m_last_voltage) || std::fabs(m_last_voltage - v) > kDelta)
-	{
-		m_motor_p->Set(v) ;
-		m_last_voltage = v ;
-	}
-}
-
-void Grabber::doCalibration()
-{
 	int32_t sample = m_encoder_p->Get() ;
 		
 	if (m_samples_taken == m_samples.size())
@@ -101,14 +66,72 @@ void Grabber::doCalibration()
 		m_samples[m_samples_taken] = sample ;
 	}
 
+	if (m_calibrated)
+		m_angle = (sample - m_encoder_base) * kDegreesPerTick ;
+}
+
+void Grabber::setOutputs()
+{
+	switch(m_state)
+	{
+	case State::Idle:
+		setMotorVoltage(0.0) ;
+		break ;
+	case State::Calibrate:
+		doCalibration() ;
+		break ;
+	case State::Hold:
+		setMotorVoltage(m_holding_voltage) ;
+		break ;
+	case State::Grasp:
+		doGrasp() ;
+		break ;
+	case State::Angle:
+		doAngle() ;
+		break ;
+	}
+}
+
+bool Grabber::isStationary()
+{
 	int32_t minsamp = *std::min_element(m_samples.begin(), m_samples.end()) ;
 	int32_t maxsamp = *std::max_element(m_samples.begin(), m_samples.end()) ;
+	return maxsamp - minsamp < m_stationary_threshold ;
+}
 
-	if (maxsamp - minsamp < m_calibration_threshold)
+void Grabber::setMotorVoltage(double v)
+{
+	if (std::isnan(m_last_voltage) || std::fabs(m_last_voltage - v) > kDelta)
+	{
+		m_motor_p->Set(v) ;
+		m_last_voltage = v ;
+	}
+}
+
+void Grabber::doCalibration()
+{
+	if (isStationary())
 	{
 		m_calibrated = true ;
 		m_state = State::Hold ;
 		m_encoder_base = std::accumulate(m_samples.begin(), m_samples.end(), 0) / m_samples.size() ;
+	}
+}
+
+void Grabber::doGrasp()
+{
+	setMotorVoltage(m_grasping_voltage) ;
+	
+	if (isStationary())
+	{
+		if (getCurrentAngle() < m_folded_angle)
+		{
+			m_state = State::Idle ;
+		}
+		else
+		{
+			m_state = State::Hold ;
+		}
 	}
 }
 

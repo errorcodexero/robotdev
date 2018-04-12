@@ -1,3 +1,4 @@
+#include <CountdownTimer.h>
 #include <SubsystemBase.h>
 #include <DigitalInput.h>
 #include <memory>
@@ -5,7 +6,7 @@
 class Intake ;
 class Grabber ;
 
-class Collector : public xerolib:SubsystemBase
+class Collector : public xerolib::SubsystemBase
 {
 public:
 	Collector(xerolib::XeroRobotBase &robot,
@@ -18,7 +19,7 @@ public:
 	virtual void getInputs() ;
 	virtual void setOutputs() ;
 
-	bool isDone() const ;
+	void calibrate() ;
 
 	void eject()
 	{
@@ -47,9 +48,7 @@ public:
 	
 	void closeCollect(double speed) ;
 
-	void collect(double angle, dobule speed)
-	{
-	}
+	void collect(double angle, double speed) ;
 
 	bool isDone() const
 	{
@@ -66,8 +65,21 @@ private:
 		STOWED,
 	 } ;
 
+	enum class CubeStatus
+	{
+		NoCube,
+		MaybeHasCube,
+		GraspCube,
+		HasCube,
+		MaybeLostCube,
+	} ;
+
+	void pulseIntakeInit(double now) ;
+	void pulseIntake(double now) ;
+
 private:
 	State m_state ;
+	CubeStatus m_cube_state ;
 	
 	std::shared_ptr<Intake> m_intake_p ;
 	std::shared_ptr<Grabber> m_grabber_p ;
@@ -78,4 +90,12 @@ private:
 	double m_default_drop_time ;
 	double m_default_eject_speed ;
 	double m_default_eject_time ;
-}
+	double m_maybe_has_cube_time ;
+	double m_maybe_lost_cube_time ;
+	double m_has_cube_intake_run_interval ;
+	double m_has_cube_intake_run_duration ;
+	double m_pulse_intake_speed ;
+
+	xerolib::CountdownTimer m_cube_timer ;
+	xerolib::CountdownTimer m_pulse_intake_timer ;
+} ;

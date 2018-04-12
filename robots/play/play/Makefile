@@ -51,7 +51,8 @@ SRC = \
 	Robot2018Autonomous.cpp\
 	Intake.cpp\
 	Grabber.cpp\
-	Collector.cpp
+	Collector.cpp\
+	Lifter.cpp
 
 include ../../../makefiles/compileapp.mk
 

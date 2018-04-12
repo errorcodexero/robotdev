@@ -16,17 +16,6 @@ public:
 		STOWED
 	} ;
 	
-	//
-	// The state of the grabber
-	//
-	enum class State
-	{
-		Idle,
-		Calibrating,
-		Hold,
-		Angle,
-	} ;
-	
 public:
 	Grabber(xerolib::XeroRobotBase &robot,
 			std::shared_ptr<frc::SpeedController> motor_p,
@@ -38,14 +27,44 @@ public:
 	virtual void getInputs() ;
 	virtual void setOutputs() ;
 
+	bool isFolded() const
+	{
+		return isCalibrated() && getCurrentAngle() < m_folded_angle ;
+	}
+
+	bool isCalibrated() const
+	{
+		return m_calibrated ;
+	}
+
+	bool isIdle() const
+	{
+		return m_state == State::Idle ;
+	}
+
+	bool isHolding() const
+	{
+		return m_state == State::Hold ;
+	}
+
 	void hold()
 	{
 		m_state = State::Hold ;
 	}
 
+	void grasp()
+	{
+		m_state = State::Grasp ;
+	}
+
 	void idle()
 	{
 		m_state = State::Idle ;
+	}
+
+	void calibrate()
+	{
+		m_state = State::Calibrate ;
 	}
 	
 	void gotoAngle(double angle)
@@ -65,14 +84,21 @@ public:
 		return m_angle ;
 	}
 
-	bool isCalibrated() const
-	{
-		return m_calibrated ;
-	}
-
 private:
 	static constexpr double kDelta = 1e-6 ;
 	static constexpr double kDegreesPerTick = 90.0 / 144.0 ;
+	
+	//
+	// The state of the grabber
+	//
+	enum class State
+	{
+		Idle,
+		Calibrate,
+		Hold,
+		Grasp,
+		Angle,
+	} ;
 	
 	double presetToAngle(Grabber::Preset preset)
 	{
@@ -96,7 +122,9 @@ private:
 
 	void setMotorVoltage(double v) ;
 	void doAngle() ;
+	void doGrasp() ;
 	void doCalibration() ;
+	bool isStationary() ;
 
 private:
 
@@ -131,11 +159,17 @@ private:
 	double m_holding_voltage ;
 
 	//
+	// The grasping voltage
+	//
+	double m_grasping_voltage ;
+
+	//
 	// The angles for the various presets
 	//
 	double m_open_angle ;
 	double m_closed_angle ;
 	double m_stowed_angle ;
+	double m_folded_angle ;
 
 	//
 	// The last voltage applied to the motor
@@ -160,7 +194,7 @@ private:
 	//
 	// The calibration threshold for the encoder samples
 	//
-	int32_t m_calibration_threshold ;
+	int32_t m_stationary_threshold ;
 
 	//
 	// The latest angle for the grabber
