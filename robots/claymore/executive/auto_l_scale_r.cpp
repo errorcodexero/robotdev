@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
@@ -9,22 +10,27 @@ using namespace std ;
 // Action: Score on right scale
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> left_scale_right_steps =
+static vector<Step> steps =
 {
-    startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterExch,
-    Step(Drive_param("auto:r_scale_r:segment1", 219.0, false)),
-    rotate90pos,
-    Step(Drive_param("auto:r_scale_r:segment2", 240.0, false)),		// TODO ?????
+    AUTO_PREAMBLE("left_scale_right"),
+    Step(Drive("auto:l_scale_r:segment1", 213, false)),
+	Step(Rotate(90.0, 3.0)),
+    Step(Drive("auto:l_scale_r:segment2", 250, false)),
     rotate90neg,
-    Step(Drive_param("auto:r_scale_r:segment2", 72.5, false)),
-    rotate90neg,
-    lifterToScale,
+    Step(Drive("auto:l_scale_r:segment3", 80, false)),
+	Step(Background_lifter_to_preset(85.0, 0.0)),
+	Step(Rotate(-90, 8.0)),
+    Step(Lifter_to_height(85.0)),
     eject,
-    endAuto,
+	lifterToFloor,
+	Step(Rotate(-57.0)),
+	Step(Drive_and_collect(106.0)),
+	Step(Close_collect_no_cube(1.0)),
+	Step(Drive(-6.0)),
+	Step(Close_collect_no_cube(0.5)),
+	lifterToExch,
+	AUTO_POSTAMBLE
 } ;
 
-static Chain left_scale_right_chain(left_scale_right_steps, teleopex) ;
-Executive left_scale_right(left_scale_right_chain) ;
+static Chain chain(steps, teleopex) ;
+Executive left_scale_right(chain) ;

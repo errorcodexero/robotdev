@@ -35,6 +35,8 @@ var _error_code_8h =
       [ "GainsAreNotSet", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171a8498eceec08ca7d55d86e5d00e6985a1", null ],
       [ "IncompatibleMode", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171a8360d2fd176ed474223419c12a430cd9", null ],
       [ "InvalidHandle", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171a8e3e47461fbe07dc53f88b339a0f0624", null ],
+      [ "FeatureRequiresHigherFirm", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171ae7aaeee5ff858dcbee4e3876eb426681", null ],
+      [ "TalonFeatureRequiresHigherFirm", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171ab547fdaa837d84678d75dfa75a52c473", null ],
       [ "PulseWidthSensorNotPresent", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171af6089e77ac7606e270a5726a6e254776", null ],
       [ "GeneralWarning", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171ab7d9fcde753b26e5e0e23072b0b2c97e", null ],
       [ "FeatureNotSupported", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171af7221322f43a71d1b22f91dd05bb4746", null ],
@@ -44,6 +46,9 @@ var _error_code_8h =
       [ "ControlModeNotValid", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171af0c88496f38ba588d1a9c439998d1198", null ],
       [ "ControlModeNotSupportedYet", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171ab7c5b51fa2132baf5254a8b9928972ac", null ],
       [ "CascadedPIDNotSupporteYet", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171ab416d4de64d3e600fad5fe5bb1f1ce44", null ],
-      [ "RemoteSensorsNotSupportedYet", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171aa28eef8eaca4fe8ccb18a9389f4768a4", null ]
+      [ "AuxiliaryPIDNotSupportedYet", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171ae4f0e325ccff99ebf8a5ea9c2270270d", null ],
+      [ "RemoteSensorsNotSupportedYet", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171aa28eef8eaca4fe8ccb18a9389f4768a4", null ],
+      [ "MotProfFirmThreshold", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171a9b1a307ca265dc9878bb52ebc8c78851", null ],
+      [ "MotProfFirmThreshold2", "_error_code_8h.html#ab3a22fd2d2cd99e3c672f37a054e3171a80e145fff0eed0bb19ce1f48bf3be294", null ]
     ] ]
 ];

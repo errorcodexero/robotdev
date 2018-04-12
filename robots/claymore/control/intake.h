@@ -9,8 +9,23 @@
 #include <sstream>
 
 struct Intake{
-	enum class Goal{IN,OFF,OUT};
-	
+	struct Goal {
+		private:
+		Goal();
+		double left_, right_;
+
+		public:
+		double left()const;
+		double right()const;
+
+		static Goal in();
+		static Goal in(double);
+		static Goal off();
+		static Goal out();
+		static Goal out(double);
+		static Goal absolute(double, double);
+	};
+
 	using Input=Nop::Input;
 	
 	typedef Input Status_detail;
@@ -19,7 +34,12 @@ struct Intake{
 
 	using Input_reader=Nop::Input_reader;
 
-	typedef Goal Output;
+	struct Output{
+		double left, right;
+
+		Output();
+		Output(double, double);
+	};
 	
 	struct Output_applicator{
 		Robot_outputs operator()(Robot_outputs,Intake::Output)const;
@@ -34,11 +54,16 @@ struct Intake{
 };
 
 std::ostream& operator<<(std::ostream&,Intake::Goal);
+std::ostream& operator<<(std::ostream&,Intake::Output);
 std::ostream& operator<<(std::ostream&,Intake);
 
-bool operator<(Intake::Status_detail,Intake::Status_detail);
-bool operator==(Intake::Status_detail,Intake::Status_detail);
-bool operator!=(Intake::Status_detail,Intake::Status_detail);
+bool operator<(Intake::Goal,Intake::Goal);
+bool operator==(Intake::Goal,Intake::Goal);
+bool operator!=(Intake::Goal,Intake::Goal);
+
+bool operator<(Intake::Output,Intake::Output);
+bool operator==(Intake::Output,Intake::Output);
+bool operator!=(Intake::Output,Intake::Output);
 
 bool operator==(Intake::Output_applicator,Intake::Output_applicator);
 

@@ -16,6 +16,7 @@ var dir_6cc22f41418063b0c9fbb388ba8b8cad =
     [ "CANifierStickyFaults.h", "_c_a_nifier_sticky_faults_8h.html", [
       [ "CANifierStickyFaults", "structctre_1_1phoenix_1_1_c_a_nifier_sticky_faults.html", "structctre_1_1phoenix_1_1_c_a_nifier_sticky_faults" ]
     ] ],
+    [ "CANifierVelocityMeasPeriod.h", "_c_a_nifier_velocity_meas_period_8h.html", "_c_a_nifier_velocity_meas_period_8h" ],
     [ "ErrorCode.h", "_error_code_8h.html", "_error_code_8h" ],
     [ "paramEnum.h", "param_enum_8h.html", "param_enum_8h" ]
 ];

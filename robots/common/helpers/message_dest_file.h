@@ -3,42 +3,26 @@
 #include "message_logger_dest.h"
 #include <fstream>
 #include <string>
+#include <chrono>
+
+
 
 class messageDestFile : public messageLoggerDest
 {
 public:
-    messageDestFile()
-    {
-		m_strm_p = nullptr ;
-    }
-    
-    messageDestFile(const std::string &name)
-    {
-		setFile(name) ;
-    }
-    
-    virtual ~messageDestFile()
-    {
-		if (m_strm_p != nullptr)
-			delete m_strm_p ;
-    }
-
-    void setFile(const std::string &name)
-    {
-		m_strm_p = new std::ofstream(name) ;
-		if (!m_strm_p->is_open())
-		{
-			std::cerr << "counld not open log file '" << name << "' for writing" << std::endl ;
-			m_strm_p = nullptr ;
-		}
-    }
-
-    virtual void displayMessage(const messageLogger::messageType &type, uint64_t subs, const std::string &msg)
-    {
-		if (m_strm_p != nullptr)
-			(*m_strm_p) << msg << std::endl << std::flush ;
-    }
+	messageDestFile();
+	messageDestFile(const std::string &name);
+	virtual ~messageDestFile();
+	void setTimeout(unsigned long int timeout_limit);
+	bool setFile(const std::string &name);
+	virtual void displayMessage(const messageLogger::messageType &type, uint64_t subs, const std::string &msg);
 
 private:
+    void initialize();
     std::ofstream *m_strm_p ;
+	std::list<std::string> m_msg_q;
+	std::string m_filename;
+	bool m_enabled = true , m_ref_established = false;
+	std::chrono::time_point<std::chrono::steady_clock> start; //Timeout reference point (first file open failure)
+	int m_timeout_limit;
 } ;

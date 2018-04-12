@@ -10,13 +10,16 @@
 #include "subsystems.h"
 #include "params_parser.h"
 #include "message_logger.h"
-#include "message_dest_dated_file.h"
+#include "message_dest_seq_file.h"
+#include "message_dest_DS.h"
 #include "message_dest_stream.h"
+#include "motor_current_monitor.h"
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <iostream>
 
+const char *param_file_name_p = "/home/lvuser/params.txt" ;
 
 using namespace std;
 
@@ -53,49 +56,6 @@ int read_joysticks(Robot_inputs &r, frc::DriverStation& ds){
 	return 0;
 }
 
-/*
-void setoutputs_joysticks(Robot_inputs &r){
-	DriverStation *ds=DriverStation::GetInstance();
-	if(unsigned i=0;i<r.JOYSTICKS;i++){
-		r.joystick[i]=SetOutput(1,1);			 
-	}
-}
-*/
-
-/*DriverStationEnhancedIO &get_driver_station(){
-	DriverStation *ds=DriverStation::GetInstance();
-	if(!ds) return NULL;
-	return ds->GetEnhancedIO();
-}*/
-
-/*int read_driver_station(Driver_station_input& r){
-	DriverStation *ds=DriverStation::GetInstance();
-	if(!ds) return 2048;
-	//Cyprus board isn't supported and a replacement is not yet available.
-	//DriverStationEnhancedIO &en=ds->GetEnhancedIO();
-	for(unsigned i=0;i<r.ANALOG_INPUTS;i++){
-		r.analog[i]=0;//en.GetAnalogIn(i+1);//Causing a LOT of printouts when the DS is disconnected
-
-	}
-	for(unsigned i=0;i<r.DIGITAL_INPUTS;i++){
-		r.digital[i]=0;//en.GetDigital(i+1);//Same as above ^^
-	}
-	return 0;
-}*/
-
-//it might make sense to put this in the Robot_inputs structure.  
-Volt battery_voltage(){
-	auto &d=frc::DriverStation::GetInstance();
-	//AnalogModule *am=AnalogModule::GetInstance(DriverStation::kBatteryModuleNumber);
-	/*if(!d){
-		return 18; //this should look surprising
-		//but maybe should actually return NAN.
-	}*/
-	/*float f=am->GetAverageVoltage(DriverStation::kBatteryChannel);
-	return f * (1680.0 / 1000.0);//copied from WPIlib's DriverStation.cpp*/
-	return d.GetBatteryVoltage();
-}
-
 int demo(...){
 	cerr<<"In demo\n";
 	return 0;
@@ -126,43 +86,98 @@ class To_roborio
 	Pump_control pump_control;
 	//frc::Compressor *compressor;
 	frc::DriverStation& driver_station;
-#ifdef NEED_PIXY_CAM
-	Pixy::PixyUART uart;
-	Pixy::PixyCam camera;
-	bool cam_data_recieved;
-#endif
+	MotorCurrentMonitor dbl_monitor ;
+	MotorCurrentMonitor dbr_monitor ;
+	MotorCurrentMonitor grabber_monitor ;
+	MotorCurrentMonitor lift_monitor ;
+	MotorCurrentMonitor lin_monitor ;
+	MotorCurrentMonitor rin_monitor ;
 	std::ofstream null_stream;
+	
 public:
-To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),driver_station(frc::DriverStation::GetInstance()),null_stream("/dev/null")
+	To_roborio():error_code(0),
+				 navx_control(frc::SPI::Port::kMXP),
+				 i2c_control(8),
+				 driver_station(frc::DriverStation::GetInstance()),
+				 dbl_monitor(3),
+				 dbr_monitor(3),
+				 grabber_monitor(1),
+				 lift_monitor(2),
+				 lin_monitor(1),
+				 rin_monitor(1),
+			 null_stream("/dev/null")
 	{
+		//////////////////////////////////////////////////////////////////////
+		// Initialize the message logger
+		//////////////////////////////////////////////////////////////////////
+		
 		messageLogger &logger = messageLogger::get();
 		logger.enableType(messageLogger::messageType::error);
 		logger.enableType(messageLogger::messageType::warning);
 		logger.enableType(messageLogger::messageType::info);
 		logger.enableType(messageLogger::messageType::debug);
 
+
 		//
 		// Decide what subsystems you want to see
 		//
-		
-		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
-		logger.enableSubsystem(SUBSYSTEM_LIFTER);
+
+#ifdef DEBUG
+		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
+		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE_RAW_DATA);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
+		//logger.enableSubsystem(SUBSYSTEM_TIMING);
 		//logger.enableSubsystem(SUBSYSTEM_GRABBER);
+		//logger.enableSubsystem(SUBSYSTEM_GRABBER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_PDPCURRENTS);
 		//logger.enableSubsystem(SUBSYSTEM_DIGITALIO);
-		logger.enableSubsystem(SUBSYSTEM_TELEOP);
+		//logger.enableSubsystem(SUBSYSTEM_TELEOP);
 		//logger.enableSubsystem(SUBSYSTEM_PANEL);
-		//logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
-		
+		//logger.enableSubsystem(SUBSYSTEM_SOLENOIDS);
+#else
+		//
+		// In competition mode, we always want the drivebase and auto mode
+		// debug information
+		//
+		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
+		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
+#endif
 
 		std::shared_ptr<messageLoggerDest> dest_p ;
 
-		dest_p = std::make_shared<messageDestStream>(std::cout) ;
+#ifdef DEBUG
+		//
+		// We only want printouts on COUT when we are debugging
+		// In competition mode, this information goes to a log file on
+		// the USB stick
+		//
+		//dest_p = std::make_shared<messageDestStream>(std::cout) ;
+		//logger.addDestination(dest_p) ;
+#endif
+		
+		//
+		// This is where the roborio places the first USB flashd drive it
+		// finds.  Other drives are placed at /V, /W, /X.  The devices are
+		// actually mounted at /media/sd*, and a symbolic link is created
+		// to /U.
+		//
+		std::string flashdrive("/u/") ;
+		std::string logname("logfile_") ;
+		dest_p = std::make_shared<messageDestSeqFile>(flashdrive,logname) ;
 		logger.addDestination(dest_p) ;
 
-		std::string flashdrive("/media/sda1") ;
-		dest_p = std::make_shared<messageDestDatedFile>(flashdrive) ;
+		//
+		// Send warnings and errors to the driver station
+		//
+		dest_p = std::make_shared<messageDestDS>() ;
 		logger.addDestination(dest_p) ;
+
+
+		//////////////////////////////////////////////////////////////////////
+		// Initialize the hardware
+		//////////////////////////////////////////////////////////////////////
 
 		power = new frc::PowerDistributionPanel();
 
@@ -174,7 +189,6 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 #ifdef THEREMIN
 		talon_srx_controls.set_inverted(2);
 		talon_srx_controls.set_inverted(3);
-
 #endif
 	
 #ifdef CLAYMORE
@@ -197,48 +211,73 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			if(!analog_in[i]) error_code|=8;
 		}
 
+		//////////////////////////////////////////////////////////////////////
+		// Read the parameters file
+		//////////////////////////////////////////////////////////////////////
+		
 		paramsInput *params_p = paramsInput::get() ;
 
-		if (!params_p->readFile("/home/lvuser/params.txt"))
-			std::cout << "Parameters file read failed" << std::endl ;
-		else
-			std::cout << "Parmeters file read sucessfully" << std::endl ;
-		
-		Drivebase::drivebase_controller.setParams(params_p);	
-		Lifter::lifter_controller.setParams(params_p);	
-		Grabber::grabber_controller.setParams(params_p);
-
-		/*
-		for(unsigned i=0;i<Robot_outputs::DIGITAL_IOS;i++){
-			int r=digital_io[i].set_channel(i);
-			if(r) error_code|=256;
-			//digital_in[i]=new DigitalInput(i+1);
-		}*/
-		
-		/*lcd=DriverStationLCD::GetInstance();
-		if(!lcd) error_code|=512;*/
-
-		//table = NetworkTable::GetTable("crio");
-		/*gyro=new Gyro(1);
-		if(gyro){
-			//gyro->InitGyro();
-		}else{
-			//TODO: Note this somehow.
-		}*/
-
-		/*
-		compressor=new frc::Compressor();
-		if(compressor){
-			//for now I'm assuming that this means that it will run automatically.  I haven't seen any documentation that says what this does though.
-			compressor->Start();
-		}else{
-			error_code|=512;
+		if (params_p->readFile(param_file_name_p))
+		{
+			logger.startMessage(messageLogger::messageType::info) ;
+			logger << "Parameters file '" ;
+			logger << param_file_name_p << "' was read sucessfully" ;
+			logger.endMessage() ;
 		}
-		*/
+		else
+		{
+			logger.startMessage(messageLogger::messageType::error) ;
+			logger << "Parameters file '" ;
+			logger << param_file_name_p << "' read failed" ;
+			logger.endMessage() ;
+		}
+
+		//////////////////////////////////////////////////////////////////////
+		// Setup the motor monitors
+		//////////////////////////////////////////////////////////////////////
+		double val ;
 		
-		//Slave
+		dbl_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:drivebase:left:variance", 0.25) ;
+		dbl_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:drivebase:left:max", 10.0) ;
+		dbl_monitor.setMaxCurrent(10.0) ;
 		
-		cout<<"Initialization Complete."<<endl<<flush;
+		dbr_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:drivebase:right:variance", 0.25) ;
+		dbr_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:drivebase:right:max", 10.0) ;
+		dbr_monitor.setMaxCurrent(10.0) ;
+
+		grabber_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:grabber:max", 10.0) ;
+		grabber_monitor.setMaxCurrent(val) ;
+
+		lift_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:lifter:variance", 0.25) ;
+		lift_monitor.setVarianceThreshold(val) ;
+		val = params_p->getValue("power:lifter:max", 10.0) ;
+		lift_monitor.setMaxCurrent(val) ;
+
+		lin_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:intake:left:max", 10.0) ;
+		lin_monitor.setMaxCurrent(val) ;
+
+		rin_monitor.setMeasurementsToAverage(5) ;
+		val = params_p->getValue("power:intake:right:max", 10.0) ;
+		rin_monitor.setMaxCurrent(val) ;
+
+
+		//////////////////////////////////////////////////////////////////////
+		// Initialize subsystems that have controllers
+		//////////////////////////////////////////////////////////////////////
+		Drivebase::drivebase_controller.setParams(params_p);	
+		Lifter::lifter_controller.init() ;
+		Grabber::grabber_controller.init() ;
+
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "Initialization complete" ;
+		logger.endMessage() ;
 	}
 	
 	int read_analog(Robot_inputs &r){
@@ -270,25 +309,13 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		ds_info.near_switch_left = game_data[0] == 'L';
 		ds_info.scale_left = game_data[1] == 'L';
 		ds_info.far_switch_left = game_data[2] == 'L';
+		ds_info.battery_voltage = driver_station.GetBatteryVoltage();
 		return ds_info;
 	}
 
 	Navx_input read_navx(){
 		return navx_control.get();
 	}
-
-#ifdef NEED_PIXY_CAM
-	Camera read_camera(Robot_inputs /*r*/){
-		Camera c;
-		camera.enable();
-		if(camera.isNewData()) {
-			cam_data_recieved=true;
-			c.blocks=camera.getBlocks();
-		}
-		c.enabled=cam_data_recieved;
-		return c;
-	}
-#endif
 
 	pair<Robot_inputs,int> read(Robot_mode robot_mode){
 		int error_code=0;
@@ -324,6 +351,16 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			logger << i << "=" << current[i] ;
 		}
 		logger.endMessage() ;
+
+#ifdef CHECK_MOTORS
+		dbl_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[13], current[14], current[15]}) ;
+		dbr_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[0], current[1], current[2]}) ;
+		grabber_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[10]}) ;
+		lift_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[3], current[12]}) ;
+		lin_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[11]}) ;
+		rin_monitor.logNewMeasurement(MotorCurrentMonitor::Measurement{current[4]}) ;
+#endif
+		
 		return current;
 	}
 	int set_solenoid(unsigned i,Solenoid_output v){
@@ -360,10 +397,17 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 			if(r) error_code|=2;
 		}
 
+		messageLogger &logger = messageLogger::get();
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_SOLENOIDS) ;
+		logger << "Solenoids: ";
 		for(unsigned i=0;i<Robot_outputs::SOLENOIDS;i++){
+			logger << out.solenoid[i];
+			logger << ", ";
 			int r=set_solenoid(i,out.solenoid[i]);
 			if(r) error_code|=16;
 		}
+		logger.endMessage();
+
 		for(unsigned i=0;i<Robot_outputs::RELAYS;i++){
 			int r=set_relay(i,out.relay[i]);
 			if(r) error_code|=32;
@@ -396,63 +440,60 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 	
 
 	void run(Robot_inputs in){
-		//std::ostream print_stream=cout;//(in.ds_info.connected && (print_num%PRINT_SPEED)==0)?cout:null_stream;
-
-#ifdef PRINT_TIME
-		double start = frc::Timer::GetFPGATimestamp() ;
-#endif
+		messageLogger &logger = messageLogger::get();
 		
+		
+		double start = frc::Timer::GetFPGATimestamp() ;
 		Robot_outputs out=main(in/*,print_stream*/);
 		
-#ifdef PRINT_TIME
 		double elapsed = frc::Timer::GetFPGATimestamp() - start  ;
-		std::cout << "process control " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "main robot loop " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		
 		start = frc::Timer::GetFPGATimestamp() ;
-#endif
-		
-		int x=set_outputs(out,in.robot_mode.enabled);
-		
-#ifdef PRINT_TIME
+		set_outputs(out,in.robot_mode.enabled);
 		elapsed = frc::Timer::GetFPGATimestamp() - start ;
-		std::cout << "set output " << elapsed * 1000 << " msec" << std::endl ;
-#endif
-		
-		if(x) cout<<"x was:"<<x<<"\n";
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "Set hardware outputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 	}
 	
 	void run(Robot_mode mode){
-#ifdef PRINT_TIME
+		messageLogger &logger = messageLogger::get();
 		double start = frc::Timer::GetFPGATimestamp() ;
 		double elapsed , last ;
-#endif
 		
 		pair<Robot_inputs,int> in1=read(mode);
 		
-#ifdef PRINT_TIME
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "---------------------------------------------------------------\n" ;
+		logger << "Reading hardware inputs" ;
+		logger.endMessage() ;
+
+		
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - start ;
-		std::cout << "    read base inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    read base inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
-#endif
 		
 		Robot_inputs in=in1.first;
 
 		in.navx=read_navx();
 		
-#ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    navx " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    navx " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
-#endif
 
 		error_code|=in1.second;
 		in.digital_io=digital_io.get();
 		
-		messageLogger &logger = messageLogger::get();
 		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DIGITALIO) ;
-
 		logger << "Ins: " ;
 		for(size_t i = 0 ; i < in.digital_io.in.size() ; i++)
 		{
@@ -487,45 +528,38 @@ To_roborio():error_code(0),navx_control(frc::SPI::Port::kMXP),i2c_control(8),dri
 		}
 		logger.endMessage() ;
 		
-#ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    digital io inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    digital io inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
+		
 		elapsed = last ;
-		std::cout << "dio: " << in.digital_io << "\n";
-#endif		
 		
 		in.talon_srx=talon_srx_controls.get();
 
-#ifdef PRINT_TIME
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    talon srx inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    talon srx inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
-#endif
 		
 		in.pump=pump_control.get();
-		
-#ifdef PRINT_TIME
+
 		last = frc::Timer::GetFPGATimestamp() ;
 		elapsed = last - elapsed ;
-		std::cout << "    pump inputs " << elapsed * 1000 << " msec" << std::endl ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "    pump inputs " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		elapsed = last ;
 		
 		elapsed = elapsed - start ;
-		std::cout << "read inputs " << elapsed * 1000 << " msec" << std::endl ;
-#endif
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_TIMING) ;
+		logger << "read inputs total " << elapsed * 1000 << " msec" ;
+		logger.endMessage() ;
 		
 		run(in);
-
-		/*              
-		// Network Table update:
-		enum DsMode_t { DS_OTHER = 0, DS_AUTO = 1, DS_TELE = 2 };
-		DsMode_t dsMode = 
-			(in.robot_mode.autonomous && in.robot_mode.enabled) ? DS_AUTO :
-			(in.robot_mode.enabled) ? DS_TELE : DS_OTHER;
-			table->PutBoolean ("isEnabled", in.robot_mode.enabled);
-			table->PutNumber  ("dsMode",    dsMode);*/
 	}
 };
 
@@ -539,6 +573,55 @@ class Robot_adapter: public frc::SampleRobot{
 	
 	void Autonomous(void)
 	{
+		//////////////////////////////////////////////////////////////////////
+		// Send match information to the message logger
+		//////////////////////////////////////////////////////////////////////
+		messageLogger &logger = messageLogger::get();
+		DriverStation &ds = DriverStation::GetInstance() ;
+		logger.startMessage(messageLogger::messageType::info) ;
+		logger << "Match Specific Data:\n" ;
+		logger << "    GameSpecificData: " << ds.GetGameSpecificMessage() << "\n" ;
+		logger << "          Event Name: " << ds.GetEventName() << "\n" ;
+		logger << "          Match Type: " ;
+		switch(ds.GetMatchType())
+		{
+		case DriverStation::kNone:
+			logger << "kNone\n" ;
+			break ;
+		case DriverStation::kPractice:
+			logger << "kPractice\n" ;
+			break ;
+		case DriverStation::kQualification:
+			logger << "kQualification\n" ;
+			break ;
+		case DriverStation::kElimination:
+			logger << "kElimination\n" ;
+			break ;
+		default:
+			logger << "Unknown (bad data from driver station)\n" ;
+			break ;
+		} ;
+		logger << "        Match Number: " << ds.GetMatchNumber() << "\n" ;
+		
+		logger << "            Alliance: " ;
+		switch(ds.GetAlliance())
+		{
+		case DriverStation::kRed:
+			logger << "kRed\n" ;
+			break ;
+		case DriverStation::kBlue:
+			logger << "kBlue\n" ;
+			break ;
+		case DriverStation::kInvalid:
+			logger << "kInvalid\n" ;
+			break ;
+		default:
+			logger << "Unknown (bad data from driver station)\n" ;
+			break ;
+		}
+		logger << "            Location: " << ds.GetLocation() << "\n" ;
+		logger.endMessage() ;
+		
 		while(IsAutonomous() && IsEnabled()){
 			//might need a loop here
 
@@ -561,15 +644,29 @@ class Robot_adapter: public frc::SampleRobot{
 
 	void OperatorControl(void)
 	{
+		double looptime = 0.05 ;
+		
 		//should see what happens when we get rid of this loop.  
 		while (IsOperatorControl() && IsEnabled())
 		{
+			double start = frc::Timer::GetFPGATimestamp() ;
 			Robot_mode r;
 			r.enabled=IsEnabled();
 			u.run(r);
-			
+
+#ifdef OLD_LOOP_TIMING
 			//should see what happpens when this wait is removed.
 			frc::Wait(0.005);// Wait 5 ms so we don't hog CPU cycle time
+#else
+			double elapsed = frc::Timer::GetFPGATimestamp() - start ;
+			if (elapsed < looptime)
+				frc::Wait(looptime - elapsed) ;
+			else
+			{
+				std::cout << "Loop exceeded loop time, actual " << elapsed * 1000 << " msec" << std::endl ;
+				std::cout << std::endl << std::endl ;
+			}
+#endif			
 		}
 	}
 	

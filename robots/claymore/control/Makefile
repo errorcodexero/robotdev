@@ -93,11 +93,11 @@ $(TESTTARGETDIR)/lifter$(EXEEXT): ../util/interface.cpp ../util/driver_station_i
 $(TESTTARGETDIR)/lights$(EXEEXT): lights.cpp nop.cpp
 $(TESTTARGETDIR)/lights$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
-$(TESTTARGETDIR)/log$(EXEEXT): log.cpp nop.cpp toplevel.cpp drivebase.cpp pump.cpp lifter.cpp lights.cpp intake_belts.cpp intake_grabber.cpp motor_check.cpp
+$(TESTTARGETDIR)/log$(EXEEXT): log.cpp nop.cpp toplevel.cpp drivebase.cpp pump.cpp lifter.cpp lights.cpp intake.cpp grabber.cpp motor_check.cpp
 $(TESTTARGETDIR)/log$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp ../util/countdown_timer.cpp ../util/speed_tracker.cpp
 $(TESTTARGETDIR)/log$(EXEEXT): ../util/stall_monitor.cpp ../util/countdown_timer.cpp
 
-$(TESTTARGETDIR)/main$(EXEEXT): main.cpp toplevel.cpp nop.cpp pump.cpp drivebase.cpp intake_belts.cpp intake_grabber.cpp nop.cpp lifter.cpp lights.cpp
+$(TESTTARGETDIR)/main$(EXEEXT): main.cpp toplevel.cpp nop.cpp pump.cpp drivebase.cpp intake.cpp grabber.cpp nop.cpp lifter.cpp lights.cpp
 $(TESTTARGETDIR)/main$(EXEEXT): motor_check.cpp force_interface.cpp force.cpp log.cpp
 $(TESTTARGETDIR)/main$(EXEEXT): ../util/countup_timer.cpp ../util/speed_tracker.cpp ../util/countdown_timer.cpp ../util/stall_monitor.cpp
 $(TESTTARGETDIR)/main$(EXEEXT): ../util/interface.cpp ../util/posedge_trigger.cpp ../util/driver_station_interface.cpp
@@ -111,7 +111,7 @@ $(TESTTARGETDIR)/nop$(EXEEXT): nop.cpp
 $(TESTTARGETDIR)/nop$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 
 $(TESTTARGETDIR)/monitor$(EXEEXT): monitor.cpp force_interface.cpp toplevel.cpp force.cpp
-$(TESTTARGETDIR)/monitor$(EXEEXT): pump.cpp drivebase.cpp lifter.cpp lights.cpp intake_belts.cpp intake_grabber.cpp nop.cpp motor_check.cpp
+$(TESTTARGETDIR)/monitor$(EXEEXT): pump.cpp drivebase.cpp lifter.cpp lights.cpp intake.cpp grabber.cpp nop.cpp motor_check.cpp
 $(TESTTARGETDIR)/monitor$(EXEEXT): ../util/interface.cpp ../util/driver_station_interface.cpp ../util/util.cpp
 $(TESTTARGETDIR)/monitor$(EXEEXT): ../util/posedge_trigger.cpp ../util/stall_monitor.cpp ../util/speed_tracker.cpp ../util/countdown_timer.cpp
 

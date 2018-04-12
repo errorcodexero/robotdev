@@ -5,6 +5,8 @@ var com__ctre__phoenix___c_a_nifier_j_n_i_8h =
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigGetParameter", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a9ee3ac1fa5d73e07a364e660b94ae08b", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigSetCustomParam", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#aa523301cb6fb7d9fb97af7e069ea61f5", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigSetParameter", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#ae71d05f364a8fdc3ae285178ba695304", null ],
+    [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementPeriod", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#afbdb0a1b78eacab5b99d5dc19d6b3b0f", null ],
+    [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementWindow", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a1e94fcd9cc3c095a8e7dee46ede382bc", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1EnablePWMOutput", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a6d2d19af0f671919523490f1f8d21eaf", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetBatteryVoltage", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a7c026fd2a178f154167dccc980bbf22c", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetBusVoltage", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#ab3d2c9428108921836964e858797c2c9", null ],
@@ -14,6 +16,8 @@ var com__ctre__phoenix___c_a_nifier_j_n_i_8h =
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetGeneralInputs", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a5617d6743e7d4bc02f28a6facc986e0f", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetLastError", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a89bccdfea644f8dfb87fbc66e49da689", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetPWMInput", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a2780e1bd75c6ebea67e2d3be4df2772a", null ],
+    [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadraturePosition", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a6541d028520a7028d1bb35f0447ede8d", null ],
+    [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadratureVelocity", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a2131574401e52f5b432783dc6dc38820", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetStatusFramePeriod", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a7abe967de727fa2a4c3194ade23f3163", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1GetStickyFaults", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a5d388113d153faed603dbb7990bfd030", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1HasResetOccurred", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#ad183b0eaa89052535da0d41902a0cc48", null ],
@@ -23,5 +27,6 @@ var com__ctre__phoenix___c_a_nifier_j_n_i_8h =
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1SetGeneralOutputs", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#aec00a64360df94bb5f567772bd4a053d", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1SetLEDOutput", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a84140241eba390cd20e11b3b81979451", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1SetPWMOutput", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a9e6c33171465bff53dfeb05711c739bf", null ],
+    [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1SetQuadraturePosition", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a0246640eb8346ce8e0c5ea365ebf5615", null ],
     [ "Java_com_ctre_phoenix_CANifierJNI_JNI_1SetStatusFramePeriod", "com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#aa7d550e35ee61bbfdc414d68ae453582", null ]
 ];

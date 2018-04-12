@@ -14,11 +14,15 @@ public:
 
 private:
     std::unique_ptr<Step_impl> impl;
+	std::vector<Step>* fail_branch;
 
 public:
     explicit Step(Step_impl const&);
+	explicit Step(Step_impl const&, std::vector<Step>);
     Step(Step const&);
+	Step(Step const&, std::vector<Step>);
 
+	std::vector<Step>* get_fail_branch();
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Status done(Next_mode_info);
@@ -99,7 +103,10 @@ public:
 
 class StartAuto: public Step_impl_inner<StartAuto>{
 public:
-    StartAuto() ;
+	std::string mProgramName ;
+	bool mInited ;
+	
+    StartAuto(const char *name_p) ;
     
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -122,34 +129,29 @@ public:
 
 //Drive straight a specified distance
 class Drive:public Step_impl_inner<Drive>{
-    Inch target_distance;
-    bool end_on_stall;
-    bool init;
+protected:
+    Inch mTargetDistance;
+	Inch mTargetAngleOffset;
+	Inch mReturnOffset;
+	std::string mParamName ;
+    bool mEndOnStall ;
+	bool mCurve;
+	Inch mCurveStart ;
+	bool mReturnFromCollect ;
+    bool mInited ;
 
 public:
-    explicit Drive(Inch, bool end_on_stall=false);
+    explicit Drive(Inch dist, bool end_on_stall=false);
+	explicit Drive(Inch dist, double curve_start, double angle_offset, bool end_on_stall=false);
+    explicit Drive(const char *param_p, Inch dist, bool end_on_stall=false);
+    explicit Drive(const std::string &param, Inch dist, bool end_on_stall=false);
+	explicit Drive(bool dummy, Inch return_offset=0);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
     Step::Status done(Next_mode_info);
     std::unique_ptr<Step_impl> clone()const;
     bool operator==(Drive const&)const;
-};
-
-class Drive_param:public Step_impl_inner<Drive_param>{
-    std::string mParam ;
-    Inch mDefaultValue ;
-    bool mEndOnStall ;
-    bool mInited ;
-
-public:
-    explicit Drive_param(const char *param, double defvalue, bool end_on_stall=false);
-
-    Toplevel::Goal run(Run_info,Toplevel::Goal);
-    Toplevel::Goal run(Run_info);
-    Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone() const;
-    bool operator==(Drive_param const &) const;
 };
 
 //Drive the motors at the specified powers for a specified amount of time
@@ -190,8 +192,12 @@ public:
 struct Rotate: Step_impl_inner<Rotate>{
     double target_angle;
     bool init;
+	double tolerance ;
+	bool tolprovided ;
+	bool opengrabber;
 
-    explicit Rotate(double);
+    explicit Rotate(double angle, bool open_grabber=false);
+	explicit Rotate(double angle, double tolerance, bool open_grabber=false) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -200,13 +206,55 @@ struct Rotate: Step_impl_inner<Rotate>{
     bool operator==(Rotate const&)const;
 };
 
+//Rotate the robot by a specified angle
+struct Rotate_finish: Step_impl_inner<Rotate_finish>{
+    double target_angle;
+	double prev_angle ;
+	double tolerance ;
+    bool init;
+	bool tolprovided ;
+
+    explicit Rotate_finish(double prevangle, double angle);
+    explicit Rotate_finish(double prevangle, double angle, double tol);
+	
+    Toplevel::Goal run(Run_info,Toplevel::Goal);
+    Toplevel::Goal run(Run_info);
+    Step::Status done(Next_mode_info);
+    std::unique_ptr<Step_impl> clone()const;
+    bool operator==(Rotate_finish const&)const;
+};
+
+//Rotate the robot by a specified angle
+struct Rotate_back: Step_impl_inner<Rotate_back>{
+    bool init;
+	double mOffset ;
+	double mTolerance ;
+	bool mTolSpecified ;
+
+    explicit Rotate_back() ;
+	explicit Rotate_back(double offset) ;
+	explicit Rotate_back(double offset, double tolerance) ;
+	
+    Toplevel::Goal run(Run_info,Toplevel::Goal);
+    Toplevel::Goal run(Run_info);
+    Step::Status done(Next_mode_info);
+    std::unique_ptr<Step_impl> clone()const;
+    bool operator==(Rotate_back const&)const;
+};
+
+
 //Start moving the lifter to a specified preset in the background
 struct Background_lifter_to_preset: Step_impl_inner<Background_lifter_to_preset>{
     LifterController::Preset preset;
     double time;
+	double delay ;
+	double height ;
+	bool heightgiven ;
     bool init;
 
     explicit Background_lifter_to_preset(LifterController::Preset, double);
+    explicit Background_lifter_to_preset(double, double);
+    explicit Background_lifter_to_preset(LifterController::Preset, double, double);
 
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -215,19 +263,9 @@ struct Background_lifter_to_preset: Step_impl_inner<Background_lifter_to_preset>
     bool operator==(Background_lifter_to_preset const&)const;
 };
 
-//Wait until the lifter has reached its goal
-struct Wait_for_lifter: Step_impl_inner<Wait_for_lifter>{
-    explicit Wait_for_lifter();
-
-    Toplevel::Goal run(Run_info,Toplevel::Goal);
-    Toplevel::Goal run(Run_info);
-    Step::Status done(Next_mode_info);
-    std::unique_ptr<Step_impl> clone()const;
-    bool operator==(Wait_for_lifter const&)const;
-};
-
 //Calibrate the lifter at the current height
 struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
+	bool mInited ;
     explicit Calibrate_lifter();
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
@@ -239,11 +277,13 @@ struct Calibrate_lifter: Step_impl_inner<Calibrate_lifter>{
 
 //Move the lifter to a sepecified height
 struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
-    double target_height;
-    double time;
-    bool init;
-
-    explicit Lifter_to_height(double, double);
+	double mTargetHeight ;
+	std::string mParamName ;
+	bool mInited ;
+	
+    explicit Lifter_to_height(double height);
+    explicit Lifter_to_height(const char *param_p, double height);
+    explicit Lifter_to_height(const std::string &param, double height);
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -253,12 +293,26 @@ struct Lifter_to_height: Step_impl_inner<Lifter_to_height>{
 };
 
 //Move the lifter to a specified preset
-struct Lifter_to_preset: Lifter_to_height{
+struct Lifter_to_preset: Step_impl_inner<Lifter_to_preset>
+{
+    LifterController::Preset mPreset;
+    double mTime;
+	Countdown_timer fail_timer;
+    bool mInit;
+
     explicit Lifter_to_preset(LifterController::Preset, double);
+	
+    Toplevel::Goal run(Run_info,Toplevel::Goal);
+    Toplevel::Goal run(Run_info);
+    Step::Status done(Next_mode_info);
+    std::unique_ptr<Step_impl> clone()const;
+    bool operator==(Lifter_to_preset const&)const;
 };
 
 //Calibrate the grabber at the current angle
 struct Calibrate_grabber: Step_impl_inner<Calibrate_grabber>{
+    bool mInited ;
+    
     explicit Calibrate_grabber();
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
@@ -283,12 +337,54 @@ struct Grabber_to_preset: Step_impl_inner<Grabber_to_preset>{
     bool operator==(Grabber_to_preset const&)const;
 };
 
+//Put the grabber into collecting mode until a cube is collected
+struct Collect: Step_impl_inner<Collect>{
+    double time;
+    bool init;
+
+    explicit Collect(double);
+
+    Toplevel::Goal run(Run_info,Toplevel::Goal);
+    Toplevel::Goal run(Run_info);
+    Step::Status done(Next_mode_info);
+    std::unique_ptr<Step_impl> clone()const;
+    bool operator==(Collect const&)const;
+};
+
 //Eject a cube
-struct Eject: Step_impl_inner<Eject>{
+struct Eject: Step_impl_inner<Eject>
+{
+	enum class EjectState
+	{
+		//
+		// We are ready to start an eject operation
+		//
+		Start,
+
+		//
+		// We are waiting on a timer to expire to be done
+		//
+		WaitingOnTime,
+
+		//
+		// Waiting for the cube sensor to turn off (or the timer)
+		//
+		WaitingCubeSensorOff,
+
+		//
+		// Eject is done
+		//
+		Done
+	} ;
+	
+	EjectState mState ;
     Countdown_timer eject_timer;
-    bool sensor_ok ;
+	double mStart ;
+	bool mPowerApplied ;
+	double mPower ;
 
     explicit Eject();
+	explicit Eject(double power) ;
 	
     Toplevel::Goal run(Run_info,Toplevel::Goal);
     Toplevel::Goal run(Run_info);
@@ -306,6 +402,41 @@ struct Drop_grabber: Step_impl_inner<Drop_grabber>{
     Step::Status done(Next_mode_info);
     std::unique_ptr<Step_impl> clone()const;
     bool operator==(Drop_grabber const&)const;
+};
+
+//Drive forward and collect until a cube is collected
+struct Close_collect_no_cube: Step_impl_inner<Close_collect_no_cube>{
+	bool mInit ;
+	double mTime ;
+	double mStart ;
+	Countdown_timer timeout_timer;
+	
+	explicit Close_collect_no_cube(double length);
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Close_collect_no_cube const&)const;
+};
+
+//Drive forward and collect until a cube is collected
+struct Drive_and_collect: Step_impl_inner<Drive_and_collect>
+{
+	static double distance_travelled;
+
+	Drivebase::Distances initial_distances;
+	bool init;
+	double mStart ;
+	double maxdistance ;
+
+	explicit Drive_and_collect(double maxdist) ;
+
+	Toplevel::Goal run(Run_info,Toplevel::Goal);
+	Toplevel::Goal run(Run_info);
+	Step::Status done(Next_mode_info);
+	std::unique_ptr<Step_impl> clone()const;
+	bool operator==(Drive_and_collect const&)const;
 };
 
 #endif

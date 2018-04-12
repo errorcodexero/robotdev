@@ -65,12 +65,12 @@ clean::
 #
 ifeq ($(VERBOSE),1)
 $(REALTARGET): $(OBJS) $(TARGETAPPFILES) $(COMMONLIBSFILES)
-	$(CROSSCXX) -o $@ $(OBJS) $(LDFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
+	$(COMPILER) -o $@ $(OBJS) $(LDFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
 else
 $(info $(COMMONLIBSFULL))
 $(REALTARGET): $(OBJS) $(TARGETAPPFILES) $(COMMONLIBSFILES)
 	@echo -n Linking application $@ " ... "
-	@$(CROSSCXX) -o $@ $(OBJS) $(LDFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
+	@$(COMPILER) -o $@ $(OBJS) $(LDFLAGS) $(TARGETAPPLIBS) $(COMMONLIBSFULL) $(ADDLIBS) $(USERLIBS)
 	@echo complete
 endif
 
@@ -100,15 +100,7 @@ deploy:: all
 		scp $$file lvuser@$(DEPLOYHOST):/home/lvuser ; \
 	done
 	ssh lvuser@$(DEPLOYHOST) ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r"
-
-
-deployall:: all
-	@ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local "rm -f /home/lvuser/FRCUserProgram"
-	@for file in $(REALTARGET) $(DEPLOYADD) ; do \
-		scp $$file admin@roboRIO-$(TEAM_NUMBER)-FRC.local:/home/lvuser ; \
-	done
-	ssh admin@roboRIO-$(TEAM_NUMBER)-FRC.local ". /etc/profile.d/natinst-path.sh; chmod a+x /home/lvuser/FRCUserProgram; /usr/local/frc/bin/frcKillRobot.sh -t -r &"
-
+	scp lvuser@$(DEPLOYHOST):/home/lvuser/params.txt params-latest.txt
 
 $(DEPDIR)/%.d: ;
 

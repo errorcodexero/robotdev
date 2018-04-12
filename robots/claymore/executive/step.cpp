@@ -23,15 +23,25 @@ ostream& operator<<(ostream& o,Step const& a){
     a.display(o);
     return o;
 }
-//
 
-
-Step::Step(Step const& a):impl(a.get().clone()){}
+Step::Step(Step const& a):impl(a.get().clone()),fail_branch(nullptr){}
+Step::Step(Step const& a, vector<Step> fail):Step(a){
+	fail_branch = &fail;
+}
 
 Step::Step(Step_impl const& a){
-    auto c=a.clone();
+	fail_branch = nullptr;
+	auto c=a.clone();
     if(!c)nyi
-	      impl=move(c);
+		impl=move(c);
+}
+
+Step::Step(Step_impl const& a, vector<Step> fail):Step(a){
+	fail_branch = &fail;
+}
+
+vector<Step>* Step::get_fail_branch(){
+	return fail_branch;
 }
 
 Toplevel::Goal Step::run(Run_info info, Toplevel::Goal goals){
@@ -102,13 +112,13 @@ Step::Status Combo::done(Next_mode_info info){
     Step::Status b_status = step_b.done(info);
     switch(a_status){
     case Step::Status::FINISHED_SUCCESS:
-	return b_status;
+		return b_status;
     case Step::Status::UNFINISHED:
-	return a_status;//TODO
+		return a_status;//TODO
     case Step::Status::FINISHED_FAILURE:
-	nyi //TODO
+		nyi //TODO
     default:
-	assert(0);
+		assert(0);
     } 
 }
 
@@ -142,10 +152,10 @@ Step::Status Wait::done(Next_mode_info){
     Step::Status ret =  wait_timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Wait step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Wait step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
@@ -171,8 +181,10 @@ bool Wait::operator==(Wait const& b)const{
 //
 // Start auto, mark the start of the auto program
 //
-StartAuto::StartAuto()
+StartAuto::StartAuto(const char *name_p)
 {
+	mProgramName = name_p ;
+	mInited = false ;
 }
 
 Step::Status StartAuto::done(Next_mode_info info)
@@ -185,7 +197,16 @@ Toplevel::Goal StartAuto::run(Run_info info){
     return run(info,{});
 }
 
-Toplevel::Goal StartAuto::run(Run_info info,Toplevel::Goal goals){
+Toplevel::Goal StartAuto::run(Run_info info,Toplevel::Goal goals)
+{
+	if (!mInited)
+	{
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Starting autonomous program " << mProgramName ;
+		logger.endMessage() ;
+		mInited = true ;
+	}
     return goals;
 }
 
@@ -233,29 +254,97 @@ bool EndAuto::operator==(EndAuto const& b)const{
 // Drive: Drive straight a specified distance
 //
 
-Drive::Drive(Inch target, bool end_on_stall):target_distance(target),end_on_stall(end_on_stall),init(false){}
+Drive::Drive(Inch dist, bool end_on_stall)
+{
+	mTargetDistance = dist ;
+	mEndOnStall = end_on_stall ;
+	mCurve = false;
+	mReturnFromCollect = false;
+	mInited = false ;
+}
 
-Step::Status Drive::done(Next_mode_info info){
+Drive::Drive(Inch dist, double curve_start, double angle_offset, bool end_on_stall)
+{
+	mTargetDistance = dist ;
+	mTargetAngleOffset = angle_offset;
+	mCurve = true;
+	mCurveStart = curve_start ;
+	mEndOnStall = end_on_stall;
+	mInited = false;
+	mReturnFromCollect = false;
+}
+
+Drive::Drive(const char *param_p, Inch dist, bool end_on_stall)
+{
+	mParamName = param_p ;
+	mTargetDistance = dist ;
+	mEndOnStall = end_on_stall ;
+	mCurve = false;
+	mReturnFromCollect = false;
+	mInited = false ;
+}
+
+Drive::Drive(const std::string &param, Inch dist, bool end_on_stall)
+{
+	mParamName = param ;
+	mTargetDistance = dist ;
+	mEndOnStall = end_on_stall ;
+	mCurve = false;
+	mReturnFromCollect = false;
+	mInited = false ;
+}
+
+Drive::Drive(bool, Inch return_offset)
+{
+	mReturnOffset = return_offset;
+	mCurve = false;
+	mReturnFromCollect = true;
+	mInited = false;
+}
+
+Step::Status Drive::done(Next_mode_info info)
+{
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Drive step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Drive step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
 
-Toplevel::Goal Drive::run(Run_info info){
+Toplevel::Goal Drive::run(Run_info info)
+{
     return run(info, {});
 }
 
-Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals){
-    if(!init) {
-	double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-	Drivebase::drivebase_controller.initDistance(avg_status + target_distance, info.status.drive.angle, info.in.now, end_on_stall);
-	init = true;
+Toplevel::Goal Drive::run(Run_info info, Toplevel::Goal goals)
+{
+    if(!mInited)
+	{
+		if (mParamName.length() > 0)
+		{
+			//
+			// Based on a parameter name, go get the value from the
+			// parameter file
+			//
+			paramsInput *params_p = paramsInput::get() ;
+			mTargetDistance = params_p->getValue(mParamName, mTargetDistance) ;
+		} else if (mReturnFromCollect) {
+			mTargetDistance = -(Drive_and_collect::distance_travelled + mReturnOffset);
+		}
+		
+		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+		if(!mCurve) {
+			Drivebase::drivebase_controller.initDistance(avg_status + mTargetDistance, info.status.drive.angle,
+													 info.in.now, mEndOnStall, mTargetDistance >= 0.0);
+		} else {
+			Drivebase::drivebase_controller.initCurve(avg_status, avg_status + mTargetDistance, mCurveStart, info.status.drive.angle,
+													  mTargetAngleOffset, info.in.now, mEndOnStall, mTargetDistance >= 0.0);
+		}
+		mInited = true ;
     }
     goals.drive = Drivebase::Goal::drive_straight();
     return goals;
@@ -266,64 +355,12 @@ unique_ptr<Step_impl> Drive::clone()const{
 }
 
 bool Drive::operator==(Drive const& a)const{
-    return target_distance == a.target_distance && end_on_stall == a.end_on_stall && init == a.init;
-}
-
-//
-// Drive_param: same as drive above, but the distance comes from the params
-//
-Drive_param::Drive_param(const char *param_p, double defval, bool end_stall)
-{
-    mParam = param_p ;
-    mDefaultValue = defval ;
-    mEndOnStall = end_stall ;
-    mInited = false ;
-}
-
-Step::Status Drive_param::done(Next_mode_info info)
-{
-    Step::Status ret =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-    if (ret == Step::Status::FINISHED_SUCCESS)
-    {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Drive step complete" ;
-	logger.endMessage() ;
-    }
-    return ret ;
-}
-
-Toplevel::Goal Drive_param::run(Run_info info)
-{
-    return run(info, {});
-}
-
-Toplevel::Goal Drive_param::run(Run_info info, Toplevel::Goal goals)
-{
-    if(!mInited) {
-	paramsInput *param_p = paramsInput::get() ;
-	double dist = param_p->getValue(mParam, mDefaultValue) ;
-	double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
-	Drivebase::drivebase_controller.initDistance(avg_status + dist, info.status.drive.angle, info.in.now, mEndOnStall);
-	mInited = true;
-    }
-    goals.drive = Drivebase::Goal::drive_straight();
-    return goals;
-}
-
-unique_ptr<Step_impl> Drive_param::clone()const{
-    return unique_ptr<Step_impl>(new Drive_param(*this));
-}
-
-bool Drive_param::operator==(Drive_param const& a) const
-{
-    return a.mParam == mParam && mEndOnStall == a.mEndOnStall ;
+    return mTargetDistance == a.mTargetDistance && mEndOnStall == a.mEndOnStall && mInited == a.mInited ;
 }
 
 //
 // Drive_timed: Drive the motors at the specified powers for a specified amount of time
 //
-
 Drive_timed::Drive_timed(double l, double r, double t){
     left_power = l;
     right_power = r;
@@ -334,10 +371,10 @@ Step::Status Drive_timed::done(Next_mode_info /*info*/){
     Step::Status ret =  timer.done() ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Timed Drive step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Timed Drive step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
@@ -384,9 +421,9 @@ Toplevel::Goal Ram::run(Run_info info){
 
 Toplevel::Goal Ram::run(Run_info info,Toplevel::Goal goals){
     if(!init){
-	initial_distances = info.status.drive.distances;
-	target_distances = target_distances + initial_distances;
-	init = true;
+		initial_distances = info.status.drive.distances;
+		target_distances = target_distances + initial_distances;
+		init = true;
     }
 
     goals.drive = Drivebase::Goal::absolute(left_power, right_power);
@@ -404,51 +441,238 @@ bool Ram::operator==(Ram const& b)const{
 //
 // Rotate: Rotate the robot by a specified angle
 //
+Rotate::Rotate(double a, bool open_grabber)
+{
+	target_angle = a ;
+	opengrabber = open_grabber;
+	init = false ;
+	tolprovided = false ;
+}
 
-Rotate::Rotate(double a):target_angle(a),init(false){}
+Rotate::Rotate(double a, double tol, bool open_grabber)
+{
+	target_angle = a ;
+	opengrabber = open_grabber;
+	init = false ;
+	tolprovided = true ;
+	tolerance = tol ;
+}
 
-Toplevel::Goal Rotate::run(Run_info info){
+Toplevel::Goal Rotate::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals){
+double lastrotate ;
+Toplevel::Goal Rotate::run(Run_info info,Toplevel::Goal goals)
+{
     if(!init) {
-	Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now) ;
-	init = true;
+		if (tolprovided)
+		{
+			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0, tolerance) ;
+		}
+		else
+		{
+			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target_angle, info.in.now, target_angle > 0) ;
+		}
+		lastrotate = info.status.drive.angle ;
+		init = true;
+    }
+
+    goals.drive = Drivebase::Goal::rotate();
+	if(opengrabber)
+		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+    return goals;
+}
+
+Step::Status Rotate::done(Next_mode_info info)
+{
+    Step::Status ret =  ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
+    if (ret == Step::Status::FINISHED_SUCCESS)
+    {
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Rotate step complete" ;
+		logger.endMessage() ;
+    }
+
+    return ret ;
+}
+
+std::unique_ptr<Step_impl> Rotate::clone()const
+{
+    return unique_ptr<Step_impl>(new Rotate(*this));
+}
+
+bool Rotate::operator==(Rotate const& b)const
+{
+    return target_angle == b.target_angle && init == b.init;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Rotate: Rotate the robot by a specified angle
+//
+Rotate_finish::Rotate_finish(double prev, double a)
+{
+	prev_angle = prev ;
+	target_angle = a ;
+	init = false ;
+	tolprovided = false ;
+}
+
+Rotate_finish::Rotate_finish(double prev, double a, double tol)
+{
+	prev_angle = prev ;
+	target_angle = a ;
+	tolerance = tol ;
+	init = false ;
+	tolprovided = true ;
+}
+
+Toplevel::Goal Rotate_finish::run(Run_info info)
+{
+    return run(info,{});
+}
+
+Toplevel::Goal Rotate_finish::run(Run_info info,Toplevel::Goal goals)
+{
+    if(!init) {
+		// double last = Drivebase::drivebase_controller.getLastAngle() ;
+		// double target = prev_angle - last + info.status.drive.angle + target_angle ;
+		double target = lastrotate + target_angle + prev_angle ;
+		
+		if (tolprovided)
+			Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0, tolerance) ;
+		else
+			Drivebase::drivebase_controller.initAngle(target, info.in.now, target_angle > 0) ;
+		init = true;
     }
 
     goals.drive = Drivebase::Goal::rotate();
     return goals;
 }
 
-Step::Status Rotate::done(Next_mode_info info){
+Step::Status Rotate_finish::done(Next_mode_info info)
+{
     Step::Status ret =  ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Rotate step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Rotate_finish step complete" ;
+		logger.endMessage() ;
     }
 
     return ret ;
 }
 
-std::unique_ptr<Step_impl> Rotate::clone()const{
-    return unique_ptr<Step_impl>(new Rotate(*this));
+std::unique_ptr<Step_impl> Rotate_finish::clone()const
+{
+    return unique_ptr<Step_impl>(new Rotate_finish(*this));
 }
 
-bool Rotate::operator==(Rotate const& b)const{
+bool Rotate_finish::operator==(Rotate_finish const& b)const
+{
     return target_angle == b.target_angle && init == b.init;
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+
+Rotate_back::Rotate_back()
+{
+	init = false ;
+	mOffset = 0 ;
+	mTolSpecified = false ;
+}
+
+Rotate_back::Rotate_back(double offset)
+{
+	init = false ;
+	mOffset = offset ;
+	mTolSpecified = false ;
+}
+
+Rotate_back::Rotate_back(double offset, double tolval)
+{
+	init = false ;
+	mOffset = offset ;
+	mTolSpecified = true ;
+	mTolerance = tolval ;
+}
+
+Toplevel::Goal Rotate_back::run(Run_info info)
+{
+    return run(info,{});
+}
+
+Toplevel::Goal Rotate_back::run(Run_info info,Toplevel::Goal goals)
+{
+    if(!init) {
+		double target = -Drivebase::drivebase_controller.getLastAngle() ;
+		if (mTolSpecified)
+			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target + mOffset, info.in.now, target > 0, mTolerance) ;
+		else
+			Drivebase::drivebase_controller.initAngle(info.status.drive.angle + target + mOffset, info.in.now, target > 0) ;
+		init = true;
+    }
+
+    goals.drive = Drivebase::Goal::rotate();
+    return goals;
+}
+
+Step::Status Rotate_back::done(Next_mode_info info)
+{
+    Step::Status ret =  ready(info.status.drive, Drivebase::Goal::rotate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;	
+    if (ret == Step::Status::FINISHED_SUCCESS)
+    {
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Rotate_back step complete" ;
+		logger.endMessage() ;
+    }
+
+    return ret ;
+}
+
+std::unique_ptr<Step_impl> Rotate_back::clone()const
+{
+    return unique_ptr<Step_impl>(new Rotate_back(*this));
+}
+
+bool Rotate_back::operator==(Rotate_back const& b)const
+{
+    return true ;
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 //
 // Start_lifter_in_background: Start moving the lifter to a specified preset in the background
 //
 
-Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double time):preset(preset),time(time),init(false){}
+Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double time):preset(preset),time(time),init(false)
+{
+	delay = 0.0 ;
+	heightgiven = false ;
+}
 
-Step::Status Background_lifter_to_preset::done(Next_mode_info){
+Background_lifter_to_preset::Background_lifter_to_preset(double h, double time):time(time),init(false)
+{
+	delay = 0.0 ;
+	heightgiven = true ;
+	height = h ;
+}
+
+Background_lifter_to_preset::Background_lifter_to_preset(LifterController::Preset preset, double del, double time):preset(preset),time(time),init(false)
+{
+	delay = del ;
+	heightgiven = false ;
+}
+
+Step::Status Background_lifter_to_preset::done(Next_mode_info)
+{
     messageLogger &logger = messageLogger::get() ;
     logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
     logger << "Background_lifter_to_preset step complete" ;
@@ -456,127 +680,134 @@ Step::Status Background_lifter_to_preset::done(Next_mode_info){
     return Step::Status::FINISHED_SUCCESS;
 }
 
-Toplevel::Goal Background_lifter_to_preset::run(Run_info info){
+Toplevel::Goal Background_lifter_to_preset::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
-    if(!init) {
-	Lifter::lifter_controller.backgroundMoveToHeight(preset, info.status.lifter.height, time);
-	init = false;
+Toplevel::Goal Background_lifter_to_preset::run(Run_info info,Toplevel::Goal goals)
+{
+    if(!init)
+	{
+		if (heightgiven)
+			Lifter::lifter_controller.moveToHeight(height, info.in.now, true);
+		else
+			Lifter::lifter_controller.moveToHeight(preset, info.in.now, true);
+		
+		init = false;
     }
     return goals;
 }
 
-unique_ptr<Step_impl> Background_lifter_to_preset::clone()const{
+unique_ptr<Step_impl> Background_lifter_to_preset::clone()const
+{
     return unique_ptr<Step_impl>(new Background_lifter_to_preset(*this));
 }
 
-bool Background_lifter_to_preset::operator==(Background_lifter_to_preset const& b)const{
+bool Background_lifter_to_preset::operator==(Background_lifter_to_preset const& b)const
+{
     return preset == b.preset && time == b.time && init == b.init;
-}
-
-//
-// Wait_for_lifter: Wait until the lifter has reached its goal
-//
-
-Wait_for_lifter::Wait_for_lifter(){}
-
-Step::Status Wait_for_lifter::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::background()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
-    if (ret == Step::Status::FINISHED_SUCCESS)
-    {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Wait For Lifter Step done" ;
-	logger.endMessage() ;
-    }
-
-    return ret ;
-}
-
-Toplevel::Goal Wait_for_lifter::run(Run_info info){
-    return run(info,{});
-}
-
-Toplevel::Goal Wait_for_lifter::run(Run_info info,Toplevel::Goal goals){
-    goals.lifter = Lifter::Goal::background();
-    return goals;
-}
-
-unique_ptr<Step_impl> Wait_for_lifter::clone()const{
-    return unique_ptr<Step_impl>(new Wait_for_lifter(*this));
-}
-
-bool Wait_for_lifter::operator==(Wait_for_lifter const& b)const{
-    return true;
 }
 
 //
 // Calibrate_lifter: Calibrate the lifter at the current height
 //
 
-Calibrate_lifter::Calibrate_lifter(){
-    Lifter::lifter_controller.setCalibrate(true);
+Calibrate_lifter::Calibrate_lifter()
+{
+	mInited = false ;
 }
 
-Step::Status Calibrate_lifter::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+Step::Status Calibrate_lifter::done(Next_mode_info info)
+{
+    Step::Status ret = ready(status(info.status.lifter), Lifter::Goal::calibrate()) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Calibrate Lifter Step done" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Calibrate Lifter Step done" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
 
-Toplevel::Goal Calibrate_lifter::run(Run_info info){
+Toplevel::Goal Calibrate_lifter::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals){
+Toplevel::Goal Calibrate_lifter::run(Run_info info,Toplevel::Goal goals)
+{
     goals.lifter = Lifter::Goal::calibrate();
     return goals;
 }
 
-unique_ptr<Step_impl> Calibrate_lifter::clone()const{
+unique_ptr<Step_impl> Calibrate_lifter::clone()const
+{
     return unique_ptr<Step_impl>(new Calibrate_lifter(*this));
 }
 
-bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const{
+bool Calibrate_lifter::operator==(Calibrate_lifter const& b)const
+{
     return true;
 }
 
 //
 // Lifter_to_height: Move the lifter to a specified height
 //
+Lifter_to_height::Lifter_to_height(double target_height)
+{
+	mTargetHeight = target_height ;
+	mInited = false ;
+}
 
-Lifter_to_height::Lifter_to_height(double target_height, double time):target_height(target_height),time(time),init(false){}
+Lifter_to_height::Lifter_to_height(const char *param_p, double height)
+{
+	mParamName = param_p ;
+	mTargetHeight = height ;
+	mInited = false ;
+}
 
-Step::Status Lifter_to_height::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_height(target_height)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+Lifter_to_height::Lifter_to_height(const std::string &param, double height)
+{
+	mParamName = param ;
+	mTargetHeight = height ;
+	mInited = false ;
+}
+
+Step::Status Lifter_to_height::done(Next_mode_info info)
+{
+    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_height(mTargetHeight)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Lifter_to_height step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Lifter_to_height step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 }
 
-Toplevel::Goal Lifter_to_height::run(Run_info info){
+Toplevel::Goal Lifter_to_height::run(Run_info info)
+{
     return run(info,{});
 }
 
-Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals){
-    if(!init) {
-	Lifter::lifter_controller.moveToHeight(target_height, info.status.lifter.height, time);
-	init = false;
+Toplevel::Goal Lifter_to_height::run(Run_info info,Toplevel::Goal goals)
+{
+    if(!mInited) {
+		if (mParamName.length() > 0)
+		{
+			paramsInput *params_p = paramsInput::get() ;
+			mTargetHeight = params_p->getValue(mParamName, mTargetHeight) ;
+		}
+		
+		Lifter::lifter_controller.moveToHeight(mTargetHeight, info.in.now) ;
+		mInited = false ;
     }
-    goals.lifter = Lifter::Goal::go_to_height(target_height);
+    goals.lifter = Lifter::Goal::go_to_height(mTargetHeight);
+    if(info.status.grabber.has_cube)
+        goals.grabber = Grabber::Goal::hold();
     return goals;
 }
 
@@ -584,22 +815,70 @@ unique_ptr<Step_impl> Lifter_to_height::clone()const{
     return unique_ptr<Step_impl>(new Lifter_to_height(*this));
 }
 
-bool Lifter_to_height::operator==(Lifter_to_height const& b)const{
-    return target_height == b.target_height && time == b.time && init == b.init;
+bool Lifter_to_height::operator==(Lifter_to_height const& b)const
+{
+    return mTargetHeight == b.mTargetHeight && mInited == b.mInited ;
 }
 
 //
 // Lifter_to_preset: Move the lifter to a specified preset
 //
 
-Lifter_to_preset::Lifter_to_preset(LifterController::Preset target_preset, double time):Lifter_to_height(Lifter::lifter_controller.presetToHeight(target_preset), time){}
+Lifter_to_preset::Lifter_to_preset(LifterController::Preset preset, double time)
+{
+    mPreset = preset ;
+    mTime = time ;
+    mInit = false ;
+}
+
+Step::Status Lifter_to_preset::done(Next_mode_info info){
+    Step::Status ret = ready(status(info.status.lifter), Lifter::Goal::go_to_preset(mPreset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+
+	fail_timer.update(info.in.now, info.in.robot_mode.enabled);
+	if (fail_timer.done())
+		ret = Step::Status::FINISHED_FAILURE;
+
+    if (ret == Step::Status::FINISHED_SUCCESS)
+    {
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Lifter_to_preset step complete" ;
+		logger.endMessage() ;
+    }
+    return ret ;
+}
+
+Toplevel::Goal Lifter_to_preset::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Lifter_to_preset::run(Run_info info,Toplevel::Goal goals){
+    if(!mInit) {
+		Lifter::lifter_controller.moveToHeight(mPreset, info.in.now);
+		fail_timer.set(5.0);
+		mInit = false;
+    }
+    goals.lifter = Lifter::Goal::go_to_preset(mPreset);
+    if(info.status.grabber.has_cube)
+        goals.grabber = Grabber::Goal::hold();
+    return goals;
+}
+
+unique_ptr<Step_impl> Lifter_to_preset::clone()const{
+    return unique_ptr<Step_impl>(new Lifter_to_preset(*this));
+}
+
+bool Lifter_to_preset::operator==(Lifter_to_preset const& b)const{
+    return mPreset == b.mPreset ;
+}
 
 //
 // Calibrate_grabber: Calibrate the grabber at the current angle
 //
 
-Calibrate_grabber::Calibrate_grabber(){
-    Grabber::grabber_controller.setDoneCalibrating(false);
+Calibrate_grabber::Calibrate_grabber()
+{
+    mInited = false ;
 }
 
 Step::Status Calibrate_grabber::done(Next_mode_info info){
@@ -619,6 +898,11 @@ Toplevel::Goal Calibrate_grabber::run(Run_info info){
 }
 
 Toplevel::Goal Calibrate_grabber::run(Run_info info,Toplevel::Goal goals){
+    if (!mInited)
+    {
+	Grabber::grabber_controller.calibrate() ;
+	mInited = true ;
+    }
     goals.grabber = Grabber::Goal::calibrate();
     return goals;
 }
@@ -641,10 +925,10 @@ Step::Status Grabber_to_preset::done(Next_mode_info info){
     Step::Status ret =  ready(status(info.status.grabber), Grabber::Goal::go_to_preset(target_preset)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Grabber To Preset complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Grabber To Preset complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
@@ -656,8 +940,8 @@ Toplevel::Goal Grabber_to_preset::run(Run_info info){
 
 Toplevel::Goal Grabber_to_preset::run(Run_info info,Toplevel::Goal goals){
     if(!init) {
-	Grabber::grabber_controller.moveToAngle(target_preset, time);
-	init = false;
+		Grabber::grabber_controller.moveToAngle(target_preset, time);
+		init = false;
     }
     goals.grabber = Grabber::Goal::go_to_preset(target_preset);
     return goals;
@@ -672,61 +956,150 @@ bool Grabber_to_preset::operator==(Grabber_to_preset const& b)const{
 }
 
 //
-// Eject: Eject a cube
+// Collect: Put the grabber into collecting mode until a cube is collected
 //
 
-Eject::Eject(){
-    eject_timer.set(1.0);
-}
+Collect::Collect(double time):time(time),init(false){}
 
-Step::Status Eject::done(Next_mode_info info){
-    Step::Status ret = Step::Status::UNFINISHED ;
-    bool reason_sensor = true ;
-
-    if (sensor_ok && !info.status.grabber.has_cube)
-    {
-	//
-	// If we detected a cube when we ran this step, and
-	// we no longer detect a cube now, we assume the cube
-	// is ejected and consider this step finished.
-	//
-	ret = Step::Status::FINISHED_SUCCESS ;
-    }
-    else if (eject_timer.done())
-    {
-	//
-	// Otherwise, if our eject timeout has finished, we consider
-	// this step done
-	//
-	ret = Step::Status::FINISHED_SUCCESS ;
-	reason_sensor = false ;
-    }
-    
+Step::Status Collect::done(Next_mode_info info){
+    Step::Status ret = info.status.grabber.has_cube ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS)
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Eject step complete - " ;
-	logger << (reason_sensor ? "sensor" : "timer") ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Collect complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
+}
+
+Toplevel::Goal Collect::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Collect::run(Run_info info,Toplevel::Goal goals){
+    if(!init) {
+		Grabber::grabber_controller.moveToAngle(GrabberController::Preset::OPEN, time);
+		init = false;
+    }
+    goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+	return goals;
+}
+
+unique_ptr<Step_impl> Collect::clone()const{
+    return unique_ptr<Step_impl>(new Collect(*this));
+}
+
+bool Collect::operator==(Collect const& b)const{
+    return time == b.time && init == b.init;
+}
+
+//
+// Eject: Eject a cube
+//
+
+Eject::Eject()
+{
+	mState = EjectState::Start ;
+	mPowerApplied = false ;
+}
+
+Eject::Eject(double power)
+{
+	mState = EjectState::Start ;
+	mPower = power ;
+	mPowerApplied = true ;
+}
+
+Step::Status Eject::done(Next_mode_info info)
+{
+    Step::Status ret = Step::Status::UNFINISHED ;
+	if (mState == EjectState::Done)
+		ret = Step::Status::FINISHED_SUCCESS ;
+		
+    if (ret == Step::Status::FINISHED_SUCCESS)
+    {
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Eject step complete, elapsed " << info.in.now - mStart ;
+		logger.endMessage() ;
+    }
+    return ret ;
 }
 
 Toplevel::Goal Eject::run(Run_info info){
     return run(info,{});
 }
 
-Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals){
-    //
-    // This is to detect against the cube detector not working.  If the
-    // cube detector is not detecting a cube when we start and eject
-    // step, we assume the detector is not working.  While the cube could
-    // have fallen out, and this is more likely, assuming a broken detector
-    // is the safer assumption.
-    //
-    sensor_ok = info.status.grabber.has_cube ;
+Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals)
+{
+	switch(mState)
+	{
+	case EjectState::Start:
+		mStart = info.in.now ;
+		if (info.status.grabber.has_cube)
+		{
+			//
+			// The cube sensor is on, wait for it to go off
+			// We also set a timer just in case the sensor never
+			// goes off
+			//
+			mState = EjectState::WaitingCubeSensorOff ;
+			eject_timer.set(1.0) ;
+		}
+		else
+		{
+			//
+			// The cube sensor is off, it may not be working as
+			// we are trying to eject.  Just assume a fixed time
+			// for the eject operation
+			//
+			mState = EjectState::WaitingOnTime ;
+			eject_timer.set(1.0) ;
+		}
+		break ;
+
+	case EjectState::WaitingCubeSensorOff:
+		//
+		// We get here if the cube sensor was on when we started
+		// an eject operation.  There are two ways to leave this state.
+		// First, if the cube sensor goes off, or if the fail safe time
+		// we started expires
+		//
+		if (!info.status.grabber.has_cube)
+		{
+			//
+			// The cube has disappeared.  Start a timer to leave the intake
+			// in eject mode for a little longer to be sure the cube is fully
+			// ejected
+			//
+			eject_timer.set(0.05) ;
+			mState = EjectState::WaitingOnTime ;
+		}
+		else if (eject_timer.done())
+		{
+			//
+			// We were waiting for the cube sensor to turn off but it has
+			// not after our fail safe timeout.  Assume the sensor is broken
+			// and stuck on and stop the eject operation.
+			//
+			mState = EjectState::Done ;
+		}
+		break ;
+
+	case EjectState::WaitingOnTime:
+		//
+		// The timer has expired while we were waiting on the timer.  We are done.
+		//
+		if (eject_timer.done())
+			mState = EjectState::Done ;
+		break ;
+
+	case EjectState::Done:
+		Grabber::grabber_controller.setIdle() ;
+		break ;
+	}		
 
     //
     // Update the timer.  When it expires we consider this step done no matter
@@ -738,7 +1111,10 @@ Toplevel::Goal Eject::run(Run_info info,Toplevel::Goal goals){
     // Tell the grabber/intake to eject the cube
     //
     goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-    goals.intake = Intake::Goal::OUT;
+	if (mPowerApplied)
+		goals.intake = Intake::Goal::out(mPower);
+	else
+		goals.intake = Intake::Goal::out();
     
     return goals;
 }
@@ -757,13 +1133,13 @@ bool Eject::operator==(Eject const& b)const{
 Drop_grabber::Drop_grabber(){}
 
 Step::Status Drop_grabber::done(Next_mode_info info){
-    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
+    Step::Status ret =  ready(status(info.status.lifter), Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR)) ? Step::Status::FINISHED_SUCCESS : Step::Status::UNFINISHED;
     if (ret == Step::Status::FINISHED_SUCCESS) 
     {
-	messageLogger &logger = messageLogger::get() ;
-	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
-	logger << "Drop grabber step complete" ;
-	logger.endMessage() ;
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Drop grabber step complete" ;
+		logger.endMessage() ;
     }
     return ret ;
 	
@@ -774,8 +1150,13 @@ Toplevel::Goal Drop_grabber::run(Run_info info){
 }
 
 Toplevel::Goal Drop_grabber::run(Run_info info,Toplevel::Goal goals){
-    goals.lifter = Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER);
-    goals.grabber = Grabber::Goal::stop();
+    Lifter::Goal drop_grabber_goal = Lifter::Goal::go_to_preset(LifterController::Preset::DROP_GRABBER);
+    if(!ready(status(info.status.lifter), drop_grabber_goal))
+		goals.lifter = drop_grabber_goal;
+    else
+    	goals.lifter = Lifter::Goal::go_to_preset(LifterController::Preset::FLOOR);
+	
+    goals.grabber = Grabber::Goal::hold();
     return goals;
 }
 
@@ -787,6 +1168,130 @@ bool Drop_grabber::operator==(Drop_grabber const& b)const{
     return true;
 }
 
+//
+// Drive_and_collect: Drive forward and collect until a cube is collected
+//
+
+double Drive_and_collect::distance_travelled;
+
+Drive_and_collect::Drive_and_collect(double maxdist):init(false)
+{
+	maxdistance = maxdist ;
+}
+
+Step::Status Drive_and_collect::done(Next_mode_info info){
+	Drivebase::Distances distances_travelled = info.status.drive.distances - initial_distances;
+
+    Step::Status ret = Step::Status::UNFINISHED ;
+
+    bool distdone =  ready(info.status.drive, Drivebase::Goal::drive_straight()) ;
+	if (distdone || Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+		ret = Step::Status::FINISHED_SUCCESS ;
+	
+    if (ret == Step::Status::FINISHED_SUCCESS) 
+    {
+		distance_travelled = (distances_travelled.l + distances_travelled.r) / 2.0;
+
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Drive and collect step complete, elapsed " << info.in.now - mStart ;
+		logger.endMessage() ;
+    }
+    return ret ;
+	
+}
+
+Toplevel::Goal Drive_and_collect::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Drive_and_collect::run(Run_info info,Toplevel::Goal goals){
+	if(!init) {
+		mStart = info.in.now ;
+		double avg_status = (info.status.drive.distances.l + info.status.drive.distances.r) / 2.0;
+		Drivebase::drivebase_controller.initDistance(avg_status + maxdistance, info.status.drive.angle,
+													 info.in.now, false, true, true) ;
+		initial_distances = info.status.drive.distances;
+		init = true;
+	}
+
+    goals.drive = Drivebase::Goal::drive_straight();
+    goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
+	goals.intake = Intake::Goal::in();
+	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube)
+		goals.grabber = Grabber::Goal::clamp();
+	
+    return goals;
+}
+
+unique_ptr<Step_impl> Drive_and_collect::clone()const{
+    return unique_ptr<Step_impl>(new Drive_and_collect(*this));
+}
+
+bool Drive_and_collect::operator==(Drive_and_collect const& b)const{
+    return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+Close_collect_no_cube::Close_collect_no_cube(double len)
+{
+	mInit = false ;
+	mTime = len ;
+}
+
+Step::Status Close_collect_no_cube::done(Next_mode_info info)
+{
+    Step::Status ret = Step::Status::UNFINISHED ;
+	if (timeout_timer.done() || Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+		ret = Step::Status::FINISHED_SUCCESS ;
+	
+    if (ret == Step::Status::FINISHED_SUCCESS) 
+    {
+		messageLogger &logger = messageLogger::get() ;
+		logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_AUTONOMOUS) ;
+		logger << "Close_collect_no_cube step complete"  ;
+		if (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
+			logger << " - has cube" ;
+		else
+			logger << " - timed out" ;
+
+		logger << "\n" ;
+		logger << "    Time " << info.in.now - mStart ;
+		logger.endMessage() ;
+    }
+    return ret ;
+	
+}
+
+Toplevel::Goal Close_collect_no_cube::run(Run_info info){
+    return run(info,{});
+}
+
+Toplevel::Goal Close_collect_no_cube::run(Run_info info,Toplevel::Goal goals){
+	if(!mInit) {
+		timeout_timer.set(mTime) ;
+		mInit = true ;
+		mStart = info.in.now ;
+	}
+
+	timeout_timer.update(info.in.now, true);
+    goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
+	goals.intake = Intake::Goal::in();
+	if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube)
+		goals.grabber = Grabber::Goal::clamp();
+	
+    return goals;
+}
+
+unique_ptr<Step_impl> Close_collect_no_cube::clone()const{
+    return unique_ptr<Step_impl>(new Close_collect_no_cube(*this));
+}
+
+bool Close_collect_no_cube::operator==(Close_collect_no_cube const& b)const{
+    return true;
+}
+
+///////////////////////////////////////////////////////////////////////////
 #ifdef STEP_TEST
 void test_step(Step a){
     PRINT(a);
@@ -806,14 +1311,14 @@ void test_step(Step a){
     //abort if they do change
 
     while(to_visit.size()){
-	auto f=to_visit.front();
-	to_visit.pop();
+		auto f=to_visit.front();
+		to_visit.pop();
 
-	if(visited.find(f)!=visited.end()) continue;
+		if(visited.find(f)!=visited.end()) continue;
 
-	visited|=f;
+		visited|=f;
 
-	//TODO: Actually run some data on it.
+		//TODO: Actually run some data on it.
     }
 
     //see that will at some point "done" can be set

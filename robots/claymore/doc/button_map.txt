@@ -29,44 +29,48 @@ POV:
   Up_right   - 
 
 Gunner:
- A          - 
+ A          - Collect closed
               AO: 
- B          - 
+ B          - Collect open
               AO: 
- X          - 
+ X          - Eject
               AO: 
- Y          - 
+ Y          - Drop
               AO: 
- Start      - 
- Back       -
- RB         - 
- LB         - Alternative Operation (AO) - changes what other buttons do if held
- RT         - 
-	      AO:
- LT         - 
+ Start      - Climb/wing lock
+ Back       - Wing release
+ RB         - Alternative Operation (AO) - changes what other buttons do if held
+ LB         - Calibrate grabber
+              AO: Calibrate lifter
+ RT         - Lifter high power
+ LT         - Climb
  L_Joy:
-  Up        - 
-  Down      - 
+  Up        - Lifter up
+  Down      - Lifter down
   Left      - 
   Right     - 
   Pushed in - 
  R_Joy:
-  Up        - 
-	      AO: 
-  Down      - 
-	      AO: 
+  Up        - Scale end collection height
+  Down      - Switch end collection height
   Left      - 
   Right     - 
   Pushed in - 
  POV:        
   Center     - 
-  Up         -
+  Up         - Scale
+               AO: Intake out
   Up_left    - 
-  Left       - 
-               AO:
+               AO: Intake out, grabber close
+  Left       - Exchange
+               AO: Grabber close
   Down_left  - 
-  Down       - 
+               AO: Intake in, grabber close
+  Down       - Floor
+               AO: Intake in
   Down_right - 
-  Right      - 
-               AO: 
+               AO: Intake in, grabber open
+  Right      - Switch
+               AO: Grabber open
   Up_right   - 
+               AO: Intake out, grabber open

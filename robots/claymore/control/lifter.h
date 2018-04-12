@@ -9,14 +9,8 @@ struct Lifter{
 
 	struct Goal{
 		public:
-		#define LIFTER_GEARING_MODES X(LOW) X(HIGH)
-		enum class Gearing{
-			#define X(MODE) MODE,
-			LIFTER_GEARING_MODES
-			#undef X
-		};
 		
-		#define LIFTER_GOAL_MODES X(CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE) X(LOW_GEAR) X(LOCK)
+		#define LIFTER_GOAL_MODES X(CLIMB) X(MAINTAIN_CLIMB) X(GO_TO_HEIGHT) X(GO_TO_PRESET) X(UP) X(DOWN) X(STOP) X(BACKGROUND) X(CALIBRATE) X(LOW_GEAR)
 		enum class Mode{
 			#define X(MODE) MODE,
 			LIFTER_GOAL_MODES
@@ -26,7 +20,6 @@ struct Lifter{
 		private:
 		Goal();
 		Mode mode_;
-		Gearing gearing_;
 		double target_;
 		double tolerance_;
 		LifterController::Preset preset_target_;
@@ -34,13 +27,15 @@ struct Lifter{
 		
 		public:
 		Mode mode()const;
-		Gearing gearing()const;
 		double target()const;
 		double tolerance()const;
 		LifterController::Preset preset_target()const;
 		bool high_power()const;
 
+		std::string toString() const ;
+
 		static Goal climb();
+		static Goal maintain_climb();
 		static Goal go_to_height(double);
 		static Goal go_to_preset(LifterController::Preset);
 		static Goal up(bool);
@@ -49,17 +44,20 @@ struct Lifter{
 		static Goal background();
 		static Goal calibrate();
 		static Goal low_gear();
-		static Goal lock();
 	};
 
 	struct Output{
+		enum Gearing
+		{
+			LOW,
+			HIGH
+		} ;
+			
 		double power;//pwm value, positive is up
-		using Gearing = Lifter::Goal::Gearing;
 		Gearing gearing;
 		bool lock;
-		
 		Output();
-		Output(double,Gearing,bool);
+		Output(double power,Gearing gear, bool lock);
 	};
 
 	struct Input{
@@ -72,16 +70,14 @@ struct Lifter{
 	};
 
 	struct Status_detail{
-		bool at_bottom;
-		bool at_top;
-		bool at_climbed_height;
-		bool upper_slowdown_range;
-		bool lower_slowdown_range;
-		double height;
-		double time, dt;
+		bool at_bottom_limit;
+		bool at_top_limit;
+		int ticks;
+		double time ;
+		double dt;
 	
 		Status_detail();
-		Status_detail(bool,bool,bool,bool,bool,double,double,double);
+		Status_detail(bool bottomlimit,bool toplimit ,int ticks, double time,double dt);
 	};
 
 	#define LIFTER_STATUSES X(BOTTOM) X(MIDDLE) X(TOP) X(ERROR) X(CLIMBED)
@@ -103,15 +99,12 @@ struct Lifter{
 
 	struct Estimator{
 		Status_detail last;
-		Output::Gearing last_gearing;
-		double climb_goal;
-		double encoder_offset;
 
 		void update(Time const&,Input const&,Output const&);
 		Status_detail get()const;
 		
 		Estimator();
-		Estimator(Lifter::Status_detail, Output::Gearing, double, double);
+		Estimator(Lifter::Status_detail st);
 	};
 
 	Output_applicator output_applicator;

@@ -38,13 +38,14 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_base_motor_controller_8cpp.html",
-"_mot_controller___c_c_i_8h.html#a2224690b6fc808587e0be6b64b657bf5",
-"_stopwatch_8h.html",
-"classctre_1_1phoenix_1_1motorcontrol_1_1_control_frame_routines.html",
-"classctre_1_1phoenix_1_1motorcontrol_1_1can_1_1_victor_s_p_x.html#a2af8e20328c05c0cead13653dd9ca579",
-"classctre_1_1phoenix_1_1signals_1_1_moving_average.html#a0e3afedea20bfe5e9fb43adb2f8be194",
-"dir_6cc22f41418063b0c9fbb388ba8b8cad.html",
-"signal_types_8h.html#a06fc87d81c62e9abb8790b6e5713c55bad8f2c7201737c891eb150f3569eaf095"
+"_limit_switch_type_8h.html#afd232c45ffd137c1dc94b1efc7697bc9aa88d985e7d457fa3b5ddf31f1e16d353",
+"_sensor_term_8h.html#a4f84db28c2d27cd678c7c1e867ba10c5af1431baa9f1b46f10be8b0d8772534e1",
+"classctre_1_1phoenix_1_1_c_a_nifier.html#a19500f07bc0811a9da0993ff664efaceab3def09f82ae0b229e966df5c2d11a3f",
+"classctre_1_1phoenix_1_1motorcontrol_1_1can_1_1_base_motor_controller.html#a8655a7001e4fdb76605344fdaa5ecb98",
+"classctre_1_1phoenix_1_1motorcontrol_1_1lowlevel_1_1_mot_controller___low_level.html#af5be19d8afda34e0f13a43e066d9f1eb",
+"com__ctre__phoenix___motor_control___c_a_n___mot_controller_j_n_i_8h.html#aaed3988d3d150781559b1326220dff12",
+"namespacemembers_n.html",
+"structctre_1_1phoenix_1_1motorcontrol_1_1_sticky_faults.html#a55c1d95b0b99e4a9f3cdd84619e9bded"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

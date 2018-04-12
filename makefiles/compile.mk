@@ -11,10 +11,10 @@ ifndef CONFIG
 $(error missing the CONFIG variable on the make command line, e.g. make CONFIG=debug)
 else
 ifeq ($(CONFIG), debug)
-CXXFLAGS = -D_DEBUG
+CXXFLAGS += -DDEBUG
 else
 ifeq ($(CONFIG), release)
-CXXFLAGS = -DRELEASE
+CXXFLAGS += -DRELEASE
 else
 $(error CONFIG must be set to either 'debug' or 'release')
 endif
@@ -31,6 +31,13 @@ SHELL=bash
 #
 EXTERNALSW = ../../../external
 
+#
+# Detect cases where we want to use the native compiler (raspberry pi)
+# Note project-specific makefile may have already set USE_NATIVE_COMPILER to yes.
+#
+ifeq ($(shell uname -a | awk '{print $$2}') ,raspberrypi)
+	USE_NATIVE_COMPILER := yes
+endif
 
 #
 # The compiler to use to build the robot code
@@ -63,6 +70,14 @@ else
 CROSSCXX = arm-frc-linux-gnueabi-g++
 AR = arm-frc-linux-gnueabi-ar
 EXEEXT=
+endif
+
+# Use native compiler on raspberry pi, else the cross compiler
+ifeq ($(USE_NATIVE_COMPILER),yes)
+COMPILER=/usr/bin/g++
+AR=
+else
+COMPILER=$(CROSSCXX)
 endif
 
 #
@@ -216,11 +231,11 @@ endif
 #
 ifeq ($(VERBOSE),1)
 $(OBJDIR)/%.o : %.cpp
-	$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	$(COMPILER) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 else
 $(OBJDIR)/%.o : %.cpp
 	@echo -n "Compiling file '"$<"' ... "
-	@$(CROSSCXX) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
+	@$(COMPILER) -c $(CXXFLAGS) $(CPPFLAGS) $< -o $@
 	@echo done
 endif
 

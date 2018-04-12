@@ -93,14 +93,25 @@ Robot_inputs Drivebase::Input_reader::operator()(Robot_inputs all,Input in)const
 	return all;
 }
 
-Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)const{
-	return Drivebase::Input{
+Drivebase::Input Drivebase::Input_reader::operator()(Robot_inputs const& in)const{	
+	Drivebase::Input input = Drivebase::Input(
 		{
 			-ticks_to_inches(encoderconv(in.digital_io.encoder[L_ENCODER_LOC])),
 			ticks_to_inches(encoderconv(in.digital_io.encoder[R_ENCODER_LOC]))
 		},
 		in.navx.angle
-	};
+	);
+	
+	messageLogger &logger = messageLogger::get();
+	logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE_RAW_DATA);
+	logger << "Left ticks: " << encoderconv(in.digital_io.encoder[L_ENCODER_LOC]);
+	logger << " Right ticks: " << encoderconv(in.digital_io.encoder[R_ENCODER_LOC]);
+	logger << "\nLeft Distance: " << input.distances.l;
+	logger << " Right Distance: " << input.distances.r;
+	logger << "\nAngle: " << input.angle;
+	logger.endMessage();
+
+	return input;
 }
 
 Drivebase::Encoder_ticks operator+(Drivebase::Encoder_ticks const& a,Drivebase::Encoder_ticks const& b){
@@ -257,7 +268,7 @@ std::ostream& operator<<(std::ostream& o, Drivebase::Goal::Gear a) {
 	}
 }
 
-Drivebase::Goal::Goal():mode_(Drivebase::Goal::Mode::ABSOLUTE),left_(0),right_(0),gear_(Gear::AUTO){}
+Drivebase::Goal::Goal():mode_(Drivebase::Goal::Mode::ABSOLUTE),left_(0),right_(0),gear_(Gear::AUTO),brake_(true){}
 
 Drivebase::Goal::Mode Drivebase::Goal::mode()const{
 	return mode_;
@@ -278,12 +289,17 @@ Drivebase::Goal::Gear Drivebase::Goal::gear()const{
 	return gear_;
 }
 
-Drivebase::Goal Drivebase::Goal::absolute(double left, double right, Gear gear){
+bool Drivebase::Goal::brake()const{
+	return brake_;
+}
+
+Drivebase::Goal Drivebase::Goal::absolute(double left, double right, Gear gear, bool brake){
 	Drivebase::Goal a;
 	a.mode_ = Drivebase::Goal::Mode::ABSOLUTE;
 	a.left_ = left;
 	a.right_ = right;
 	a.gear_ = gear;
+	a.brake_ = brake;
 	return a;
 }
 
@@ -300,19 +316,20 @@ Drivebase::Goal Drivebase::Goal::rotate(){
 }
 
 ostream& operator<<(ostream& o,Drivebase::Goal const& a){
-	o<<"Drivebase::Goal("<<a.mode()<<" ";
+	o << "Drivebase::Goal(" << a.mode();
 	switch(a.mode()){
 		case Drivebase::Goal::Mode::ROTATE:
 			break;
 		case Drivebase::Goal::Mode::DRIVE_STRAIGHT:
 			break;
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			o << a.left() << " " << a.right() << a.gear();
+			o << " " << a.left() << " " << a.right() << a.gear();
 			break;
 		default: 
 			nyi
 	}
-	o<<")";
+	o << " " << a.brake(); 
+	o << ")";
 	return o;
 }
 
@@ -332,6 +349,7 @@ bool operator==(Drivebase::Goal const& a,Drivebase::Goal const& b){
 		default:
 			nyi
 	}
+	X(brake())
 	#undef X
 	return true;	
 }
@@ -353,6 +371,7 @@ bool operator<(Drivebase::Goal const& a,Drivebase::Goal const& b){
 		default:
 			nyi
 	}
+	CMP(brake())
 	return 0;
 }
 
@@ -442,7 +461,7 @@ void Drivebase::Estimator::update(Time now,Drivebase::Input in,Drivebase::Output
 			last.high_gear_recommended = true;
 	}*/
 	last.high_gear_recommended = false;
-
+	
 	last.dt = now - last.now;
 	last.now = now;
 }
@@ -453,6 +472,11 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.talon_srx[L_MOTOR_LOC_2].power_level = b.l;
 	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
+
+	robot.talon_srx[L_MOTOR_LOC_1].brake = b.brake;
+	robot.talon_srx[L_MOTOR_LOC_2].brake = b.brake;
+	robot.talon_srx[R_MOTOR_LOC_1].brake = b.brake;
+	robot.talon_srx[R_MOTOR_LOC_2].brake = b.brake;
 #endif
 
 #ifdef CLAYMORE
@@ -462,6 +486,13 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 	robot.talon_srx[R_MOTOR_LOC_1].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_2].power_level = b.r;
 	robot.talon_srx[R_MOTOR_LOC_3].power_level = b.r;
+
+	robot.talon_srx[L_MOTOR_LOC_1].brake = b.brake;
+	robot.talon_srx[L_MOTOR_LOC_2].brake = b.brake;
+	robot.talon_srx[L_MOTOR_LOC_3].brake = b.brake;
+	robot.talon_srx[R_MOTOR_LOC_1].brake = b.brake;
+	robot.talon_srx[R_MOTOR_LOC_2].brake = b.brake;
+	robot.talon_srx[R_MOTOR_LOC_3].brake = b.brake;
 #endif
 
 	robot.solenoid[SHIFTER_SOLENOID] = !b.high_gear;
@@ -471,7 +502,7 @@ Robot_outputs Drivebase::Output_applicator::operator()(Robot_outputs robot,Drive
 		robot.digital_io[b] = Digital_out::encoder(loc,0);
 	};
 	set_encoder(L_ENCODER_PORTS,L_ENCODER_LOC);
-	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);
+	set_encoder(R_ENCODER_PORTS,R_ENCODER_LOC);	
 
 	return robot;
 }
@@ -481,7 +512,8 @@ Drivebase::Output Drivebase::Output_applicator::operator()(Robot_outputs robot)c
 	return Drivebase::Output{	
 		robot.talon_srx[L_MOTOR_LOC_1].power_level,
 		-robot.talon_srx[R_MOTOR_LOC_1].power_level,
-		!robot.solenoid[SHIFTER_SOLENOID]
+		!robot.solenoid[SHIFTER_SOLENOID],
+		robot.talon_srx[L_MOTOR_LOC_1].brake
 	};
 }
 
@@ -506,11 +538,19 @@ bool operator!=(Drivebase const& a,Drivebase const& b){
 }
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
-	Drivebase::Output out(0.0, 0.0, false);
+	Drivebase::Output out(0.0, 0.0, false, goal.brake());
 
 	switch(goal.mode()){
 		case Drivebase::Goal::Mode::ABSOLUTE:
-			out = Drivebase::Output{goal.left(), goal.right(), false};
+			out = Drivebase::Output{goal.left(), goal.right(), false, goal.brake()};
+
+			{
+			messageLogger &logger = messageLogger::get();
+			logger.startMessage(messageLogger::messageType::debug, SUBSYSTEM_DRIVEBASE_RAW_DATA);
+			logger << "Left Output: " << out.l;
+			logger << " Right Output: " << out.r;
+			logger.endMessage();
+			}
 
 			if(goal.gear() == Drivebase::Goal::Gear::AUTO)
 				out.high_gear = status.high_gear_recommended;
@@ -526,7 +566,6 @@ Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
 		default:
 			nyi
 	}
-
 	return out;
 }
 

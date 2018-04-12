@@ -29,7 +29,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">CTRE_Phoenix
-   &#160;<span id="projectnumber">2018_v10</span>
+   &#160;<span id="projectnumber">2018_v14</span>
    </div>
   </td>
  </tr>
@@ -114,6 +114,16 @@ Functions</h2></td></tr>
 <tr class="separator:a89bccdfea644f8dfb87fbc66e49da689"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7c026fd2a178f154167dccc980bbf22c"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jdouble JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a7c026fd2a178f154167dccc980bbf22c">Java_com_ctre_phoenix_CANifierJNI_JNI_1GetBatteryVoltage</a> (JNIEnv *, jclass, jlong)</td></tr>
 <tr class="separator:a7c026fd2a178f154167dccc980bbf22c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6541d028520a7028d1bb35f0447ede8d"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jint JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a6541d028520a7028d1bb35f0447ede8d">Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadraturePosition</a> (JNIEnv *, jclass, jlong)</td></tr>
+<tr class="separator:a6541d028520a7028d1bb35f0447ede8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0246640eb8346ce8e0c5ea365ebf5615"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jint JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a0246640eb8346ce8e0c5ea365ebf5615">Java_com_ctre_phoenix_CANifierJNI_JNI_1SetQuadraturePosition</a> (JNIEnv *, jclass, jlong, jint, jint)</td></tr>
+<tr class="separator:a0246640eb8346ce8e0c5ea365ebf5615"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2131574401e52f5b432783dc6dc38820"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jint JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a2131574401e52f5b432783dc6dc38820">Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadratureVelocity</a> (JNIEnv *, jclass, jlong)</td></tr>
+<tr class="separator:a2131574401e52f5b432783dc6dc38820"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbdb0a1b78eacab5b99d5dc19d6b3b0f"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jint JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#afbdb0a1b78eacab5b99d5dc19d6b3b0f">Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementPeriod</a> (JNIEnv *, jclass, jlong, jint, jint)</td></tr>
+<tr class="separator:afbdb0a1b78eacab5b99d5dc19d6b3b0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e94fcd9cc3c095a8e7dee46ede382bc"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jint JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#a1e94fcd9cc3c095a8e7dee46ede382bc">Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementWindow</a> (JNIEnv *, jclass, jlong, jint, jint)</td></tr>
+<tr class="separator:a1e94fcd9cc3c095a8e7dee46ede382bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa523301cb6fb7d9fb97af7e069ea61f5"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jint JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#aa523301cb6fb7d9fb97af7e069ea61f5">Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigSetCustomParam</a> (JNIEnv *, jclass, jlong, jint, jint, jint)</td></tr>
 <tr class="separator:aa523301cb6fb7d9fb97af7e069ea61f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab51faeea140bc2094b6c320333c9550c"><td class="memItemLeft" align="right" valign="top">JNIEXPORT jint JNICALL&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="com__ctre__phoenix___c_a_nifier_j_n_i_8h.html#ab51faeea140bc2094b6c320333c9550c">Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigGetCustomParam</a> (JNIEnv *, jclass, jlong, jint, jint)</td></tr>
@@ -372,6 +382,98 @@ Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">jint&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jint&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jint&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="afbdb0a1b78eacab5b99d5dc19d6b3b0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afbdb0a1b78eacab5b99d5dc19d6b3b0f">&#9670;&nbsp;</a></span>Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementPeriod()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JNIEXPORT jint JNICALL Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementPeriod </td>
+          <td>(</td>
+          <td class="paramtype">JNIEnv *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jclass&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jlong&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jint&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jint&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1e94fcd9cc3c095a8e7dee46ede382bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e94fcd9cc3c095a8e7dee46ede382bc">&#9670;&nbsp;</a></span>Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementWindow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JNIEXPORT jint JNICALL Java_com_ctre_phoenix_CANifierJNI_JNI_1ConfigVelocityMeasurementWindow </td>
+          <td>(</td>
+          <td class="paramtype">JNIEnv *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jclass&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jlong&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -738,6 +840,74 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a6541d028520a7028d1bb35f0447ede8d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6541d028520a7028d1bb35f0447ede8d">&#9670;&nbsp;</a></span>Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadraturePosition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JNIEXPORT jint JNICALL Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadraturePosition </td>
+          <td>(</td>
+          <td class="paramtype">JNIEnv *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jclass&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jlong&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2131574401e52f5b432783dc6dc38820"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2131574401e52f5b432783dc6dc38820">&#9670;&nbsp;</a></span>Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadratureVelocity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JNIEXPORT jint JNICALL Java_com_ctre_phoenix_CANifierJNI_JNI_1GetQuadratureVelocity </td>
+          <td>(</td>
+          <td class="paramtype">JNIEnv *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jclass&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jlong&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a7abe967de727fa2a4c3194ade23f3163"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7abe967de727fa2a4c3194ade23f3163">&#9670;&nbsp;</a></span>Java_com_ctre_phoenix_CANifierJNI_JNI_1GetStatusFramePeriod()</h2>
 
@@ -1084,6 +1254,52 @@ Functions</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">JNIEXPORT void JNICALL Java_com_ctre_phoenix_CANifierJNI_JNI_1SetPWMOutput </td>
+          <td>(</td>
+          <td class="paramtype">JNIEnv *&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jclass&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jlong&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jint&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">jint&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a0246640eb8346ce8e0c5ea365ebf5615"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0246640eb8346ce8e0c5ea365ebf5615">&#9670;&nbsp;</a></span>Java_com_ctre_phoenix_CANifierJNI_JNI_1SetQuadraturePosition()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JNIEXPORT jint JNICALL Java_com_ctre_phoenix_CANifierJNI_JNI_1SetQuadraturePosition </td>
           <td>(</td>
           <td class="paramtype">JNIEnv *&#160;</td>
           <td class="paramname">, </td>

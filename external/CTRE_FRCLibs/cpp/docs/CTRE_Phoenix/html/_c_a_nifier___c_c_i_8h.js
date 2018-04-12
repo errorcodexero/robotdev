@@ -18,6 +18,8 @@ var _c_a_nifier___c_c_i_8h =
     [ "c_CANifier_ConfigGetParameter", "_c_a_nifier___c_c_i_8h.html#aba50085d263cff6c9e7e68d531c13187", null ],
     [ "c_CANifier_ConfigSetCustomParam", "_c_a_nifier___c_c_i_8h.html#a7a65b32667dc6a3479c28f700ade5929", null ],
     [ "c_CANifier_ConfigSetParameter", "_c_a_nifier___c_c_i_8h.html#ae2fa050d78aa565a7a20d3f64b1c7691", null ],
+    [ "c_CANifier_ConfigVelocityMeasurementPeriod", "_c_a_nifier___c_c_i_8h.html#a5bbb4de6a3b0933cab38210a69a1f46e", null ],
+    [ "c_CANifier_ConfigVelocityMeasurementWindow", "_c_a_nifier___c_c_i_8h.html#aa43d69d51493a837765cde81aabbd944", null ],
     [ "c_CANifier_Create1", "_c_a_nifier___c_c_i_8h.html#a082f52bc6e171861ecdbed2c91bf9fdf", null ],
     [ "c_CANifier_EnablePWMOutput", "_c_a_nifier___c_c_i_8h.html#abd75f0c3dc9fbbfa978cecc577a0e7c6", null ],
     [ "c_CANifier_GetBusVoltage", "_c_a_nifier___c_c_i_8h.html#acff3d84a53aaeef2bdbe1ea0aead3604", null ],
@@ -28,6 +30,9 @@ var _c_a_nifier___c_c_i_8h =
     [ "c_CANifier_GetGeneralInputs", "_c_a_nifier___c_c_i_8h.html#a09da1869f73dac9aeba96a25d468d0c5", null ],
     [ "c_CANifier_GetLastError", "_c_a_nifier___c_c_i_8h.html#a38b363b8cd54c00d3c760db6025d35d6", null ],
     [ "c_CANifier_GetPWMInput", "_c_a_nifier___c_c_i_8h.html#ad2f4b9d9db1b26edd901452ab9410ddc", null ],
+    [ "c_CANifier_GetQuadraturePosition", "_c_a_nifier___c_c_i_8h.html#a58f5a519cbf525ffaa669ffd43865465", null ],
+    [ "c_CANifier_GetQuadratureSensor", "_c_a_nifier___c_c_i_8h.html#a28171a80d9240ffe2156e23d63b06969", null ],
+    [ "c_CANifier_GetQuadratureVelocity", "_c_a_nifier___c_c_i_8h.html#a962735b671591e0036e7268c7a1a1509", null ],
     [ "c_CANifier_GetStatusFramePeriod", "_c_a_nifier___c_c_i_8h.html#aa25f88b605f22f6e492ae14e513f4316", null ],
     [ "c_CANifier_GetStickyFaults", "_c_a_nifier___c_c_i_8h.html#a37753f134b78f9ad5c332a2a9f17ebd3", null ],
     [ "c_CANifier_HasResetOccurred", "_c_a_nifier___c_c_i_8h.html#a054a176683d69bad61cb00ecec9b022a", null ],
@@ -37,5 +42,6 @@ var _c_a_nifier___c_c_i_8h =
     [ "c_CANifier_SetLastError", "_c_a_nifier___c_c_i_8h.html#a2d61efaa196b4f449410767fd2f1d18e", null ],
     [ "c_CANifier_SetLEDOutput", "_c_a_nifier___c_c_i_8h.html#a09d53bd37e42f3cf6ffdab2126cb2bb3", null ],
     [ "c_CANifier_SetPWMOutput", "_c_a_nifier___c_c_i_8h.html#ad0c68160c8d8800b11ebbde6fb970a4d", null ],
+    [ "c_CANifier_SetQuadraturePosition", "_c_a_nifier___c_c_i_8h.html#abf3588a27e19cd164f7f25817fdcdfa1", null ],
     [ "c_CANifier_SetStatusFramePeriod", "_c_a_nifier___c_c_i_8h.html#aee1d7011dfa54dd8e6062002dbd57ead", null ]
 ];

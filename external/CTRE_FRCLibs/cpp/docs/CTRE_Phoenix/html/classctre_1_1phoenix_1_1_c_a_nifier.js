@@ -31,6 +31,8 @@ var classctre_1_1phoenix_1_1_c_a_nifier =
     [ "ConfigGetParameter", "classctre_1_1phoenix_1_1_c_a_nifier.html#ad0e53a763d91c5dc4ae465b66eda57a2", null ],
     [ "ConfigSetCustomParam", "classctre_1_1phoenix_1_1_c_a_nifier.html#aa0ed368cd44c8c564d4ffdec37fbd95d", null ],
     [ "ConfigSetParameter", "classctre_1_1phoenix_1_1_c_a_nifier.html#a249ad515fa5acd09b162142a06e56d39", null ],
+    [ "ConfigVelocityMeasurementPeriod", "classctre_1_1phoenix_1_1_c_a_nifier.html#a0ff4c7e745cf2a1e7e261a2ae143b437", null ],
+    [ "ConfigVelocityMeasurementWindow", "classctre_1_1phoenix_1_1_c_a_nifier.html#a62217e9466ff0906c09bd58032f368d7", null ],
     [ "EnablePWMOutput", "classctre_1_1phoenix_1_1_c_a_nifier.html#aeceff0ea74d26f3a6b830e870e59c279", null ],
     [ "GetBusVoltage", "classctre_1_1phoenix_1_1_c_a_nifier.html#ac72786465b9bde9c32e12b9587a2df93", null ],
     [ "GetFaults", "classctre_1_1phoenix_1_1_c_a_nifier.html#a4e07aa9b1a139dce3b425950c8665e14", null ],
@@ -39,6 +41,8 @@ var classctre_1_1phoenix_1_1_c_a_nifier =
     [ "GetGeneralInputs", "classctre_1_1phoenix_1_1_c_a_nifier.html#a8964ff8b592381812238eef27717eb43", null ],
     [ "GetLastError", "classctre_1_1phoenix_1_1_c_a_nifier.html#ab6f4c4a5613480d54bc9c8be17e348b8", null ],
     [ "GetPWMInput", "classctre_1_1phoenix_1_1_c_a_nifier.html#a44c70ae10c17fd08c4f32b4107f652d2", null ],
+    [ "GetQuadraturePosition", "classctre_1_1phoenix_1_1_c_a_nifier.html#ad1008a90c34c2e827fb88acdf57b6bd5", null ],
+    [ "GetQuadratureVelocity", "classctre_1_1phoenix_1_1_c_a_nifier.html#aeae2703071838d835f50f0c5fd2b50cf", null ],
     [ "GetStatusFramePeriod", "classctre_1_1phoenix_1_1_c_a_nifier.html#a64dadca38d6436f8c5e9d7a593eaf8a7", null ],
     [ "GetStickyFaults", "classctre_1_1phoenix_1_1_c_a_nifier.html#ad9432c5acf6c9670508f5fc0d5c4c4ab", null ],
     [ "HasResetOccurred", "classctre_1_1phoenix_1_1_c_a_nifier.html#a32583a2821847249804cf06ef0491e52", null ],
@@ -47,6 +51,7 @@ var classctre_1_1phoenix_1_1_c_a_nifier =
     [ "SetGeneralOutputs", "classctre_1_1phoenix_1_1_c_a_nifier.html#ac2ff20c04a75163d8d10cc08685635b0", null ],
     [ "SetLEDOutput", "classctre_1_1phoenix_1_1_c_a_nifier.html#a97d6f6ccaad0307f9024acde96fe119e", null ],
     [ "SetPWMOutput", "classctre_1_1phoenix_1_1_c_a_nifier.html#aa165b671c82ca3a39f5866af12bb7dfe", null ],
+    [ "SetQuadraturePosition", "classctre_1_1phoenix_1_1_c_a_nifier.html#a2f323b2046559d5be448e129b4293a27", null ],
     [ "SetStatusFramePeriod", "classctre_1_1phoenix_1_1_c_a_nifier.html#a7db0e2984de328d1b14458a4271e86fc", null ],
     [ "PWMChannelCount", "classctre_1_1phoenix_1_1_c_a_nifier.html#a9db86680809cb89fdfe0fc7632a8768e", null ]
 ];

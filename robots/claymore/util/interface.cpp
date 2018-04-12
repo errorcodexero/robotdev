@@ -105,7 +105,7 @@ std::ostream& operator<<(std::ostream& o, Talon_srx_input in){
 }
 
 IMPL_STRUCT(Talon_srx_output::Talon_srx_output,TALON_SRX_OUTPUT_ITEMS)
-Talon_srx_output::Talon_srx_output():Talon_srx_output(PID_values(),0,0,Talon_srx_output::Mode::PERCENT,false){}
+Talon_srx_output::Talon_srx_output():Talon_srx_output(PID_values(),0,0,true,Talon_srx_output::Mode::PERCENT,false){}
 
 Talon_srx_output Talon_srx_output::percent(double a){
 	Talon_srx_output r;
@@ -133,6 +133,7 @@ std::ostream& operator<<(std::ostream& o, Talon_srx_output a){
 	o<<" pid:"<<a.pid;
 	if(a.mode==Talon_srx_output::Mode::PERCENT) o<<" power_level:"<<a.power_level;
 	else if(a.mode==Talon_srx_output::Mode::SPEED) o<<" speed:"<<a.speed;
+	o<<" brake:"<<a.brake;
 	return o<<")";
 }
 
@@ -779,7 +780,7 @@ ostream& operator<<(ostream& o,Digital_inputs const& a){
 }
 
 IMPL_STRUCT(DS_info::DS_info,DS_INFO_ITEMS)
-DS_info::DS_info():DS_info(false,Alliance::INVALID,0,false,false,false,false){}
+DS_info::DS_info():DS_info(false,Alliance::INVALID,0,false,false,false,false,0.0){}
 
 ostream& operator<<(ostream& o,DS_info const& d){
 	o<<"DS_info(";

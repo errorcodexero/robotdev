@@ -11,71 +11,73 @@
 #include <sstream>
 
 struct Grabber{
-	static GrabberController grabber_controller;
+    static GrabberController grabber_controller;
 
-	struct Goal{
+    struct Goal{
 		public:
-		#define GRABBER_GOAL_MODES X(GO_TO_ANGLE) X(GO_TO_PRESET) X(OPEN) X(CLOSE) X(STOP) X(CALIBRATE)
+#define GRABBER_GOAL_MODES X(IDLE) X(HOLD) X(CLAMP) X(OPEN) X(CLOSE) X(GO_TO_ANGLE) X(GO_TO_PRESET) X(CALIBRATE)
 		enum class Mode{
-			#define X(MODE) MODE,
+#define X(MODE) MODE,
 			GRABBER_GOAL_MODES
-			#undef X
+#undef X
 		};
-		
+			
 		private:
 		Goal();
 		Mode mode_;
 		double target_;
 		GrabberController::Preset preset_target_;
-		
+			
 		public:
 		Mode mode()const;
 		double target()const;
 		GrabberController::Preset preset_target()const;
 
-		static Goal go_to_angle(double);
-		static Goal go_to_preset(GrabberController::Preset);
+		static Goal idle();
+		static Goal hold();
+		static Goal clamp();
 		static Goal open();
 		static Goal close();
-		static Goal stop();
+		static Goal go_to_angle(double);
+		static Goal go_to_preset(GrabberController::Preset);
 		static Goal calibrate();
-	};
+    };
 
-	using Output = double;
+    using Output = double;
 	
-	struct Input{
+    struct Input{
 		int ticks;
 		bool has_cube;
 		bool limit_switch;
-		
+			
 		Input();
 		Input(int, bool, bool);
-	};
+    };
 
-	struct Status_detail{
+    struct Status_detail{
 		bool has_cube;
 		bool outer_limit;
 		bool inner_limit;
 		double angle;
 		double time, dt;
-		
+			
 		Status_detail();
 		Status_detail(bool, bool, bool, double, double, double);
-	};
+    };
 	
-	using Status = Status_detail;
+    using Status = Status_detail;
 	
-	struct Input_reader{
+    struct Input_reader{
 		Grabber::Input operator()(Robot_inputs const&)const;
 		Robot_inputs operator()(Robot_inputs,Grabber::Input)const;
-	};
+    };
 
-	struct Output_applicator{
+    struct Output_applicator{
 		Robot_outputs operator()(Robot_outputs,Grabber::Output)const;
 		Grabber::Output operator()(Robot_outputs const&)const;
-	};
+    };
 
-	struct Estimator{
+    struct Estimator{
 		Status_detail last;
 		double encoder_offset;
 		std::list<double> ticks_history;
@@ -83,11 +85,11 @@ struct Grabber{
 		void update(Time,Grabber::Input,Grabber::Output);
 		Status_detail get()const;
 		Estimator();
-	};
+    };
 
-	Input_reader input_reader;
-	Output_applicator output_applicator;
-	Estimator estimator;
+    Input_reader input_reader;
+    Output_applicator output_applicator;
+    Estimator estimator;
 };
 
 std::set<Grabber::Goal> examples(Grabber::Goal*);
@@ -122,11 +124,11 @@ bool ready(Grabber::Status,Grabber::Goal);
 
 inline messageLogger &operator<<(messageLogger &logger, const Grabber::Goal &goal)
 {
-	std::stringstream strm ;
+    std::stringstream strm ;
 
-	strm << goal ;
-	logger << strm.str() ;
-	return logger ;
+    strm << goal ;
+    logger << strm.str() ;
+    return logger ;
 }
 
 

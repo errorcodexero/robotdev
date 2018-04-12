@@ -9,7 +9,11 @@
 
 using namespace std;
 
-const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
+const unsigned GRABBER_AXIS = 2 ;
+const unsigned COLLECTION_END_HEIGHT_AXIS = 3 ;
+const unsigned INTAKE_AXIS = 4 ;
+const unsigned AUTO_GRABBER_AXIS = 5 ;
+const unsigned AUTO_SELECTOR_AXIS = 6;
 
 #define BUTTONS \
 	X(floor)\
@@ -22,18 +26,19 @@ const unsigned AUTO_SELECTOR_AXIS = 6;//TODO rework these constants
 	X(drop)\
 	X(climb)\
 	X(wings)\
-	X(calibrate)
+	X(calibrate_grabber)\
+	X(calibrate_lifter)
 
 #define TWO_POS_SWITCHES \
 	X(grabber_auto)\
 	X(intake_auto)\
-	X(climb_lock)\
+	X(climb_disabled)\
 	X(lifter_high_power)
 
 #define THREE_POS_SWITCHES \
 	X(grabber)\
 	X(intake)\
-	X(collector_mode)\
+	X(collection_end_height)\
 	X(lifter)
 
 #define TEN_POS_SWITCHES \
@@ -54,7 +59,7 @@ Panel::Panel():
 	#undef X
 	grabber(Panel::Grabber::OFF),
 	intake(Panel::Intake::OFF),
-	collector_mode(Panel::Collector_mode::FULL_AUTO),
+	collection_end_height(Panel::Collection_end_height::EXCHANGE),
 	lifter(Panel::Lifter::OFF),
 	auto_select(0)
 {}
@@ -73,9 +78,9 @@ ostream& operator<<(ostream& o,Panel::Intake a){
 	assert(0);
 }
 
-ostream& operator<<(ostream& o,Panel::Collector_mode a){
-	#define X(NAME) if(a==Panel::Collector_mode::NAME) return o<<""#NAME;
-	X(NO_AUTO) X(SEMI_AUTO) X(FULL_AUTO)
+ostream& operator<<(ostream& o,Panel::Collection_end_height a){
+	#define X(NAME) if(a==Panel::Collection_end_height::NAME) return o<<""#NAME;
+	X(EXCHANGE) X(SWITCH) X(SCALE)
 	#undef X
 	assert(0);
 }
@@ -146,34 +151,34 @@ Panel interpret_oi(Joystick_data d){
 	}
 	{//two position switches
 		p.grabber_auto = [&]{
-			float grabber_auto = d.axis[5];
+			float grabber_auto = d.axis[AUTO_GRABBER_AXIS];
 			return (grabber_auto < 0) ? false : true;
 		}();
 		p.intake_auto = d.button[10];
-		p.climb_lock = d.button[14];
+		p.climb_disabled = !d.button[14];
 		p.lifter_high_power = d.button[15];
 	}
 	{//three position switches
 		p.grabber = [&]{
-			float grabber = d.axis[2];
+			float grabber = d.axis[GRABBER_AXIS];
 			static const float CLOSE=-1,OFF=0,OPEN=1;
 			if(set_button(grabber,CLOSE,OFF,OPEN)) return Panel::Grabber::OFF;
-			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::OPEN;
-			return Panel::Grabber::CLOSE;
+			if(set_button(grabber,OFF,OPEN,ARTIFICIAL_MAX)) return Panel::Grabber::CLOSE;
+			return Panel::Grabber::OPEN;
 		}();
 		p.intake = [&]{
-			float intake = d.axis[4];
+			float intake = d.axis[INTAKE_AXIS];
 			static const float IN=-1,OFF=0,OUT=1;
 			if(set_button(intake,IN,OFF,OUT)) return Panel::Intake::OFF;
-			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::OUT;
-			return Panel::Intake::IN;
+			if(set_button(intake,OFF,OUT,ARTIFICIAL_MAX)) return Panel::Intake::IN;
+			return Panel::Intake::OUT;
 		}();
-		p.collector_mode = [&]{
-			float collector_mode = d.axis[3];
-			static const float NO_AUTO=-1,SEMI_AUTO=0,FULL_AUTO=1;
-			if(set_button(collector_mode,NO_AUTO,SEMI_AUTO,FULL_AUTO)) return Panel::Collector_mode::SEMI_AUTO;
-			if(set_button(collector_mode,SEMI_AUTO,FULL_AUTO,ARTIFICIAL_MAX)) return Panel::Collector_mode::FULL_AUTO;
-			return Panel::Collector_mode::NO_AUTO;
+		p.collection_end_height = [&]{
+			float collection_end_height = d.axis[COLLECTION_END_HEIGHT_AXIS];
+			static const float SCALE=-1,SWITCH=0,EXCHANGE=1;
+			if(set_button(collection_end_height,SCALE,SWITCH,EXCHANGE)) return Panel::Collection_end_height::SWITCH;
+			if(set_button(collection_end_height,SWITCH,EXCHANGE,ARTIFICIAL_MAX)) return Panel::Collection_end_height::EXCHANGE;
+			return Panel::Collection_end_height::SCALE;
 		}();
 		p.lifter = [&]{
 			if(d.button[12]){
@@ -196,7 +201,8 @@ Panel interpret_oi(Joystick_data d){
 		p.drop = d.button[6];
 		p.climb = d.button[7];
 		p.wings = d.button[8];
-		p.calibrate = d.button[11];
+		p.calibrate_grabber = d.button[11];
+		p.calibrate_lifter = d.button[11];
 	}
 	{//Dials
 	}
@@ -250,14 +256,13 @@ Panel interpret_gamepad(Joystick_data d){
 	p.in_use = get_in_use(d);
 	if(!p.in_use) return p;
 	
-	p.auto_select=0;
+	p.auto_select = 0;
 
-	p.calibrate = d.button[Gamepad_button::LB];
 	p.climb = d.axis[Gamepad_axis::LTRIGGER] > .1;
 
 	p.lifter_high_power = d.axis[Gamepad_axis::RTRIGGER] > .1;
 
-	p.climb_lock = d.button[Gamepad_button::START];
+	p.climb_disabled = !d.button[Gamepad_button::START];
 	p.wings = d.button[Gamepad_button::BACK];
 
 	bool alternate_operation = d.button[Gamepad_button::RB];
@@ -265,6 +270,8 @@ Panel interpret_gamepad(Joystick_data d){
 	if(!alternate_operation) {
 		p.grabber_auto = true;
 		p.intake_auto = true;
+
+		p.calibrate_grabber = d.button[Gamepad_button::LB];
 
 		p.collect_closed = d.button[Gamepad_button::A];
 		p.collect_open = d.button[Gamepad_button::B];
@@ -300,6 +307,8 @@ Panel interpret_gamepad(Joystick_data d){
 	} else {
 		p.grabber_auto = false;
 		p.intake_auto = false;
+
+		p.calibrate_lifter = d.button[Gamepad_button::LB];
 		
 		p.grabber = Panel::Grabber::OFF;
 		p.intake = Panel::Intake::OFF;
@@ -339,13 +348,13 @@ Panel interpret_gamepad(Joystick_data d){
 		}
 	}
 
-	p.collector_mode = Panel::Collector_mode::SEMI_AUTO;
+	p.collection_end_height = Panel::Collection_end_height::EXCHANGE;
 	switch(joystick_section(d.axis[Gamepad_axis::RIGHTX],d.axis[Gamepad_axis::RIGHTY])){
 		case Joystick_section::UP:
-			p.collector_mode = Panel::Collector_mode::FULL_AUTO;
+			p.collection_end_height = Panel::Collection_end_height::SCALE;
 			break;
 		case Joystick_section::DOWN:
-			p.collector_mode = Panel::Collector_mode::NO_AUTO;
+			p.collection_end_height = Panel::Collection_end_height::SWITCH;
 			break;
 		default:
 			break;

@@ -1,4 +1,5 @@
 #include "autosteps.h"
+#include "chain.h"
 #include <vector>
 
 using namespace std ;
@@ -9,17 +10,24 @@ using namespace std ;
 // Action: Score on right switch
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-static vector<Step> right_switch_right_steps =
+static vector<Step> steps =
 {
-    startAuto,
-    calibrateLifter,
-    calibrateGrabber,
-    startLifterSwitch,
-    // TODO
-    waitForLifter,
+    AUTO_PREAMBLE("right_switch_right"),
+    startLifterExch,
+    Step(Drive("auto:r_switch_r:segment1", 148, false)),
+    rotate90neg,
+	startLifterSwitch,
+	Step(Wait(0.5)),
+    Step(Drive("auto:r_switch_r:segment2", 18, true)),
+	lifterToSwitch,
     eject,
-    endAuto
+	startLifterExch,
+    Step(Drive("auto:r_switch_r:segment3", -18, true)),
+	rotate90pos,
+    Step(Drive("auto:r_switch_r:segment4", 36, true)), 
+    rotate90neg,
+	AUTO_POSTAMBLE
 } ;
 
-static Chain right_switch_right_chain(right_switch_right_steps, teleopex) ;
-Executive right_switch_right(right_switch_right_chain) ;
+static Chain chain(steps, teleopex) ;
+Executive right_switch_right(chain) ;
