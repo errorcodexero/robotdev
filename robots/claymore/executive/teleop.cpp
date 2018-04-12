@@ -398,8 +398,7 @@ void Teleop::runLights(const Run_info &info, Toplevel::Goal &goals)
     goals.lights.drive_left = goals.drive.left();
     goals.lights.drive_right = goals.drive.right();
     goals.lights.has_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube) ;
-
-    goals.lights.collector_open = collector_mode == Collector_mode::COLLECT;
+    goals.lights.collecting = collector_mode == Collector_mode::COLLECT;
     goals.lights.wings_deployed = goals.wings == Wings::Goal::UNLOCKED;
     goals.lights.lifter_status = [&]{
 		Lifter::Status s = status(info.status.lifter);

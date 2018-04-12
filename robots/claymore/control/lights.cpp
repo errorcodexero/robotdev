@@ -13,7 +13,8 @@ struct OI_light_addresses{
 	static const unsigned WINGS_DEPLOYED = 3; 
 	static const unsigned ENABLED = 4;
 	
-	static const unsigned CUBE_COLLECTED_SIGNAL = 4;
+	static const unsigned HAS_CUBE_SIGNAL = 4;
+	static const unsigned COLLECTING_SIGNAL = 5;
 	
 	/*
 	static const unsigned LIFTER_STATUS_BINARY_A = 5;
@@ -29,8 +30,7 @@ Lights::Goal::Goal(
 	double l,
 	double r,
 	bool cube,
-	bool open,
-	bool closed,
+	bool col,
 	bool wings,
 	Lights::Goal::Lifter_status lifter
 ):
@@ -40,8 +40,7 @@ Lights::Goal::Goal(
 	drive_left(l),
 	drive_right(r),
 	has_cube(cube),
-	collector_open(open),
-	collector_closed(closed),
+	collecting(col),
 	wings_deployed(wings),
 	lifter_status(lifter)
 {}
@@ -56,7 +55,6 @@ Lights::Goal::Goal():
 		false,
 		false,
 		false,
-		false,
 		Lights::Goal::Lifter_status::UNKNOWN
 	)
 {}
@@ -65,16 +63,14 @@ Lights::Output::Output(
 	bool c,
 	vector<uint8_t> b,
 	std::array<bool,Lights::Output::LIFTER_STATUS_BINARY_LEN> lifter,
-	bool open,
-	bool closed,
 	bool cube,
+	bool col,
 	bool wings,
 	bool en
 ):
 	camera_light(c),
 	blinky_light_info(b),
-	collector_open(open),
-	collector_closed(closed),
+	collecting(col),
 	has_cube(cube),
 	wings_deployed(wings),
 	enabled(en)
@@ -84,7 +80,6 @@ Lights::Output::Output():
 		false,
 		{},
 		{0,0,0},
-		false,
 		false,
 		false,
 		false,
@@ -153,8 +148,7 @@ ostream& operator<<(ostream& o, Lights::Output a){
 	o<<"camera_light:"<<a.camera_light;
 	o<<" blinky_light_info:"<<a.blinky_light_info;
 	o<<" lifter_status:"<<a.lifter_status;
-	o<<" collector_open:"<<a.collector_open;
-	o<<" collector_closed:"<<a.collector_closed;
+	o<<" collecting:"<<a.collecting;
 	o<<" has_cube:"<<a.has_cube;
 	o<<" wings_deployed:"<<a.wings_deployed;
 	o<<" enabled:"<<a.enabled;
@@ -170,8 +164,7 @@ ostream& operator<<(ostream& o, Lights::Goal a){
 	o<<" drive_left:"<<a.drive_left;
 	o<<" drive_right"<<a.drive_right;
 	o<<" has_cube:"<<a.has_cube;
-	o<<" collector_open:"<<a.collector_open;
-	o<<" collector_closed:"<<a.collector_closed;
+	o<<" collecting:"<<a.collecting;
 	o<<" wings_deployed:"<<a.wings_deployed;
 	o<<" lifter_status:"<<a.lifter_status;
 	return o<<")";
@@ -213,7 +206,7 @@ bool operator==(Lights::Output a,Lights::Output b){
 	return a.camera_light == b.camera_light && 
 		a.blinky_light_info == b.blinky_light_info && 
 		a.lifter_status == b.lifter_status && 
-		a.collector_open == b.collector_open &&
+		a.collecting == b.collecting &&
 		a.has_cube == b.has_cube &&
 		a.wings_deployed == b.wings_deployed &&
 		a.enabled == b.enabled;
@@ -236,8 +229,7 @@ bool operator==(Lights::Goal a,Lights::Goal b){
 		a.drive_left == b.drive_left && 
 		a.drive_right == b.drive_right && 
 		a.has_cube == b.has_cube && 
-		a.collector_open == b.collector_open &&
-		a.collector_closed == b.collector_closed && 
+		a.collecting == b.collecting &&
 		a.wings_deployed == b.wings_deployed &&
 		a.lifter_status == b.lifter_status;
 }
@@ -249,8 +241,7 @@ bool operator<(Lights::Goal a,Lights::Goal b){
 	CMP(drive_left)
 	CMP(drive_right)
 	CMP(has_cube)
-	CMP(collector_open)
-	CMP(collector_closed)
+	CMP(collecting)
 	CMP(wings_deployed)
 	CMP(lifter_status)
 	return 0;
@@ -316,7 +307,8 @@ Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 	Output out;
 	out.blinky_light_info = r.i2c.data;
 	
-	out.has_cube = r.driver_station.digital[OI_light_addresses::CUBE_COLLECTED_SIGNAL];
+	out.has_cube = r.driver_station.digital[OI_light_addresses::HAS_CUBE_SIGNAL];
+	out.collecting = r.driver_station.digital[OI_light_addresses::COLLECTING_SIGNAL];
 	
 	/*	
 	out.collector_open = r.driver_station.digital[OI_light_addresses::COLLECTOR_OPEN];
@@ -335,7 +327,8 @@ Lights::Output Lights::Output_applicator::operator()(Robot_outputs r)const{
 Robot_outputs Lights::Output_applicator::operator()(Robot_outputs r, Lights::Output out)const{
 	r.i2c.data = out.blinky_light_info;
 	
-	r.driver_station.digital[OI_light_addresses::CUBE_COLLECTED_SIGNAL] = out.has_cube;
+	r.driver_station.digital[OI_light_addresses::HAS_CUBE_SIGNAL] = out.has_cube;
+	r.driver_station.digital[OI_light_addresses::COLLECTING_SIGNAL] = out.collecting;
 	
 	/*
 	r.driver_station.digital[OI_light_addresses::COLLECTOR_OPEN] = out.collector_open;
@@ -480,8 +473,7 @@ Lights::Output control(Lights::Status status, Lights::Goal goal){
 				nyi
 		}
 	}();
-	out.collector_open = goal.collector_open;
-	out.collector_closed = goal.collector_closed;
+	out.collecting = goal.collecting;
 	out.has_cube = goal.has_cube;
 	out.wings_deployed = goal.wings_deployed;
 	out.enabled = status.enabled;
