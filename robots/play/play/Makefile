@@ -15,7 +15,7 @@ DEPLOYADD = params
 #
 # Add flags to get to the xerolib header file
 #
-COMMON=xerolib misc
+COMMON=xerolib
 
 #
 # Tell the make system we need to the WPI libraries
@@ -48,9 +48,10 @@ USERLIBS = -lstdc++fs
 #
 SRC = \
 	Robot2018.cpp\
-	Robot2018Consts.cpp\
 	Robot2018Autonomous.cpp\
-	Robot2018Operator.cpp
+	Intake.cpp\
+	Grabber.cpp\
+	Collector.cpp
 
 include ../../../makefiles/compileapp.mk
 

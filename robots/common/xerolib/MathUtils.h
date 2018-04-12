@@ -28,6 +28,11 @@ namespace xero
 			return Rotation(pos.getX(), pos.getY());
 		}
 
+		inline Rotation getDirection(const Position &pos, bool normalize)
+		{
+			return Rotation(pos.getX(), pos.getY(), normalize);
+		}
+
 		inline double getSign(double v)
 		{
 			if (v < 0.0)

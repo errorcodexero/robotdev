@@ -18,32 +18,35 @@ NAVX=true
 # define the source code files
 #
 SRC = \
+	AdaptivePurePursuitController.cpp\
 	AutoDelay.cpp\
-	AutoDriveBaseChar.cpp\
-	AutoDriveDistance.cpp\
 	AutonomousControllerBase.cpp\
 	AutonomousStepBase.cpp\
 	AutoSetMotorVoltage.cpp\
-	DataDashboardDestination.cpp\
-	DataFileDestination.cpp\
-	DataLogger.cpp\
-	DataFileDestination.cpp\
-	DataTcpDestination.cpp\
-	DataUDPDestination.cpp\
-	DataDashboardDestination.cpp\
 	DriveBase.cpp\
-	EncoderAngleMeasurementDevice.cpp\
 	FileManager.cpp\
 	MessageLogger.cpp\
 	MessageStreamDestination.cpp\
-	NavXAngleMeasurementDevice.cpp\
-	OperatorControllerBase.cpp\
-	ParamFileReader.cpp\
 	PIDCtrl.cpp\
 	RobotControllerBase.cpp\
 	SubsystemBase.cpp\
-	TrapezoidSpeedProfile.cpp\
-	XeroRobotBase.cpp
+	XeroRobotBase.cpp\
+	HeadingProfileFollower.cpp\
+	MotionProfile.cpp\
+	ParamsParser.cpp\
+	Path.cpp\
+	PathFollower.cpp\
+	PathSegment.cpp\
+	Position.cpp\
+	ProfileFollower.cpp\
+	ProfileGenerator.cpp\
+	ProfileGoal.cpp\
+	RobotState.cpp\
+	RobotStateEstimator.cpp\
+	Rotation.cpp\
+	Segment.cpp\
+	SetpointGenerator.cpp\
+	State.cpp
 
 
 #

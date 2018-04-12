@@ -1,7 +1,6 @@
 #pragma once
 
 #include "MessageLogger.h"
-#include "DataLogger.h"
 #include "FileManager.h"
 #include <Timer.h>
 #include <SampleRobot.h>
@@ -19,6 +18,8 @@ namespace xerolib
     public:
 	XeroRobotBase();
 	virtual ~XeroRobotBase();
+
+	void setupConsoleLogger() ;
 
 	/// @brief called when the robot is disabled
 	virtual void Disabled();
@@ -45,13 +46,6 @@ namespace xerolib
 	    return m_logger;
 	}
 
-	/// @brief return the data logger for the robot
-	/// @returns the data logger for the robot
-	DataLogger &getDataLogger()
-	{
-	    return m_data;
-	}
-
 	/// @brief return the subsystem with the given name
 	/// @param name the name of the subsystem to find
 	/// @returns the subsystme with the given name, or nullptr if no subsystem with the name exists
@@ -74,27 +68,9 @@ namespace xerolib
 	/// @brief this method is implemented by a derived class and creates the test controller
 	virtual std::shared_ptr<RobotControllerBase> createTestController() = 0;
 
-	/// @brief setup the message log file and data file to the home directory of the robot user
-	/// @param msgname_p the name of the file for messages
-	/// @param dataname_p the name of the file for data
-	virtual void setupLoggers(const char *msgname_p, const char *dataname_p);
-
-	/// @brief setup for output message on the console
-	virtual void setupConsoleLogger();
-
-	/// @brief setup the logger to send data to the FRC smart dashboard
-	virtual void setupSmartDashboardLogger() ;
-
 	/// @brief read the parameters file
-	virtual void readParams();
+	virtual void readParams(const std::string &filename);
 
-	/// @brief return the value of a parameter, or the default value if the parameter was not in the file
-	/// @param name the name of the parameter in the parameter file
-	/// @param defvalue the default value of the parameter
-	/// @returns the value of the parameter
-	double getParam(const std::string &name, double defvalue);
-
-	
 	enum RobotModeType
 	{
 	    DisabledMode = 0,
@@ -132,11 +108,6 @@ namespace xerolib
 	MessageLogger m_logger;
 
 	//
-	// The data logger for the robot
-	//
-	DataLogger m_data;
-
-	//
 	// The file manager for finding a location for the data and message files
 	//
 	FileManager m_filemgr ;
@@ -151,10 +122,6 @@ namespace xerolib
 	//
 	size_t m_mode_col;
 
-	//
-	// The map of params read from the params file
-	//
-	std::map<std::string, double> m_parameters;
     };
 }
 

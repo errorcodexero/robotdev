@@ -9,7 +9,5 @@ public:
 	~XeroRobotGPG3AutoController();
 
 private:
-	void createMotorCharProgram();
-	void createDriveStraight();
 };
 

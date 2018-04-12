@@ -1,35 +1,94 @@
-#include "PIDCtrl.h"
-#include <limits>
+#include "pidctrl.h"
+#include <iostream>
 
 namespace xerolib
 {
-	PIDCtrl::PIDCtrl()
-	{
-		m_i_guard = std::numeric_limits<double>::max() / 2.0;
-		m_sumi = 0.0;
-		m_lasterror = 0.0;
-	}
+	
 
-	PIDCtrl::~PIDCtrl()
+	PIDCtrl::PIDCtrl():PIDCtrl(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 	{
 	}
 
-	double PIDCtrl::calcOutput(double deltat, double target, double actual)
+	PIDCtrl::PIDCtrl(double p, double i, double d, double f, double floor, double ceil, double integralCeil, bool isAngle)
 	{
-		double error = target - actual;
-		double derror = (error - m_lasterror) / deltat;
+		Init(p, i, d, f, floor, ceil, integralCeil);
+		current = 0;
+	}
 
-		if (derror > 1e26)
-			derror = 1e26;
+	void PIDCtrl::Init(double p, double i, double d, double f, double floor, double ceil, double integralCeil, bool isangle)
+	{
+		PIDConsts.p = p;
+		PIDConsts.i = i;
+		PIDConsts.d = d;
+		PIDConsts.f = f;
+		PIDConsts.floor = floor;
+		PIDConsts.ceil = ceil;
+		PIDConsts.integralCeil = integralCeil;
+		mIsAngle = isangle ;
+		integral = 0;
+	}
 
-		m_sumi += error * deltat;
-		if (m_sumi < -m_i_guard)
-			m_sumi = -m_i_guard;
-		else if (m_sumi > m_i_guard)
-			m_sumi = m_i_guard;
+	double PIDCtrl::getOutput(double target, double current, double timeDifference, double *pv, double *iv, double *dv, double *fv)
+	{
+		double error = calcError(target, current) ;
+		double pOut = PIDConsts.p*error;
+		double derivative = (current - this->current) / timeDifference;
+		double dOut = PIDConsts.d*derivative;
+	
+		integral += error*timeDifference;
+	
+		if (integral > PIDConsts.integralCeil)
+			integral = PIDConsts.integralCeil;
+		else if (integral < -PIDConsts.integralCeil)
+			integral = -PIDConsts.integralCeil;
+	
+		double iOut = PIDConsts.i * integral;
 
-		m_lasterror = error;
-		m_last_derror = derror;
-		return m_kp * error + m_ki * m_sumi + m_kd * derror + m_kf * target;
+		if (pv != nullptr)
+			*pv = pOut ;
+
+		if (iv != nullptr)
+			*iv = iOut ;
+
+		if (dv != nullptr)
+			*dv = dOut ;
+
+		if (fv != nullptr)
+			*fv = PIDConsts.f ;
+	
+		double output = pOut + iOut + dOut + PIDConsts.f;
+
+#ifdef PRINT_PID_INTERNALS
+		std::cout << "integral " << integral ;
+		std::cout << ", pOut " << pOut ;
+		std::cout << ", iOut " << iOut ;
+		std::cout << ", dOut " << dOut ;
+		std::cout << ", error " << error;
+		std::cout << ", derivative " << derivative;
+		std::cout << std::endl ;
+#endif
+	
+		if (output <= PIDConsts.floor)
+			output = PIDConsts.floor;
+	
+		if (output >= PIDConsts.ceil)
+			output = PIDConsts.ceil;
+	
+		return output;
+	}
+
+	double PIDCtrl::calcError(double target, double current)
+	{
+		double error = target - current ;
+		if (mIsAngle)
+		{
+			while (error > 180)
+				error -= 360 ;
+
+			while (error < -180)
+				error += 360 ;
+		}
+
+		return error ;
 	}
 }

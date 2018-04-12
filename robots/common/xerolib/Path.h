@@ -40,7 +40,7 @@ namespace xero
 			Path();
 			virtual ~Path();
 
-			void extrapolateLat()
+			void extrapolateLast()
 			{
 				std::shared_ptr<PathSegment> last_p = m_segments[m_segments.size() - 1];
 				last_p->extrapolateLookahead(true);

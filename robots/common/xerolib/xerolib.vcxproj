@@ -63,22 +63,17 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;$(SolutionDir)..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;$(SolutionDir)..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="AdaptivePurePursuitController.cpp" />
     <ClCompile Include="AutoDelay.cpp" />
-    <ClCompile Include="AutoDriveBaseChar.cpp" />
-    <ClCompile Include="AutoDriveDistance.cpp" />
     <ClCompile Include="AutonomousControllerBase.cpp" />
     <ClCompile Include="AutonomousStepBase.cpp" />
     <ClCompile Include="AutoSetMotorVoltage.cpp" />
-    <ClCompile Include="DataDashboardDestination.cpp" />
-    <ClCompile Include="DataFileDestination.cpp" />
-    <ClCompile Include="DataLogger.cpp" />
     <ClCompile Include="DriveBase.cpp" />
     <ClCompile Include="EncoderAngleMeasurementDevice.cpp" />
     <ClCompile Include="FileManager.cpp" />
@@ -86,9 +81,9 @@
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
     <ClCompile Include="MotionProfile.cpp" />
-    <ClCompile Include="NavXAngleMeasurementDevice.cpp" />
-    <ClCompile Include="ParamFileReader.cpp" />
+    <ClCompile Include="ParamsParser.cpp" />
     <ClCompile Include="Path.cpp" />
+    <ClCompile Include="PathBuilder.cpp" />
     <ClCompile Include="PathFollower.cpp" />
     <ClCompile Include="PathSegment.cpp" />
     <ClCompile Include="PIDCtrl.cpp" />
@@ -97,6 +92,8 @@
     <ClCompile Include="ProfileGenerator.cpp" />
     <ClCompile Include="ProfileGoal.cpp" />
     <ClCompile Include="RobotControllerBase.cpp" />
+    <ClCompile Include="RobotState.cpp" />
+    <ClCompile Include="RobotStateEstimator.cpp" />
     <ClCompile Include="Rotation.cpp" />
     <ClCompile Include="Segment.cpp" />
     <ClCompile Include="SetpointGenerator.cpp" />
@@ -108,22 +105,17 @@
   <ItemGroup>
     <ClInclude Include="AdaptivePurePursuitController.h" />
     <ClInclude Include="AgedTrapezoidSpeedProfile.h" />
-    <ClInclude Include="AngleMeasurementDevice.h" />
     <ClInclude Include="AutoDelay.h" />
-    <ClInclude Include="AutoDriveBaseChar.h" />
-    <ClInclude Include="AutoDriveDistance.h" />
     <ClInclude Include="AutonomousControllerBase.h" />
     <ClInclude Include="AutonomousStepBase.h" />
+    <ClInclude Include="AutoPath.h" />
     <ClInclude Include="AutoSetMotorVoltage.h" />
     <ClInclude Include="Constraints.h" />
-    <ClInclude Include="DataDashboardDestination.h" />
-    <ClInclude Include="DataDestination.h" />
-    <ClInclude Include="DataFileDestination.h" />
-    <ClInclude Include="DataLogger.h" />
     <ClInclude Include="DriveBase.h" />
     <ClInclude Include="EncoderAngleMeasurementDevice.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="HeadingProfileFollower.h" />
+    <ClInclude Include="Kinematics.h" />
     <ClInclude Include="Lookahead.h" />
     <ClInclude Include="MathUtils.h" />
     <ClInclude Include="MessageDestination.h" />
@@ -131,8 +123,9 @@
     <ClInclude Include="MessageStreamDestination.h" />
     <ClInclude Include="MotionProfile.h" />
     <ClInclude Include="NavXAngleMeasurementDevice.h" />
-    <ClInclude Include="ParamFileReader.h" />
+    <ClInclude Include="ParamsParser.h" />
     <ClInclude Include="Path.h" />
+    <ClInclude Include="PathBuilder.h" />
     <ClInclude Include="PathContainer.h" />
     <ClInclude Include="PathFinderConstants.h" />
     <ClInclude Include="PathFollower.h" />
@@ -145,6 +138,8 @@
     <ClInclude Include="ProfileGenerator.h" />
     <ClInclude Include="ProfileGoal.h" />
     <ClInclude Include="RobotControllerBase.h" />
+    <ClInclude Include="RobotState.h" />
+    <ClInclude Include="RobotStateEstimator.h" />
     <ClInclude Include="Rotation.h" />
     <ClInclude Include="Segment.h" />
     <ClInclude Include="SetpointGenerator.h" />
@@ -152,6 +147,7 @@
     <ClInclude Include="State.h" />
     <ClInclude Include="SubsystemBase.h" />
     <ClInclude Include="TrapezoidSpeedProfile.h" />
+    <ClInclude Include="Waypoint.h" />
     <ClInclude Include="XeroRobotBase.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">

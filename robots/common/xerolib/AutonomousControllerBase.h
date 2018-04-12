@@ -32,6 +32,8 @@ namespace xerolib
 		}
 
 	private:
+		void nextStep(double now);
+
 		enum class State
 		{
 			Beginning,

@@ -2,8 +2,7 @@
 #include "RobotControllerBase.h"
 #include "SubsystemBase.h"
 #include "Timer.h"
-#include "DataDashboardDestination.h"
-#include "ParamFileReader.h"
+#include "ParamsParser.h"
 #include <iostream>
 
 namespace xerolib
@@ -15,7 +14,6 @@ namespace xerolib
 
     XeroRobotBase::~XeroRobotBase()
     {
-		m_data.endDataSet();
     }
 
     void XeroRobotBase::setupConsoleLogger()
@@ -23,51 +21,21 @@ namespace xerolib
 		m_logger.addStandardOutputDestination();
     }
 
-    void XeroRobotBase::readParams()
+    void XeroRobotBase::readParams(const std::string &file)
     {
-		std::string file = "/home/lvuser/params" ;
+		std::string filename = file;
+
+		if (filename.length() == 0)
+			filename = "/home/lvuser/params.txt" ;
+
 		xerolib::MessageLogger &logger = getMessageLogger();
 
-		if (!xerolib::ParamFileReader::readParamFile(logger, file, m_parameters))
+		ParamsParser &params = ParamsParser::get();
+		if (!params.readFile(file))
 		{
 			logger << xerolib::MessageLogger::MessageType::Debug << "cannot read parameter file '";
 			logger << file << "'" << xerolib::MessageLogger::Token::EndOfMessage;
 		}
-    }
-
-    double XeroRobotBase::getParam(const std::string &name, double defvalue)
-    {
-		auto it = m_parameters.find(name);
-		if (it == m_parameters.end())
-			return defvalue;
-
-		return it->second;
-    }
-
-    void XeroRobotBase::setupLoggers(const char *msgname_p, const char *dataname_p)
-    {
-		std::string filename;
-
-		if (msgname_p != nullptr)
-		{
-			filename = m_filemgr.makeFileName(msgname_p) ;
-			m_logger.addDestination(filename);
-		}
-
-		if (dataname_p != nullptr)
-		{
-			filename = m_filemgr.makeFileName(dataname_p) ;
-			m_data.addDestination(filename);
-		}
-
-		m_time_col = m_data.createColumn("time");
-		m_mode_col = m_data.createColumn("mode");
-    }
-
-    void XeroRobotBase::setupSmartDashboardLogger()
-    {
-		std::shared_ptr<DataDashboardDestination> dest_p = std::make_shared<DataDashboardDestination>() ;
-		m_data.addDestination(dest_p) ;
     }
 
     void XeroRobotBase::Disabled()
@@ -82,7 +50,6 @@ namespace xerolib
 
     void XeroRobotBase::Autonomous()
     {
-		m_data.startDataSet() ;
 		getMessageLogger() << MessageLogger::MessageType::Info;
 		getMessageLogger() << "Entering mode: Autonomous" << MessageLogger::Token::EndOfMessage;
 
@@ -92,8 +59,6 @@ namespace xerolib
 		{
 			doOneLoop(RobotModeType::AutonomousMode);
 		}
-
-		m_data.endDataSet() ;
     }
 
     void XeroRobotBase::OperatorControl()
@@ -126,12 +91,8 @@ namespace xerolib
     {
 		double start = getTime();
 
-		m_data.startRow();
-		m_data.logData(m_time_col, start);
-		m_data.logData(m_mode_col, mode);
-
 		for (auto sub_p : m_subsystems)
-			sub_p->readInputs();
+			sub_p->getInputs();
 
 		if (m_controller_p != nullptr)
 			m_controller_p->executeOneLoop();
@@ -151,8 +112,6 @@ namespace xerolib
 			getMessageLogger() << "robot exceeded the target loop time, target " << m_looptime;
 			getMessageLogger() << ", actual " << elapsed << MessageLogger::Token::EndOfMessage;
 		}
-
-		m_data.endRow();
     }
 
     std::shared_ptr<SubsystemBase> XeroRobotBase::getSubsystem(const char *name_p)

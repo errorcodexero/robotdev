@@ -17,7 +17,7 @@ namespace xerolib
 			return m_name;
 		}
 
-		virtual void readInputs() = 0;
+		virtual void getInputs() = 0;
 		virtual void setOutputs() = 0;
 
 	protected:

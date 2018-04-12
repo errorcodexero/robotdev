@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cassert>
+#include <mutex>
 
 namespace xerolib
 {
@@ -52,14 +53,14 @@ namespace xerolib
 		/// \returns true if a speed can be calculated, otherwise false
 		bool isValid() const
 		{
-			return m_full || (m_next > 1);
+			return isValidInternal();
 		}
 
 		/// \brief returns the speed based on the samples stored
 		/// \returns the calculated speed
 		double getSpeed() const
 		{
-			assert(isValid());
+			assert(isValidInternal());
 
 			const TimePoint &newest = getNewestSample();
 			const TimePoint &oldest = getOldestSample();
@@ -71,6 +72,13 @@ namespace xerolib
 		{
 			const TimePoint &newest = getNewestSample();
 			return newest.distance;
+		}
+
+	private:
+		bool isValidInternal() const
+		{
+			return m_full || (m_next > 1);
+
 		}
 
 	private:

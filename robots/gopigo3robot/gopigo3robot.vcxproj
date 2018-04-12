@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoSetServoPosition.h" />
-    <ClInclude Include="RobotGPG3Consts.h" />
+    <ClInclude Include="RoundedRectanglePathContainer.h" />
     <ClInclude Include="ServoSubsystem.h" />
     <ClInclude Include="XeroGPG3Robot.h" />
     <ClInclude Include="XeroRobotGPG3AutoController.h" />
@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AutoSetServoPosition.cpp" />
-    <ClCompile Include="RobotGPG3Consts.cpp" />
+    <ClCompile Include="RoundedRectanglePathContainer.cpp" />
     <ClCompile Include="ServoSubsystem.cpp" />
     <ClCompile Include="XeroGPG3Robot.cpp" />
     <ClCompile Include="XeroRobotGPG3AutoController.cpp" />
@@ -49,10 +49,10 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>$(IncludePath);$(ISenseIncludePath);../GoPiGo3Hw;../GoPiGoFRC;../XeroRobotLib../NavXLib;../boost/include</IncludePath>
+    <IncludePath>$(IncludePath);$(ISenseIncludePath);$(SolutionDir)..\gopigo3\gopigo3hw;$(SolutionDir)..\gopigo3\gopigo3frc;$(SolutionDir)..\gopigo3\gopigo3navx;$(SolutionDir)..\common\xerolib</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <IncludePath>$(IncludePath);$(ISenseIncludePath);../GoPiGo3Hw;../GoPiGoFRC;../XeroRobotLib../NavXLib</IncludePath>
+    <IncludePath>$(IncludePath);$(ISenseIncludePath);$(SolutionDir)..\gopigo3\gopigo3hw;$(SolutionDir)..\gopigo3\gopigo3frc;$(SolutionDir)..\gopigo3\gopigo3navx;$(SolutionDir)..\common\xerolib</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>

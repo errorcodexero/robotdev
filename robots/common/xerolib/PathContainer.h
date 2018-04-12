@@ -3,13 +3,12 @@
 #include <string>
 #include <memory>
 #include "PositionCS.h"
+#include "Path.h"
 
 namespace xero
 {
 	namespace pathfinder
 	{
-		class Path;
-
 		class PathContainer
 		{
 		public:

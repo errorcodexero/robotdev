@@ -71,6 +71,7 @@
     <ClCompile Include="Joystick.cpp" />
     <ClCompile Include="RobotBase.cpp" />
     <ClCompile Include="SampleRobot.cpp" />
+    <ClCompile Include="SerialPort.cpp" />
     <ClCompile Include="Servo.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="GPG3MotorController.cpp" />
