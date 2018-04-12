@@ -20,9 +20,9 @@ const unsigned AUTO_SELECTOR_AXIS = 6;
 	X(exchange)\
 	X(switch_)\
 	X(scale)\
-	X(collect_closed)\
-	X(collect_open)\
+	X(collect)\
 	X(eject)\
+	X(eject_slow)\
 	X(drop)\
 	X(climb)\
 	X(wings)\
@@ -195,9 +195,9 @@ Panel interpret_oi(Joystick_data d){
 		p.exchange = d.button[1];
 		p.switch_ = d.button[2];
 		p.scale = d.button[3];
-		p.collect_closed = d.button[4];
-		p.collect_open = d.button[9];
+		p.collect = d.button[4];
 		p.eject = d.button[5];
+		p.eject_slow = d.button[9];
 		p.drop = d.button[6];
 		p.climb = d.button[7];
 		p.wings = d.button[8];
@@ -273,9 +273,9 @@ Panel interpret_gamepad(Joystick_data d){
 
 		p.calibrate_grabber = d.button[Gamepad_button::LB];
 
-		p.collect_closed = d.button[Gamepad_button::A];
-		p.collect_open = d.button[Gamepad_button::B];
+		p.collect = d.button[Gamepad_button::B];
 		p.eject = d.button[Gamepad_button::X];	
+		p.eject_slow = d.button[Gamepad_button::A];
 		p.drop = d.button[Gamepad_button::Y];	
 	
 		switch(pov_section(d.pov)){

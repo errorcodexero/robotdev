@@ -29,9 +29,9 @@ POV:
   Up_right   - 
 
 Gunner:
- A          - Collect closed
+ A          - Eject slow
               AO: 
- B          - Collect open
+ B          - Collect
               AO: 
  X          - Eject
               AO: 

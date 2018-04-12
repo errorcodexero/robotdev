@@ -14,9 +14,9 @@ struct Panel{
 	bool exchange;
 	bool switch_;
 	bool scale;
-	bool collect_closed;
-	bool collect_open;
+	bool collect;
 	bool eject;
+	bool eject_slow;
 	bool drop;
 	bool climb;
 	bool wings;

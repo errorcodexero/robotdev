@@ -168,36 +168,30 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		// Now process the panel inputs and decide what to do.  Note, these
 		// actions may be overridden if we are in manual mode by code below.
 		//
-		if(collect_open_trigger(info.panel.collect_open))
+		if(collect_trigger(info.panel.collect))
 		{
-			if(collector_mode == Collector_mode::COLLECT_OPEN)
+			if(collector_mode == Collector_mode::COLLECT)
 			{
 				collector_mode = Collector_mode::IDLE;
 				logger << "    Collector to IDLE mode\n" ;
 			}
 			else
 			{
-				collector_mode = Collector_mode::COLLECT_OPEN;
-				logger << "    Collector to OPEN mode\n" ;
+				collector_mode = Collector_mode::COLLECT;
+				logger << "    Collector to COLLECT mode\n" ;
 			}
-		}
-		else if(collect_closed_trigger(info.panel.collect_closed))
-		{
-			if(collector_mode == Collector_mode::COLLECT_CLOSED)
-			{
-				collector_mode = Collector_mode::IDLE;
-				logger << "    Collector to IDLE mode\n" ;
-			}
-			else
-			{
-				collector_mode = Collector_mode::COLLECT_CLOSED;
-				logger << "    Collector to CLOSED mode\n" ;
-			}
-		}
+		}	
 		else if(info.panel.eject)
 		{
 			logger << "    Collector to EJECT\n" ;
 			collector_mode = Collector_mode::EJECT;
+			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
+			intake_timer.set(0.1);
+		}
+		else if(info.panel.eject_slow)
+		{
+			logger << "    Collector to EJECT_SLOW\n" ;
+			collector_mode = Collector_mode::EJECT_SLOW;
 			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
 			intake_timer.set(0.1);
 		}
@@ -324,23 +318,21 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		if(Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
 			collector_mode = Collector_mode::HOLD_CUBE;
 		break;
-    case Collector_mode::COLLECT_OPEN:
+    case Collector_mode::COLLECT:
 		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
 		goals.intake = Intake::Goal::in();
 		if (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
 			collector_mode = Collector_mode::HOLD_CUBE;
 		break;
-    case Collector_mode::COLLECT_CLOSED:
-		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::CLOSED);
-		goals.intake = Intake::Goal::in();
-		if (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube)
-			collector_mode = Collector_mode::HOLD_CUBE;
-		break;
     case Collector_mode::EJECT:
+	case Collector_mode::EJECT_SLOW:
     case Collector_mode::DROP:
-		if(collector_mode == Collector_mode::EJECT) {
+		if (collector_mode == Collector_mode::EJECT) {
 			goals.grabber = Grabber::Goal::hold();
 			goals.intake = Intake::Goal::out();
+		} else if (collector_mode == Collector_mode::EJECT_SLOW) {
+			goals.grabber = Grabber::Goal::hold();
+			goals.intake = Intake::Goal::out(0.5);
 		} else {
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
 			goals.intake = Intake::Goal::out(0.2);
@@ -407,8 +399,7 @@ void Teleop::runLights(const Run_info &info, Toplevel::Goal &goals)
     goals.lights.drive_right = goals.drive.right();
     goals.lights.has_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::GraspCube) ;
 
-    goals.lights.collector_open = collector_mode == Collector_mode::COLLECT_OPEN;
-    goals.lights.collector_closed = collector_mode == Collector_mode::COLLECT_CLOSED;
+    goals.lights.collector_open = collector_mode == Collector_mode::COLLECT;
     goals.lights.wings_deployed = goals.wings == Wings::Goal::UNLOCKED;
     goals.lights.lifter_status = [&]{
 		Lifter::Status s = status(info.status.lifter);

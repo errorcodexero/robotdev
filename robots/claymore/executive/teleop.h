@@ -17,7 +17,7 @@ struct Teleop : Executive_impl<Teleop> {
 		Countdown_timer timer;
 	};
 
-    #define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(CLAMP_DOWN) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(STOW) X(CALIBRATE)
+    #define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(CLAMP_DOWN) X(COLLECT) X(EJECT) X(EJECT_SLOW) X(DROP) X(STOW) X(CALIBRATE)
 	enum class Collector_mode{
 		#define X(NAME) NAME,
 		COLLECTOR_MODES
@@ -30,8 +30,7 @@ struct Teleop : Executive_impl<Teleop> {
 	X(Lifter::Goal, lifter_goal)                           \
 	X(Wings::Goal, wings_goal)                             \
 	X(Collector_mode, collector_mode)                      \
-	X(Posedge_trigger, collect_open_trigger)               \
-	X(Posedge_trigger, collect_closed_trigger)             \
+	X(Posedge_trigger, collect_trigger)                    \
 	X(Countdown_timer, intake_timer)                       \
 	X(bool, started_intake_with_cube)                      \
 	X(Posedge_trigger, calibrate_lifter_trigger)	       \
@@ -60,7 +59,7 @@ double set_drive_speed(double,double,double);
 
 inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode mode)
 {
-	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(CLAMP_DOWN) X(COLLECT_OPEN) X(COLLECT_CLOSED) X(EJECT) X(DROP) X(STOW) X(CALIBRATE)
+	#define COLLECTOR_MODES X(IDLE) X(HOLD_CUBE) X(CLAMP_DOWN) X(COLLECT) X(EJECT) X(EJECT_SLOW) X(DROP) X(STOW) X(CALIBRATE)
 	
 	switch(mode)
 	{
@@ -73,14 +72,14 @@ inline messageLogger &operator<<(messageLogger &logger, Teleop::Collector_mode m
 	case Teleop::Collector_mode::CLAMP_DOWN:
 		logger << "CLAMP_DOWN" ;
 		break;
-	case Teleop::Collector_mode::COLLECT_OPEN:
-		logger << "COLLECT_OPEN" ;
-		break ;
-	case Teleop::Collector_mode::COLLECT_CLOSED:
-		logger << "COLLECT_CLOSED" ;
+	case Teleop::Collector_mode::COLLECT:
+		logger << "COLLECT" ;
 		break ;
 	case Teleop::Collector_mode::EJECT:
 		logger << "EJECT" ;
+		break ;
+	case Teleop::Collector_mode::EJECT_SLOW:
+		logger << "EJECT_SLOW" ;
 		break ;
 	case Teleop::Collector_mode::DROP:
 		logger << "DROP" ;
