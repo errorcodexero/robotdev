@@ -125,7 +125,7 @@ public:
 #ifdef DEBUG
 		logger.enableSubsystem(SUBSYSTEM_AUTONOMOUS);
 		logger.enableSubsystem(SUBSYSTEM_DRIVEBASE);
-		logger.enableSubsystem(SUBSYSTEM_LIFTER);
+		//logger.enableSubsystem(SUBSYSTEM_LIFTER);
 		//logger.enableSubsystem(SUBSYSTEM_DRIVEBASE_RAW_DATA);
 		//logger.enableSubsystem(SUBSYSTEM_LIFTER_TUNING);
 		//logger.enableSubsystem(SUBSYSTEM_TIMING);
@@ -153,8 +153,8 @@ public:
 		// In competition mode, this information goes to a log file on
 		// the USB stick
 		//
-		dest_p = std::make_shared<messageDestStream>(std::cout) ;
-		logger.addDestination(dest_p) ;
+		//dest_p = std::make_shared<messageDestStream>(std::cout) ;
+		//logger.addDestination(dest_p) ;
 #endif
 		
 		//
