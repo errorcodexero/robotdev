@@ -193,7 +193,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			logger << "    Collector to EJECT_SLOW\n" ;
 			collector_mode = Collector_mode::EJECT_SLOW;
 			started_intake_with_cube = (Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::HasCube) ;
-			intake_timer.set(0.1);
+			intake_timer.set(0.5);
 		}
 		else if(info.panel.drop)
 		{
@@ -325,14 +325,10 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 			collector_mode = Collector_mode::HOLD_CUBE;
 		break;
     case Collector_mode::EJECT:
-	case Collector_mode::EJECT_SLOW:
     case Collector_mode::DROP:
 		if (collector_mode == Collector_mode::EJECT) {
 			goals.grabber = Grabber::Goal::hold();
 			goals.intake = Intake::Goal::out();
-		} else if (collector_mode == Collector_mode::EJECT_SLOW) {
-			goals.grabber = Grabber::Goal::hold();
-			goals.intake = Intake::Goal::out(0.5);
 		} else {
 			goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::OPEN);
 			goals.intake = Intake::Goal::out(0.2);
@@ -341,13 +337,20 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		if ((started_intake_with_cube && Grabber::grabber_controller.getCubeState() == GrabberController::CubeState::NoCube) || intake_timer.done())
 			collector_mode = Collector_mode::IDLE;
 		break;
+	case Collector_mode::EJECT_SLOW:
+		goals.grabber = Grabber::Goal::hold();
+		goals.intake = Intake::Goal::out(0.35);
+		intake_timer.update(info.in.now, info.in.robot_mode.enabled);
+		if (intake_timer.done())
+			collector_mode = Collector_mode::IDLE;
+		break;
 	case Collector_mode::STOW:
 		goals.grabber = Grabber::Goal::go_to_preset(GrabberController::Preset::STOWED);
 		goals.intake = Intake::Goal::off();
 		break;
     case Collector_mode::CALIBRATE:
 		goals.grabber = Grabber::Goal::calibrate();
-		if(ready(info.status.grabber, Grabber::Goal::calibrate()))
+		if (ready(info.status.grabber, Grabber::Goal::calibrate()))
 			collector_mode = Collector_mode::HOLD_CUBE;
 		break;
     default:
