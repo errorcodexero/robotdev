@@ -90,12 +90,44 @@ namespace xerolib
 		std::chrono::milliseconds delay(5);
 		double now;
 
+#ifdef LOGPATH
+		std::ofstream pathlog("/home/pi/logs/pathlog.csv");
+		pathlog << "t,pose_x,pose_y,pose_theta,linear_disp,linear_vel,profile_disp,profile_vel,vel_cmd_dx,vel_cmd_dy,vel_cmd_dtheta,steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta,cross_track_error,along_track_error,la_pt_x,la_pt_y,la_pt_vel";
+		pathlog << std::endl;
+#endif
+
 		while (m_running)
 		{
 			now = robot.getTime();
 
 			if (m_mode == Mode::Path)
+			{
 				updatePath(now);
+				const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
+
+#ifdef LOGPATH
+				pathlog << debug.t;
+				pathlog << "," << debug.pose_x;
+				pathlog << "," << debug.pose_y;
+				pathlog << "," << debug.pose_theta;
+				pathlog << "," << debug.linear_displacement;
+				pathlog << "," << debug.linear_velocity;
+				pathlog << "," << debug.profile_displacement;
+				pathlog << "," << debug.profile_velocity;
+				pathlog << "," << debug.velocity_command_dx;
+				pathlog << "," << debug.velocity_command_dy;
+				pathlog << "," << debug.velocity_command_dtheta;
+				pathlog << "," << debug.steering_command_dx;
+				pathlog << "," << debug.steering_command_dy;
+				pathlog << "," << debug.steering_command_dtheta;
+				pathlog << "," << debug.cross_track_error;
+				pathlog << "," << debug.along_track_error;
+				pathlog << "," << debug.lookahead_point_x;
+				pathlog << "," << debug.lookahead_point_y;
+				pathlog << "," << debug.lookahead_point_velocity;
+				pathlog << std::endl;
+#endif
+			}
 
 			std::this_thread::sleep_for(delay);
 		}
@@ -252,11 +284,6 @@ namespace xerolib
 		double disp = state.getDrivenDistance();
 		double vel = state.getPredictedVelocity();
 		PositionAngle pa = m_follower_p->update(t, pos, disp, vel);
-		std::cout << "updatePath";
-		std::cout << ", disp " << disp;
-		std::cout << ", vel " << vel;
-		std::cout << ", pa " << pa.toString();
-		std::cout << std::endl;
 
 		if (!m_follower_p->isFinished())
 		{
