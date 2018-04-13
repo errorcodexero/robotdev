@@ -31,8 +31,10 @@ std::string AutoSetServoPosition::toString()
 {
 	std::stringstream strm;
 
+
 	strm << "set eyes postiion voltage, angle = " <<
 	
 	m_angle << " degrees";
 	return strm.str();
 }
+

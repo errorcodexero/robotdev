@@ -16,7 +16,7 @@ namespace xero
 		std::shared_ptr<Path> PathBuilder::buildPath(const std::vector<Waypoint> &waypoints)
 		{
 			assert(waypoints.size() >= 2);
-			std::shared_ptr<Path> path_p = std::shared_ptr<Path>();
+			std::shared_ptr<Path> path_p = std::make_shared<Path>();
 
 			if (waypoints.size() > 2)
 			{

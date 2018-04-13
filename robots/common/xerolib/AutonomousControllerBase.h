@@ -31,6 +31,7 @@ namespace xerolib
 		{
 		}
 
+
 	private:
 		void nextStep(double now);
 

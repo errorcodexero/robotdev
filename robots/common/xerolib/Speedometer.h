@@ -60,7 +60,8 @@ namespace xerolib
 		/// \returns the calculated speed
 		double getSpeed() const
 		{
-			assert(isValidInternal());
+			if (!isValidInternal())
+				return 0.0;
 
 			const TimePoint &newest = getNewestSample();
 			const TimePoint &oldest = getOldestSample();

@@ -14,7 +14,7 @@ namespace xerolib
 
 		virtual void SendMessage(MessageLogger::MessageType type, const std::string &msg)
 		{
-			(*m_stream_p) << msg << std::endl;
+			(*m_stream_p) << msg << std::endl << std::flush;
 		}
 
 	private:

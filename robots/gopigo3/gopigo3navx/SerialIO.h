@@ -8,20 +8,21 @@
 #ifndef SRC_SERIALIO_H_
 #define SRC_SERIALIO_H_
 
-#include "WPILib.h"
+//include "WPILIb.h"
+
+#include "SerialPort.cpp"
 #include "IIOProvider.h"
 #include <stdint.h>
-#include <AHRSProtocol.h>
+#include <string.h>
+#include "AHRSProtocol.h"
 #include "IMUProtocol.h"
 #include "IIOCompleteNotification.h"
 #include "IBoardCapabilities.h"
 
-using namespace frc;
-
 class SerialIO : public IIOProvider {
 
 
-    SerialPort::Port serial_port_id;
+    std::string serial_port_id;
     SerialPort *serial_port;
     uint8_t next_integration_control_action;
     bool signal_transmit_integration_control;
@@ -41,10 +42,9 @@ class SerialIO : public IIOProvider {
     IIOCompleteNotification::BoardState board_state;
     IBoardCapabilities *board_capabilities;
     double last_valid_packet_time;
-    bool is_usb;
 
 public:
-    SerialIO( SerialPort::Port port_id,
+    SerialIO( std::string port_id,
               uint8_t update_rate_hz,
               bool processed_data,
               IIOCompleteNotification *notify_sink,
@@ -57,7 +57,6 @@ public:
     void ZeroDisplacement();
     void Run();
     void Stop();
-    void EnableLogging(bool enable);
 private:
 
     SerialPort *ResetSerialPort();

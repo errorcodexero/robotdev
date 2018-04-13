@@ -154,7 +154,8 @@ namespace xerolib
 		{
 			Idle,			// The drivebase is idle
 			Manual,			// Under manual control, motor voltages can be set
-			Path,
+			Path,			// Using pathfinder follow a path
+			Velocity,		// Drive straight at a fixed velocity
 		};
 
 		DriveBase(XeroRobotBase &robot) ;

@@ -6,6 +6,7 @@ namespace xerolib
 {
 	class AutonomousControllerBase;
 	class XeroRobotBase;
+	class MessageLogger;
 
 	class AutonomousStepBase
 	{
@@ -26,6 +27,8 @@ namespace xerolib
 		}
 
 		XeroRobotBase &getRobot();
+
+		MessageLogger &getLogger();
 
 	private:
 		AutonomousControllerBase &m_controller;

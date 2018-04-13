@@ -1,5 +1,6 @@
 #include "AutonomousStepBase.h"
 #include "AutonomousControllerBase.h"
+#include "XeroRobotBase.h"
 
 namespace xerolib
 {
@@ -14,5 +15,10 @@ namespace xerolib
 	XeroRobotBase &AutonomousStepBase::getRobot()
 	{
 		return m_controller.getRobot();
+	}
+
+	MessageLogger &AutonomousStepBase::getLogger()
+	{
+		return getRobot().getMessageLogger();
 	}
 }

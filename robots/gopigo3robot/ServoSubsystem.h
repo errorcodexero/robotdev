@@ -7,15 +7,10 @@
 class ServoSubsystem : public xerolib::SubsystemBase
 {
 public:
-	ServoSubsystem(xerolib::XeroRobotBase &robot);
+	ServoSubsystem(xerolib::XeroRobotBase &robot, std::shared_ptr<frc::Servo> servo_p);
 	~ServoSubsystem();
 
-	void setServo(std::shared_ptr<frc::Servo> servo_p)
-	{
-		m_servo_p = servo_p;
-	}
-
-	virtual void readInputs();
+	virtual void getInputs();
 	virtual void setOutputs();
 
 	void setAngle(float angle);
@@ -26,7 +21,12 @@ public:
 	}
 
 private:
-	static const float Delta;
+	void setServo(std::shared_ptr<frc::Servo> servo_p)
+	{
+		m_servo_p = servo_p;
+	}
+
+	static constexpr float kDelta = 1.0;
 
 private:
 	// The current angle

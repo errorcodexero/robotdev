@@ -1,10 +1,8 @@
-#include "pidctrl.h"
+#include "PIDCtrl.h"
 #include <iostream>
 
 namespace xerolib
 {
-	
-
 	PIDCtrl::PIDCtrl():PIDCtrl(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 	{
 	}

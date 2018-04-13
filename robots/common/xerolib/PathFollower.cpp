@@ -19,6 +19,8 @@ namespace xero
 			m_goal_vel_tolerance = params.goal_vel_tolerance;
 			m_inertia_gain = params.inertia_gain;
 			m_stop_steering_distance = params.stop_steering_distance;
+			m_override_finished = false;
+			m_done_steering = false;
 		}
 
 		PathFollower::~PathFollower()

@@ -1,6 +1,8 @@
 #include "RobotState.h"
 #include "Kinematics.h"
+#include <Timer.h>
 #include <cassert>
+#include <iostream>
 
 using namespace xero::math;
 using namespace xero::motion;
@@ -14,10 +16,23 @@ namespace xero
 		RobotState::RobotState()
 		{
 			m_driven_distance = 0;
+			PositionCS pos;
+			reset(frc::Timer::GetFPGATimestamp(), pos);
+			m_time_window = 10.0;
 		}
 
 		RobotState::~RobotState()
 		{
+		}
+
+		void RobotState::reset(double start, const PositionCS &pos)
+		{
+			m_actual_positions.push_back(std::make_pair(start, pos));
+		}
+
+		void RobotState::reset(const PositionCS &pos)
+		{
+			reset(frc::Timer::GetFPGATimestamp(), pos);
 		}
 
 		void RobotState::addActualPosition(double t, const xero::math::PositionAngle &measured, const xero::math::PositionAngle &predicted)
@@ -25,6 +40,9 @@ namespace xero
 			const PositionCS &latest = m_actual_positions[m_actual_positions.size() - 1].second;
 			PositionCS ob = Kinematics::integrateForwardKinematics(latest, measured);
 			m_actual_positions.push_back(std::make_pair(t, ob));
+
+			while (m_actual_positions.size() > 0 && t - m_actual_positions[0].first > m_time_window)
+				m_actual_positions.erase(m_actual_positions.begin());
 		}
 
 		PositionAngle RobotState::generateOdometryFromSensors(double left_dist, double right_dist, const xero::math::Rotation &rot)

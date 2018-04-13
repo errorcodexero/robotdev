@@ -1,7 +1,6 @@
 #pragma once
 
 #include "MessageLogger.h"
-#include "FileManager.h"
 #include <Timer.h>
 #include <SampleRobot.h>
 #include <memory>
@@ -19,7 +18,11 @@ namespace xerolib
 	XeroRobotBase();
 	virtual ~XeroRobotBase();
 
+	/// @brief setup a logger to print information to the output console
 	void setupConsoleLogger() ;
+
+	/// @brief setup a logger to print information to an output file
+	void setupFileLogger(const char *filename);
 
 	/// @brief called when the robot is disabled
 	virtual void Disabled();
@@ -106,11 +109,6 @@ namespace xerolib
 	// The message logger for the robot
 	//
 	MessageLogger m_logger;
-
-	//
-	// The file manager for finding a location for the data and message files
-	//
-	FileManager m_filemgr ;
 
 	//
 	// The index for the time variable

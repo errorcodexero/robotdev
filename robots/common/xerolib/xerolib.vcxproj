@@ -75,8 +75,6 @@
     <ClCompile Include="AutonomousStepBase.cpp" />
     <ClCompile Include="AutoSetMotorVoltage.cpp" />
     <ClCompile Include="DriveBase.cpp" />
-    <ClCompile Include="EncoderAngleMeasurementDevice.cpp" />
-    <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="HeadingProfileFollower.cpp" />
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
@@ -99,12 +97,10 @@
     <ClCompile Include="SetpointGenerator.cpp" />
     <ClCompile Include="State.cpp" />
     <ClCompile Include="SubsystemBase.cpp" />
-    <ClCompile Include="TrapezoidSpeedProfile.cpp" />
     <ClCompile Include="XeroRobotBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AdaptivePurePursuitController.h" />
-    <ClInclude Include="AgedTrapezoidSpeedProfile.h" />
     <ClInclude Include="AutoDelay.h" />
     <ClInclude Include="AutonomousControllerBase.h" />
     <ClInclude Include="AutonomousStepBase.h" />
@@ -112,8 +108,6 @@
     <ClInclude Include="AutoSetMotorVoltage.h" />
     <ClInclude Include="Constraints.h" />
     <ClInclude Include="DriveBase.h" />
-    <ClInclude Include="EncoderAngleMeasurementDevice.h" />
-    <ClInclude Include="FileManager.h" />
     <ClInclude Include="HeadingProfileFollower.h" />
     <ClInclude Include="Kinematics.h" />
     <ClInclude Include="Lookahead.h" />
@@ -122,7 +116,6 @@
     <ClInclude Include="MessageLogger.h" />
     <ClInclude Include="MessageStreamDestination.h" />
     <ClInclude Include="MotionProfile.h" />
-    <ClInclude Include="NavXAngleMeasurementDevice.h" />
     <ClInclude Include="ParamsParser.h" />
     <ClInclude Include="Path.h" />
     <ClInclude Include="PathBuilder.h" />
@@ -146,13 +139,14 @@
     <ClInclude Include="Speedometer.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="SubsystemBase.h" />
-    <ClInclude Include="TrapezoidSpeedProfile.h" />
+    <ClInclude Include="ModuleDefintions.h" />
     <ClInclude Include="Waypoint.h" />
     <ClInclude Include="XeroRobotBase.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
       <AdditionalIncludeDirectories>../gopigo3imisc;../gopigo3frc;../gopigo3navx;../gopigo3hw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_DEBUG</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">

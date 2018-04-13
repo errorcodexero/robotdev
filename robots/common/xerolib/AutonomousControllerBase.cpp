@@ -1,6 +1,7 @@
 #include "AutonomousControllerBase.h"
 #include "AutonomousStepBase.h"
 #include "XeroRobotBase.h"
+#include "ModuleDefintions.h"
 #include <iostream>
 
 namespace xerolib
@@ -22,7 +23,9 @@ namespace xerolib
 		//
 		// if run() returns true, the step is complete
 		//
-		logger << MessageLogger::MessageType::Debug << now << ": Ending step '" << step_p->toString() << "'" << MessageLogger::Token::EndOfMessage;
+		logger.startMessage(MessageLogger::MessageType::Debug, MODULE_AUTOMODE);
+		logger << now << ": Ending step '" << step_p->toString() << "'";
+		logger.endMessage();
 
 		step_p->end();
 		m_current_step++;
@@ -35,7 +38,9 @@ namespace xerolib
 		else
 		{
 			step_p = m_steps[m_current_step];
-			logger << MessageLogger::MessageType::Debug << now << ": Starting step '" << step_p->toString() << "'" << MessageLogger::Token::EndOfMessage;
+			logger.startMessage(MessageLogger::MessageType::Debug, MODULE_AUTOMODE);
+			logger << now << ": Starting step '" << step_p->toString() << "'";
+			logger.endMessage();
 			step_p->start();
 		}
 	}
@@ -51,7 +56,9 @@ namespace xerolib
 		{
 			if (m_state == State::Beginning)
 			{
-				logger << MessageLogger::MessageType::Debug << now << ": Starting autonomous program" << MessageLogger::Token::EndOfMessage;
+				logger.startMessage(MessageLogger::MessageType::Debug, MODULE_AUTOMODE);
+				logger << now << ": Starting autonomous program";
+				logger.endMessage();
 				onStartAutonomousProgram();
 
 				//
@@ -69,7 +76,9 @@ namespace xerolib
 				{
 					m_current_step = 0;
 					step_p = m_steps[m_current_step];
-					logger << MessageLogger::MessageType::Debug << now << ": Starting step '" << step_p->toString() << "'" << MessageLogger::Token::EndOfMessage;
+					logger.startMessage(MessageLogger::MessageType::Debug, MODULE_AUTOMODE);
+					logger << now << ": Starting step '" << step_p->toString() << "'";
+					logger.endMessage();
 					step_p->start();
 
 					m_state = State::Running;

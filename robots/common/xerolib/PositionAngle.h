@@ -100,6 +100,11 @@ namespace xero
 			{
 				return PositionAngle(getX() * scale, getY() * scale, getAngle() * scale);
 			}
+
+			std::string toString() const
+			{
+				return m_position.toString() + ", angle " + std::to_string(m_angle);
+			}
 		};
 	}
 }

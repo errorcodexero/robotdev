@@ -39,8 +39,6 @@ namespace frc
 	{
 		int ms;
 
-		std::cout << "Internal control" << std::endl;
-
 		setEnabled(false);
 		setRobotMode(RobotBase::RobotMode::Autonomous);
 		ms = static_cast<int>(m_start_delay * 1000);
@@ -67,8 +65,6 @@ namespace frc
 
 	void SampleRobot::DriverStationControl()
 	{
-		std::cout << "DriverStation control" << std::endl;
-
 		DriverStation &st = DriverStation::GetInstance();
 		setRobotMode(RobotBase::RobotMode::Operator);
 		setEnabled(false);

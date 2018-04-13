@@ -4,6 +4,7 @@
 #include "ParamsParser.h"
 #include "RobotStateEstimator.h"
 #include "Kinematics.h"
+#include "ModuleDefintions.h"
 #include <WPILib.h>
 #include <cassert>
 #include <iostream>
@@ -162,8 +163,8 @@ namespace xerolib
 		double ki = params.getValue("drivebase:velocity:i");
 		double kd = params.getValue("drivebase:velocity:d");
 		double kf = params.getValue("drivebase:velocity:f");
-		double vmin = params.getValue("drivebase::velocity:vmin") ;
-		double vmax = params.getValue("drivebase::velocity:vmax") ;
+		double vmin = params.getValue("drivebase:velocity:vmin") ;
+		double vmax = params.getValue("drivebase:velocity:vmax") ;
 
 		m_left_velocity_pid.Init(kp, ki, kd, kf, vmin, vmax, 1e6) ;
 		m_right_velocity_pid.Init(kp, ki, kd, kf, vmin, vmax, 1e6);
@@ -251,6 +252,12 @@ namespace xerolib
 		double disp = state.getDrivenDistance();
 		double vel = state.getPredictedVelocity();
 		PositionAngle pa = m_follower_p->update(t, pos, disp, vel);
+		std::cout << "updatePath";
+		std::cout << ", disp " << disp;
+		std::cout << ", vel " << vel;
+		std::cout << ", pa " << pa.toString();
+		std::cout << std::endl;
+
 		if (!m_follower_p->isFinished())
 		{
 			double left, right;

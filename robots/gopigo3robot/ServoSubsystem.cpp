@@ -3,10 +3,9 @@
 #include <cmath>
 #include <iostream>
 
-const float ServoSubsystem::Delta = 1.0;
-
-ServoSubsystem::ServoSubsystem(xerolib::XeroRobotBase &robot) : xerolib::SubsystemBase("eyes", robot)
+ServoSubsystem::ServoSubsystem(xerolib::XeroRobotBase &robot, std::shared_ptr<frc::Servo> servo_p) : xerolib::SubsystemBase("eyes", robot)
 {
+	setServo(servo_p);
 	m_moving = false;
 }
 
@@ -14,7 +13,7 @@ ServoSubsystem::~ServoSubsystem()
 {
 }
 
-void ServoSubsystem::readInputs()
+void ServoSubsystem::getInputs()
 {
 	xerolib::XeroRobotBase &robot = getRobot();
 
@@ -32,7 +31,7 @@ void ServoSubsystem::readInputs()
 void ServoSubsystem::setOutputs()
 {
 	float diff = std::abs(m_target_angle - m_angle);
-	if (!m_moving && diff > Delta)
+	if (!m_moving && diff > kDelta)
 	{
 		xerolib::XeroRobotBase &robot = getRobot();
 		m_servo_p->setPosition(m_target_angle);

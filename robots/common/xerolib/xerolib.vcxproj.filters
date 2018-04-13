@@ -49,12 +49,6 @@
     <ClCompile Include="DriveBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EncoderAngleMeasurementDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FileManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MessageLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -68,9 +62,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SubsystemBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TrapezoidSpeedProfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="XeroRobotBase.cpp">
@@ -99,9 +90,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AgedTrapezoidSpeedProfile.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
     <ClInclude Include="Constraints.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
@@ -171,12 +159,6 @@
     <ClInclude Include="DriveBase.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="EncoderAngleMeasurementDevice.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="FileManager.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
     <ClInclude Include="MessageDestination.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
@@ -184,9 +166,6 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="MessageStreamDestination.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="NavXAngleMeasurementDevice.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="PIDCtrl.h">
@@ -199,9 +178,6 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="SubsystemBase.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="TrapezoidSpeedProfile.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="XeroRobotBase.h">
@@ -235,6 +211,9 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="PathBuilder.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleDefintions.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>

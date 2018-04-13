@@ -3,6 +3,7 @@
 #include "SubsystemBase.h"
 #include "Timer.h"
 #include "ParamsParser.h"
+#include "ModuleDefintions.h"
 #include <iostream>
 
 namespace xerolib
@@ -21,6 +22,11 @@ namespace xerolib
 		m_logger.addStandardOutputDestination();
     }
 
+	void XeroRobotBase::setupFileLogger(const char *filename_p)
+	{
+		m_logger.addDestination(filename_p);
+	}
+
     void XeroRobotBase::readParams(const std::string &file)
     {
 		std::string filename = file;
@@ -33,15 +39,18 @@ namespace xerolib
 		ParamsParser &params = ParamsParser::get();
 		if (!params.readFile(file))
 		{
-			logger << xerolib::MessageLogger::MessageType::Debug << "cannot read parameter file '";
-			logger << file << "'" << xerolib::MessageLogger::Token::EndOfMessage;
+			logger.startMessage(MessageLogger::MessageType::Error, MODULE_ROBOTBASE);
+			logger << "cannot read parameter file '" << file << "'";
+			logger.endMessage();
 		}
     }
 
     void XeroRobotBase::Disabled()
     {
-		getMessageLogger() << MessageLogger::MessageType::Info;
-		getMessageLogger() << "Entering mode: Disabled" << MessageLogger::Token::EndOfMessage;
+		auto &log = getMessageLogger();
+		log.startMessage(MessageLogger::MessageType::Info, MODULE_ROBOTBASE);
+		log << "Entering mode: Disabled";
+		log.endMessage();
 
 		while (!IsEnabled())
 		{
@@ -50,8 +59,10 @@ namespace xerolib
 
     void XeroRobotBase::Autonomous()
     {
-		getMessageLogger() << MessageLogger::MessageType::Info;
-		getMessageLogger() << "Entering mode: Autonomous" << MessageLogger::Token::EndOfMessage;
+		auto &log = getMessageLogger();
+		log.startMessage(MessageLogger::MessageType::Info, MODULE_ROBOTBASE);
+		log << "Entering mode: Autonomous";
+		log.endMessage();
 
 		m_controller_p = createAutonomousController();
 
@@ -63,8 +74,10 @@ namespace xerolib
 
     void XeroRobotBase::OperatorControl()
     {
-		getMessageLogger() << MessageLogger::MessageType::Info;
-		getMessageLogger() << "Entering mode: Operator" << MessageLogger::Token::EndOfMessage;
+		auto &log = getMessageLogger();
+		log.startMessage(MessageLogger::MessageType::Info, MODULE_ROBOTBASE);
+		log << "Entering mode: OperatorControl";
+		log.endMessage();
 
 		m_controller_p = createOperatorControlController();
 
@@ -76,8 +89,10 @@ namespace xerolib
 
     void XeroRobotBase::Test()
     {
-		getMessageLogger() << MessageLogger::MessageType::Info;
-		getMessageLogger() << "Entering mode: Test" << MessageLogger::Token::EndOfMessage;
+		auto &log = getMessageLogger();
+		log.startMessage(MessageLogger::MessageType::Info, MODULE_ROBOTBASE);
+		log << "Entering mode: Test";
+		log.endMessage();
 
 		m_controller_p = createTestController();
 
@@ -108,9 +123,11 @@ namespace xerolib
 		}
 		else
 		{
-			getMessageLogger() << MessageLogger::MessageType::Warning;
-			getMessageLogger() << "robot exceeded the target loop time, target " << m_looptime;
-			getMessageLogger() << ", actual " << elapsed << MessageLogger::Token::EndOfMessage;
+			auto &log = getMessageLogger();
+			log.startMessage(MessageLogger::MessageType::Warning, MODULE_ROBOTBASE);
+			log << "robot exceeded the target loop time, target " << m_looptime;
+			log << ", actual " << elapsed;
+			log.endMessage();
 		}
     }
 

@@ -10,6 +10,30 @@
       <Platform>ARM</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AHRS.cpp" />
+    <ClCompile Include="ContinuousAngleTracker.cpp" />
+    <ClCompile Include="InertialDataIntegrator.cpp" />
+    <ClCompile Include="OffsetTracker.cpp" />
+    <ClCompile Include="SerialIO.cpp" />
+    <ClCompile Include="SerialPort.cpp" />
+    <ClCompile Include="TimeStamp.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AHRS.h" />
+    <ClInclude Include="AHRSProtocol.h" />
+    <ClInclude Include="ContinuousAngleTracker.h" />
+    <ClInclude Include="IBoardCapabilities.h" />
+    <ClInclude Include="IIOCompleteNotification.h" />
+    <ClInclude Include="IIOProvider.h" />
+    <ClInclude Include="IMUProtocol.h" />
+    <ClInclude Include="IMURegisters.h" />
+    <ClInclude Include="InertialDataIntegrator.h" />
+    <ClInclude Include="ITimestampedDataSubscriber.h" />
+    <ClInclude Include="OffsetTracker.h" />
+    <ClInclude Include="SerialIO.h" />
+    <ClInclude Include="TimeStamp.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6e9d9ca5-bdc0-467e-bfdc-e5cf12131c25}</ProjectGuid>
     <Keyword>Linux</Keyword>
@@ -35,43 +59,14 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <IncludePath>$(IncludePath);$(ISenseIncludePath);../GoPiGo3Hw;../GoPiGoFRC</IncludePath>
+    <IncludePath>$(IncludePath);$(ISenseIncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <IncludePath>$(IncludePath);$(ISenseIncludePath);../GoPiGo3Hw;../GoPiGoFRC</IncludePath>
   </PropertyGroup>
-  <ItemGroup>
-    <ClInclude Include="AHRS.h" />
-    <ClInclude Include="AHRSProtocol.h" />
-    <ClInclude Include="ContinuousAngleTracker.h" />
-    <ClInclude Include="delay.h" />
-    <ClInclude Include="IBoardCapabilities.h" />
-    <ClInclude Include="IIOCompleteNotification.h" />
-    <ClInclude Include="IIOProvider.h" />
-    <ClInclude Include="IMUProtocol.h" />
-    <ClInclude Include="IMURegisters.h" />
-    <ClInclude Include="InertialDataIntegrator.h" />
-    <ClInclude Include="IRegisterIO.h" />
-    <ClInclude Include="ITimestampedDataSubscriber.h" />
-    <ClInclude Include="OffsetTracker.h" />
-    <ClInclude Include="RegisterIO.h" />
-    <ClInclude Include="RegisterIOI2C.h" />
-    <ClInclude Include="RegisterIOSPI.h" />
-    <ClInclude Include="SerialIO.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="AHRS.cpp" />
-    <ClCompile Include="ContinuousAngleTracker.cpp" />
-    <ClCompile Include="InertialDataIntegrator.cpp" />
-    <ClCompile Include="OffsetTracker.cpp" />
-    <ClCompile Include="RegisterIO.cpp" />
-    <ClCompile Include="RegisterIOI2C.cpp" />
-    <ClCompile Include="RegisterIOSPI.cpp" />
-    <ClCompile Include="SerialIO.cpp" />
-  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;../gopigo3imisc;../gopigo3hw;../gopigo3frc;$(StlIncludeDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;$(StlIncludeDirectories);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>

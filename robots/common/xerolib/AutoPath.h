@@ -1,15 +1,18 @@
 #pragma once
 
 #include "DriveBase.h"
+#include "RobotState.h"
 #include "AutonomousStepBase.h"
 #include "PathContainer.h"
+#include "ModuleDefintions.h"
 
 namespace xerolib
 {
-	class AutoPath
+	class AutoPath : public AutonomousStepBase
 	{
 	public:
-		AutoPath(std::shared_ptr<DriveBase> db_p, xero::pathfinder::PathContainer &c) : m_container(c)
+		AutoPath(AutonomousControllerBase &controller, std::shared_ptr<DriveBase> db_p, xero::pathfinder::PathContainer &c) 
+			: AutonomousStepBase(controller), m_container(c)
 		{
 			m_db_p = db_p;
 		}
@@ -20,7 +23,17 @@ namespace xerolib
 
 		virtual void start()
 		{
-			m_db_p->followPath(m_container.buildPath(), m_container.isReversed());
+			MessageLogger &log = getLogger();
+
+			xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::getRobotState();
+			state.reset(m_container.getStartPose());
+			auto path_p = m_container.buildPath();
+
+			log.startMessage(MessageLogger::MessageType::Debug, MODULE_PATHFINDER);
+			log << "Path: " << path_p->toString();
+			log.endMessage();
+
+			m_db_p->followPath(path_p, m_container.isReversed());
 		}
 
 		virtual bool run()
