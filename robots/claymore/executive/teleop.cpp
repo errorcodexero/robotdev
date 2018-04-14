@@ -310,7 +310,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		break;
     case Collector_mode::HOLD_CUBE:
 		goals.grabber = Grabber::Goal::hold();
-		goals.intake = Intake::Goal::off();
+		goals.intake = Intake::Goal::in(.15);
 		break;
 	case Collector_mode::CLAMP_DOWN:
 		goals.grabber = Grabber::Goal::clamp();
