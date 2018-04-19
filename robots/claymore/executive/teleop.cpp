@@ -339,7 +339,7 @@ void Teleop::runCollector(const Run_info &info, Toplevel::Goal &goals)
 		break;
 	case Collector_mode::EJECT_SLOW:
 		goals.grabber = Grabber::Goal::hold();
-		goals.intake = Intake::Goal::out(0.35);
+		goals.intake = Intake::Goal::out(0.4);
 		intake_timer.update(info.in.now, info.in.robot_mode.enabled);
 		if (intake_timer.done())
 			collector_mode = Collector_mode::IDLE;
