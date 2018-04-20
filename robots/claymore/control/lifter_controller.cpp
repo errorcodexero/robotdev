@@ -348,19 +348,19 @@ void LifterController::updateUp(double time, double dt, double &out, Gear &gear,
 	gear = mGear ;
 	brake = false ;
 	
-	if (!mCalibrated)
+	if (!mCalibrated && mGear == Gear::HIGH)
 	{
 		logger << ", uncalibrated" ;
 		out = params_p->getValue("lifter:manual_power:low", 0.4) ;
 		assert(out >= 0.0) ;
 	}
-	else if (mCurrent >= top_limit)
+	else if (mGear != Gear::LOW && mCurrent >= top_limit)
 	{
 		brake = true;
 		out = 0.0 ;
 		logger << ", top limit" ;
 	}
-	else if (mCurrent > top_limit - slowdown_range)
+	else if (mGear != Gear::LOW && mCurrent > top_limit - slowdown_range)
 	{
 		logger << ", upper slowdown" ;
 		out = params_p->getValue("lifter:slowdown_power", 0.2) ;
@@ -403,7 +403,7 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 	
 	gear = mGear ;
 	brake = false ;
-	if (!mCalibrated)
+	if (!mCalibrated && mGear == Gear::HIGH)
 	{
 		logger << ", uncalibrated" ;
 		out = -params_p->getValue("lifter:manual_power:low", 0.4) ;
@@ -415,7 +415,7 @@ void LifterController::updateDown(double time, double dt, double &out, Gear &gea
 		logger << ", bottom limit" ;
 		out = 0.0 ;
 	}*/
-	else if (mCurrent < bottom_limit + slowdown_range)
+	else if (mGear != Gear::LOW && mCurrent < bottom_limit + slowdown_range)
 	{
 		logger << ", lower slowdown" ;
 		out = -params_p->getValue("lifter:slowdown_power", 0.2) ;
