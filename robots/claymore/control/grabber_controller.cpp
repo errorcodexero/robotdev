@@ -201,6 +201,9 @@ void GrabberController::update(double angle, bool cubesensor, double time, doubl
 		logger << " -> " ;
 		logger << armStateToString(mArmState) ;
 		logger.endMessage() ;
+
+		if (mPrevArmState == ArmState::CALIBRATING && mArmState == ArmState::HOLD)
+			mCalibrated = true;
 	}
 
     //
