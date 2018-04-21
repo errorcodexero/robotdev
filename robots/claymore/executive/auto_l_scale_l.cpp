@@ -63,6 +63,7 @@ static vector<Step> steps_comp =
     AUTO_PREAMBLE("left_scale_left_comp"),
 	Step(Drive(300, false)),
 	Step(Rotate(90, 8.0)),
+	Step(Drive(-14, false)),
     Step(Lifter_to_height(80.0)),
 	eject,
 	lifterToFloor,
