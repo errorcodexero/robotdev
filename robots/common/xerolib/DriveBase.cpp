@@ -75,7 +75,6 @@ namespace xerolib
 		RobotStateEstimator &est = RobotStateEstimator::get();
 		est.setDriveBase(this);
 
-
 		while (m_running)
 		{
 			double time = frc::Timer::GetFPGATimestamp();
@@ -103,9 +102,9 @@ namespace xerolib
 			if (m_mode == Mode::Path)
 			{
 				updatePath(now);
-				const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
 
 #ifdef LOGPATH
+				const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
 				pathlog << debug.t;
 				pathlog << "," << debug.pose_x;
 				pathlog << "," << debug.pose_y;
@@ -215,7 +214,8 @@ namespace xerolib
 
 		//
 		// TODO - fix so that is this is called while we are actively following a path we do
-		//        the right thing
+		//        the right thing.  For now, we ignore the new path and finish the current
+		//        one.
 		//
 		if (m_mode == Mode::Path && !isPathFinished())
 			return;

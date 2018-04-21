@@ -1,5 +1,5 @@
 #include "Grabber.h"
-#include "ParamsParser.h"
+#include <ParamsParser.h>
 #include <XeroRobotBase.h>
 #include <cmath>
 #include <algorithm>
@@ -23,7 +23,7 @@ Grabber::Grabber(xerolib::XeroRobotBase &robot,
 	m_holding_voltage = params.getValue("grabber::holding_voltage") ;
 	m_grasping_voltage = params.getValue("grabber::grasping_voltage") ;
 
-	m_stationary_threshold = static_cast<int32_t>(params.getValue("grebber::stationary_threshold") + 0.5) ;
+	m_stationary_threshold = static_cast<int32_t>(params.getValue("grabber::stationary_threshold") + 0.5) ;
 
 	double p = params.getValue("grabber:p") ;
 	double i = params.getValue("grabber:i") ;
@@ -110,6 +110,8 @@ void Grabber::setMotorVoltage(double v)
 
 void Grabber::doCalibration()
 {
+	setMotorVoltage(m_holding_voltage) ;
+	
 	if (isStationary())
 	{
 		m_calibrated = true ;
