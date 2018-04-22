@@ -24,7 +24,7 @@ namespace xero
 
 		void RobotStateEstimator::oneLoop(double t)
 		{
-			RobotState &st = RobotState::getRobotState();
+			RobotState &st = RobotState::get();
 
 			double left = m_db_p->getLeftDistance();
 			double right = m_db_p->getRightDistance();
@@ -35,6 +35,9 @@ namespace xero
 			st.addActualPosition(t, od_vel, predicted_vel);
 			m_left_dist_prev = left;
 			m_right_dist_prev = right;
+
+			// std::cout << " Odometry Velocity:" << od_vel.toString() << std::endl;
+			// std::cout << "Predicted Velocity: " << predicted_vel.toString() << std::endl;
 		}
 	}
 }

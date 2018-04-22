@@ -6,3 +6,5 @@
 **/builddir
 **/.vscode
 **/*.mp4
+**/Debug
+**/Win32

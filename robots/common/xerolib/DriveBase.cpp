@@ -5,7 +5,6 @@
 #include "RobotStateEstimator.h"
 #include "Kinematics.h"
 #include "ModuleDefintions.h"
-#include <WPILib.h>
 #include <cassert>
 #include <iostream>
 #include <cmath>
@@ -239,6 +238,7 @@ namespace xerolib
 		double stopdist = params.getValue("pathfollower:stopping:distance");
 		
 		PathFollower::Parameters p(la, igain, kp, ki, kv, kffv, kffa, max_abs_vel, max_abs_acc, pos_tol, vel_tol, stopdist);
+
 		m_path_p = path_p;
 		m_follower_p = std::make_shared<PathFollower>(path_p, reversed, p);
 
@@ -275,11 +275,13 @@ namespace xerolib
 
 	void DriveBase::setOutputs()
 	{
+		if (m_mode == Mode::Manual)
+			outputToMotors();
 	}
 
 	void DriveBase::updatePath(double t)
 	{
-		xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::getRobotState();
+		xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
 		PositionCS pos = state.getPositionAtTime(t);
 		double disp = state.getDrivenDistance();
 		double vel = state.getPredictedVelocity();

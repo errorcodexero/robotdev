@@ -32,7 +32,7 @@ namespace xerolib
 
 		if (elapsed > m_duration)
 		{
-			m_drivebase_p->setMotorVoltage(0.0, 0.0);
+			m_drivebase_p->stop();
 			ret = true;
 		}
 		else

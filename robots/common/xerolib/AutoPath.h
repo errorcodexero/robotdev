@@ -25,7 +25,7 @@ namespace xerolib
 		{
 			MessageLogger &log = getLogger();
 
-			xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::getRobotState();
+			xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
 			state.reset(m_container.getStartPose());
 			auto path_p = m_container.buildPath();
 

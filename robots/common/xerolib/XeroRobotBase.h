@@ -24,6 +24,12 @@ namespace xerolib
 	/// @brief setup a logger to print information to an output file
 	void setupFileLogger(const char *filename);
 
+	/// @brief setup a logger to print information to an output file
+	void setupFileLogger(const std::string &filename)
+	{
+		setupFileLogger(filename.c_str());
+	}
+
 	/// @brief called when the robot is disabled
 	virtual void Disabled();
 

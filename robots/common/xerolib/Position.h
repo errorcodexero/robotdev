@@ -172,7 +172,7 @@ namespace xero
 			/// \brief return a string representing this object
 			std::string toString() const
 			{
-				return "[" + std::to_string(m_x) + ", " + std::to_string(m_y) + "]";
+				return std::to_string(m_x) + ", " + std::to_string(m_y);
 			}
 		};
 	}

@@ -51,10 +51,6 @@ namespace xerolib
 		log.startMessage(MessageLogger::MessageType::Info, MODULE_ROBOTBASE);
 		log << "Entering mode: Disabled";
 		log.endMessage();
-
-		while (!IsEnabled())
-		{
-		}
     }
 
     void XeroRobotBase::Autonomous()

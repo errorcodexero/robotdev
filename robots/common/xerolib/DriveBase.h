@@ -65,11 +65,13 @@ namespace xerolib
 
 		double getLeftSpeed()
 		{
+			std::lock_guard<std::mutex> lock(m_velocity_mutex);
 			return m_left_speed.getSpeed();
 		}
 
 		double getRightSpeed()
 		{
+			std::lock_guard<std::mutex> lock(m_velocity_mutex);
 			return m_right_speed.getSpeed();
 		}
 
@@ -120,6 +122,7 @@ namespace xerolib
 			setOutputVoltage(0.0, 0.0);
 			m_path_p = nullptr;
 			m_follower_p = nullptr;
+			outputToMotors();
 		}
 
 		/// \brief set the left and right motor voltages to a fixed voltage
@@ -300,6 +303,11 @@ namespace xerolib
 		// The path follower object following the above path
 		//
 		std::shared_ptr<xero::pathfinder::PathFollower> m_follower_p;
+
+		//
+		// The mutex for setting the path and the follower
+		//
+		std::mutex m_path_mutex;
 
 		// The mode for the drive base
 		Mode m_mode;
