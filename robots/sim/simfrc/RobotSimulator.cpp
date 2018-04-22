@@ -40,7 +40,6 @@ namespace frc
 		return *m_robotsim_p;
 	}
 
-
 	void RobotSimulator::zeroYaw()
 	{
 		std::lock_guard<std::mutex> lock(m_lock);
@@ -50,7 +49,7 @@ namespace frc
 	double RobotSimulator::getYaw()
 	{
 		std::lock_guard<std::mutex> lock(m_lock);
-		return m_angle;
+		return m_angle / PI * 180 ;
 	}
 
 	void RobotSimulator::setMotor(int index, double v)

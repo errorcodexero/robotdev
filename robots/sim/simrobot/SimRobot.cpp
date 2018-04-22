@@ -5,6 +5,7 @@
 #include <DriveBase.h>
 #include <AHRS.h>
 #include <SimMotorController.h>
+#include <RobotStateEstimator.h>
 
 using namespace xerolib;
 
@@ -20,6 +21,8 @@ void SimRobot::RobotInit()
 {
 	std::string basedir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\");
 	std::chrono::milliseconds delay(1);
+
+	xero::pathfinder::RobotStateEstimator::LogFileName = basedir + "estimator.csv";
 
 	MessageLogger &logger = getMessageLogger();
 	logger.enableModules(MODULE_ALL);

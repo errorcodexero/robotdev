@@ -19,11 +19,11 @@ namespace xero
 			{
 			}
 
-			static xero::math::PositionAngle forwardKinematics(const xero::math::Rotation &measrot,
+			static xero::math::PositionAngle forwardKinematics(const xero::math::Rotation &prevrot,
 				double ldist, double rdist, const xero::math::Rotation &gyro)
 			{
-				double dx = (ldist + rdist) / 2.0;
-				return xero::math::PositionAngle(xero::math::Position(dx, 0.0), gyro.getRadians());
+				double dangle = prevrot.inverse().rotateBy(gyro).getRadians();
+				return forwardKinematics(ldist, rdist, dangle);
 			}
 
 			static xero::math::PositionAngle forwardKinematics(double leftdelta, double rightdelta, double width, double scrub)

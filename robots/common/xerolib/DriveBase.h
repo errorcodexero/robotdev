@@ -77,7 +77,7 @@ namespace xerolib
 
 		xero::math::Rotation getAngle()
 		{
-			return xero::math::Rotation::fromDegrees(m_navx_p->GetYaw());
+			return xero::math::Rotation::fromDegrees(m_yaw);
 		}
 
 		/// \brief returns true if the drivebase is idle
@@ -248,6 +248,13 @@ namespace xerolib
 		// While true, the threads controlling the drive base are running
 		//
 		bool m_running;
+
+		//
+		// The Yaw angle for the robot, note it is the opposite sign from the
+		// NavX default as the path finder convention is different than the
+		// than the NavX.
+		//
+		double m_yaw;
 
 		//
 		// The thread managing the velocity PID

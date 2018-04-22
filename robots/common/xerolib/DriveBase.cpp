@@ -36,7 +36,7 @@ namespace xerolib
 		setNavX(navx_p) ;
 	}
 	
-	DriveBase::DriveBase(XeroRobotBase &robot) : SubsystemBase("drivebase", robot), m_left_speed(2), m_right_speed(2)
+	DriveBase::DriveBase(XeroRobotBase &robot) : SubsystemBase("drivebase", robot), m_left_speed(4), m_right_speed(4)
 	{
 		m_mode = Mode::Idle;
 
@@ -46,7 +46,7 @@ namespace xerolib
 		m_right_last_voltage = std::nan("");
 
 		initPIDConstants();
-
+		m_yaw = 0.0;
 	}
 
 	DriveBase::~DriveBase()
@@ -271,6 +271,7 @@ namespace xerolib
 
 	void DriveBase::getInputs()
 	{
+		m_yaw = -m_navx_p->GetYaw();
 	}
 
 	void DriveBase::setOutputs()
