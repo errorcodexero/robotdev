@@ -23,8 +23,8 @@ std::shared_ptr<xero::pathfinder::Path> RoundedRectanglePathContainer::buildPath
 {
 	std::vector<Waypoint> points;
 
-	points.push_back(Waypoint(0, 0, 0, 1));
-	points.push_back(Waypoint(12.0, 0.0, 0.0, 1));
+	points.push_back(Waypoint(0, 0, 0, 5));
+	points.push_back(Waypoint(12.0, 0.0, 0.0, 5));
 
 	return xero::pathfinder::PathBuilder::buildPath(points);
 }

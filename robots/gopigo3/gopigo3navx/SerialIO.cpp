@@ -257,7 +257,7 @@ void SerialIO::Run() {
                                 ( received_data[i+1] == BINARY_PACKET_INDICATOR_CHAR ) ) {
                             /* Binary packet received; next byte is packet length-2 */
                             uint8_t total_expected_binary_data_bytes = received_data[i+2];
-                            total_expected_binary_data_bytes += 2;
+                            total_expected_binary_data_bytes = static_cast<uint8_t>(total_expected_binary_data_bytes + 2);
                             while ( bytes_remaining < total_expected_binary_data_bytes ) {
 
                                 /* This binary packet contains an embedded     */
