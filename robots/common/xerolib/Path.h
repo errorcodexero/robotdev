@@ -35,9 +35,10 @@ namespace xero
 			std::vector<std::shared_ptr<PathSegment>> m_segments;
 			std::shared_ptr<PathSegment> m_prev_segment;
 			std::list<std::string> m_markers_crossed;
+			double m_maxaccel;
 
 		public:
-			Path();
+			Path(double maxaccel);
 			virtual ~Path();
 
 			void extrapolateLast()

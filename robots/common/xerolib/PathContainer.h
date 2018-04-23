@@ -21,7 +21,7 @@ namespace xero
 			}
 
 			virtual std::string getName() const = 0;
-			virtual std::shared_ptr<Path> buildPath() = 0;
+			virtual std::shared_ptr<Path> buildPath(double maxaccel) = 0;
 			virtual xero::math::PositionCS getStartPose() = 0;
 			virtual bool isReversed() = 0;
 		};

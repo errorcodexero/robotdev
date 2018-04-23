@@ -24,7 +24,6 @@ SRC = \
 	AutonomousStepBase.cpp\
 	AutoSetMotorVoltage.cpp\
 	DriveBase.cpp\
-	FileManager.cpp\
 	MessageLogger.cpp\
 	MessageStreamDestination.cpp\
 	PIDCtrl.cpp\

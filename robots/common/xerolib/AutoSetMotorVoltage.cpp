@@ -22,6 +22,7 @@ namespace xerolib
 	{
 		XeroRobotBase &robot = getRobot();
 		m_start = robot.getTime();
+		m_drivebase_p->setMotorVoltage(m_left_voltage, m_right_voltage);
 	}
 
 	bool AutoSetMotorVoltage::run()
@@ -32,14 +33,9 @@ namespace xerolib
 
 		if (elapsed > m_duration)
 		{
-			m_drivebase_p->setMotorVoltage(0.0, 0.0);
+			m_drivebase_p->stop();
 			ret = true;
 		}
-		else
-		{
-			m_drivebase_p->setMotorVoltage(m_left_voltage, m_right_voltage);
-		}
-
 		return ret;
 	}
 

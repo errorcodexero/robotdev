@@ -65,17 +65,19 @@ namespace xerolib
 
 		double getLeftSpeed()
 		{
+			std::lock_guard<std::mutex> lock(m_velocity_mutex);
 			return m_left_speed.getSpeed();
 		}
 
 		double getRightSpeed()
 		{
+			std::lock_guard<std::mutex> lock(m_velocity_mutex);
 			return m_right_speed.getSpeed();
 		}
 
 		xero::math::Rotation getAngle()
 		{
-			return xero::math::Rotation::fromDegrees(m_navx_p->GetYaw());
+			return xero::math::Rotation::fromDegrees(m_yaw);
 		}
 
 		/// \brief returns true if the drivebase is idle
@@ -120,6 +122,7 @@ namespace xerolib
 			setOutputVoltage(0.0, 0.0);
 			m_path_p = nullptr;
 			m_follower_p = nullptr;
+			outputToMotors();
 		}
 
 		/// \brief set the left and right motor voltages to a fixed voltage
@@ -131,6 +134,14 @@ namespace xerolib
 			setOutputVoltage(left, right);
 			m_path_p = nullptr;
 			m_follower_p = nullptr;
+		}
+
+		void setVelocity(double left, double right)
+		{
+			m_mode = Mode::Manual;
+			m_left_target_velocity = left;
+			m_right_target_velocity = right;
+			m_mode = Mode::Velocity;
 		}
 
 		/// \brief set the drivebase to follow the provided path
@@ -247,6 +258,13 @@ namespace xerolib
 		bool m_running;
 
 		//
+		// The Yaw angle for the robot, note it is the opposite sign from the
+		// NavX default as the path finder convention is different than the
+		// than the NavX.
+		//
+		double m_yaw;
+
+		//
 		// The thread managing the velocity PID
 		//
 		std::thread m_velocity_thread;
@@ -300,6 +318,11 @@ namespace xerolib
 		// The path follower object following the above path
 		//
 		std::shared_ptr<xero::pathfinder::PathFollower> m_follower_p;
+
+		//
+		// The mutex for setting the path and the follower
+		//
+		std::mutex m_path_mutex;
 
 		// The mode for the drive base
 		Mode m_mode;

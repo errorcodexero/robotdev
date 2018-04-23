@@ -10,25 +10,27 @@ namespace xero
 {
 	namespace pathfinder
 	{
-		PathSegment::PathSegment(double x1, double y1, double x2, double y2, double maxspeed,
+		PathSegment::PathSegment(double x1, double y1, double x2, double y2, double maxspeed, double maxaccel,
 			const xero::motion::State &start, double endspeed)
 		{
 			m_start = Position(x1, y1);
 			m_end = Position(x2, y2);
 			m_delta_start = Position(m_start, m_end);
 			m_maxspeed = maxspeed;
+			m_maxaccel = maxaccel;
 			m_extrapolate_lookahead = false;
 			m_isline = true;
 			createMotionProfiler(start, endspeed);
 		}
 
-		PathSegment::PathSegment(double x1, double y1, double x2, double y2, double maxspeed,
+		PathSegment::PathSegment(double x1, double y1, double x2, double y2, double maxspeed, double maxaccel,
 			const xero::motion::State &start, double endspeed, const char *marker_p)
 		{
 			m_start = Position(x1, y1);
 			m_end = Position(x2, y2);
 			m_delta_start = Position(m_start, m_end);
 			m_maxspeed = maxspeed;
+			m_maxaccel = maxaccel;
 			m_extrapolate_lookahead = false;
 			m_isline = true;
 			m_marker = marker_p;
@@ -36,7 +38,7 @@ namespace xero
 		}
 
 		PathSegment::PathSegment(double x1, double y1, double x2, double y2, double c1, double c2,
-			double maxspeed, const xero::motion::State &start, double endspeed)
+			double maxspeed, double maxaccel, const xero::motion::State &start, double endspeed)
 		{
 			m_start = Position(x1, y1);
 			m_end = Position(x2, y2);
@@ -44,13 +46,14 @@ namespace xero
 			m_delta_start = Position(m_center, m_start);
 			m_delta_end = Position(m_center, m_end);
 			m_maxspeed = maxspeed;
+			m_maxaccel = maxaccel;
 			m_extrapolate_lookahead = false;
 			m_isline = false;
 			createMotionProfiler(start, endspeed);
 		}
 
 		PathSegment::PathSegment(double x1, double y1, double x2, double y2, double c1, double c2,
-			double maxspeed, const xero::motion::State &start, double endspeed, const char *marker_p)
+			double maxspeed, double maxaccel, const xero::motion::State &start, double endspeed, const char *marker_p)
 		{
 			m_start = Position(x1, y1);
 			m_end = Position(x2, y2);
@@ -58,6 +61,7 @@ namespace xero
 			m_delta_start = Position(m_center, m_start);
 			m_delta_end = Position(m_center, m_end);
 			m_maxspeed = maxspeed;
+			m_maxaccel = maxaccel;
 			m_extrapolate_lookahead = false;
 			m_isline = false;
 			m_marker = marker_p;
@@ -170,7 +174,7 @@ namespace xero
 
 		void PathSegment::createMotionProfiler(const xero::motion::State &start, double endspeed)
 		{
-			Constraints con(m_maxspeed, Constants::kPathFollowingMaxAccel);
+			Constraints con(m_maxspeed, m_maxaccel);
 			ProfileGoal goal(getLength(), endspeed);
 			m_profile = ProfileGenerator::generateProfile(con, goal, start);
 		}

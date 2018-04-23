@@ -40,6 +40,17 @@ namespace xero
 			{
 			}
 
+			std::string toString() const
+			{
+				std::string ret;
+
+				ret = m_position.toString();
+				ret += " @ ";
+				ret += std::to_string(m_rotation.getDegrees());
+
+				return ret;
+			}
+
 			const Position &getPos() const
 			{
 				return m_position;

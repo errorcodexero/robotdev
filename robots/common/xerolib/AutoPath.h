@@ -11,10 +11,11 @@ namespace xerolib
 	class AutoPath : public AutonomousStepBase
 	{
 	public:
-		AutoPath(AutonomousControllerBase &controller, std::shared_ptr<DriveBase> db_p, xero::pathfinder::PathContainer &c) 
+		AutoPath(AutonomousControllerBase &controller, std::shared_ptr<DriveBase> db_p, xero::pathfinder::PathContainer &c, double maxaccel) 
 			: AutonomousStepBase(controller), m_container(c)
 		{
 			m_db_p = db_p;
+			m_maxaccel = maxaccel;
 		}
 
 		virtual ~AutoPath()
@@ -25,9 +26,9 @@ namespace xerolib
 		{
 			MessageLogger &log = getLogger();
 
-			xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::getRobotState();
+			xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
 			state.reset(m_container.getStartPose());
-			auto path_p = m_container.buildPath();
+			auto path_p = m_container.buildPath(m_maxaccel);
 
 			log.startMessage(MessageLogger::MessageType::Debug, MODULE_PATHFINDER);
 			log << "Path: " << path_p->toString();
@@ -58,6 +59,7 @@ namespace xerolib
 		}
 
 	private:
+		double m_maxaccel;
 		std::shared_ptr<DriveBase> m_db_p;
 		xero::pathfinder::PathContainer &m_container;
 	};

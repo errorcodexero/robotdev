@@ -67,6 +67,7 @@ namespace xero
 				m_path_p = path_p;
 				m_reversed = reversed;
 				m_lookahead = la;
+				m_at_end = false;
 			}
 
 			virtual ~AdaptivePurePursuitController()

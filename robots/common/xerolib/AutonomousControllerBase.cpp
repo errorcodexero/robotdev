@@ -52,7 +52,7 @@ namespace xerolib
 		bool running = true;
 		std::shared_ptr<AutonomousStepBase> step_p;
 
-		while (running)
+		while (running && m_state != State::End)
 		{
 			if (m_state == State::Beginning)
 			{

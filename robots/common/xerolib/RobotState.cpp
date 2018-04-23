@@ -11,7 +11,7 @@ namespace xero
 {
 	namespace pathfinder
 	{
-		RobotState RobotState::TheOneObject;
+		RobotState *RobotState::TheOneObject = nullptr;
 
 		RobotState::RobotState()
 		{
@@ -32,17 +32,22 @@ namespace xero
 
 		void RobotState::reset(const PositionCS &pos)
 		{
+			std::lock_guard<std::mutex> lock(m_lock);
 			reset(frc::Timer::GetFPGATimestamp(), pos);
 		}
 
 		void RobotState::addActualPosition(double t, const xero::math::PositionAngle &measured, const xero::math::PositionAngle &predicted)
 		{
+			std::lock_guard<std::mutex> lock(m_lock);
+
 			const PositionCS &latest = m_actual_positions[m_actual_positions.size() - 1].second;
 			PositionCS ob = Kinematics::integrateForwardKinematics(latest, measured);
 			m_actual_positions.push_back(std::make_pair(t, ob));
 
 			while (m_actual_positions.size() > 0 && t - m_actual_positions[0].first > m_time_window)
 				m_actual_positions.erase(m_actual_positions.begin());
+
+			m_predicted_velocity = predicted;
 		}
 
 		PositionAngle RobotState::generateOdometryFromSensors(double left_dist, double right_dist, const xero::math::Rotation &rot)
@@ -81,6 +86,8 @@ namespace xero
 
 		xero::math::PositionCS RobotState::getPositionAtTime(double t)
 		{
+			std::lock_guard<std::mutex> lock(m_lock);
+
 			assert(m_actual_positions.size() > 0);
 
 			if (m_actual_positions.size() == 1)
@@ -93,11 +100,13 @@ namespace xero
 
 		double RobotState::getDrivenDistance()
 		{
+			std::lock_guard<std::mutex> lock(m_lock);
 			return m_driven_distance;
 		}
 
-		double RobotState::getPredictedVelocity()
+		xero::math::PositionAngle RobotState::getPredictedVelocity()
 		{
+			std::lock_guard<std::mutex> lock(m_lock);
 			return m_predicted_velocity;
 		}
 	}

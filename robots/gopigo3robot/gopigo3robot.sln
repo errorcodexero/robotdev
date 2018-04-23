@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3hw", "..\gopigo3\gopigo3hw\gopigo3hw.vcxproj", "{2539C1FD-38D5-4E85-BECF-41104DAB0285}"
 EndProject
@@ -28,6 +28,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3robot", "gopigo3robo
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gopigo3imisc", "..\common\misc\gopigo3imisc.vcxproj", "{66703D9D-9374-4E83-BE4A-0C0FD915D59A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simfrc", "..\sim\simfrc\simfrc.vcxproj", "{8B51466E-DC3D-4489-B7CC-C442F52CAD33}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simrobot", "..\sim\simrobot\simrobot.vcxproj", "{629CFBE6-963F-45C1-982C-D9734F6E1006}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33} = {8B51466E-DC3D-4489-B7CC-C442F52CAD33}
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7} = {23A1E0E6-702E-46A1-8E40-B7208E3C02B7}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simxerolib", "..\common\xerolib\simxerolib.vcxproj", "{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,6 +105,36 @@ Global
 		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|x64.Build.0 = Release|x64
 		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|x86.ActiveCfg = Release|x86
 		{66703D9D-9374-4E83-BE4A-0C0FD915D59A}.Release|x86.Build.0 = Release|x86
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Debug|ARM.ActiveCfg = Debug|Win32
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Debug|x64.ActiveCfg = Debug|x64
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Debug|x64.Build.0 = Debug|x64
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Debug|x86.ActiveCfg = Debug|Win32
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Debug|x86.Build.0 = Debug|Win32
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Release|ARM.ActiveCfg = Release|Win32
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Release|x64.ActiveCfg = Release|x64
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Release|x64.Build.0 = Release|x64
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Release|x86.ActiveCfg = Release|Win32
+		{8B51466E-DC3D-4489-B7CC-C442F52CAD33}.Release|x86.Build.0 = Release|Win32
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Debug|ARM.ActiveCfg = Debug|Win32
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Debug|x64.ActiveCfg = Debug|x64
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Debug|x64.Build.0 = Debug|x64
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Debug|x86.ActiveCfg = Debug|Win32
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Debug|x86.Build.0 = Debug|Win32
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Release|ARM.ActiveCfg = Release|Win32
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Release|x64.ActiveCfg = Release|x64
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Release|x64.Build.0 = Release|x64
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Release|x86.ActiveCfg = Release|Win32
+		{629CFBE6-963F-45C1-982C-D9734F6E1006}.Release|x86.Build.0 = Release|Win32
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Debug|ARM.ActiveCfg = Debug|Win32
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Debug|x64.ActiveCfg = Debug|x64
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Debug|x64.Build.0 = Debug|x64
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Debug|x86.ActiveCfg = Debug|Win32
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Debug|x86.Build.0 = Debug|Win32
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|ARM.ActiveCfg = Release|Win32
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|x64.ActiveCfg = Release|x64
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|x64.Build.0 = Release|x64
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|x86.ActiveCfg = Release|Win32
+		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
