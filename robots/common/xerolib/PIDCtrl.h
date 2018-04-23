@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fstream>
+
 namespace xerolib
 {
 
@@ -43,6 +45,30 @@ namespace xerolib
 			return integral ;
 		}
 
+		void setLogFile(const std::string &filename)
+		{
+			if (m_logfile.is_open())
+				m_logfile.close();
+
+			m_logfile.open(filename);
+
+			if (m_logfile.is_open())
+			{
+				m_logfile << "sample";
+				m_logfile << ",target" ;
+				m_logfile << ",actual";
+				m_logfile << ",output";
+				m_logfile << ",deltat";
+				m_logfile << ",sumi";
+				m_logfile << ",outp";
+				m_logfile << ",outi";
+				m_logfile << ",outd";
+				m_logfile << ",error";
+				m_logfile << ",derror";
+				m_logfile << std::endl;
+			}
+		}
+
 	private:
 		double calcError(double target, double current) ;
 
@@ -54,10 +80,12 @@ namespace xerolib
 			double integralCeil;
 		} PIDConsts;
 
+		int m_count;
 		bool mIsAngle ;
 		double target ;
 		double current ;
 		double timeDifference;
 		double integral;
+		std::ofstream m_logfile;
 	};
 }

@@ -25,6 +25,7 @@
     <ClCompile Include="AutonomousStepBase.cpp" />
     <ClCompile Include="AutoPrintPosition.cpp" />
     <ClCompile Include="AutoSetMotorVoltage.cpp" />
+    <ClCompile Include="AutoSetVelocity.cpp" />
     <ClCompile Include="DriveBase.cpp" />
     <ClCompile Include="HeadingProfileFollower.cpp" />
     <ClCompile Include="MessageLogger.cpp" />
@@ -58,6 +59,7 @@
     <ClInclude Include="AutoPath.h" />
     <ClInclude Include="AutoPrintPosition.h" />
     <ClInclude Include="AutoSetMotorVoltage.h" />
+    <ClInclude Include="AutoSetVelocity.h" />
     <ClInclude Include="Constraints.h" />
     <ClInclude Include="CountdownTimer.h" />
     <ClInclude Include="DriveBase.h" />

@@ -1,10 +1,10 @@
-drivebase:velocity:p					1.0
+drivebase:velocity:p					0.0
 drivebase:velocity:i					0.0
 drivebase:velocity:d					0.0
-drivebase:velocity:f					0.0
+drivebase:velocity:f					0.007
 drivebase:velocity:vmin					-1.0
 drivebase:velocity:vmax					1.0
-drivebase:encoderPulsesPerRev			100
+drivebase:ticks_per_rev					200
 drivebase:diameter						5.0
 drivebase:width							24
 drivebase:scrub							1.0

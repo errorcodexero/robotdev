@@ -62,6 +62,7 @@ namespace frc
 			m_right_volts = v;
 		else
 			assert(false);
+
 	}
 
 	void RobotSimulator::resetEncoder(int first, int second)
@@ -105,7 +106,7 @@ namespace frc
 
 	void RobotSimulator::run()
 	{
-		std::chrono::microseconds delay(500);
+		std::chrono::microseconds delay(50);
 		while (m_running)
 		{
 			calcPosition();

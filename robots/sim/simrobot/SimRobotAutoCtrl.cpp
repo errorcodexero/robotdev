@@ -6,12 +6,18 @@
 #include <AutoPath.h>
 #include <AutoSetMotorVoltage.h>
 #include <AutoPrintPosition.h>
+#include <AutoSetVelocity.h>
 #include <cassert>
 
-#define RUN_MOTORS_SPIN
+#define STRAIGHT_PATH_FINDER
 
+#ifdef ROUNDED_RECT_PATH_FINDER
 RoundedRectanglePathContainer rect(64, 48, 24);
+#endif
+
+#ifdef STRAIGHT_PATH_FINDER
 StraightLinePathContainer line(100, 24);
+#endif
 
 SimRobotAutoCtrl::SimRobotAutoCtrl(xerolib::XeroRobotBase &robot) : xerolib::AutonomousControllerBase(robot)
 {
@@ -21,13 +27,13 @@ SimRobotAutoCtrl::SimRobotAutoCtrl(xerolib::XeroRobotBase &robot) : xerolib::Aut
 	assert(sub_p != nullptr);
 	auto db_p = std::static_pointer_cast<xerolib::DriveBase>(sub_p);
 
-#ifdef STRAIGHT_PATH_FINGER
-	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, line);
+#ifdef STRAIGHT_PATH_FINDER
+	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, line, 36.0);
 	addStep(step_p);
 #endif
 
 #ifdef ROUNDED_RECT_PATH_FINDER
-	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, rect);
+	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, rect, 36.0);
 	addStep(step_p);
 #endif
 
@@ -41,8 +47,15 @@ SimRobotAutoCtrl::SimRobotAutoCtrl(xerolib::XeroRobotBase &robot) : xerolib::Aut
 	addStep(step_p);
 #endif
 
+#ifdef RUN_MOTORS_VELOCITY
+	step_p = std::make_shared<xerolib::AutoSetVelocity>(*this, db_p, 5.0, 12.0, 12.0);
+	addStep(step_p);
+#endif
+
+#ifdef PRINT_POSITIONS
 	step_p = std::make_shared<xerolib::AutoPrintPosition>(*this);
 	addStep(step_p);
+#endif
 }
 
 

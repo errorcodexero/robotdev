@@ -42,7 +42,7 @@ void SimRobot::RobotInit()
 	std::shared_ptr<frc::Encoder> right_enc_p = std::make_shared<frc::Encoder>(2, 3);
 	m_drivebase_p = std::make_shared<DriveBase>(*this, left_p, right_p, left_enc_p, right_enc_p, navx_p);
 
-	int32_t ticks = static_cast<int32_t>(params.getValue("drivebase:encoderPulsesPerRev") + 0.5);
+	int32_t ticks = static_cast<int32_t>(params.getValue("drivebase:ticks_per_rev") + 0.5);
 	double diameter = params.getValue("drivebase:diameter");
 	double width = params.getValue("drivebase:width");
 	double scrub = params.getValue("drivebase:scrub");

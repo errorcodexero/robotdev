@@ -10,9 +10,13 @@
 #include <cmath>
 #include <numeric>
 
+#define LOGPATH
+
 using namespace xero::math;
 using namespace xero::motion;
 using namespace xero::pathfinder;
+
+std::string basedir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\");
 
 namespace xerolib
 {
@@ -85,12 +89,12 @@ namespace xerolib
 	void DriveBase::controlThread()
 	{
 		xerolib::XeroRobotBase &robot = getRobot();
-		std::chrono::milliseconds delay(5);
+		std::chrono::milliseconds delay(25);
 		double now;
 
 #ifdef LOGPATH
-		std::ofstream pathlog("/home/pi/logs/pathlog.csv");
-		pathlog << "t,pose_x,pose_y,pose_theta,linear_disp,linear_vel,profile_disp,profile_vel,vel_cmd_dx,vel_cmd_dy,vel_cmd_dtheta,steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta,cross_track_error,along_track_error,la_pt_x,la_pt_y,la_pt_vel";
+		std::ofstream pathlog(basedir + "pathlog.csv");
+		pathlog << "t,pose_x,pose_y,pose_theta,linear_disp,profile_disp,linear_vel,profile_vel,vel_cmd_dx,vel_cmd_dy,vel_cmd_dtheta,steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta,cross_track_error,along_track_error,la_pt_x,la_pt_y,la_pt_vel";
 		pathlog << std::endl;
 #endif
 
@@ -109,8 +113,8 @@ namespace xerolib
 				pathlog << "," << debug.pose_y;
 				pathlog << "," << debug.pose_theta;
 				pathlog << "," << debug.linear_displacement;
-				pathlog << "," << debug.linear_velocity;
 				pathlog << "," << debug.profile_displacement;
+				pathlog << "," << debug.linear_velocity;
 				pathlog << "," << debug.profile_velocity;
 				pathlog << "," << debug.velocity_command_dx;
 				pathlog << "," << debug.velocity_command_dy;
@@ -133,18 +137,21 @@ namespace xerolib
 
 	void DriveBase::velocityThread()
 	{
-		std::chrono::milliseconds delay(5);
+		std::chrono::milliseconds delay(25);
 		bool first = true;
 		double current = frc::Timer::GetFPGATimestamp();
 		double last = current;
 		bool updated;
+		bool spdok = false;
+
+		m_left_velocity_pid.setLogFile(basedir + "leftpid.csv");
 
 		while (m_running)
 		{
 			updated = false;
 			current = frc::Timer::GetFPGATimestamp();
 
-			if (m_mode == Mode::Path)
+			if (m_mode == Mode::Path || m_mode == Mode::Velocity)
 			{
 				if (!first)
 				{
@@ -155,13 +162,18 @@ namespace xerolib
 						// Synchronize access to the left and right target velocties
 						//
 						std::lock_guard<std::mutex> lock(m_velocity_mutex);
-						m_left_speed.addSample(current, getLeftDistance());
-						m_right_speed.addSample(current, getRightDistance());
+						double ldist = getLeftDistance();
+						double rdist = getRightDistance();
+						m_left_speed.addSample(current, ldist);
+						m_right_speed.addSample(current, rdist);
 						lefttarget = m_left_target_velocity;
 						righttarget = m_right_target_velocity;
 						leftactual = m_left_speed.getSpeed();
 						rightactual = m_right_speed.getSpeed();
 						updated = true;
+
+						if (leftactual > 1.0)
+							spdok = true;
 					}
 
 					double dt = current - last;
@@ -285,7 +297,7 @@ namespace xerolib
 		xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
 		PositionCS pos = state.getPositionAtTime(t);
 		double disp = state.getDrivenDistance();
-		double vel = state.getPredictedVelocity();
+		double vel = state.getPredictedVelocity().getX();
 		PositionAngle pa = m_follower_p->update(t, pos, disp, vel);
 
 		if (!m_follower_p->isFinished())

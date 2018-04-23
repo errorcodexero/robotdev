@@ -19,20 +19,21 @@ namespace xero
 			xero::math::Position m_delta_start;
 			xero::math::Position m_delta_end;
 			double m_maxspeed;
+			double m_maxaccel;
 			bool m_isline;
 			std::shared_ptr<xero::motion::MotionProfile> m_profile;
 			bool m_extrapolate_lookahead;
 			std::string m_marker;
 
 		public:
-			PathSegment(double x1, double y1, double x2, double y2, double maxspeed,  
+			PathSegment(double x1, double y1, double x2, double y2, double maxspeed, double maxaccel,
 				const xero::motion::State &start, double endspeed);
-			PathSegment(double x1, double y1, double x2, double y2, double maxspeed,  
+			PathSegment(double x1, double y1, double x2, double y2, double maxspeed, double maxaccel,
 				const xero::motion::State &start, double endspeed, const char *marker_p);
 			PathSegment(double x1, double y1, double x2, double y2, double c1, double c2,
-				double maxspeed, const xero::motion::State &start, double endspeed);
+				double maxspeed, double maxaccel, const xero::motion::State &start, double endspeed);
 			PathSegment(double x1, double y1, double x2, double y2, double c1, double c2, 
-				double maxspeed, const xero::motion::State &start, double endspeed, const char *marker_p);
+				double maxspeed, double maxaccel, const xero::motion::State &start, double endspeed, const char *marker_p);
 			virtual ~PathSegment();
 
 			double getMaxSpeed() const

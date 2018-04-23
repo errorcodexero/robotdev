@@ -35,13 +35,13 @@ namespace xero
 					m_end = m_b.getPosition().translateBy(m_slope.scale(-m_b.getRadius() / m_slope.getNorm()));
 				}
 
-				void addToPath(std::shared_ptr<Path> path_p, double endspeed)
+				void addToPath(std::shared_ptr<Path> path_p, double endspeed, double maxaccel)
 				{
 					double len = xero::math::Position(m_end, m_start).getNorm();
 					if (len > kDelta)
 					{
 						auto seg_p = std::make_shared<PathSegment>(m_start.getX(), m_start.getY(), m_end.getX(), m_end.getY(), 
-							m_b.getSpeed(), path_p->getLastMotionState(), endspeed, m_b.getMarker().c_str());
+							m_b.getSpeed(), maxaccel, path_p->getLastMotionState(), endspeed, m_b.getMarker().c_str());
 						path_p->addSegment(seg_p);
 					}
 				}
@@ -98,13 +98,13 @@ namespace xero
 					return linea.intersection(lineb);
 				}
 
-				void addToPath(std::shared_ptr<Path> path_p)
+				void addToPath(std::shared_ptr<Path> path_p, double maxaccel)
 				{
-					m_a.addToPath(path_p, m_speed);
+					m_a.addToPath(path_p, m_speed, maxaccel);
 					if (m_radius > kDelta && m_radius < kReallyBig)
 					{
 						auto seg_p = std::make_shared<PathSegment>(m_a.getEnd().getX(), m_a.getEnd().getY(), m_b.getStart().getX(), m_b.getStart().getY(),
-							m_center.getX(), m_center.getY(), m_speed, path_p->getLastMotionState(), m_b.getSpeed());
+							m_center.getX(), m_center.getY(), m_speed, maxaccel, path_p->getLastMotionState(), m_b.getSpeed());
 					}
 				}
 
@@ -120,7 +120,7 @@ namespace xero
 			PathBuilder();
 			virtual ~PathBuilder();
 
-			static std::shared_ptr<Path> buildPath(const std::vector<Waypoint> &waypoints);
+			static std::shared_ptr<Path> buildPath(const std::vector<Waypoint> &waypoints, double maxaccel);
 		};
 	}
 }

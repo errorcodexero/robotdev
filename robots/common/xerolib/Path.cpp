@@ -7,8 +7,9 @@ namespace xero
 {
 	namespace pathfinder
 	{
-		Path::Path()
+		Path::Path(double maxaccel)
 		{
+			m_maxaccel = maxaccel;
 		}
 
 		Path::~Path()
@@ -70,7 +71,7 @@ namespace xero
 			for (int i = m_segments.size() - 1; i >= 0; i--)
 			{
 				auto seg_p = m_segments[i];
-				maxStartSpeed += std::sqrt(maxStartSpeed * maxStartSpeed + 2 * Constants::kPathFollowingMaxAccel * seg_p->getLength());
+				maxStartSpeed += std::sqrt(maxStartSpeed * maxStartSpeed + 2 * m_maxaccel * seg_p->getLength());
 				startSpeeds[i] = seg_p->getStartState().getVelocity();
 
 				if (startSpeeds[i] > maxStartSpeed)

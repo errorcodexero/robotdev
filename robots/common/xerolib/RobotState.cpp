@@ -46,6 +46,8 @@ namespace xero
 
 			while (m_actual_positions.size() > 0 && t - m_actual_positions[0].first > m_time_window)
 				m_actual_positions.erase(m_actual_positions.begin());
+
+			m_predicted_velocity = predicted;
 		}
 
 		PositionAngle RobotState::generateOdometryFromSensors(double left_dist, double right_dist, const xero::math::Rotation &rot)
@@ -102,7 +104,7 @@ namespace xero
 			return m_driven_distance;
 		}
 
-		double RobotState::getPredictedVelocity()
+		xero::math::PositionAngle RobotState::getPredictedVelocity()
 		{
 			std::lock_guard<std::mutex> lock(m_lock);
 			return m_predicted_velocity;

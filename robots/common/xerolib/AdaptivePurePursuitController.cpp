@@ -1,5 +1,6 @@
 #include "AdaptivePurePursuitController.h"
 #include <algorithm>
+#include <iostream>
 
 using namespace xero::math;
 

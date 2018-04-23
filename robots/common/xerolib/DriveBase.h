@@ -136,6 +136,14 @@ namespace xerolib
 			m_follower_p = nullptr;
 		}
 
+		void setVelocity(double left, double right)
+		{
+			m_mode = Mode::Manual;
+			m_left_target_velocity = left;
+			m_right_target_velocity = right;
+			m_mode = Mode::Velocity;
+		}
+
 		/// \brief set the drivebase to follow the provided path
 		/// \param path_p the path to follow
 		void followPath(std::shared_ptr<xero::pathfinder::Path> path_p, bool reversed);

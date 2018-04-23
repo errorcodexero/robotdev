@@ -11,6 +11,7 @@ namespace xerolib
 	{
 		Init(p, i, d, f, floor, ceil, integralCeil);
 		current = 0;
+		m_count = 0;
 	}
 
 	void PIDCtrl::Init(double p, double i, double d, double f, double floor, double ceil, double integralCeil, bool isangle)
@@ -32,7 +33,7 @@ namespace xerolib
 		double pOut = PIDConsts.p*error;
 		double derivative = (current - this->current) / timeDifference;
 		double dOut = PIDConsts.d*derivative;
-	
+
 		integral += error*timeDifference;
 	
 		if (integral > PIDConsts.integralCeil)
@@ -54,24 +55,31 @@ namespace xerolib
 		if (fv != nullptr)
 			*fv = PIDConsts.f ;
 	
-		double output = pOut + iOut + dOut + PIDConsts.f;
-
-#ifdef PRINT_PID_INTERNALS
-		std::cout << "integral " << integral ;
-		std::cout << ", pOut " << pOut ;
-		std::cout << ", iOut " << iOut ;
-		std::cout << ", dOut " << dOut ;
-		std::cout << ", error " << error;
-		std::cout << ", derivative " << derivative;
-		std::cout << std::endl ;
-#endif
+		double output = pOut + iOut + dOut + PIDConsts.f * target;
 	
 		if (output <= PIDConsts.floor)
 			output = PIDConsts.floor;
 	
 		if (output >= PIDConsts.ceil)
 			output = PIDConsts.ceil;
-	
+
+		if (m_logfile.is_open())
+		{
+			m_logfile << m_count;
+			m_logfile << "," << target;
+			m_logfile << "," << current;
+			m_logfile << "," << output;
+			m_logfile << "," << timeDifference;
+			m_logfile << "," << integral;
+			m_logfile << "," << pOut;
+			m_logfile << "," << iOut;
+			m_logfile << "," << dOut;
+			m_logfile << "," << error;
+			m_logfile << "," << derivative;
+			m_logfile << std::endl;
+		}
+
+		m_count++;
 		return output;
 	}
 

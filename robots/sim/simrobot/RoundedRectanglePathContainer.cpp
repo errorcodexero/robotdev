@@ -22,7 +22,7 @@ std::string RoundedRectanglePathContainer::getName() const
 	return m_name;
 }
 
-std::shared_ptr<xero::pathfinder::Path> RoundedRectanglePathContainer::buildPath()
+std::shared_ptr<xero::pathfinder::Path> RoundedRectanglePathContainer::buildPath(double maxaccel)
 {
 	std::vector<Waypoint> points;
 
@@ -35,7 +35,7 @@ std::shared_ptr<xero::pathfinder::Path> RoundedRectanglePathContainer::buildPath
 	points.push_back(Waypoint(m_radius + m_side, 0.0, deg2rad(180.0), m_speed));
 	points.push_back(Waypoint(m_radius, 0.0, deg2rad(180.0), m_speed));
 	points.push_back(Waypoint(0, m_radius, deg2rad(90.0), m_speed));
-	return xero::pathfinder::PathBuilder::buildPath(points);
+	return xero::pathfinder::PathBuilder::buildPath(points, maxaccel);
 }
 
 xero::math::PositionCS RoundedRectanglePathContainer::getStartPose()

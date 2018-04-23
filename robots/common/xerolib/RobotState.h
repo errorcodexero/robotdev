@@ -37,7 +37,7 @@ namespace xero
 
 			xero::math::PositionCS getPositionAtTime(double t);
 			double getDrivenDistance();
-			double getPredictedVelocity();
+			xero::math::PositionAngle getPredictedVelocity();
 
 			void addActualPosition(double t, const xero::math::PositionAngle &measured, const xero::math::PositionAngle &predicted);
 			xero::math::PositionAngle generateOdometryFromSensors(double left_dist, double right_dist, const xero::math::Rotation &rot);
@@ -55,7 +55,7 @@ namespace xero
 		private:
 			static RobotState *TheOneObject;
 			double m_driven_distance;
-			double m_predicted_velocity;
+			xero::math::PositionAngle m_predicted_velocity;
 			double m_time_window;
 			std::mutex m_lock;
 			std::vector<std::pair<double, xero::math::PositionCS>> m_actual_positions ;
