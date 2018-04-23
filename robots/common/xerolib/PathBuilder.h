@@ -105,6 +105,7 @@ namespace xero
 					{
 						auto seg_p = std::make_shared<PathSegment>(m_a.getEnd().getX(), m_a.getEnd().getY(), m_b.getStart().getX(), m_b.getStart().getY(),
 							m_center.getX(), m_center.getY(), m_speed, maxaccel, path_p->getLastMotionState(), m_b.getSpeed());
+						path_p->addSegment(seg_p);
 					}
 				}
 

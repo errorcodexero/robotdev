@@ -24,6 +24,7 @@ namespace xero
 				do {
 					Arc a(waypoints[i], waypoints[i + 1], waypoints[i + 2]);
 					a.addToPath(path_p, maxaccel);
+					i++;
 				} while (i < waypoints.size() - 2);
 			}
 

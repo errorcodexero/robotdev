@@ -11,16 +11,17 @@ drivebase:scrub							1.0
 
 pathfollower:lookahead:distance:min		12.0
 pathfollower:lookahead:distance:max		24.0
-pathfollower:lookahead:speed:min		12.0
-pathfollower:lookahead:speed:max		24.0
+pathfollower:lookahead:speed:min		9.0
+pathfollower:lookahead:speed:max		120.0
 pathfollower:inertia_gain				1.0
-pathfollower:kp							1.0
-pathfollower:ki							0.0
-pathfollower:kv							0.0
-pathfollower:kffv						0.0
-pathfollower:kffa						0.0
-pathfollower:maxvelocity				36.0
-pathfollower:maxacceleration			36.0
-pathfollower:position:tolerance			2.0
-pathfollower:velocity:tolerance			2.0
-pathfollower:stopping:distance			6.0
+pathfollower:kp							5.0
+pathfollower:ki							0.03
+pathfollower:kv							0.02
+pathfollower:kffv						1.0
+pathfollower:kffa						0.05
+pathfollower:maxvelocity				120.0
+pathfollower:maxacceleration			120.0
+pathfollower:position:tolerance			0.75
+pathfollower:velocity:tolerance			12.0
+pathfollower:stopping:distance			9.0
+

@@ -19,18 +19,19 @@ SimRobot::~SimRobot()
 
 void SimRobot::RobotInit()
 {
-	std::string basedir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\");
 	std::chrono::milliseconds delay(1);
 
-	xero::pathfinder::RobotStateEstimator::LogFileName = basedir + "estimator.csv";
+	setBaseDir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot");
+
+	xero::pathfinder::RobotStateEstimator::LogFileName = getBaseDir() + "\\estimator.csv";
 
 	MessageLogger &logger = getMessageLogger();
 	logger.enableModules(MODULE_ALL);
 	setupConsoleLogger();
-	setupFileLogger(basedir + "robot.log");
+	setupFileLogger(getBaseDir() + "\\robot.log");
 
 	ParamsParser &params = ParamsParser::get();
-	params.readFile(basedir + "params.txt");
+	params.readFile(getBaseDir() + "\\params.txt");
 
 	std::shared_ptr<AHRS> navx_p = std::make_shared<AHRS>("/dev/ttyACM0");
 	while (!navx_p->IsConnected())

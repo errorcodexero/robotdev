@@ -14,11 +14,7 @@ public:
 	virtual bool isReversed() ;
 
 private:
-	double deg2rad(double deg)
-	{
-		return deg / 180.0 * PI;
-	}
-	static constexpr double PI = 3.1415926;
+
 
 private:
 	double m_side;

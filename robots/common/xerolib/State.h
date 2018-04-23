@@ -61,7 +61,8 @@ namespace xero
 
 			State flipped() const
 			{
-				return State(m_time, -m_position, -m_velocity, -m_accel);
+				State st(m_time, -m_position, -m_velocity, -m_accel);
+				return st;
 			}
 
 			std::string toString() const

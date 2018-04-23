@@ -1,6 +1,7 @@
 #include "SimRobotAutoCtrl.h"
 #include "RoundedRectanglePathContainer.h"
 #include "StraightLinePathContainer.h"
+#include "LineArcLinePathContainer.h"
 #include <XeroRobotBase.h>
 #include <DriveBase.h>
 #include <AutoPath.h>
@@ -9,7 +10,7 @@
 #include <AutoSetVelocity.h>
 #include <cassert>
 
-#define STRAIGHT_PATH_FINDER
+#define LINE_ARC_PATH_FINDER
 
 #ifdef ROUNDED_RECT_PATH_FINDER
 RoundedRectanglePathContainer rect(64, 48, 24);
@@ -17,6 +18,10 @@ RoundedRectanglePathContainer rect(64, 48, 24);
 
 #ifdef STRAIGHT_PATH_FINDER
 StraightLinePathContainer line(100, 24);
+#endif
+
+#ifdef LINE_ARC_PATH_FINDER
+LineArcLinePathContainer linearc;
 #endif
 
 SimRobotAutoCtrl::SimRobotAutoCtrl(xerolib::XeroRobotBase &robot) : xerolib::AutonomousControllerBase(robot)
@@ -34,6 +39,11 @@ SimRobotAutoCtrl::SimRobotAutoCtrl(xerolib::XeroRobotBase &robot) : xerolib::Aut
 
 #ifdef ROUNDED_RECT_PATH_FINDER
 	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, rect, 36.0);
+	addStep(step_p);
+#endif
+
+#ifdef LINE_ARC_PATH_FINDER
+	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, linearc, 120.0);
 	addStep(step_p);
 #endif
 

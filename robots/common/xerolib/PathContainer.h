@@ -24,6 +24,13 @@ namespace xero
 			virtual std::shared_ptr<Path> buildPath(double maxaccel) = 0;
 			virtual xero::math::PositionCS getStartPose() = 0;
 			virtual bool isReversed() = 0;
+
+		protected:
+			double deg2rad(double deg)
+			{
+				return deg / 180.0 * PI;
+			}
+			static constexpr double PI = 3.1415926;
 		};
 	}
 }

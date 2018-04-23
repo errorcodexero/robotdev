@@ -62,7 +62,10 @@ namespace xero
 				xero::motion::State state;
 
 				if (m_segments.size() > 0)
+				{
 					state = m_segments[m_segments.size() - 1]->getEndState();
+					state = xero::motion::State(0.0, 0.0, state.getVelocity(), state.getAccel());
+				}
 
 				return state;
 			}

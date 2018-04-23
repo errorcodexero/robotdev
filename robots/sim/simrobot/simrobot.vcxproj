@@ -19,12 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LineArcLinePathContainer.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="RoundedRectanglePathContainer.h" />
     <ClInclude Include="SimRobot.h" />
     <ClInclude Include="SimRobotAutoCtrl.h" />
     <ClInclude Include="StraightLinePathContainer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LineArcLinePathContainer.cpp" />
     <ClCompile Include="RoundedRectanglePathContainer.cpp" />
     <ClCompile Include="SimRobot.cpp" />
     <ClCompile Include="SimRobotAutoCtrl.cpp" />

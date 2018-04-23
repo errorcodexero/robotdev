@@ -16,8 +16,6 @@ using namespace xero::math;
 using namespace xero::motion;
 using namespace xero::pathfinder;
 
-std::string basedir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\");
-
 namespace xerolib
 {
 	DriveBase::DriveBase(XeroRobotBase &robot,
@@ -93,7 +91,7 @@ namespace xerolib
 		double now;
 
 #ifdef LOGPATH
-		std::ofstream pathlog(basedir + "pathlog.csv");
+		std::ofstream pathlog(robot.getBaseDir() + "\\pathlog.csv");
 		pathlog << "t,pose_x,pose_y,pose_theta,linear_disp,profile_disp,linear_vel,profile_vel,vel_cmd_dx,vel_cmd_dy,vel_cmd_dtheta,steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta,cross_track_error,along_track_error,la_pt_x,la_pt_y,la_pt_vel";
 		pathlog << std::endl;
 #endif
@@ -107,27 +105,30 @@ namespace xerolib
 				updatePath(now);
 
 #ifdef LOGPATH
-				const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
-				pathlog << debug.t;
-				pathlog << "," << debug.pose_x;
-				pathlog << "," << debug.pose_y;
-				pathlog << "," << debug.pose_theta;
-				pathlog << "," << debug.linear_displacement;
-				pathlog << "," << debug.profile_displacement;
-				pathlog << "," << debug.linear_velocity;
-				pathlog << "," << debug.profile_velocity;
-				pathlog << "," << debug.velocity_command_dx;
-				pathlog << "," << debug.velocity_command_dy;
-				pathlog << "," << debug.velocity_command_dtheta;
-				pathlog << "," << debug.steering_command_dx;
-				pathlog << "," << debug.steering_command_dy;
-				pathlog << "," << debug.steering_command_dtheta;
-				pathlog << "," << debug.cross_track_error;
-				pathlog << "," << debug.along_track_error;
-				pathlog << "," << debug.lookahead_point_x;
-				pathlog << "," << debug.lookahead_point_y;
-				pathlog << "," << debug.lookahead_point_velocity;
-				pathlog << std::endl;
+				if (m_follower_p != nullptr)
+				{
+					const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
+					pathlog << debug.t;
+					pathlog << "," << debug.pose_x;
+					pathlog << "," << debug.pose_y;
+					pathlog << "," << debug.pose_theta;
+					pathlog << "," << debug.linear_displacement;
+					pathlog << "," << debug.profile_displacement;
+					pathlog << "," << debug.linear_velocity;
+					pathlog << "," << debug.profile_velocity;
+					pathlog << "," << debug.velocity_command_dx;
+					pathlog << "," << debug.velocity_command_dy;
+					pathlog << "," << debug.velocity_command_dtheta;
+					pathlog << "," << debug.steering_command_dx;
+					pathlog << "," << debug.steering_command_dy;
+					pathlog << "," << debug.steering_command_dtheta;
+					pathlog << "," << debug.cross_track_error;
+					pathlog << "," << debug.along_track_error;
+					pathlog << "," << debug.lookahead_point_x;
+					pathlog << "," << debug.lookahead_point_y;
+					pathlog << "," << debug.lookahead_point_velocity;
+					pathlog << std::endl;
+				}
 #endif
 			}
 
@@ -144,7 +145,7 @@ namespace xerolib
 		bool updated;
 		bool spdok = false;
 
-		m_left_velocity_pid.setLogFile(basedir + "leftpid.csv");
+		m_left_velocity_pid.setLogFile(getRobot().getBaseDir() + "\\leftpid.csv");
 
 		while (m_running)
 		{
@@ -310,6 +311,9 @@ namespace xerolib
 		else
 		{
 			setVelocities(0.0, 0.0);
+			m_path_p = nullptr;
+			m_follower_p = nullptr;
+			m_mode = Mode::Idle;
 		}
 	}
 

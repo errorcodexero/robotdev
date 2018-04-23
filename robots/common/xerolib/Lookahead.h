@@ -16,6 +16,8 @@ namespace xero
 			double m_delta_distance;
 			double m_delta_speed;
 
+			static constexpr double kDelta = 1e-6;
+
 		public:
 			Lookahead()
 			{
@@ -66,7 +68,7 @@ namespace xero
 			{
 				double ret;
 
-				if (m_delta_speed == 0)
+				if (std::fabs(m_delta_speed) < kDelta)
 				{
 					ret = m_min_distance;
 				}

@@ -1,4 +1,5 @@
 #include "Path.h"
+#include <iostream>
 
 using namespace xero::math;
 using namespace xero::motion;
@@ -16,13 +17,16 @@ namespace xero
 		{
 		}
 
+		static int cnt = 0;
 		Path::TargetPointReport Path::getTargetPoint(const xero::math::Position &robot, const Lookahead &ahead)
 		{
 			TargetPointReport ret;
 			auto seg_p = m_segments[0];
 
 			ret.ClosestPoint = seg_p->getClosestPoint(robot);
-			ret.ClosestPointDistance = Position(robot, ret.ClosestPoint).getNorm();
+			double dist = ret.ClosestPoint.getX();
+			Position robotdiff(robot, ret.ClosestPoint);
+			ret.ClosestPointDistance = robotdiff.getNorm();
 			ret.RemainingSegmentDistance = seg_p->getRemainingDistance(ret.ClosestPoint);
 			ret.RemainingPathDistance = ret.RemainingSegmentDistance;
 			for (size_t i = 1; i < m_segments.size(); i++)
@@ -31,7 +35,7 @@ namespace xero
 			ret.ClosestPointSpeed = seg_p->getSpeedByDistance(seg_p->getLength() - ret.RemainingSegmentDistance);
 			double ladist = ahead.getLookaheadForSpeed(ret.ClosestPointSpeed) + ret.ClosestPointDistance;
 
-			if (ret.RemainingSegmentDistance < ladist)
+			if (ret.RemainingSegmentDistance < ladist && m_segments.size() > 1)
 			{
 				ladist -= ret.RemainingSegmentDistance;
 				for (size_t i = 1; i < m_segments.size(); i++)
@@ -59,6 +63,7 @@ namespace xero
 
 			checkSegmentDone(ret.ClosestPoint);
 
+			cnt++;
 			return ret;
 		}
 
