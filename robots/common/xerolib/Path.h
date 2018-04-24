@@ -7,6 +7,7 @@
 #include <list>
 #include <set>
 #include <memory>
+#include <iostream>
 
 namespace xero
 {
@@ -92,7 +93,8 @@ namespace xero
 			void checkSegmentDone(const xero::math::Position &pos)
 			{
 				auto seg_p = m_segments[0];
-				double remaining = seg_p->getRemainingDistance(seg_p->getClosestPoint(pos));
+				auto closepos = seg_p->getClosestPoint(pos);
+				double remaining = seg_p->getRemainingDistance(closepos);
 				if (remaining < Constants::kSegmentCompletionTolerance)
 					removeCurrentSegment();
 			}

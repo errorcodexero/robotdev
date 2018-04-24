@@ -202,6 +202,12 @@ namespace xero
 			if (m_marker.length() > 0)
 				ret += ", marker '" + m_marker + "'";
 
+			if (m_profile != nullptr)
+			{
+				ret += "\r\n";
+				ret += m_profile->toString("        ");
+			}
+
 			return ret;
 		}
 	}

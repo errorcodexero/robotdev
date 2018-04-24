@@ -182,11 +182,20 @@ namespace xero
 
 			std::string toString() const
 			{
-				std::string ret("MotionProfile: \r\n");
+				std::string str;
+				return toString(str);
+			}
+
+			std::string toString(const std::string &prefix) const
+			{
+				std::string ret = prefix + "MotionProfile: \r\n";
 				for (const Segment &seg : m_segments)
 				{
-					ret += "    ";
-					ret += seg.toString();
+					ret += prefix + "    ";
+					ret += "Start: " + seg.getStart().toString();
+					ret += "\r\n";
+					ret += prefix + "    ";
+					ret += "End: " + seg.getEnd().toString();
 					ret += "\r\n";
 				}
 

@@ -299,6 +299,7 @@ namespace xerolib
 		PositionCS pos = state.getPositionAtTime(t);
 		double disp = state.getDrivenDistance();
 		double vel = state.getPredictedVelocity().getX();
+
 		PositionAngle pa = m_follower_p->update(t, pos, disp, vel);
 
 		if (!m_follower_p->isFinished())

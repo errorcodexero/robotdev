@@ -8,3 +8,5 @@
 **/*.mp4
 **/Debug
 **/Win32
+robots/sim/simrobot/*.csv
+robots/sim/simrobot/*.log

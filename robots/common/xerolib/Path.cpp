@@ -40,8 +40,8 @@ namespace xero
 				ladist -= ret.RemainingSegmentDistance;
 				for (size_t i = 1; i < m_segments.size(); i++)
 				{
-					auto curseg_p = m_segments[i];
-					double length = curseg_p->getLength();
+					seg_p = m_segments[i];
+					double length = seg_p->getLength();
 					if (length < ladist && i < m_segments.size() - 1)
 					{
 						ladist -= length;

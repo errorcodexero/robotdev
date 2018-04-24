@@ -29,6 +29,9 @@
     <ClInclude Include="LineArcLinePathContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RedHopperPathContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SimRobot.cpp">
@@ -44,6 +47,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LineArcLinePathContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RedHopperPathContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
