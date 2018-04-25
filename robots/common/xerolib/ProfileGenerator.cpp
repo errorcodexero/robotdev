@@ -30,7 +30,7 @@ namespace xero
 			}
 
 			double minvelsq = now.getVelocity() * now.getVelocity() - 2.0 * con.getMaxAccel() * delta;
-			double minvel = std::sqrt(minvelsq);
+			double minvel = std::sqrt(std::fabs(minvelsq));
 			double maxvel = std::sqrt(now.getVelocity() * now.getVelocity() + 2.0 * con.getMaxAccel() * delta);
 			double goalvel = goal.getMaxVelocity();
 			double maxacc = con.getMaxAccel();

@@ -23,7 +23,6 @@ namespace xero
 			auto seg_p = m_segments[0];
 
 			ret.ClosestPoint = seg_p->getClosestPoint(robot);
-			double dist = ret.ClosestPoint.getX();
 			Position robotdiff(robot, ret.ClosestPoint);
 			ret.ClosestPointDistance = robotdiff.getNorm();
 			ret.RemainingSegmentDistance = seg_p->getRemainingDistance(ret.ClosestPoint);
@@ -34,6 +33,9 @@ namespace xero
 			ret.ClosestPointSpeed = seg_p->getSpeedByDistance(seg_p->getLength() - ret.RemainingSegmentDistance);
 			double ladist = ahead.getLookaheadForSpeed(ret.ClosestPointSpeed) + ret.ClosestPointDistance;
 
+			//
+			// Now, find the segment and distance in the segment that is the look ahead point
+			//
 			if (ret.RemainingSegmentDistance < ladist && m_segments.size() > 1)
 			{
 				ladist -= ret.RemainingSegmentDistance;
@@ -53,7 +55,7 @@ namespace xero
 			}
 			else
 			{
-				ladist += seg_p->getLength() - ret.RemainingSegmentDistance;
+				ladist += (seg_p->getLength() - ret.RemainingSegmentDistance);
 			}
 
 			ret.MaxSpeed = seg_p->getMaxSpeed();

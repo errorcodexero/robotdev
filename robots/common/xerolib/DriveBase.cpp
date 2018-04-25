@@ -103,7 +103,7 @@ namespace xerolib
 
 			if (m_mode == Mode::Path)
 			{
-				updatePath(now);
+				xero::math::PositionAngle pa = updatePath(now);
 
 #ifdef LOGPATH
 				if (m_follower_p != nullptr)
@@ -129,6 +129,9 @@ namespace xerolib
 					pathlog << "," << debug.lookahead_point_x;
 					pathlog << "," << debug.lookahead_point_y;
 					pathlog << "," << debug.lookahead_point_velocity;
+					pathlog << "," << pa.getPosition().getX();
+					pathlog << "," << pa.getPosition().getY();
+					pathlog << "," << pa.getAngle();
 					pathlog << std::endl;
 				}
 #endif
@@ -300,7 +303,7 @@ namespace xerolib
 			outputToMotors();
 	}
 
-	void DriveBase::updatePath(double t)
+	xero::math::PositionAngle DriveBase::updatePath(double t)
 	{
 		xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
 		PositionCS pos = state.getPositionAtTime(t);
@@ -323,6 +326,8 @@ namespace xerolib
 			m_follower_p = nullptr;
 			m_mode = Mode::Idle;
 		}
+
+		return pa;
 	}
 
 	void DriveBase::outputToMotors()
