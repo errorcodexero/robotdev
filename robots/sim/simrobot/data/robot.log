@@ -1,0 +1,29 @@
+Entering mode: Disabled
+Entering mode: Autonomous
+0.258264: Starting autonomous program
+0.258264: Starting step 'follow path, name = 'CrossScale''
+Path: Path
+    LINE, start 0.000000, 90.000000, end 100.000000, 90.000000, maxspeed 80.000000
+        Start: State: time 0.000000, pos 0.000000, vel 0.000000, acc 120.000000
+        End: State: time 0.666667, pos 26.666667, vel 80.000000, acc 120.000000
+        Start: State: time 0.666667, pos 26.666667, vel 80.000000, acc 0.000000
+        End: State: time 1.333333, pos 80.000000, vel 80.000000, acc 0.000000
+        Start: State: time 1.333333, pos 80.000000, vel 80.000000, acc -120.000000
+        End: State: time 1.666667, pos 100.000000, vel 40.000000, acc -120.000000
+
+    LINE, start 100.000000, 90.000000, end 180.000000, 90.000000, maxspeed 40.000000
+        Start: State: time 0.000000, pos 0.000000, vel 40.000000, acc 0.000000
+        End: State: time 2.000000, pos 80.000000, vel 40.000000, acc 0.000000
+
+    LINE, start 180.000000, 90.000000, end 220.000000, 90.000000, maxspeed 80.000000
+        Start: State: time 0.000000, pos 0.000000, vel 40.000000, acc 120.000000
+        End: State: time 0.290276, pos 16.666667, vel 74.833148, acc 120.000000
+        Start: State: time 0.290276, pos 16.666667, vel 74.833148, acc -120.000000
+        End: State: time 0.913886, pos 40.000000, vel 0.000000, acc -120.000000
+
+
+robot exceeded the target loop time, target 0.020000, actual 0.022864
+4.858624: Ending step 'follow path, name = 'CrossScale''
+Entering mode: Disabled
+Entering mode: OperatorControl
+Entering mode: Disabled

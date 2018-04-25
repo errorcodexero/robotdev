@@ -10,16 +10,17 @@ RoundedRectanglePathContainer::RoundedRectanglePathContainer(double straight, do
 	m_side = straight;
 	m_radius = corner;
 	m_speed = speed;
-	m_name = "RoundedRectangle";
+
+	std::string name = "RoundedRect(";
+	name += std::to_string(straight);
+	name += ", " + std::to_string(corner);
+	name += ", " + std::to_string(speed);
+	name += ")";
+	setName(name);
 }
 
 RoundedRectanglePathContainer::~RoundedRectanglePathContainer()
 {
-}
-
-std::string RoundedRectanglePathContainer::getName() const
-{
-	return m_name;
 }
 
 std::shared_ptr<xero::pathfinder::Path> RoundedRectanglePathContainer::buildPath(double maxaccel)

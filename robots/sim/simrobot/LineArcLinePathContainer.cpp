@@ -5,26 +5,24 @@ using namespace xero::math;
 using namespace xero::pathfinder;
 using namespace xero::motion;
 
-LineArcLinePathContainer::LineArcLinePathContainer()
+LineArcLinePathContainer::LineArcLinePathContainer() : PathContainer("CrossScale")
 {
-	m_name = "CrossScale";
 }
 
 LineArcLinePathContainer::~LineArcLinePathContainer()
 {
 }
 
-std::string LineArcLinePathContainer::getName() const
-{
-	return m_name;
-}
-
 std::shared_ptr<xero::pathfinder::Path> LineArcLinePathContainer::buildPath(double maxaccel)
 {
 	std::vector<Waypoint> points;
 
-	points.push_back(Waypoint(0.0, 90, 0, 0));
+	points.push_back(Waypoint(0, 90, 0, 0));
+	points.push_back(Waypoint(100, 90, 0, 80));
+	points.push_back(Waypoint(180, 90, 0, 40));
 	points.push_back(Waypoint(220, 90, 0, 80));
+
+
 #ifdef NOTYET
 	points.push_back(Waypoint(230, 90, 10, 80));
 	points.push_back(Waypoint(240, 100, 10, 80));
@@ -39,7 +37,7 @@ std::shared_ptr<xero::pathfinder::Path> LineArcLinePathContainer::buildPath(doub
 
 xero::math::PositionCS LineArcLinePathContainer::getStartPose()
 {
-	PositionCS ret(Position(0, 0), Rotation::fromDegrees(90));
+	PositionCS ret(Position(0, 90), Rotation::fromDegrees(90));
 	return ret;
 }
 

@@ -8,7 +8,6 @@ public:
 	RoundedRectanglePathContainer(double straight, double corner, double speed);
 	~RoundedRectanglePathContainer();
 
-	virtual std::string getName() const ;
 	virtual std::shared_ptr<xero::pathfinder::Path> buildPath(double maxaccel);
 	virtual xero::math::PositionCS getStartPose() ;
 	virtual bool isReversed() ;
@@ -20,6 +19,5 @@ private:
 	double m_side;
 	double m_radius;
 	double m_speed;
-	std::string m_name;
 };
 

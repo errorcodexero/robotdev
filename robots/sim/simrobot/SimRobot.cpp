@@ -21,7 +21,7 @@ void SimRobot::RobotInit()
 {
 	std::chrono::milliseconds delay(1);
 
-	setBaseDir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot");
+	setBaseDir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\data");
 
 	xero::pathfinder::RobotStateEstimator::LogFileName = getBaseDir() + "\\estimator.csv";
 

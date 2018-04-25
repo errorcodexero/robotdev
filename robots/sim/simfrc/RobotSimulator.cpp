@@ -129,6 +129,17 @@ namespace frc
 	{
 		std::lock_guard<std::mutex> lock(m_lock);
 
+#ifdef PRINT_SIMULATOR
+		double t = frc::Timer::GetFPGATimestamp();
+		std::cout << "robotsim:";
+		std::cout << " time " << t;
+		std::cout << ", left volts " << m_left_volts;
+		std::cout << ", right volts " << m_right_volts;
+		std::cout << ", left disp " << m_left;
+		std::cout << ", right disp " << m_left;
+		std::cout << std::endl;
+#endif
+
 		//
 		// We know the left and right motors have been running at a 
 		// given voltage since the m_last_time_value 

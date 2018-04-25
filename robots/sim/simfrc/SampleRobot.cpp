@@ -9,7 +9,7 @@ namespace frc
 		m_mode = RobotMode::Autonomous;
 		m_robotMainOverridden = false;
 		m_start_delay = 0.25;
-		m_auto_period = 15;
+		m_auto_period = 8;
 		m_teleop_period = 0;
 	}
 

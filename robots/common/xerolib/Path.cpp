@@ -17,7 +17,6 @@ namespace xero
 		{
 		}
 
-		static int cnt = 0;
 		Path::TargetPointReport Path::getTargetPoint(const xero::math::Position &robot, const Lookahead &ahead)
 		{
 			TargetPointReport ret;
@@ -63,7 +62,6 @@ namespace xero
 
 			checkSegmentDone(ret.ClosestPoint);
 
-			cnt++;
 			return ret;
 		}
 

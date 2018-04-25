@@ -86,13 +86,14 @@ namespace xerolib
 
 	void DriveBase::controlThread()
 	{
+		static int n = 0;
 		xerolib::XeroRobotBase &robot = getRobot();
 		std::chrono::milliseconds delay(25);
 		double now;
 
 #ifdef LOGPATH
-		std::ofstream pathlog(robot.getBaseDir() + "\\pathlog.csv");
-		pathlog << "t,pose_x,pose_y,pose_theta,linear_disp,profile_disp,linear_vel,profile_vel,vel_cmd_dx,vel_cmd_dy,vel_cmd_dtheta,steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta,cross_track_error,along_track_error,la_pt_x,la_pt_y,la_pt_vel";
+		std::ofstream pathlog(robot.getBaseDir() + "\\path.csv");
+		pathlog << "num,t,pose_x,pose_y,pose_theta,linear_disp,profile_disp,linear_vel,profile_vel,vel_cmd_dx,vel_cmd_dy,vel_cmd_dtheta,steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta,cross_track_error,along_track_error,la_pt_x,la_pt_y,la_pt_vel";
 		pathlog << std::endl;
 #endif
 
@@ -108,7 +109,8 @@ namespace xerolib
 				if (m_follower_p != nullptr)
 				{
 					const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
-					pathlog << debug.t;
+					pathlog << n++;
+					pathlog << "," << debug.t;
 					pathlog << "," << debug.pose_x;
 					pathlog << "," << debug.pose_y;
 					pathlog << "," << debug.pose_theta;
@@ -146,6 +148,7 @@ namespace xerolib
 		bool spdok = false;
 
 		m_left_velocity_pid.setLogFile(getRobot().getBaseDir() + "\\leftpid.csv");
+		m_right_velocity_pid.setLogFile(getRobot().getBaseDir() + "\\rightpid.csv");
 
 		while (m_running)
 		{
@@ -256,6 +259,10 @@ namespace xerolib
 		m_follower_p = std::make_shared<PathFollower>(path_p, reversed, p);
 
 		setVelocities(0.0, 0.0);
+
+		auto &st = xero::pathfinder::RobotState::get();
+		st.resetDrivenDistance();
+
 		m_mode = Mode::Path;
 	}
 

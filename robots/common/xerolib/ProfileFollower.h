@@ -29,8 +29,9 @@ namespace xero
 
 			std::shared_ptr<ProfileGoal> m_goal_p;
 			std::shared_ptr<Constraints> m_constraints_p;
-			SetpointGenerator m_generator;
 			std::shared_ptr<SetpointGenerator::Setpoint> m_latest_setpoint_p;
+
+			SetpointGenerator m_generator;
 
 		public:
 			ProfileFollower(double kp, double ki, double kv, double kffv, double kffa)

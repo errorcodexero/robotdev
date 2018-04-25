@@ -43,6 +43,10 @@ namespace xero
 
 				ProfileGoal g(disp + cmd.m_delta.getX(), std::fabs(cmd.m_end_velocity), ProfileGoal::CompletionType::ExceedMaxAccel, m_goal_pos_tolerance, m_goal_vel_tolerance);
 				Constraints c(std::min(m_max_profile_vel, cmd.m_max_velocity), m_max_profile_acc);
+				std::cout << "up:";
+				std::cout << "time " << t;
+				std::cout << ", goal " << g.getPosition() << " " << g.getMaxVelocity();
+				std::cout << ", constraints " << c.getMaxVelocity() << " " << c.getMaxAccel();
 				m_velocity_controller_p->setGoalAndConstraints(g, c);
 
 				if (cmd.m_remaining_path_length < m_stop_steering_distance)
@@ -51,6 +55,8 @@ namespace xero
 
 			State st(t, disp, vel, 0.0);
 			double velcmd = m_velocity_controller_p->update(st, t);
+			std::cout << ", velcmd " << velcmd << std::endl;
+
 			m_along_track_error = m_velocity_controller_p->getPositionError();
 			double curvature = m_last_steering_delta.getAngle() / m_last_steering_delta.getX();
 			double dtheta = m_last_steering_delta.getAngle();

@@ -7,7 +7,6 @@
 
 namespace xerolib
 {
-
 	MessageLogger::MessageLogger()
 	{
 		m_send_types.push_back(MessageType::Error);

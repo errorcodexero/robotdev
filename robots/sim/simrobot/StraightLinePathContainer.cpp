@@ -9,16 +9,12 @@ StraightLinePathContainer::StraightLinePathContainer(double length, double speed
 {
 	m_length = length;
 	m_speed = speed;
-	m_name = "StraightLine " + std::to_string(length) + " , " + std::to_string(speed);
+	std::string name = "StraightLine " + std::to_string(length) + " , " + std::to_string(speed);
+	setName(name);
 }
 
 StraightLinePathContainer::~StraightLinePathContainer()
 {
-}
-
-std::string StraightLinePathContainer::getName() const
-{
-	return m_name;
 }
 
 std::shared_ptr<xero::pathfinder::Path> StraightLinePathContainer::buildPath(double accel)

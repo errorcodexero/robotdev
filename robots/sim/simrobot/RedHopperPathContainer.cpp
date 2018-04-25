@@ -5,19 +5,12 @@ using namespace xero::math;
 using namespace xero::pathfinder;
 using namespace xero::motion;
 
-RedHopperPathContainer::RedHopperPathContainer()
+RedHopperPathContainer::RedHopperPathContainer() : PathContainer("RedHopperPath")
 {
-	m_name = "RedHopperPath";
 }
 
 RedHopperPathContainer::~RedHopperPathContainer()
 {
-}
-
-
-std::string RedHopperPathContainer::getName() const
-{
-	return m_name;
 }
 
 std::shared_ptr<xero::pathfinder::Path> RedHopperPathContainer::buildPath(double maxaccel)
