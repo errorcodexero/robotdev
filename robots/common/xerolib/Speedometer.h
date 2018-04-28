@@ -11,7 +11,7 @@ namespace xerolib
 	public:
 		/// \brief create a speedometer
 		/// \param samples the number of position samples to keep to calculate speed
-		Speedometer(size_t samples)
+		Speedometer(size_t samples = 2)
 		{
 			m_next = 0;
 			m_full = false;
@@ -21,6 +21,15 @@ namespace xerolib
 		/// \brief destroy the speedometer
 		virtual  ~Speedometer()
 		{
+		}
+
+		/// \brief set the number of samples averaged for speed
+		/// Note this method resets the contents of the speedometer
+		void setSampleCount(size_t count)
+		{
+			m_next = 0;
+			m_full = false;
+			m_samples.resize(count);
 		}
 
 		/// \brief reset with zero samples

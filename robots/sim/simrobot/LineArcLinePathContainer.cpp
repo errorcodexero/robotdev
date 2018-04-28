@@ -21,9 +21,6 @@ std::shared_ptr<xero::pathfinder::Path> LineArcLinePathContainer::buildPath(doub
 	points.push_back(Waypoint(100, 90, 0, 80));
 	points.push_back(Waypoint(140, 90, 0, 40));
 	points.push_back(Waypoint(220, 90, 0, 80));
-
-
-#ifdef NOTYET
 	points.push_back(Waypoint(230, 90, 10, 80));
 	points.push_back(Waypoint(240, 100, 10, 80));
 	points.push_back(Waypoint(250, 130, 10, 80));
@@ -31,7 +28,7 @@ std::shared_ptr<xero::pathfinder::Path> LineArcLinePathContainer::buildPath(doub
 	points.push_back(Waypoint(260, 260, 10, 80));
 	points.push_back(Waypoint(270, 260, 10, 80));
 	points.push_back(Waypoint(310, 260, 0, 80));
-#endif
+
 	return xero::pathfinder::PathBuilder::buildPath(points, maxaccel);
 }
 

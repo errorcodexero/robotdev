@@ -19,19 +19,17 @@ SimRobot::~SimRobot()
 
 void SimRobot::RobotInit()
 {
+
+	setBaseDir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\data");
+	// setBaseDir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot\\data");'
+
+	xerolib::XeroRobotBase::RobotInit();
+
 	std::chrono::milliseconds delay(1);
-
-	setBaseDir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot\\data");
-
 	xero::pathfinder::RobotStateEstimator::LogFileName = getBaseDir() + "\\estimator.csv";
 
-	MessageLogger &logger = getMessageLogger();
-	logger.enableModules(MODULE_ALL);
-	setupConsoleLogger();
-	setupFileLogger(getBaseDir() + "\\robot.log");
 
-	ParamsParser &params = ParamsParser::get();
-	params.readFile(getBaseDir() + "\\params.txt");
+	auto &params = xerolib::ParamsParser::get();
 
 	std::shared_ptr<AHRS> navx_p = std::make_shared<AHRS>("/dev/ttyACM0");
 	while (!navx_p->IsConnected())

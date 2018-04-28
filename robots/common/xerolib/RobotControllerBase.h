@@ -10,6 +10,11 @@ namespace xerolib
 	RobotControllerBase(XeroRobotBase &robot);
 	virtual ~RobotControllerBase();
 
+	virtual bool isRunning()
+	{
+		return true;
+	}
+
 	virtual void executeOneLoop() = 0;
 
 	XeroRobotBase &getRobot()

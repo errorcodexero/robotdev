@@ -102,6 +102,8 @@ namespace frc
 		double m_start_delay;
 		double m_auto_period;
 		double m_teleop_period;
+
+		bool m_auto_done;
 	};
 }
 

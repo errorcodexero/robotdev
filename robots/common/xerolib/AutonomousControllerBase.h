@@ -15,6 +15,7 @@ namespace xerolib
 		AutonomousControllerBase(XeroRobotBase &robot);
 		~AutonomousControllerBase();
 
+		virtual bool isRunning();
 		virtual void executeOneLoop();
 
 	protected:

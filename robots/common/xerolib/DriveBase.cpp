@@ -37,8 +37,8 @@ namespace xerolib
 		setEncoders(left_enc_p, right_enc_p) ;
 		setNavX(navx_p) ;
 	}
-	
-	DriveBase::DriveBase(XeroRobotBase &robot) : SubsystemBase("drivebase", robot), m_left_speed(4), m_right_speed(4)
+
+	DriveBase::DriveBase(XeroRobotBase &robot) : SubsystemBase("drivebase", robot)
 	{
 		m_mode = Mode::Idle;
 
@@ -47,6 +47,8 @@ namespace xerolib
 		m_left_last_voltage = std::nan("");
 		m_right_last_voltage = std::nan("");
 
+
+		initSpeedometers();
 		initPIDConstants();
 		m_yaw = 0.0;
 	}
@@ -202,6 +204,16 @@ namespace xerolib
 			last = current;
 			std::this_thread::sleep_for(delay);
 		}
+	}
+
+	void DriveBase::initSpeedometers()
+	{
+		ParamsParser &params = ParamsParser::get();
+
+		double samples = params.getValue("drivebase:speedometer:samples");
+		size_t count = static_cast<size_t>(samples + 0.5);
+		m_left_speed.setSampleCount(count);
+		m_right_speed.setSampleCount(count);
 	}
 
 	void DriveBase::initPIDConstants()

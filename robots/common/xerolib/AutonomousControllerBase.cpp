@@ -15,6 +15,11 @@ namespace xerolib
 	{
 	}
 
+	bool AutonomousControllerBase::isRunning()
+	{
+		return m_state != State::End;
+	}
+
 	void AutonomousControllerBase::nextStep(double now)
 	{
 		MessageLogger &logger = getRobot().getMessageLogger();

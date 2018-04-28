@@ -243,6 +243,7 @@ namespace xerolib
 		void controlThread();
 		void stateThread();
 		void initPIDConstants();
+		void initSpeedometers();
 
 		void setOutputVoltage(double left, double right)
 		{

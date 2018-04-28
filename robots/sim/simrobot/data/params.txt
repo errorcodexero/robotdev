@@ -1,27 +1,49 @@
-drivebase:velocity:p					0.0
-drivebase:velocity:i					0.0
-drivebase:velocity:d					0.0
-drivebase:velocity:f					0.05
-drivebase:velocity:vmin					-1.0
-drivebase:velocity:vmax					1.0
+#
+# Base paramsters controller the robot
+#
+robot:looptime							0.05
+
+
+#
+# Describes the physical robot
+#
 drivebase:ticks_per_rev					200
 drivebase:diameter						5.0
 drivebase:width							24
 drivebase:scrub							1.0
 
+#
+# Define the samples for measuring the speed of the robot
+#
+drivebase:speedometer:samples			4
+
+#
+# Tuning for the velocity PID controller
+#
+drivebase:velocity:p					0.00001
+drivebase:velocity:i					0.0
+drivebase:velocity:d					0.0
+drivebase:velocity:f					0.007
+drivebase:velocity:vmin					-1.0
+drivebase:velocity:vmax					1.0
+
+#
+# Tuning for the path follower
+#
 pathfollower:lookahead:distance:min		12.0
 pathfollower:lookahead:distance:max		24.0
 pathfollower:lookahead:speed:min		9.0
 pathfollower:lookahead:speed:max		120.0
-pathfollower:inertia_gain				1.0
-pathfollower:kp							10.0
+
+
+pathfollower:inertia_gain				0.0
+pathfollower:kp							1.0
 pathfollower:ki							0.0
-pathfollower:kv							0.0
+pathfollower:kv							1.0
 pathfollower:kffv						0
 pathfollower:kffa						0.0
 pathfollower:maxvelocity				120.0
 pathfollower:maxacceleration			120.0
 pathfollower:position:tolerance			0.75
-pathfollower:velocity:tolerance			12.0
+pathfollower:velocity:tolerance			4.0
 pathfollower:stopping:distance			9.0
-

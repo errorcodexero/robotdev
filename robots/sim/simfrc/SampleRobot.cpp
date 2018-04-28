@@ -9,7 +9,7 @@ namespace frc
 		m_mode = RobotMode::Autonomous;
 		m_robotMainOverridden = false;
 		m_start_delay = 0.25;
-		m_auto_period = 8;
+		m_auto_period = 30;
 		m_teleop_period = 0;
 	}
 
@@ -31,6 +31,7 @@ namespace frc
 	void SampleRobot::InternalControl()
 	{
 		int ms;
+		m_auto_done = false;
 
 		setEnabled(false);
 		setRobotMode(SampleRobot::RobotMode::Autonomous);
@@ -39,8 +40,11 @@ namespace frc
 
 		setEnabled(true);
 		ms = static_cast<int>(m_auto_period * 1000);
-		std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-
+		while (ms > 0 && !m_auto_done)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			ms -= 100;
+		}
 		setEnabled(false);
 		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 		setRobotMode(SampleRobot::RobotMode::Operator);
@@ -157,6 +161,7 @@ namespace frc
 				}
 				else if (IsAutonomous()) {
 					Autonomous();
+					m_auto_done = true;
 					while (IsAutonomous() && IsEnabled());
 				}
 				else if (IsTest()) {

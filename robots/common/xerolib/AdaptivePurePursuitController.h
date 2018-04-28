@@ -145,7 +145,7 @@ namespace xero
 			{
 				xero::math::Position poseToPoint(pose.getPos(), pos);
 				xero::math::Position robot(pose.getRotation().getCos(), pose.getRotation().getSin());
-				double cross = xero::math::Position::cross(robot, poseToPoint);
+				double cross = robot.getX() * poseToPoint.getY() - robot.getY() * poseToPoint.getX();
 				return (cross < 0) ? -1 : 1;
 			}
 

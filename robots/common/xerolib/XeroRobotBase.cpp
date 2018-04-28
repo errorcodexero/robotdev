@@ -17,6 +17,19 @@ namespace xerolib
     {
     }
 
+	void XeroRobotBase::RobotInit()
+	{
+		MessageLogger &logger = getMessageLogger();
+		logger.enableModules(MODULE_ALL);
+		setupConsoleLogger();
+		setupFileLogger(getBaseDir() + "\\robot.log");
+
+		ParamsParser &params = ParamsParser::get();
+		params.readFile(getBaseDir() + "\\params.txt");
+
+		m_looptime = params.getValue("robot:looptime", 0.02);
+	}
+
     void XeroRobotBase::setupConsoleLogger()
     {
 		m_logger.addStandardOutputDestination();
@@ -26,24 +39,6 @@ namespace xerolib
 	{
 		m_logger.addDestination(filename_p);
 	}
-
-    void XeroRobotBase::readParams(const std::string &file)
-    {
-		std::string filename = file;
-
-		if (filename.length() == 0)
-			filename = "/home/lvuser/params.txt" ;
-
-		xerolib::MessageLogger &logger = getMessageLogger();
-
-		ParamsParser &params = ParamsParser::get();
-		if (!params.readFile(file))
-		{
-			logger.startMessage(MessageLogger::MessageType::Error, MODULE_ROBOTBASE);
-			logger << "cannot read parameter file '" << file << "'";
-			logger.endMessage();
-		}
-    }
 
     void XeroRobotBase::Disabled()
     {
@@ -62,7 +57,7 @@ namespace xerolib
 
 		m_controller_p = createAutonomousController();
 
-		while (IsAutonomous() && IsEnabled())
+		while (IsAutonomous() && IsEnabled() && m_controller_p->isRunning())
 		{
 			doOneLoop(RobotModeType::AutonomousMode);
 		}

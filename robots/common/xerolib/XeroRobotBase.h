@@ -18,6 +18,8 @@ namespace xerolib
 		XeroRobotBase();
 		virtual ~XeroRobotBase();
 
+		virtual void RobotInit();
+
 		/// @brief setup a logger to print information to the output console
 		void setupConsoleLogger();
 
@@ -86,9 +88,6 @@ namespace xerolib
 
 		/// @brief this method is implemented by a derived class and creates the test controller
 		virtual std::shared_ptr<RobotControllerBase> createTestController() = 0;
-
-		/// @brief read the parameters file
-		virtual void readParams(const std::string &filename);
 
 		enum RobotModeType
 		{
