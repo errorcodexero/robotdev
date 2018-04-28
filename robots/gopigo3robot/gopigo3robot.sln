@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simrobot", "..\sim\simrobot
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "simxerolib", "..\common\xerolib\simxerolib.vcxproj", "{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jacipath", "..\common\Pathfinder\Pathfinder-Core\jacipath.vcxproj", "{D97CC90F-3F1C-4866-B447-352E14E83820}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -135,6 +137,16 @@ Global
 		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|x64.Build.0 = Release|x64
 		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|x86.ActiveCfg = Release|Win32
 		{23A1E0E6-702E-46A1-8E40-B7208E3C02B7}.Release|x86.Build.0 = Release|Win32
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Debug|ARM.ActiveCfg = Debug|Win32
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Debug|x64.ActiveCfg = Debug|x64
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Debug|x64.Build.0 = Debug|x64
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Debug|x86.ActiveCfg = Debug|Win32
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Debug|x86.Build.0 = Debug|Win32
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Release|ARM.ActiveCfg = Release|Win32
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Release|x64.ActiveCfg = Release|x64
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Release|x64.Build.0 = Release|x64
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Release|x86.ActiveCfg = Release|Win32
+		{D97CC90F-3F1C-4866-B447-352E14E83820}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

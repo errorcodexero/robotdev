@@ -1,20 +1,11 @@
 #include "DriveBase.h"
 #include "XeroRobotBase.h"
-#include "RobotState.h"
 #include "ParamsParser.h"
-#include "RobotStateEstimator.h"
-#include "Kinematics.h"
 #include "ModuleDefintions.h"
 #include <cassert>
 #include <iostream>
 #include <cmath>
 #include <numeric>
-
-#define LOGPATH
-
-using namespace xero::math;
-using namespace xero::motion;
-using namespace xero::pathfinder;
 
 namespace xerolib
 {
@@ -73,13 +64,10 @@ namespace xerolib
 	void DriveBase::stateThread()
 	{
 		std::chrono::milliseconds delay(5);
-		RobotStateEstimator &est = RobotStateEstimator::get();
-		est.setDriveBase(this);
 
 		while (m_running)
 		{
 			double time = frc::Timer::GetFPGATimestamp();
-			est.oneLoop(time);
 			std::this_thread::sleep_for(delay);
 		}
 	}
@@ -103,38 +91,6 @@ namespace xerolib
 
 			if (m_mode == Mode::Path)
 			{
-				xero::math::PositionAngle pa = updatePath(now);
-
-#ifdef LOGPATH
-				if (m_follower_p != nullptr)
-				{
-					const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
-					pathlog << n++;
-					pathlog << "," << debug.t;
-					pathlog << "," << debug.pose_x;
-					pathlog << "," << debug.pose_y;
-					pathlog << "," << debug.pose_theta;
-					pathlog << "," << debug.linear_displacement;
-					pathlog << "," << debug.profile_displacement;
-					pathlog << "," << debug.linear_velocity;
-					pathlog << "," << debug.profile_velocity;
-					pathlog << "," << debug.velocity_command_dx;
-					pathlog << "," << debug.velocity_command_dy;
-					pathlog << "," << debug.velocity_command_dtheta;
-					pathlog << "," << debug.steering_command_dx;
-					pathlog << "," << debug.steering_command_dy;
-					pathlog << "," << debug.steering_command_dtheta;
-					pathlog << "," << debug.cross_track_error;
-					pathlog << "," << debug.along_track_error;
-					pathlog << "," << debug.lookahead_point_x;
-					pathlog << "," << debug.lookahead_point_y;
-					pathlog << "," << debug.lookahead_point_velocity;
-					pathlog << "," << pa.getPosition().getX();
-					pathlog << "," << pa.getPosition().getY();
-					pathlog << "," << pa.getAngle();
-					pathlog << std::endl;
-				}
-#endif
 			}
 
 			std::this_thread::sleep_for(delay);
@@ -226,49 +182,6 @@ namespace xerolib
 		m_right_target_velocity = right;
 	}
 
-	void DriveBase::followPath(std::shared_ptr<xero::pathfinder::Path> path_p, bool reversed)
-	{
-		ParamsParser &params = ParamsParser::get();
-
-		//
-		// TODO - fix so that is this is called while we are actively following a path we do
-		//        the right thing.  For now, we ignore the new path and finish the current
-		//        one.
-		//
-		if (m_mode == Mode::Path && !isPathFinished())
-			return;
-
-		double la_min = params.getValue("pathfollower:lookahead:distance:min");
-		double la_max = params.getValue("pathfollower:lookahead:distance:max");
-		double la_minspeed = params.getValue("pathfollower:lookahead:speed:min");
-		double la_maxspeed = params.getValue("pathfollower:lookahead:speed:max");
-		Lookahead la(la_min, la_max, la_minspeed, la_maxspeed);
-
-		double igain = params.getValue("pathfollower:inertia_gain");
-		double kp = params.getValue("pathfollower:kp");
-		double ki = params.getValue("pathfollower:ki");
-		double kv = params.getValue("pathfollower:kv");
-		double kffv = params.getValue("pathfollower:kffv");
-		double kffa = params.getValue("pathfollower:kffa");
-		double max_abs_vel = params.getValue("pathfollower:maxvelocity");
-		double max_abs_acc = params.getValue("pathfollower:maxacceleration");
-		double pos_tol = params.getValue("pathfollower:position:tolerance");
-		double vel_tol = params.getValue("pathfollower:velocity:tolerance");
-		double stopdist = params.getValue("pathfollower:stopping:distance");
-		
-		PathFollower::Parameters p(la, igain, kp, ki, kv, kffv, kffa, max_abs_vel, max_abs_acc, pos_tol, vel_tol, stopdist);
-
-		m_path_p = path_p;
-		m_follower_p = std::make_shared<PathFollower>(path_p, reversed, p);
-
-		setVelocities(0.0, 0.0);
-
-		auto &st = xero::pathfinder::RobotState::get();
-		st.resetDrivenDistance();
-
-		m_mode = Mode::Path;
-	}
-
 	double DriveBase::getDistance()
 	{
 		int32_t left = m_left_encoder_p->Get();
@@ -301,33 +214,6 @@ namespace xerolib
 	{
 		if (m_mode == Mode::Manual)
 			outputToMotors();
-	}
-
-	xero::math::PositionAngle DriveBase::updatePath(double t)
-	{
-		xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
-		PositionCS pos = state.getPositionAtTime(t);
-		double disp = state.getDrivenDistance();
-		double vel = state.getPredictedVelocity().getX();
-
-		PositionAngle pa = m_follower_p->update(t, pos, disp, vel);
-
-		if (!m_follower_p->isFinished())
-		{
-			double left, right;
-
-			Kinematics::inverseKinematics(pa, m_width, m_scrub, left, right);
-			setVelocities(left, right);
-		}
-		else
-		{
-			setVelocities(0.0, 0.0);
-			m_path_p = nullptr;
-			m_follower_p = nullptr;
-			m_mode = Mode::Idle;
-		}
-
-		return pa;
 	}
 
 	void DriveBase::outputToMotors()
