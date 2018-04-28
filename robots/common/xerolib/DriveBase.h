@@ -235,7 +235,7 @@ namespace xerolib
 			resetNavX();
 		}
 
-		xero::math::PositionAngle updatePath(double t);
+		xero::math::PositionAngle updatePath(double t, xero::pathfinder::PathDebugData &debug);
 		void setVelocities(double left, double right);
 		void outputToMotors();
 

@@ -1,4 +1,5 @@
 #include "PathFollower.h"
+#include "PathDebugData.h"
 
 using namespace xero::math;
 using namespace xero::motion;
@@ -27,17 +28,17 @@ namespace xero
 		{
 		}
 
-		PositionAngle PathFollower::update(double t, const xero::math::PositionCS &pose, double disp, double vel)
+		PositionAngle PathFollower::update(double t, const xero::math::PositionCS &pose, double disp, double vel, xero::pathfinder::PathDebugData &debug)
 		{
 			if (!m_steering_controller_p->isFinished())
 			{
-				AdaptivePurePursuitController::Command cmd = m_steering_controller_p->update(pose);
-				m_debug_output.lookahead_point_x = cmd.m_lookahead_point.getX();
-				m_debug_output.lookahead_point_y = cmd.m_lookahead_point.getY();
-				m_debug_output.lookahead_point_velocity = cmd.m_end_velocity;
-				m_debug_output.steering_command_dx = cmd.m_delta.getX();
-				m_debug_output.steering_command_dy = cmd.m_delta.getY();
-				m_debug_output.steering_command_dtheta = cmd.m_delta.getAngle();
+				AdaptivePurePursuitController::Command cmd = m_steering_controller_p->update(pose, debug);
+				debug.lookahead_point_x = cmd.m_lookahead_point.getX();
+				debug.lookahead_point_y = cmd.m_lookahead_point.getY();
+				debug.lookahead_point_velocity = cmd.m_end_velocity;
+				debug.steering_command_dx = cmd.m_delta.getX();
+				debug.steering_command_dy = cmd.m_delta.getY();
+				debug.steering_command_dtheta = Rotation::r2d(cmd.m_delta.getAngle());
 				m_cross_track_error = cmd.m_cross_track_error;
 				m_last_steering_delta = cmd.m_delta;
 
@@ -62,22 +63,25 @@ namespace xero
 				dtheta = m_last_steering_delta.getX() * curvature * (1.0 + m_inertia_gain * abs_velocity_setpoint);
 			}
 
+			debug.curvature = curvature;
+			debug.dtheta = dtheta;
+
 			double scale = velcmd / m_last_steering_delta.getX() ;
 			PositionAngle ret(m_last_steering_delta.getX() * scale, 0.0, dtheta * scale);
 
-			m_debug_output.t = t;
-			m_debug_output.pose_x = pose.getPos().getX();
-			m_debug_output.pose_y = pose.getPos().getY();
-			m_debug_output.pose_theta = pose.getRotation().getRadians();
-			m_debug_output.linear_displacement = disp;
-			m_debug_output.linear_velocity = vel;
-			m_debug_output.profile_displacement = m_velocity_controller_p->getSetpoint()->getState().getPosition();
-			m_debug_output.profile_velocity = m_velocity_controller_p->getSetpoint()->getState().getVelocity();
-			m_debug_output.velocity_command_dx = ret.getX();
-			m_debug_output.velocity_command_dy = ret.getY();
-			m_debug_output.velocity_command_dtheta = ret.getAngle();
-			m_debug_output.cross_track_error = m_cross_track_error;
-			m_debug_output.along_track_error = m_along_track_error;
+			debug.t = t;
+			debug.pose_x = pose.getPos().getX();
+			debug.pose_y = pose.getPos().getY();
+			debug.pose_theta = pose.getRotation().getDegrees();
+			debug.linear_displacement = disp;
+			debug.linear_velocity = vel;
+			debug.profile_displacement = m_velocity_controller_p->getSetpoint()->getState().getPosition();
+			debug.profile_velocity = m_velocity_controller_p->getSetpoint()->getState().getVelocity();
+			debug.velocity_command_dx = ret.getX();
+			debug.velocity_command_dy = ret.getY();
+			debug.velocity_command_dtheta = Rotation::r2d(ret.getAngle());
+			debug.cross_track_error = m_cross_track_error;
+			debug.along_track_error = m_along_track_error;
 
 			return ret;
 		}

@@ -37,6 +37,16 @@ namespace xero
 			virtual ~Rotation()
 			{
 			}
+			
+			static double r2d(double ang)
+			{
+				return ang / kPI * 180.0;
+			}
+
+			static double d2r(double ang)
+			{
+				return ang / 180.0 * kPI;
+			}
 
 			double getCos() const
 			{

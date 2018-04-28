@@ -18,6 +18,7 @@ namespace xero
 			xero::math::Position m_center;
 			xero::math::Position m_delta_start;
 			xero::math::Position m_delta_end;
+			size_t m_index;
 			double m_maxspeed;
 			double m_maxaccel;
 			bool m_isline;
@@ -35,6 +36,16 @@ namespace xero
 			PathSegment(double x1, double y1, double x2, double y2, double c1, double c2, 
 				double maxspeed, double maxaccel, const xero::motion::State &start, double endspeed, const char *marker_p);
 			virtual ~PathSegment();
+
+			size_t getIndex() const
+			{
+				return m_index;
+			}
+
+			void setIndex(size_t i)
+			{
+				m_index = i;
+			}
 
 			double getMaxSpeed() const
 			{

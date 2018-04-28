@@ -234,6 +234,9 @@
     <ClInclude Include="Speedometer.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="PathDebugData.h">
+      <Filter>Headers\PathFinder</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Headers">

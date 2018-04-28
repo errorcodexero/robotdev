@@ -42,6 +42,14 @@ namespace xero
 			Path(double maxaccel);
 			virtual ~Path();
 
+			size_t getSegmentIndex() const
+			{
+				if (m_segments.size() == 0)
+					return std::numeric_limits<size_t>::max();
+
+				return m_segments[0]->getIndex();
+			}
+
 			void extrapolateLast()
 			{
 				std::shared_ptr<PathSegment> last_p = m_segments[m_segments.size() - 1];
@@ -55,6 +63,7 @@ namespace xero
 
 			void addSegment(std::shared_ptr<PathSegment> seg_p)
 			{
+				seg_p->setIndex(m_segments.size());
 				m_segments.push_back(seg_p);
 			}
 

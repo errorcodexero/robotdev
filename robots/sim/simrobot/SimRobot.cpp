@@ -20,8 +20,8 @@ SimRobot::~SimRobot()
 void SimRobot::RobotInit()
 {
 
-	setBaseDir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\data");
-	// setBaseDir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot\\data");'
+	// setBaseDir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\data");
+	setBaseDir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot\\data");
 
 	xerolib::XeroRobotBase::RobotInit();
 

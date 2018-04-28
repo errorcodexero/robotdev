@@ -10,6 +10,9 @@ namespace xero
 	{
 		class Kinematics
 		{
+		private:
+			static constexpr double kDelta = 1e-9;
+
 		public:
 			Kinematics()
 			{
@@ -47,7 +50,7 @@ namespace xero
 
 			static void inverseKinematics(xero::math::PositionAngle const &pa, double width, double scrub, double &left, double &right)
 			{
-				if (std::fabs(pa.getAngle()) < 0)
+				if (std::fabs(pa.getAngle()) < kDelta)
 				{
 					left = pa.getX();
 					right = pa.getX();

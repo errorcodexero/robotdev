@@ -11,30 +11,6 @@ namespace xero
 		class PathFollower
 		{
 		public:
-			class DebugOutput
-			{
-			public:
-				double t;
-				double pose_x;
-				double pose_y;
-				double pose_theta;
-				double linear_displacement;
-				double linear_velocity;
-				double profile_displacement;
-				double profile_velocity;
-				double velocity_command_dx;
-				double velocity_command_dy;
-				double velocity_command_dtheta;
-				double steering_command_dx;
-				double steering_command_dy;
-				double steering_command_dtheta;
-				double cross_track_error;
-				double along_track_error;
-				double lookahead_point_x;
-				double lookahead_point_y;
-				double lookahead_point_velocity;
-			};
-
 			class Parameters
 			{
 			public:
@@ -72,7 +48,7 @@ namespace xero
 			PathFollower(std::shared_ptr<Path> path_p, bool reversed, const Parameters &params);
 			virtual ~PathFollower();
 
-			xero::math::PositionAngle update(double t, const xero::math::PositionCS &pose, double disp, double vel);
+			xero::math::PositionAngle update(double t, const xero::math::PositionCS &pose, double disp, double vel, xero::pathfinder::PathDebugData &debug);
 
 			double getCrossTrackError() const
 			{
@@ -82,11 +58,6 @@ namespace xero
 			double getAlongTrackError() const
 			{
 				return m_along_track_error;
-			}
-
-			const DebugOutput &getDebugOuptut() const
-			{
-				return m_debug_output;
 			}
 
 			bool isFinished() const
@@ -114,7 +85,6 @@ namespace xero
 			double m_inertia_gain;
 			bool m_override_finished;
 			bool m_done_steering;
-			DebugOutput m_debug_output;
 
 			double m_max_profile_vel;
 			double m_max_profile_acc;

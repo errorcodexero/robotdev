@@ -35,6 +35,11 @@ namespace xero
 				return *TheOneObject;
 			}
 
+			const xero::math::PositionCS &getLatestFieldToVehicle() const
+			{
+				return m_actual_positions.back().second;
+			}
+
 			xero::math::PositionCS getPositionAtTime(double t);
 			double getDrivenDistance();
 			xero::math::PositionAngle getPredictedVelocity();

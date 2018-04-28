@@ -76,6 +76,7 @@
     <ClInclude Include="Path.h" />
     <ClInclude Include="PathBuilder.h" />
     <ClInclude Include="PathContainer.h" />
+    <ClInclude Include="PathDebugData.h" />
     <ClInclude Include="PathFinderConstants.h" />
     <ClInclude Include="PathFollower.h" />
     <ClInclude Include="PathSegment.h" />

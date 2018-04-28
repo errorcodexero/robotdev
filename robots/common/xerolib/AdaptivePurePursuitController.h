@@ -6,6 +6,7 @@
 #include "Path.h"
 #include "MathUtils.h"
 #include "PathFinderConstants.h"
+#include "PathDebugData.h"
 #include <memory>
 
 namespace xero
@@ -74,7 +75,7 @@ namespace xero
 			{
 			}
 
-			Command update(const xero::math::PositionCS &pos);
+			Command update(const xero::math::PositionCS &pos, xero::pathfinder::PathDebugData &debug);
 
 			bool hasPassedMarker(const char *marker_p) const
 			{

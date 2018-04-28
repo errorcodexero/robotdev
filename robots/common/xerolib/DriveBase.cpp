@@ -5,6 +5,7 @@
 #include "RobotStateEstimator.h"
 #include "Kinematics.h"
 #include "ModuleDefintions.h"
+#include "PathDebugData.h"
 #include <cassert>
 #include <iostream>
 #include <cmath>
@@ -95,7 +96,25 @@ namespace xerolib
 
 #ifdef LOGPATH
 		std::ofstream pathlog(robot.getBaseDir() + "\\path.csv");
-		pathlog << "num,t,pose_x,pose_y,pose_theta,linear_disp,profile_disp,linear_vel,profile_vel,vel_cmd_dx,vel_cmd_dy,vel_cmd_dtheta,steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta,cross_track_error,along_track_error,la_pt_x,la_pt_y,la_pt_vel";
+		pathlog << "num,t,segidx";
+		pathlog << ",";
+		pathlog << ",pose_x,pose_y,pose_theta";
+		pathlog << ",";
+		pathlog << ",left,right";
+		pathlog << ",";
+		pathlog << ",linear_disp,profile_disp,linear_vel,profile_vel";
+		pathlog << ",";
+		pathlog << ",vel_cmd_dx,vel_cmd_dy, vel_cmd_dtheta";
+		pathlog << ",";
+		pathlog << ",steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta";
+		pathlog << ",";
+		pathlog << ",cross_track_error,along_track_error";
+		pathlog << ",";
+		pathlog << ",la_pt_x,la_pt_y,la_pt_vel";
+		pathlog << ",";
+		pathlog << ",arc_x,arc_y,arc_radius,arg_length";
+		pathlog << ",";
+		pathlog << "curve,dtheta";
 		pathlog << std::endl;
 #endif
 
@@ -105,35 +124,50 @@ namespace xerolib
 
 			if (m_mode == Mode::Path)
 			{
-				xero::math::PositionAngle pa = updatePath(now);
+				PathDebugData debug;
+				xero::math::PositionAngle pa = updatePath(now, debug);
 
 #ifdef LOGPATH
 				if (m_follower_p != nullptr)
 				{
-					const xero::pathfinder::PathFollower::DebugOutput &debug = m_follower_p->getDebugOuptut();
 					pathlog << n++;
 					pathlog << "," << debug.t;
+					pathlog << "," << debug.m_segment_index;
+					pathlog << ",";
 					pathlog << "," << debug.pose_x;
 					pathlog << "," << debug.pose_y;
 					pathlog << "," << debug.pose_theta;
+					pathlog << ",";
+					pathlog << "," << debug.left;
+					pathlog << "," << debug.right;
+					pathlog << ",";
 					pathlog << "," << debug.linear_displacement;
 					pathlog << "," << debug.profile_displacement;
 					pathlog << "," << debug.linear_velocity;
 					pathlog << "," << debug.profile_velocity;
+					pathlog << ",";
 					pathlog << "," << debug.velocity_command_dx;
 					pathlog << "," << debug.velocity_command_dy;
 					pathlog << "," << debug.velocity_command_dtheta;
+					pathlog << ",";
 					pathlog << "," << debug.steering_command_dx;
 					pathlog << "," << debug.steering_command_dy;
 					pathlog << "," << debug.steering_command_dtheta;
+					pathlog << ",";
 					pathlog << "," << debug.cross_track_error;
 					pathlog << "," << debug.along_track_error;
+					pathlog << ",";
 					pathlog << "," << debug.lookahead_point_x;
 					pathlog << "," << debug.lookahead_point_y;
 					pathlog << "," << debug.lookahead_point_velocity;
-					pathlog << "," << pa.getPosition().getX();
-					pathlog << "," << pa.getPosition().getY();
-					pathlog << "," << pa.getAngle();
+					pathlog << ",";
+					pathlog << "," << debug.arc_center_x;
+					pathlog << "," << debug.arc_center_y;
+					pathlog << "," << debug.arc_radius;
+					pathlog << "," << debug.arc_length;
+					pathlog << ",";
+					pathlog << "," << debug.curvature;
+					pathlog << "," << debug.dtheta;
 					pathlog << std::endl;
 				}
 #endif
@@ -315,14 +349,14 @@ namespace xerolib
 			outputToMotors();
 	}
 
-	xero::math::PositionAngle DriveBase::updatePath(double t)
+	xero::math::PositionAngle DriveBase::updatePath(double t, xero::pathfinder::PathDebugData &debug)
 	{
 		xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
-		PositionCS pos = state.getPositionAtTime(t);
+		PositionCS pos = state.getLatestFieldToVehicle();
 		double disp = state.getDrivenDistance();
 		double vel = state.getPredictedVelocity().getX();
 
-		PositionAngle pa = m_follower_p->update(t, pos, disp, vel);
+		PositionAngle pa = m_follower_p->update(t, pos, disp, vel, debug);
 
 		if (!m_follower_p->isFinished())
 		{
@@ -330,6 +364,8 @@ namespace xerolib
 
 			Kinematics::inverseKinematics(pa, m_width, m_scrub, left, right);
 			setVelocities(left, right);
+			debug.left = left;
+			debug.right = right;
 		}
 		else
 		{
@@ -337,6 +373,8 @@ namespace xerolib
 			m_path_p = nullptr;
 			m_follower_p = nullptr;
 			m_mode = Mode::Idle;
+			debug.left = 0;
+			debug.right = 0;
 		}
 
 		return pa;
