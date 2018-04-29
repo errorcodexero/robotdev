@@ -96,7 +96,9 @@ namespace xerolib
 
 #ifdef LOGPATH
 		std::ofstream pathlog(robot.getBaseDir() + "\\path.csv");
-		pathlog << "num,t,segidx";
+		pathlog << "num,t";
+		pathlog << ",";
+		pathlog << ",segidx,rem,closex,closey,startx,starty,endx,endy";
 		pathlog << ",";
 		pathlog << ",pose_x,pose_y,pose_theta";
 		pathlog << ",";
@@ -114,7 +116,7 @@ namespace xerolib
 		pathlog << ",";
 		pathlog << ",arc_x,arc_y,arc_radius,arg_length";
 		pathlog << ",";
-		pathlog << "curve,dtheta";
+		pathlog << ",curve,dtheta";
 		pathlog << std::endl;
 #endif
 
@@ -132,7 +134,15 @@ namespace xerolib
 				{
 					pathlog << n++;
 					pathlog << "," << debug.t;
+					pathlog << ",";
 					pathlog << "," << debug.m_segment_index;
+					pathlog << "," << debug.m_segment_remaining;
+					pathlog << "," << debug.m_closest_x;
+					pathlog << "," << debug.m_closest_y;
+					pathlog << "," << debug.m_seg_start_x;
+					pathlog << "," << debug.m_seg_start_y;
+					pathlog << "," << debug.m_seg_end_x;
+					pathlog << "," << debug.m_seg_end_y;
 					pathlog << ",";
 					pathlog << "," << debug.pose_x;
 					pathlog << "," << debug.pose_y;

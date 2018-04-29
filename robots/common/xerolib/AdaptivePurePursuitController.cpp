@@ -15,12 +15,21 @@ namespace xero
 				pose = PositionCS(p.getPos(), p.getRotation().rotateBy(Rotation::fromDegrees(180.0)));
 
 			debug.m_segment_index = m_path_p->getSegmentIndex();
+			auto seg_p = m_path_p->getCurrentSegment();
 			Path::TargetPointReport report = m_path_p->getTargetPoint(pose.getPos(), m_lookahead);
 			if (isFinished())
 			{
 				PositionAngle pa;
 				return Command(pa, report.ClosestPointDistance, report.MaxSpeed, 0.0, report.LookAheadPoint, report.RemainingPathDistance);
 			}
+
+			debug.m_segment_remaining = report.RemainingSegmentDistance;
+			debug.m_closest_x = report.ClosestPoint.getX();
+			debug.m_closest_y = report.ClosestPoint.getY();
+			debug.m_seg_start_x = seg_p->getStart().getX();
+			debug.m_seg_start_y = seg_p->getStart().getY();
+			debug.m_seg_end_x = seg_p->getEnd().getX();
+			debug.m_seg_end_y = seg_p->getEnd().getY();
 
 			Arc arc(pose, report.LookAheadPoint);
 			debug.arc_center_x = arc.Center.getX();

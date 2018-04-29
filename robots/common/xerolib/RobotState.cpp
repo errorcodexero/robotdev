@@ -52,7 +52,7 @@ namespace xero
 
 		PositionAngle RobotState::generateOdometryFromSensors(double left_dist, double right_dist, const xero::math::Rotation &rot)
 		{
-			PositionCS last = m_actual_positions[m_actual_positions.size() - 1].second;
+			PositionCS last = getLatestFieldToVehicle();
 			PositionAngle delta = Kinematics::forwardKinematics(last.getRotation(), left_dist, right_dist, rot);
 			m_driven_distance += delta.getX();
 

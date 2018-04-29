@@ -50,6 +50,14 @@ namespace xero
 				return m_segments[0]->getIndex();
 			}
 
+			std::shared_ptr<PathSegment> getCurrentSegment()
+			{
+				if (m_segments.size() == 0)
+					return nullptr;
+
+				return m_segments[0];
+			}
+
 			void extrapolateLast()
 			{
 				std::shared_ptr<PathSegment> last_p = m_segments[m_segments.size() - 1];

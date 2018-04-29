@@ -67,7 +67,7 @@ SimRobotAutoCtrl::SimRobotAutoCtrl(xerolib::XeroRobotBase &robot) : xerolib::Aut
 #endif
 
 #ifdef RUN_MOTORS_VELOCITY
-	step_p = std::make_shared<xerolib::AutoSetVelocity>(*this, db_p, 5.0, 12.0, 12.0);
+	step_p = std::make_shared<xerolib::AutoSetVelocity>(*this, db_p, 5.0, 10.0, 14.0);
 	addStep(step_p);
 #endif
 

@@ -17,6 +17,7 @@ namespace xero
 
 			double t;
 			size_t m_segment_index;
+			double m_segment_remaining;
 			double pose_x;
 			double pose_y;
 			double pose_theta;
@@ -43,6 +44,12 @@ namespace xero
 			double dtheta;
 			double left;
 			double right;
+			double m_closest_x;
+			double m_closest_y;
+			double m_seg_start_x;
+			double m_seg_start_y;
+			double m_seg_end_x;
+			double m_seg_end_y;
 		};
 	}
 }
