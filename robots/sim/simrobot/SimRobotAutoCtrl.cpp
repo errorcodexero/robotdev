@@ -47,7 +47,7 @@ SimRobotAutoCtrl::SimRobotAutoCtrl(xerolib::XeroRobotBase &robot) : xerolib::Aut
 #endif
 
 #ifdef ROUNDED_RECT_PATH_FINDER
-	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, rect, 36.0);
+	step_p = std::make_shared<xerolib::AutoPath>(*this, db_p, rect, 120.0);
 	addStep(step_p);
 #endif
 
