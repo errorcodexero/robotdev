@@ -10,6 +10,7 @@ namespace xero
 		{
 		public:
 			TrajectoryInfo(const TrajectoryConfig &c);
+			TrajectoryInfo();
 			virtual ~TrajectoryInfo();
 
 			int getLength() const

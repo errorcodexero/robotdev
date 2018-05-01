@@ -3,8 +3,11 @@
 #include "Spline.h"
 #include "TrajectoryInfo.h"
 #include "TrajectoryConfig.h"
+#include "Waypoint.h"
+#include "Segment.h"
 #include <memory>
 #include <vector>
+#include <functional>
 
 namespace xero
 {
@@ -13,15 +16,22 @@ namespace xero
 		class TrajectoryCandidate
 		{
 		public:
-			TrajectoryCandidate();
+			typedef std::function<void(const Waypoint &, const Waypoint &, Spline &)> FitFun;
+
+		public:
+			TrajectoryCandidate(const std::vector<Waypoint> &waypoints, FitFun fit, size_t count, double dt,
+				double maxvel, double maxaccel, double maxjerk);
 			virtual ~TrajectoryCandidate();
 
+			void generate(std::vector<Segment> &segments);
+
 		private:
-			std::shared_ptr<Spline> m_spline_p;
+			std::vector<std::shared_ptr<Spline>> m_splines;
 			std::vector<double> m_lookahead;
 			double m_total_length;
 			int m_length;
-			int m_path_length;
+			size_t m_path_length;
+			size_t m_traj_length;
 			TrajectoryInfo m_info;
 			TrajectoryConfig m_config;
 		};

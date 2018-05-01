@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Coord.h" />
     <ClInclude Include="NumUtils.h" />
-    <ClInclude Include="Pathfinder.h" />
+    <ClInclude Include="Segment.h" />
     <ClInclude Include="Spline.h" />
     <ClInclude Include="TrajectoryCandidate.h" />
     <ClInclude Include="TrajectoryConfig.h" />
@@ -29,7 +29,6 @@
     <ClInclude Include="Waypoint.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Pathfinder.cpp" />
     <ClCompile Include="Spline.cpp" />
     <ClCompile Include="TrajectoryCandidate.cpp" />
     <ClCompile Include="TrajectoryConfig.cpp" />
@@ -115,7 +114,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>

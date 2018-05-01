@@ -7,6 +7,20 @@ namespace xero
 		class TrajectoryConfig
 		{
 		public:
+			TrajectoryConfig()
+			{
+				m_dt = 0.0;
+				m_max_vel = 0.0;
+				m_max_accel = 0.0;
+				m_max_jerk = 0.0;
+				m_src_vel = 0.0;
+				m_src_theta = 0.0;
+				m_dest_pos = 0.0;
+				m_dest_vel = 0.0;
+				m_dest_theta = 0.0;
+				m_count = 0;
+			}
+
 			TrajectoryConfig(double dt, double maxv, double maxa, double maxj, double srcv, double srctheta, 
 				double destpos, double destvel, double desttheta, size_t count)
 			{
@@ -23,6 +37,11 @@ namespace xero
 			}
 
 			virtual ~TrajectoryConfig();
+
+			size_t getCount() const
+			{
+				return m_count;
+			}
 
 			double getDeltaTime() const
 			{

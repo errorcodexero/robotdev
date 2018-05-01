@@ -6,6 +6,17 @@ namespace xero
 {
 	namespace jacispath
 	{
+		TrajectoryInfo::TrajectoryInfo()
+		{
+			m_filter_1 = 0;
+			m_filter_2 = 0;
+			m_impulse = 0.0;
+			m_length = 0;
+			m_dt = 0.0;
+			m_u = 0.0;
+			m_v = 0.0;
+		}
+
 		TrajectoryInfo::TrajectoryInfo(const TrajectoryConfig &c)
 		{
 			double max_a_sq = c.getMaxAccel() * c.getMaxAccel();
