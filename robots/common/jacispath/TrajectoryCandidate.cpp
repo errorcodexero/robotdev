@@ -39,9 +39,11 @@ namespace xero
 
 		void TrajectoryCandidate::generate(std::vector<Segment> &segments)
 		{
+			segments.resize(m_traj_length);
+
 			double spline_pos_initial = 0;
 			double spline_complete = 0;
-			int spline_i = 0;
+			size_t spline_i = 0;
 
 			for (size_t i = 0; i < m_traj_length; i++)
 			{

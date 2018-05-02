@@ -20,5 +20,15 @@ namespace xero
 
 			return ang;
 		}
+
+		double inline d2r(double deg)
+		{
+			return deg / 180.0 * PI;
+		}
+
+		double inline r2d(double rad)
+		{
+			return rad / PI * 180.0;
+		}
 	}
 }

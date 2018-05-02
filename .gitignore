@@ -10,3 +10,4 @@
 **/Win32
 robots/sim/simrobot/data/*.csv
 robots/sim/simrobot/data/*.log
+external/googletest

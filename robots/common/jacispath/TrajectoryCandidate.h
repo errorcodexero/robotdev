@@ -16,6 +16,11 @@ namespace xero
 		class TrajectoryCandidate
 		{
 		public:
+			static constexpr size_t PATHFINDER_SAMPLES_FAST = 1000;
+			static constexpr size_t PATHFINDER_SAMPLES_LOW = 10000;
+			static constexpr size_t PATHFINDER_SAMPLES_HIGH = 100000;
+
+		public:
 			typedef std::function<void(const Waypoint &, const Waypoint &, Spline &)> FitFun;
 
 		public:
