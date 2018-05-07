@@ -6,3 +6,7 @@
 **/builddir
 **/.vscode
 **/*.mp4
+**/*.jpg
+**/*.JPG
+**/*.mov
+**/*.MOV
