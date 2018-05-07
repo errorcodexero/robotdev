@@ -7,6 +7,7 @@ Cube::Cube(cv::Mat frame, const std::string& filename) {
     frame.copyTo(mOriginalFrame);
     mParams.readFile(filename);
 }
+
 Cube::Cube(cv::Mat frame, const paramsInput& params) {
     mParams = params;
     frame.copyTo(mWorkingFrame);
@@ -29,17 +30,17 @@ cv::Mat Cube::colorFilter(cv::Mat frame, Cube::filterMode mode) {
     if (mode==filterMode::TOGRAY) {
         cv::Scalar lowThreshold(mParams.getValue("GRAY_LOW",-9001)), highThreshold(mParams.getValue("GRAY_HIGH", -9001));
         cv::Mat grayFrame, mask;
-        cv::cvtColor(frame, grayFrame, CV_BGR2GRAY);
+        cv::cvtColor(frame, grayFrame, cv::COLOR_BGR2GRAY);
         cv::inRange(grayFrame, lowThreshold, highThreshold, mask);
         cv::bitwise_and(frame, frame, ret, mask);
     }
     if (mode==filterMode::TOHSV) {
         cv::Scalar lowThreshold(mParams.getValue("H_LOW",-9001),mParams.getValue("S_LOW",-9001),mParams.getValue("V_LOW",-9001)), highThreshold(mParams.getValue("H_HIGH",-9001),mParams.getValue("S_HIGH",-9001),mParams.getValue("V_HIGH",-9001));
         cv::Mat hsvFrame, mask;
-        cv::cvtColor(frame, hsvFrame, CV_BGR2HSV);
+        cv::cvtColor(frame, hsvFrame, cv::COLOR_BGR2HSV);
         cv::inRange(hsvFrame, lowThreshold, highThreshold, mask);
         mask.copyTo(ret);
-        //cv::cvtColor(ret, ret, CV_BGR2GRAY);
+        //cv::cvtColor(ret, ret, cv::COLOR_BGR2GRAY);
     }
     return ret;
 }
@@ -141,10 +142,12 @@ std::vector<cv::Rect> Cube::Rects(cv::Mat frame) {
     for (int i = 0; i<recs.size(); i++) {
         cv::rectangle(groupedRectangles, recs[i], cv::Scalar(255,255,255));
     };
-    
+
+    cv::namedWindow("Contours", cv::WINDOW_AUTOSIZE);
+    cv::moveWindow("Contours", drawing.cols, 0);
     cv::imshow("Contours", drawing);
-    cv::imshow("Rectangles", rectangles);
-    cv::imshow("Grouped", groupedRectangles);
+    //cv::imshow("Rectangles", rectangles);
+    //cv::imshow("Grouped", groupedRectangles);
     return recs;
 }
 
@@ -180,7 +183,7 @@ int Cube::getPosition(detectionMode mode) {
         cv::Mat im_with_keypoints;
         std::cout << keypoints.size() << std::endl;
         cv::drawKeypoints(mWorkingFrame, keypoints, im_with_keypoints, cv::Scalar(0,0,255), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS );
-        cv::imshow("Debug", im_with_keypoints);
+        //cv::imshow("Debug", im_with_keypoints);
         auto it = keypoints.begin();
         auto flag = it;
         int ymin = 9001;
@@ -198,8 +201,9 @@ int Cube::getPosition(detectionMode mode) {
         filtered.copyTo(mWorkingFrame);
         int ret;
         std::vector<cv::Rect> recs = Rects(filtered);
+	//cv::namedWindow("Target", cv::WINDOW_AUTOSIZE);
         cv::Mat target(paintTarget(recs));
-        cv::imshow("Target", target);
+        //cv::imshow("Target", target);
         return ret;
     }
 }

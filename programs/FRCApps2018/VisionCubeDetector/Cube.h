@@ -1,11 +1,14 @@
 #pragma once
-#include "opencv2/opencv.hpp"
-#include "opencv2/highgui.hpp"
+
 #include <string>
-#include "opencv2/features2d.hpp"
 #include <vector>
 #include <iostream>
 #include <map>
+
+#include "opencv2/core/core.hpp"
+#include "opencv2/opencv.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/features2d.hpp"
 #include "params_parser.h"
 
 
