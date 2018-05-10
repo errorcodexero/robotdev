@@ -1,5 +1,8 @@
 #include "GoPiGo3Robot.h"
+#include <wiringPi.h>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 namespace gopigo3
 {
@@ -31,6 +34,16 @@ namespace gopigo3
 	void GoPiGo3Robot::init(bool strict)
 	{
 		std::string str;
+		std::chrono::milliseconds delay(500);
+
+		wiringPiSetup();
+
+		//
+		// Write the Raspiberry PI GPIO which enables the robot
+		//
+		pinMode(4, OUTPUT);
+		digitalWrite(4, HIGH);
+		std::this_thread::sleep_for(delay);
 
 		//
 		// Create the SPI port to talk to the daughter processor

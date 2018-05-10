@@ -2,6 +2,7 @@
 
 #include "Coord.h"
 #include <vector>
+#include <cassert>
 
 namespace xero
 {
@@ -13,12 +14,43 @@ namespace xero
 			Spline();
 			~Spline();
 
+			void setStart(const Coord &c)
+			{
+				m_offset = c;
+			}
+
+			void setKnot(double v)
+			{
+				m_knot_distance = v;
+			}
+
+			double getKnot() const
+			{
+				return m_knot_distance;
+			}
+
+			void setAngle(double v)
+			{
+				m_angle_offset = v;
+			}
+
+			double getAngleOffset() const
+			{
+				return m_angle_offset;
+			}
+
 			Coord coords(double per);
 			double deriv(double per);
 			double deriv(const std::vector<double> &coeffs, double k, double p);
 			double angle(double per);
 			double distance(size_t count);
 			double progressForDistance(double dist, size_t count);
+
+			void setCoeffs(const std::vector<double> &c)
+			{
+				assert(c.size() == 5);
+				m_coeffs = c;
+			}
 
 		private:
 			static constexpr size_t a = 0;

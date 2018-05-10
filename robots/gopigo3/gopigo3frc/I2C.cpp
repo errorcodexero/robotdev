@@ -6,7 +6,6 @@
 
 namespace frc
 {
-
 	I2C::I2C(Port port, int deviceAddr)
 	{
 		if (port != Port::Port_0)

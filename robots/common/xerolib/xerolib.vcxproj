@@ -69,7 +69,6 @@
     <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;$(SolutionDir)..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="AdaptivePurePursuitController.cpp" />
     <ClCompile Include="AutoDelay.cpp" />
     <ClCompile Include="AutonomousControllerBase.cpp" />
     <ClCompile Include="AutonomousStepBase.cpp" />
@@ -78,29 +77,13 @@
     <ClCompile Include="HeadingProfileFollower.cpp" />
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
-    <ClCompile Include="MotionProfile.cpp" />
     <ClCompile Include="ParamsParser.cpp" />
-    <ClCompile Include="Path.cpp" />
-    <ClCompile Include="PathBuilder.cpp" />
-    <ClCompile Include="PathFollower.cpp" />
-    <ClCompile Include="PathSegment.cpp" />
     <ClCompile Include="PIDCtrl.cpp" />
-    <ClCompile Include="Position.cpp" />
-    <ClCompile Include="ProfileFollower.cpp" />
-    <ClCompile Include="ProfileGenerator.cpp" />
-    <ClCompile Include="ProfileGoal.cpp" />
     <ClCompile Include="RobotControllerBase.cpp" />
-    <ClCompile Include="RobotState.cpp" />
-    <ClCompile Include="RobotStateEstimator.cpp" />
-    <ClCompile Include="Rotation.cpp" />
-    <ClCompile Include="Segment.cpp" />
-    <ClCompile Include="SetpointGenerator.cpp" />
-    <ClCompile Include="State.cpp" />
     <ClCompile Include="SubsystemBase.cpp" />
     <ClCompile Include="XeroRobotBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AdaptivePurePursuitController.h" />
     <ClInclude Include="AutoDelay.h" />
     <ClInclude Include="AutonomousControllerBase.h" />
     <ClInclude Include="AutonomousStepBase.h" />

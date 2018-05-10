@@ -5,7 +5,11 @@
 #include "RobotStateEstimator.h"
 #include "Kinematics.h"
 #include "ModuleDefintions.h"
+
+#ifdef PATHFINDER
 #include "PathDebugData.h"
+#endif
+
 #include <cassert>
 #include <iostream>
 #include <cmath>

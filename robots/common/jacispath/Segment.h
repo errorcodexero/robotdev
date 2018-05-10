@@ -9,6 +9,18 @@ namespace xero
 		class Segment
 		{
 		public:
+			Segment()
+			{
+				m_dt = 0.0;
+				m_x = 0.0;
+				m_y = 0.0;
+				m_position = 0.0;
+				m_velocity = 0.0;
+				m_acceleration = 0.0;
+				m_jerk = 0.0;
+				m_heading = 0.0;
+			}
+
 			Segment(double dt, double x, double y, double pos, double vel, double accel, double jerk, double head)
 			{
 				m_dt = dt;
