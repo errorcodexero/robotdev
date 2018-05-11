@@ -5,11 +5,7 @@
 #include "RobotStateEstimator.h"
 #include "Kinematics.h"
 #include "ModuleDefintions.h"
-
-#ifdef PATHFINDER
 #include "PathDebugData.h"
-#endif
-
 #include <cassert>
 #include <iostream>
 #include <cmath>
@@ -198,7 +194,6 @@ namespace xerolib
 		double current = frc::Timer::GetFPGATimestamp();
 		double last = current;
 		bool updated;
-		bool spdok = false;
 
 		m_left_velocity_pid.setLogFile(getRobot().getBaseDir() + "\\leftpid.csv");
 		m_right_velocity_pid.setLogFile(getRobot().getBaseDir() + "\\rightpid.csv");
@@ -228,9 +223,6 @@ namespace xerolib
 						leftactual = m_left_speed.getSpeed();
 						rightactual = m_right_speed.getSpeed();
 						updated = true;
-
-						if (leftactual > 1.0)
-							spdok = true;
 					}
 
 					double dt = current - last;

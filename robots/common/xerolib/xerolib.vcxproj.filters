@@ -40,6 +40,60 @@
     <ClCompile Include="AutoDelay.cpp">
       <Filter>Source Files\autosteps</Filter>
     </ClCompile>
+    <ClCompile Include="AdaptivePurePursuitController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoPrintPosition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoSetVelocity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MotionProfile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Path.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFollower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PathSegment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Position.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProfileFollower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProfileGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ProfileGoal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RobotState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RobotStateEstimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rotation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Segment.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SetpointGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constraints.h">
@@ -163,6 +217,24 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="ModuleDefintions.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="AdaptivePurePursuitController.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="PathDebugData.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoPrintPosition.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSetVelocity.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="CountdownTimer.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="Subsystem.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>

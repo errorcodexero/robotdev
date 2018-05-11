@@ -69,27 +69,49 @@
     <IncludePath>$(SolutionDir)..\gopigo3\gopigo3frc;$(SolutionDir)..\gopigo3\gopigo3navx;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="AdaptivePurePursuitController.cpp" />
     <ClCompile Include="AutoDelay.cpp" />
     <ClCompile Include="AutonomousControllerBase.cpp" />
     <ClCompile Include="AutonomousStepBase.cpp" />
+    <ClCompile Include="AutoPrintPosition.cpp" />
     <ClCompile Include="AutoSetMotorVoltage.cpp" />
+    <ClCompile Include="AutoSetVelocity.cpp" />
     <ClCompile Include="DriveBase.cpp" />
     <ClCompile Include="HeadingProfileFollower.cpp" />
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
+    <ClCompile Include="MotionProfile.cpp" />
     <ClCompile Include="ParamsParser.cpp" />
+    <ClCompile Include="Path.cpp" />
+    <ClCompile Include="PathBuilder.cpp" />
+    <ClCompile Include="PathFollower.cpp" />
+    <ClCompile Include="PathSegment.cpp" />
     <ClCompile Include="PIDCtrl.cpp" />
+    <ClCompile Include="Position.cpp" />
+    <ClCompile Include="ProfileFollower.cpp" />
+    <ClCompile Include="ProfileGenerator.cpp" />
+    <ClCompile Include="ProfileGoal.cpp" />
     <ClCompile Include="RobotControllerBase.cpp" />
+    <ClCompile Include="RobotState.cpp" />
+    <ClCompile Include="RobotStateEstimator.cpp" />
+    <ClCompile Include="Rotation.cpp" />
+    <ClCompile Include="Segment.cpp" />
+    <ClCompile Include="SetpointGenerator.cpp" />
+    <ClCompile Include="State.cpp" />
     <ClCompile Include="SubsystemBase.cpp" />
     <ClCompile Include="XeroRobotBase.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AdaptivePurePursuitController.h" />
     <ClInclude Include="AutoDelay.h" />
     <ClInclude Include="AutonomousControllerBase.h" />
     <ClInclude Include="AutonomousStepBase.h" />
     <ClInclude Include="AutoPath.h" />
+    <ClInclude Include="AutoPrintPosition.h" />
     <ClInclude Include="AutoSetMotorVoltage.h" />
+    <ClInclude Include="AutoSetVelocity.h" />
     <ClInclude Include="Constraints.h" />
+    <ClInclude Include="CountdownTimer.h" />
     <ClInclude Include="DriveBase.h" />
     <ClInclude Include="HeadingProfileFollower.h" />
     <ClInclude Include="Kinematics.h" />
@@ -103,6 +125,7 @@
     <ClInclude Include="Path.h" />
     <ClInclude Include="PathBuilder.h" />
     <ClInclude Include="PathContainer.h" />
+    <ClInclude Include="PathDebugData.h" />
     <ClInclude Include="PathFinderConstants.h" />
     <ClInclude Include="PathFollower.h" />
     <ClInclude Include="PathSegment.h" />
@@ -121,6 +144,7 @@
     <ClInclude Include="SetpointGenerator.h" />
     <ClInclude Include="Speedometer.h" />
     <ClInclude Include="State.h" />
+    <ClInclude Include="Subsystem.h" />
     <ClInclude Include="SubsystemBase.h" />
     <ClInclude Include="ModuleDefintions.h" />
     <ClInclude Include="Waypoint.h" />

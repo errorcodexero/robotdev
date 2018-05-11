@@ -6,6 +6,7 @@
 #include "Path.h"
 #include "MathUtils.h"
 #include "PathFinderConstants.h"
+#include "PathDebugData.h"
 #include <memory>
 
 namespace xero
