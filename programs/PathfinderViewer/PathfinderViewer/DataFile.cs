@@ -55,8 +55,8 @@ namespace PathfinderViewer
         #endregion
 
         #region private members
-        IDictionary<string, DataFileElement> m_elements;
-        IList<DataFileElement> m_element_array;
+        private IDictionary<string, DataFileElement> m_elements;
+        private IList<DataFileElement> m_element_array;
         #endregion
 
         #region public constructors

@@ -45,23 +45,11 @@ namespace PathfinderViewer
                     m_file.Clear();
                 }
             }
-
-            updateWindows();
         }
 
         private void ExitCommand(object sender, EventArgs e)
         {
             Close();
-        }
-
-        private void updateWindows()
-        {
-            m_pathview.Data = m_file;
-            if (m_file != null && m_file.Count > 0)
-            {
-                DataFile.DataFileElement elem = m_file["t"];
-                m_pathview.SetPathDescriptors(m_config.Paths);
-            }
         }
     }
 }
