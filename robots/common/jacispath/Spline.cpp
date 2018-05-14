@@ -1,6 +1,8 @@
 #include "Spline.h"
 #include "NumUtils.h"
 
+using namespace xero::motion;
+
 namespace xero
 {
 	namespace jacispath
@@ -9,6 +11,10 @@ namespace xero
 		{
 			for(size_t i = 0 ; i < 5 ; i++)
 				m_coeffs.push_back(0.0);
+
+			m_angle_offset = 0.0;
+			m_arc_length = 0.0;
+			m_knot_distance = 0.0;
 		}
 
 		Spline::~Spline()
@@ -51,7 +57,7 @@ namespace xero
 			double integrand = 0.0;
 			double arc_length = 0.0;
 
-			for (size_t i = 0; i < count; i++)
+			for (size_t i = 0; i <= count; i++)
 			{
 				double t = i / (double)count;
 				double dydt = deriv(m_coeffs, m_knot_distance, t);
@@ -72,6 +78,8 @@ namespace xero
 			double arc_length = 0.0;
 			double last_arc_length = 0.0;
 			double t;
+
+			dist /= m_knot_distance;
 
 			for (size_t i = 0; i < count; i++)
 			{

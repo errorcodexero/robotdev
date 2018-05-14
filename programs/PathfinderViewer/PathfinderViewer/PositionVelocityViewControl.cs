@@ -10,11 +10,18 @@ using System.Windows.Forms;
 
 namespace PathfinderViewer
 {
-    public partial class PositionVelocityViewControl : UserControl
+    partial class PositionVelocityViewControl : UserControl
     {
-        public PositionVelocityViewControl()
+        private DataManager m_mgr;
+
+        public PositionVelocityViewControl(DataManager mgr)
         {
+            m_mgr = mgr;
             InitializeComponent();
+        }
+
+        public void SetTimeWindow(double mintime, double maxtime)
+        {
         }
     }
 }

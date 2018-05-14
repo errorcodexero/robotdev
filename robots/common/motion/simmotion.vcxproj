@@ -19,29 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Hermite.h" />
-    <ClInclude Include="NumUtils.h" />
-    <ClInclude Include="Spline.h" />
-    <ClInclude Include="TrajectoryCandidate.h" />
-    <ClInclude Include="TrajectoryConfig.h" />
-    <ClInclude Include="TrajectoryInfo.h" />
-    <ClInclude Include="Waypoint.h" />
-    <ClInclude Include="WaypointReader.h" />
+    <ClInclude Include="Coord.h" />
+    <ClInclude Include="Segment.h" />
+    <ClInclude Include="SegmentWriter.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Hermite.cpp" />
-    <ClCompile Include="Spline.cpp" />
-    <ClCompile Include="TrajectoryCandidate.cpp" />
-    <ClCompile Include="TrajectoryConfig.cpp" />
-    <ClCompile Include="TrajectoryInfo.cpp" />
-    <ClCompile Include="WaypointReader.cpp" />
+    <ClCompile Include="SegmentWriter.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{D8462B96-9FA4-4C9B-9DA0-D6E22BC9461E}</ProjectGuid>
+    <ProjectGuid>{E2EF1D16-6803-45D8-84BD-225C7EBCD1EA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>simjacipath</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <RootNamespace>simmotion</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -113,7 +103,6 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)../common/motion</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -122,7 +111,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
@@ -136,7 +125,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -145,7 +134,6 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)../common/motion</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -5,6 +5,7 @@
 #include <Hermite.h>
 
 using namespace xero::jacispath;
+using namespace xero::motion;
 
 TEST(SimpleTest, Simple)
 {
@@ -18,5 +19,6 @@ TEST(SimpleTest, Simple)
 	};
 
 	TrajectoryCandidate c(points, &Hermite::cubic, TrajectoryCandidate::PATHFINDER_SAMPLES_HIGH, 0.001, 15.0, 10.0, 60.0);
-	c.generate(segs);
+	if (c.isValid())
+		c.generate(segs);
 }

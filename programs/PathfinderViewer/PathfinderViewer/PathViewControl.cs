@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace PathfinderViewer
 {
@@ -16,24 +11,36 @@ namespace PathfinderViewer
         {
             #region private variables
             private PathViewControl m_parent;
-            private ConfigData.PathDescriptor m_desc;
 
+            private string m_name;
+            private DataFile m_file;
             private DataFile.DataFileElement m_time;
             private DataFile.DataFileElement m_x;
             private DataFile.DataFileElement m_y;
             private DataFile.DataFileElement m_theta;
 
+            private int m_start_sample;
+            private int m_end_sample;
+
             #endregion
 
-            public Path(PathViewControl parent, ConfigData.PathDescriptor desc)
+            public Path(PathViewControl parent, PathDescriptor desc)
             {
                 m_parent = parent;
-                m_desc = desc;
+                m_name = desc.Name;
+                m_file = parent.Manager[desc.File];
+                m_time = m_file[desc.Time];
+                m_x = m_file[desc.XVarName];
+                m_y = m_file[desc.YVarName];
+                m_theta = m_file[desc.ThetaName];
 
-                m_time = parent.Data["t"];
-                m_x = parent.Data[desc.XVarName];
-                m_y = parent.Data[desc.YVarName];
-                m_theta = parent.Data[desc.ThetaName];
+                m_start_sample = 0;
+                m_end_sample = m_time.Values.Length;
+            }
+
+            public string Name
+            {
+                get { return m_name; }
             }
 
             public DataFile.DataFileElement X
@@ -50,77 +57,55 @@ namespace PathfinderViewer
             {
                 get { return m_theta; }
             }
+
+            public int StartSample
+            {
+                get { return m_start_sample; }
+            }
+
+            public int EndSample
+            {
+                get { return m_end_sample; }
+            }
+
+            public void SetTimeWindow(double mintime, double maxtime)
+            {
+                m_start_sample = m_time.GetIndex(mintime);
+                m_end_sample = m_time.GetIndex(maxtime);
+                if (m_end_sample != m_time.Values.Length - 1)
+                    m_end_sample++;
+            }
         }
 
         #region private variables
         private List<Path> m_paths;
-        private DataFile m_file;
-        int m_start_sample;
-        int m_end_sample;
-        bool m_auto_boundaries;
-
-        private double m_minx;
-        private double m_maxx;
-        private double m_miny;
-        private double m_maxy;
-
-        private int m_left_boundary;
-        private int m_right_boundary;
-        private int m_top_boundary;
-        private int m_bottom_boundary;
+        private DataManager m_mgr ;
         #endregion
 
         #region public constructors
-        public PathViewControl()
+        public PathViewControl(DataManager mgr)
         {
-            m_paths = new List<Path>();
-            m_left_boundary = 3;
-            m_right_boundary = 3;
-            m_top_boundary = 3;
-            m_bottom_boundary = 3;
+            m_mgr = mgr;
 
-            m_auto_boundaries = true;
+            m_paths = new List<Path>();
             InitializeComponent();
+
+            ContextMenu menu = new ContextMenu();
+            menu.MenuItems.Add(new MenuItem("Add Path", new EventHandler(AddPathHandler)));
+            menu.MenuItems.Add(new MenuItem("Delete Path", new EventHandler(DeletePathHandler)));
+
+            ContextMenu = menu;
         }
         #endregion
 
         #region public properties
-        public DataFile Data
+        public DataManager Manager
         {
-            get { return m_file; }
-            set 
-            {
-                m_start_sample = 0;
-                m_end_sample = 0;
-
-                m_file = value;
-                if (m_file != null)
-                {
-                    DataFile.DataFileElement elem = m_file["t"];
-                    if (elem != null)
-                    {
-                        m_start_sample = 0;
-                        m_end_sample = elem.Values.Length;
-                    }
-                }
-            }
+            get { return m_mgr; }
         }
         #endregion
 
         #region public methods
-        public void SetPathDescriptors(IList<ConfigData.PathDescriptor> list)
-        {
-            m_paths.Clear();
-
-            foreach (ConfigData.PathDescriptor desc in list)
-                m_paths.Add(new Path(this, desc));
-
-            if (m_auto_boundaries)
-                FindBounds();
-
-            Invalidate();
-        }
-
         public void Clear()
         {
             m_paths.Clear();
@@ -129,93 +114,52 @@ namespace PathfinderViewer
         public void AddPath(Path p)
         {
             m_paths.Add(p);
-            if (m_auto_boundaries)
-                FindBounds();
+            UpdateChart() ;
         }
         #endregion
 
-        #region protected methods
-        protected override void OnPaint(PaintEventArgs e)
+        #region public methods
+        public void SetTimeWindow(double mintime, double maxtime)
         {
-            base.OnPaint(e);
-            if (m_paths.Count > 0)
-                DrawPlot(e.Graphics);
+            foreach (Path p in m_paths)
+                p.SetTimeWindow(mintime, maxtime);
+
+            Invalidate();
         }
         #endregion
 
         #region private methods
-        private void DrawPlot(Graphics g)
+        private void AddPathHandler(object sender, EventArgs args)
         {
-            double scalex = (Size.Width - m_left_boundary - m_right_boundary) / (m_maxx - m_minx);
-            double scaley = (Size.Height - m_top_boundary - m_bottom_boundary) / (m_maxy - m_miny);
-            double scale = (scalex < scaley) ? scalex : scaley;
-
-            DrawPlot(g, scale);
-        }
-
-        private void DrawPlot(Graphics g, double scale)
-        {
-            using (Pen pen = new Pen(Color.Blue))
+            SelectPathVariablesDialog dialog = new SelectPathVariablesDialog(m_mgr);
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                foreach (Path p in m_paths)
-                {
-                    DrawPath(g, scale, p, pen);
-                }
+                PathDescriptor desc = new PathDescriptor(dialog.File, dialog.Name, dialog.TimeVariable, dialog.XVariable, dialog.YVariable, dialog.ThetaVariable);
+                Path p = new Path(this, desc);
+                AddPath(p);
+                Invalidate();
             }
         }
 
-        private void DrawPath(Graphics g, double scale, Path p, Pen pen)
+        private void DeletePathHandler(object sender, EventArgs args)
         {
-            Point prev = new Point(0, 0);
-
-            for (int i = m_start_sample; i < m_end_sample; i++)
-            {
-                int px = (int)((p.X.Values[i] - m_minx) * scale) + m_left_boundary;
-                int py = Size.Height - (int)((p.Y.Values[i] - m_miny) * scale) - m_bottom_boundary;
-                Point curr = new Point(px, py);
-
-                if (i != m_start_sample)
-                {
-                    g.DrawLine(pen, prev, curr);
-                }
-
-                prev = curr;
-            }
         }
 
-        private void FindBounds()
+        private void UpdateChart()
         {
-            m_minx = Double.MaxValue;
-            m_maxx = Double.MinValue;
-            m_miny = Double.MaxValue;
-            m_maxy = Double.MinValue;
+            m_chart.Series.Clear();
 
             foreach(Path p in m_paths)
             {
-                if (p.X.Minimum < m_minx)
-                    m_minx = p.X.Minimum;
+                Series s = new Series(p.Name);
+                s.ChartType = SeriesChartType.Point;
+                for (int i = p.StartSample; i < p.EndSample; i++)
+                    s.Points.AddXY(p.X.Values[i], p.Y.Values[i]);
 
-                if (p.X.Maximum > m_maxx)
-                    m_maxx = p.X.Maximum;
-
-                if (p.Y.Minimum < m_miny)
-                    m_miny = p.Y.Minimum;
-
-                if (p.Y.Maximum > m_maxy)
-                    m_maxy = p.Y.Maximum;
+                m_chart.Series.Add(s);
             }
 
-            if (Math.Abs(m_minx - m_maxx) < 0.1)
-            {
-                m_minx = 0.8 * m_minx;
-                m_maxx = 1.2 * m_maxx;
-            }
-
-            if (Math.Abs(m_miny - m_maxy) < 0.1)
-            {
-                m_miny = 0.8 * m_miny;
-                m_maxy = 1.2 * m_maxy;
-            }
+            Invalidate();
         }
         #endregion
     }

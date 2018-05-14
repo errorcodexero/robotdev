@@ -2,6 +2,8 @@
 #include "NumUtils.h"
 #include <cmath>
 
+using namespace xero::motion;
+
 namespace xero
 {
 	namespace jacispath

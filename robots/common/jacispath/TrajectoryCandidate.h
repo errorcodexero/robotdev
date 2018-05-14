@@ -28,11 +28,21 @@ namespace xero
 				double maxvel, double maxaccel, double maxjerk);
 			virtual ~TrajectoryCandidate();
 
-			void generate(std::vector<Segment> &segments);
+			bool generate(std::vector<xero::motion::Segment> &segments);
+
+			bool isValid() const
+			{
+				return true;
+			}
+
+		private:
+			bool fromSecondOrderFilter(int filter_1_l, int filter_2_l, double dt, double u, double v,
+				double impulse, int len, std::vector<xero::motion::Segment> &segments);
+			bool create(std::vector<xero::motion::Segment> &segments);
 
 		private:
 			std::vector<std::shared_ptr<Spline>> m_splines;
-			std::vector<double> m_lookahead;
+			std::vector<double> m_endpos;
 			double m_total_length;
 			int m_length;
 			size_t m_path_length;

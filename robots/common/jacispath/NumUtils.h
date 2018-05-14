@@ -5,7 +5,7 @@ namespace xero
 {
 	namespace jacispath
 	{
-		static double constexpr PI = 3.14159265359;
+		static double constexpr PI = 3.14159265358979323846;
 
 		double inline clamp(double value, double min, double max)
 		{

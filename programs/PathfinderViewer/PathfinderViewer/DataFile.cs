@@ -24,6 +24,11 @@ namespace PathfinderViewer
                 m_min = Double.MaxValue;
             }
 
+            public string Name
+            {
+                get { return m_name; }
+            }
+
             public double[] Values
             {
                 get { return m_values; }
@@ -51,18 +56,44 @@ namespace PathfinderViewer
                 if (value < m_min)
                     m_min = value;
             }
+
+            public int GetIndex(double value)
+            {
+                int left = 0;
+                int right = m_values.Length - 1;
+
+                if (value < m_values[left])
+                    return left;
+
+                if (value > m_values[right])
+                    return right;
+
+                while (true)
+                {
+                    if (right - left == 1)
+                        break;
+
+                    int mid = (left + right) / 2;
+                    if (value < m_values[mid])
+                        right = mid;
+                    else
+                        left = mid;
+                }
+
+                return left;
+            }
         }
         #endregion
 
         #region private members
-        private IDictionary<string, DataFileElement> m_elements;
+        private string m_filename;
         private IList<DataFileElement> m_element_array;
         #endregion
 
         #region public constructors
-        public DataFile()
+        public DataFile(string name)
         {
-            m_elements = new Dictionary<string, DataFileElement>();
+            m_filename = name;
             m_element_array = new List<DataFileElement>();
         }
         #endregion
@@ -72,8 +103,11 @@ namespace PathfinderViewer
         {
             get
             {
-                if (m_elements.ContainsKey(name))
-                    return m_elements[name];
+                foreach (DataFileElement elem in m_element_array)
+                {
+                    if (elem.Name == name)
+                        return elem;
+                }
 
                 return null;
             }
@@ -81,18 +115,43 @@ namespace PathfinderViewer
 
         public int Count
         {
-            get { return m_elements.Count; }
+            get { return m_element_array.Count; }
         }
+
+        public IList<string> Names
+        {
+            get
+            {
+                List<string> names = new List<string>();
+                foreach(DataFileElement elem in m_element_array)
+                {
+                    names.Add(elem.Name);
+                }
+
+                return names;
+            }
+        }
+
         #endregion
 
         #region public methods
+        public bool Contains(string name)
+        {
+            foreach(DataFileElement elem in m_element_array)
+            {
+                if (elem.Name == name)
+                    return true;
+            }
+
+            return false;
+        }
+
         public void Clear()
         {
             m_element_array.Clear();
-            m_elements.Clear();
         }
 
-        public void readFile(string filename)
+        public void ReadFile(string filename)
         {
             string line;
             StreamReader rdr = new StreamReader(filename);
@@ -114,6 +173,8 @@ namespace PathfinderViewer
 
                 which++;
             }
+
+            rdr.Close();
         }
         #endregion
 
@@ -123,7 +184,6 @@ namespace PathfinderViewer
             foreach(string name in names)
             {
                 DataFileElement elem = new DataFileElement(name);
-                m_elements[name] = elem;
                 m_element_array.Add(elem);
             }
         }
@@ -132,7 +192,6 @@ namespace PathfinderViewer
         {
             if (data.Length != m_element_array.Count)
             {
-                m_elements.Clear();
                 m_element_array.Clear();
                 throw new Exception("Invalid data line in data file - wrong number of elements");
             }
@@ -151,7 +210,6 @@ namespace PathfinderViewer
                 }
                 else if (!Double.TryParse(data[i], out value))
                 {
-                    m_elements.Clear();
                     m_element_array.Clear();
                     throw new Exception("Invalid data line in data file - invalid value");
                 }

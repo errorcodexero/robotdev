@@ -4,7 +4,7 @@
 
 namespace xero
 {
-	namespace jacispath
+	namespace motion
 	{
 		class Segment
 		{
@@ -33,15 +33,40 @@ namespace xero
 				m_heading = head;
 			}
 
+			void setDT(double t)
+			{
+				m_dt = t;
+			}
+
 			void setHeading(double angle)
 			{
 				m_heading = angle;
 			}
 
-			void setPosition(const Coord &pos)
+			void setCoords(const Coord &pos)
 			{
 				m_x = pos.getX();
 				m_y = pos.getY();
+			}
+
+			void setPosition(double p)
+			{
+				m_position = p;
+			}
+
+			void setAcceleration(double a)
+			{
+				m_acceleration = a;
+			}
+
+			void setVelocity(double v)
+			{
+				m_velocity = v;
+			}
+
+			void setJerk(double j)
+			{
+				m_jerk = j;
 			}
 
 			double getDT() const

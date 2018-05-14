@@ -2,7 +2,7 @@
 
 namespace xero
 {
-	namespace jacispath
+	namespace motion
 	{
 		class Coord
 		{

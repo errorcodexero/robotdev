@@ -13,9 +13,39 @@ namespace xero
 			TrajectoryInfo();
 			virtual ~TrajectoryInfo();
 
+			int GetFilter1() const
+			{
+				return m_filter_1;
+			}
+
+			int GetFilter2() const
+			{
+				return m_filter_2;
+			}
+
 			int getLength() const
 			{
 				return m_length;
+			}
+
+			double getDT() const
+			{
+				return m_dt;
+			}
+
+			double getU() const
+			{
+				return m_u;
+			}
+
+			double getV() const
+			{
+				return m_v;
+			}
+
+			double getImpulse() const
+			{
+				return m_impulse;
 			}
 
 		private:

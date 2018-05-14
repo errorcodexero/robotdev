@@ -12,6 +12,25 @@ namespace PathfinderViewer
 {
     public partial class DoubleSlider : UserControl
     {
+        #region event handler
+        public event EventHandler ValueChanged;
+        #endregion
+
+        #region private enums
+        private enum MarkerAlign
+        {
+            Left,
+            Right
+        };
+
+        private enum DragMode
+        {
+            None,
+            DraggingLeft,
+            DraggingRight
+        }
+        #endregion
+
         #region private member variables
         private double m_minimum;
         private double m_maximum;
@@ -24,16 +43,29 @@ namespace PathfinderViewer
         private Color m_normal_color;
         private Color m_tick_color;
         private Color m_label_color;
+        private Color m_left_marker_fill_color;
+        private Color m_right_marker_fill_color;
+        private Color m_left_marker_outline_color;
+        private Color m_right_marker_outline_color;
 
+        private int m_bar_top;
         private int m_bar_height;
         private int m_bar_tick_spacing;
         private int m_tick_height;
         private int m_tick_label_spacing;
+        private int m_marker_height;
+        private int m_marker_width;
+        private int m_marker_range_spacing;
+
+        DragMode m_mode;
+
         #endregion
 
         #region public constructors
         public DoubleSlider()
         {
+            m_mode = DragMode.None;
+
             m_minimum = 0.0;
             m_maximum = 100.0;
             m_left = 0.0;
@@ -41,17 +73,25 @@ namespace PathfinderViewer
             m_ticks = 20;
             m_labels = true;
 
+            m_bar_top = Font.Height;
             m_bar_height = 12;
-            m_bar_tick_spacing = 4;
-            m_tick_height = 12;
+            m_bar_tick_spacing = -m_bar_height;
+            m_tick_height = 4 + m_bar_height;
             m_tick_label_spacing = 8;
+            m_marker_width = 8;
+            m_marker_height = 32;
+            m_marker_range_spacing = 6;
 
             m_range_color = Color.LightGreen;
             m_normal_color = Color.LightBlue;
             m_tick_color = Color.DarkBlue;
             m_label_color = Color.Black;
+            m_left_marker_fill_color = Color.CadetBlue;
+            m_left_marker_outline_color = Color.Black;
+            m_right_marker_fill_color = Color.CadetBlue;
+            m_right_marker_outline_color = Color.Black;
 
-            SetBoundsCore(0, 0, 0, 60, BoundsSpecified.Height);
+            DoubleBuffered = true;
             InitializeComponent();
         }
         #endregion
@@ -122,6 +162,14 @@ namespace PathfinderViewer
         #endregion
 
         #region protected methods
+        protected virtual void OnValueChanged()
+        {
+            if (ValueChanged != null)
+            {
+                ValueChanged(this, EventArgs.Empty);
+            }
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
@@ -129,17 +177,107 @@ namespace PathfinderViewer
             DrawBar(e.Graphics);
             DrawTicks(e.Graphics);
 
-            // DrawMarker(e.Graphics, m_left, Color.Red);
-            // DrawMarker(e.Graphics, m_right, Color.Blue);
+            DrawMarker(e.Graphics, m_left, MarkerAlign.Right, m_left_marker_outline_color, m_left_marker_fill_color);
+            DrawMarker(e.Graphics, m_right, MarkerAlign.Left, m_right_marker_outline_color, m_right_marker_fill_color);
+
+            DrawRange(e.Graphics);
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            if (m_mode == DragMode.None)
+            {
+                if (GetMarkerBounds(m_left, MarkerAlign.Right).Contains(e.Location))
+                {
+                    m_mode = DragMode.DraggingLeft;
+                    Capture = true;
+                }
+                else if (GetMarkerBounds(m_right, MarkerAlign.Left).Contains(e.Location))
+                {
+                    m_mode = DragMode.DraggingRight;
+                    Capture = true;
+                }
+            }
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            if (m_mode == DragMode.DraggingLeft)
+            {
+                using (Graphics g = CreateGraphics())
+                {
+                    Rectangle r1 = GetMarkerBounds(m_left, MarkerAlign.Right);
+                    Rectangle r3 = GetLeftRegionBounds(g);
+
+                    m_left = GetValue(e.Location.X);
+                    if (m_left < m_minimum)
+                        m_left = m_minimum;
+                    else if (m_left > m_right)
+                        m_left = m_right;
+
+                    Rectangle r2 = GetMarkerBounds(m_left, MarkerAlign.Right);
+                    r2.Inflate(m_marker_width * 2, Font.Height);
+                    Rectangle r4 = GetLeftRegionBounds(g);
+                    r4.Inflate(m_marker_width * 2, Height);
+
+                    Invalidate(r1);
+                    Invalidate(r2);
+                    Invalidate(r3);
+                    Invalidate(r4);
+
+                    OnValueChanged();
+                }
+            }
+            else if (m_mode == DragMode.DraggingRight)
+            {
+                using (Graphics g = CreateGraphics())
+                {
+                    Rectangle r1 = GetMarkerBounds(m_right, MarkerAlign.Left);
+                    Rectangle r3 = GetRightRegionBounds(g);
+
+                    m_right = GetValue(e.Location.X);
+                    if (m_right > m_maximum)
+                        m_right = m_maximum;
+                    else if (m_right < m_left)
+                        m_right = m_left;
+
+                    Rectangle r2 = GetMarkerBounds(m_right, MarkerAlign.Left);
+                    r2.Inflate(m_marker_width * 2, Font.Height);
+                    Rectangle r4 = GetRightRegionBounds(g);
+                    r4.Inflate(m_marker_width * 2, Font.Height);
+
+                    Invalidate(r1);
+                    Invalidate(r2);
+                    Invalidate(r3);
+                    Invalidate(r4);
+
+                    OnValueChanged();
+                }
+            }
+        }
+
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            base.OnMouseUp(e);
+            Capture = false;
+            m_mode = DragMode.None;
+            Invalidate();
+            OnValueChanged();
         }
         #endregion
 
         #region private methods
+
+        #region position methods
         private int GetPixel(double v)
         {
             int width = Width - Margin.Left - Margin.Right;
             double pos = (v - m_minimum) / (m_maximum - m_minimum);
-            return (int)(pos * width);
+            return (int)(pos * width) + Margin.Left;
         }
 
         private double GetValue(int pixel)
@@ -148,23 +286,52 @@ namespace PathfinderViewer
             return pos * (m_maximum - m_minimum);
         }
 
+        Rectangle GetMarkerBounds(double value, MarkerAlign align)
+        {
+            int xloc = GetPixel(value);
+            int yloc = Margin.Top + m_bar_top + m_bar_height / 2 - m_marker_height / 2;
+
+            if (align == MarkerAlign.Right)
+                xloc -= m_marker_width;
+
+            return new Rectangle(xloc, yloc, m_marker_width, m_marker_height);
+        }
+
+        Rectangle GetLeftRegionBounds(Graphics g)
+        {
+            string label = string.Format("{0:F1}", m_left);
+            int pos = GetPixel(m_left) + m_marker_range_spacing;
+            SizeF s = g.MeasureString(label, Font);
+            return new Rectangle(pos, Margin.Top, (int)s.Width , Font.Height);
+        }
+
+        Rectangle GetRightRegionBounds(Graphics g)
+        {
+            string label = string.Format("{0:F1}", m_right);
+            SizeF s = g.MeasureString(label, Font);
+            int pos = GetPixel(m_right) - m_marker_range_spacing - (int)s.Width;
+            return new Rectangle(pos, Margin.Top, (int)s.Width, Font.Height);
+        }
+        #endregion
+
+        #region drawing methods
         private void DrawBar(Graphics g)
         {
             using (Brush b = new SolidBrush(m_normal_color))
             {
                 int width = GetPixel(m_left) - Margin.Left;
-                Rectangle r = new Rectangle(Margin.Left, Margin.Top, width, m_bar_height);
+                Rectangle r = new Rectangle(Margin.Left, Margin.Top + m_bar_top, width, m_bar_height);
                 g.FillRectangle(b, r);
 
                 width = Width - Margin.Right - GetPixel(m_right);
-                r = new Rectangle(GetPixel(m_right), Margin.Top, width, m_bar_height);
+                r = new Rectangle(GetPixel(m_right), Margin.Top + m_bar_top, width, m_bar_height);
                 g.FillRectangle(b, r);
             }
 
             using (Brush b = new SolidBrush(m_range_color))
             {
                 int width = GetPixel(m_right) - GetPixel(m_left);
-                Rectangle r = new Rectangle(GetPixel(m_left), Margin.Top, width, m_bar_height);
+                Rectangle r = new Rectangle(GetPixel(m_left), Margin.Top + m_bar_top, width, m_bar_height);
                 g.FillRectangle(b, r);
             }
         }
@@ -178,11 +345,11 @@ namespace PathfinderViewer
             {
                 using (Pen p = new Pen(m_tick_color))
                 {
-                    int each = (Width - Margin.Left - Margin.Right) / (m_ticks - 1);
-                    int pos = Margin.Left;
-                    int top = Margin.Top + m_bar_height + m_bar_tick_spacing;
+                    double each = (m_maximum - m_minimum) / (m_ticks - 1);
+                    int top = Margin.Top + m_bar_top + m_bar_height + m_bar_tick_spacing;
                     for (int i = 0; i < m_ticks; i++)
                     {
+                        int pos = GetPixel(m_minimum + i * each);
                         g.DrawLine(p, pos, top, pos, top + m_tick_height);
 
                         if (m_labels)
@@ -190,46 +357,49 @@ namespace PathfinderViewer
                             string label = string.Format("{0:F1}", GetValue(pos));
                             SizeF size = g.MeasureString(label, Font);
                             float left = pos - size.Width / 2.0f;
-                            float baseline = top + m_tick_height + m_tick_label_spacing + size.Height;
+                            float baseline = top + m_tick_height + m_tick_label_spacing;
+
                             g.DrawString(label, Font, b, left, baseline);
                         }
-                        pos += each;
                     }
                 }
             }
         }
 
-        private void DrawMarker(Graphics g, double value, Color c)
+        private void DrawMarker(Graphics g, double value, MarkerAlign align, Color outline, Color fill)
         {
-            int markerwidth = 12;
-            int markermid = 12;
-            int markerheight = 24;
+            Rectangle r = GetMarkerBounds(value, align);
 
-            Point[] points = new Point[5];
-
-            double pcnt = (value - m_minimum) / (m_maximum - m_minimum);
-            int xpos = (int)(pcnt * (Width - Margin.Left - Margin.Right)) + Margin.Left;
-
-            points[0].X = xpos;
-            points[0].Y = Margin.Top + m_bar_height;
-
-            points[1].X = xpos + markerwidth / 2;
-            points[1].Y = Margin.Top + markermid + m_bar_height;
-
-            points[2].X = xpos + markerwidth / 2;
-            points[2].Y = Margin.Top + markerheight + m_bar_height;
-
-            points[3].X = xpos - markerwidth / 2;
-            points[3].Y = Margin.Top + markerheight + m_bar_height;
-
-            points[4].X = xpos - markerwidth / 2;
-            points[4].Y = Margin.Top + markermid + m_bar_height;
-
-            using (Brush b = new SolidBrush(c))
+            using (Brush b = new SolidBrush(fill))
             {
-                g.FillPolygon(b, points);
+                g.FillRectangle(b, r);
+            }
+
+            using (Pen p = new Pen(outline))
+            {
+                g.DrawRectangle(p, r);
+            }
+        }
+
+        private void DrawRange(Graphics g)
+        {
+            float pos;
+            string label;
+
+            using (Brush b = new SolidBrush(m_label_color))
+            {
+                label = string.Format("{0:F1}", m_left);
+                pos = GetPixel(m_left) + m_marker_range_spacing;
+                g.DrawString(label, Font, b, pos, Margin.Top);
+
+                label = string.Format("{0:F1}", m_right);
+                SizeF s = g.MeasureString(label, Font);
+                pos = GetPixel(m_right) - m_marker_range_spacing - s.Width;
+                g.DrawString(label, Font, b, pos, Margin.Top);
             }
         }
         #endregion
+        #endregion
     }
 }
+

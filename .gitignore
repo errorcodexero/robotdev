@@ -8,6 +8,6 @@
 **/*.mp4
 **/Debug
 **/Win32
-robots/sim/simrobot/data/*.csv
-robots/sim/simrobot/data/*.log
+robots/sim/simrobot/data
+robots/sim/simrobot/data/*
 external/googletest
