@@ -55,7 +55,7 @@ namespace PathfinderViewer
 
                 if (file.Contains("t") && file.Contains("pose_x") && file.Contains("pose_y") && file.Contains("pose_theta"))
                 {
-                    m_name.Text = "Position";
+                    m_name.Text = "TargetPos";
                     m_time_variable.SelectedItem = "t";
                     m_x_variable.SelectedItem = "pose_x";
                     m_y_variable.SelectedItem = "pose_y";
@@ -68,6 +68,14 @@ namespace PathfinderViewer
                     m_x_variable.SelectedItem = "path_x";
                     m_y_variable.SelectedItem = "path_y";
                     m_theta_variable.SelectedItem = "path_theta";
+                }
+                else if (file.Contains("t") && file.Contains("patx") && file.Contains("paty") && file.Contains("pata"))
+                {
+                    m_name.Text = "ActualPos";
+                    m_time_variable.SelectedItem = "t";
+                    m_x_variable.SelectedItem = "patx";
+                    m_y_variable.SelectedItem = "paty";
+                    m_theta_variable.SelectedItem = "pata";
                 }
             }
         }

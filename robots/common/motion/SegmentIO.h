@@ -8,13 +8,16 @@ namespace xero
 {
 	namespace motion
 	{
-		class SegmentWriter
+		class SegmentIO
 		{
 		public:
-			SegmentWriter() = delete;
-			~SegmentWriter() = delete;
+			SegmentIO() = delete;
+			~SegmentIO() = delete;
 
 			static bool writeSegments(const std::string &filename, const std::vector<xero::motion::Segment> &segments);
+			static bool readSegments(const std::string &filename, std::vector<xero::motion::Segment> &segments);
+
+		private:
 		};
 	}
 }

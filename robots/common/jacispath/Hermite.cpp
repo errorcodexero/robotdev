@@ -49,7 +49,7 @@ namespace xero
 			const xero::jacispath::Waypoint &b,
 			xero::jacispath::Spline &spline)
 		{
-			spline.setStart(Coord(a.getX(), a.getY()));
+			spline.setStart(Position(a.getX(), a.getY()));
 			double dx = b.getX() - a.getX();
 			double dy = b.getY() - a.getY();
 

@@ -17,19 +17,7 @@
     <ClInclude Include="SimRobotAutoCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RoundedRectanglePathContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StraightLinePathContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LineArcLinePathContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RedHopperPathContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,18 +26,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimRobotAutoCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RoundedRectanglePathContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StraightLinePathContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LineArcLinePathContainer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RedHopperPathContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

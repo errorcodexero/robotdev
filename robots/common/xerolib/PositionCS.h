@@ -17,20 +17,20 @@ namespace xero
 			//
 			// The position of the robot in 2D space
 			//
-			Position m_position;
+			xero::motion::Position m_position;
 
 			//
 			// The rotation of the robot, stored as the sine and cosine
 			// of the angle
 			//
-			Rotation m_rotation;
+			xero::motion::Rotation m_rotation;
 
 		public:
 			PositionCS()
 			{
 			}
 
-			PositionCS(const Position &p, const Rotation &r)
+			PositionCS(const xero::motion::Position &p, const xero::motion::Rotation &r)
 			{
 				m_position = p;
 				m_rotation = r;
@@ -51,7 +51,7 @@ namespace xero
 				return ret;
 			}
 
-			const Position &getPos() const
+			const xero::motion::Position &getPos() const
 			{
 				return m_position;
 			}
@@ -66,38 +66,38 @@ namespace xero
 				return m_position.getY();
 			}
 
-			void setPosition(const Position &pos)
+			void setPosition(const xero::motion::Position &pos)
 			{
 				m_position = pos;
 			}
 
-			const Rotation &getRotation() const
+			const xero::motion::Rotation &getRotation() const
 			{
 				return m_rotation;
 			}
 
-			void setRotation(const Rotation &r)
+			void setRotation(const xero::motion::Rotation &r)
 			{
 				m_rotation = r;
 			}
 
-			static PositionCS fromTranslation(const Position &p)
+			static PositionCS fromTranslation(const xero::motion::Position &p)
 			{
-				Rotation r;
+				xero::motion::Rotation r;
 				return PositionCS(p, r);
 			}
 
 			PositionCS transformBy(const PositionCS &cs) const
 			{
-				Position p = m_position.translateBy(cs.getPos().rotateBy(m_rotation));
-				Rotation r = m_rotation.rotateBy(cs.getRotation());
+				xero::motion::Position p = m_position.translateBy(cs.getPos().rotateBy(m_rotation));
+				xero::motion::Rotation r = m_rotation.rotateBy(cs.getRotation());
 				return PositionCS(p, r);
 			}
 
 			PositionCS inverse() const
 			{
-				Rotation r = m_rotation.inverse();
-				Position p = m_position.inverse().rotateBy(r);
+				xero::motion::Rotation r = m_rotation.inverse();
+				xero::motion::Position p = m_position.inverse().rotateBy(r);
 				return PositionCS(p, r);
 			}
 
@@ -106,12 +106,12 @@ namespace xero
 				return PositionCS(m_position, m_rotation.normal());
 			}
 
-			Position intersection(const PositionCS &pcs) const
+			xero::motion::Position intersection(const PositionCS &pcs) const
 			{
 				if (m_rotation.isParallel(pcs.getRotation()))
-					return Position(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
+					return xero::motion::Position(std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity());
 
-				Position p;
+				xero::motion::Position p;
 				if (std::fabs(m_rotation.getCos()) < std::fabs(pcs.getRotation().getCos()))
 				{
 					p = intersection(*this, pcs);
@@ -155,9 +155,9 @@ namespace xero
 				return p;
 			}
 
-			static PositionCS fromRotation(const Rotation &r)
+			static PositionCS fromRotation(const xero::motion::Rotation &r)
 			{
-				Position p;
+				xero::motion::Position p;
 				return PositionCS(p, r);
 			}
 
@@ -178,8 +178,8 @@ namespace xero
 					ncos = (1.0 - costh) / pa.getAngle();
 				}
 
-				Position p(pa.getX() * nsin - pa.getY() * ncos, pa.getX() * ncos + pa.getY() * nsin);
-				Rotation r(costh, sinth, false);
+				xero::motion::Position p(pa.getX() * nsin - pa.getY() * ncos, pa.getX() * ncos + pa.getY() * nsin);
+				xero::motion::Rotation r(costh, sinth, false);
 				return PositionCS(p, r);
 			}
 
@@ -198,16 +198,16 @@ namespace xero
 					tmp = -(th / 2.0 * pcs.getRotation().getSin()) / cm1;
 				}
 
-				Rotation r(tmp, -th / 2.0, false);
-				Position p = pcs.getPos().rotateBy(r);
+				xero::motion::Rotation r(tmp, -th / 2.0, false);
+				xero::motion::Position p = pcs.getPos().rotateBy(r);
 				return PositionAngle(p.getX(), p.getY(), th);
 			}
 
 
 		protected:
-			static Position intersection(const PositionCS &first, const PositionCS &second)
+			static xero::motion::Position intersection(const PositionCS &first, const PositionCS &second)
 			{
-				Position pt(first.getRotation().getCos(), first.getRotation().getSin());
+				xero::motion::Position pt(first.getRotation().getCos(), first.getRotation().getSin());
 				double t2 = second.getRotation().getTan();
 				double num = (first.getPos().getX() - second.getPos().getX()) * t2 + second.getPos().getY() - first.getPos().getY();
 				double den = first.getRotation().getSin() - first.getRotation().getCos() * t2;

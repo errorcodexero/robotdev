@@ -19,12 +19,19 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Coord.h" />
+    <ClInclude Include="Path.h" />
+    <ClInclude Include="Position.h" />
+    <ClInclude Include="Rotation.h" />
     <ClInclude Include="Segment.h" />
-    <ClInclude Include="SegmentWriter.h" />
+    <ClInclude Include="SegmentIO.h" />
+    <ClInclude Include="StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SegmentWriter.cpp" />
+    <ClCompile Include="Path.cpp" />
+    <ClCompile Include="Position.cpp" />
+    <ClCompile Include="Rotation.cpp" />
+    <ClCompile Include="SegmentIO.cpp" />
+    <ClCompile Include="StringUtils.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

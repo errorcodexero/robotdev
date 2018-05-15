@@ -19,21 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LineArcLinePathContainer.h" />
-    <ClInclude Include="RedHopperPathContainer.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="RoundedRectanglePathContainer.h" />
     <ClInclude Include="SimRobot.h" />
     <ClInclude Include="SimRobotAutoCtrl.h" />
-    <ClInclude Include="StraightLinePathContainer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LineArcLinePathContainer.cpp" />
-    <ClCompile Include="RedHopperPathContainer.cpp" />
-    <ClCompile Include="RoundedRectanglePathContainer.cpp" />
     <ClCompile Include="SimRobot.cpp" />
     <ClCompile Include="SimRobotAutoCtrl.cpp" />
-    <ClCompile Include="StraightLinePathContainer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -109,15 +101,16 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SIMULATOR;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc;$(SolutionDir)..\common\xerolib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc;$(SolutionDir)..\common\xerolib;$(SolutionDir)..\common\motion;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>simxerolib.lib;simfrc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>simxerolib.lib;simmotion.lib;simfrc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -142,9 +135,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SIMULATOR;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc;$(SolutionDir)..\common\xerolib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc;$(SolutionDir)..\common\xerolib;$(SolutionDir)..\common\motion;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,7 +146,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>simxerolib.lib;simfrc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>simxerolib.lib;simmotion.lib;simfrc.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

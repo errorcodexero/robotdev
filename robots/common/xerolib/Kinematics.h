@@ -22,8 +22,8 @@ namespace xero
 			{
 			}
 
-			static xero::math::PositionAngle forwardKinematics(const xero::math::Rotation &prevrot,
-				double ldist, double rdist, const xero::math::Rotation &gyro)
+			static xero::math::PositionAngle forwardKinematics(const xero::motion::Rotation &prevrot,
+				double ldist, double rdist, const xero::motion::Rotation &gyro)
 			{
 				double dangle = prevrot.inverse().rotateBy(gyro).getRadians();
 				return forwardKinematics(ldist, rdist, dangle);
@@ -42,7 +42,7 @@ namespace xero
 				return xero::math::PositionAngle(dx, 0, rot);
 			}
 
-			static xero::math::PositionCS integrateForwardKinematics(const xero::math::PositionCS &current, 
+			static xero::math::PositionCS integrateForwardKinematics(const xero::math::PositionCS &current,
 				const xero::math::PositionAngle &forward)
 			{
 				return current.transformBy(xero::math::PositionCS::exp(forward));

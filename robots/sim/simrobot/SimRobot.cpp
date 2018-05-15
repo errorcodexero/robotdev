@@ -7,6 +7,10 @@
 #include <SimMotorController.h>
 #include <RobotStateEstimator.h>
 
+#ifdef SIMULATOR
+#include <RobotSimulator.h>
+#endif
+
 using namespace xerolib;
 
 SimRobot::SimRobot()
@@ -19,10 +23,16 @@ SimRobot::~SimRobot()
 
 void SimRobot::RobotInit()
 {
+	//std::string basedir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\data");
+	std::string basedir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot\\data");
 
-	// setBaseDir("C:\\cygwin64\\home\\ButchGriffin\\src\\robot\\robotdev\\robots\\sim\\simrobot\\data");
-	setBaseDir("D:\\cygwin\\home\\ButchGriffin\\src\\robotdev\\robots\\sim\\simrobot\\data");
+#ifdef SIMULATOR
+	frc::RobotSimulator &sim = frc::RobotSimulator::get();
+	std::string logfile = basedir + "\\sim.csv";
+	sim.setLogFile(logfile);
+#endif
 
+	setBaseDir(basedir.c_str());
 	xerolib::XeroRobotBase::RobotInit();
 
 	std::chrono::milliseconds delay(1);
@@ -48,7 +58,6 @@ void SimRobot::RobotInit()
 
 	m_drivebase_p->setPhysicalChar(ticks, diameter, width, scrub);
 	addSubsystem(m_drivebase_p);
-
 }
 
 START_ROBOT_CLASS(SimRobot);

@@ -25,65 +25,11 @@
     <ClCompile Include="AutonomousStepBase.cpp">
       <Filter>Source\Auto</Filter>
     </ClCompile>
-    <ClCompile Include="AutoPrintPosition.cpp">
-      <Filter>Source\Auto</Filter>
-    </ClCompile>
     <ClCompile Include="AutoSetMotorVoltage.cpp">
       <Filter>Source\Auto</Filter>
     </ClCompile>
     <ClCompile Include="AutoSetVelocity.cpp">
       <Filter>Source\Auto</Filter>
-    </ClCompile>
-    <ClCompile Include="AdaptivePurePursuitController.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="HeadingProfileFollower.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="MotionProfile.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="Path.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="PathBuilder.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="PathFollower.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="PathSegment.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="Position.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="ProfileFollower.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="ProfileGenerator.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="ProfileGoal.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="RobotState.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="RobotStateEstimator.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="Rotation.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="Segment.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="SetpointGenerator.cpp">
-      <Filter>Source\PathFinder</Filter>
-    </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source\PathFinder</Filter>
     </ClCompile>
     <ClCompile Include="MessageLogger.cpp">
       <Filter>Source\Utils</Filter>
@@ -93,6 +39,12 @@
     </ClCompile>
     <ClCompile Include="ParamsParser.cpp">
       <Filter>Source\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="RobotState.cpp">
+      <Filter>Source\Kinematics</Filter>
+    </ClCompile>
+    <ClCompile Include="RobotStateEstimator.cpp">
+      <Filter>Source\Kinematics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,95 +75,11 @@
     <ClInclude Include="AutonomousStepBase.h">
       <Filter>Headers\Auto</Filter>
     </ClInclude>
-    <ClInclude Include="AutoPath.h">
-      <Filter>Headers\Auto</Filter>
-    </ClInclude>
-    <ClInclude Include="AutoPrintPosition.h">
-      <Filter>Headers\Auto</Filter>
-    </ClInclude>
     <ClInclude Include="AutoSetMotorVoltage.h">
       <Filter>Headers\Auto</Filter>
     </ClInclude>
     <ClInclude Include="AutoSetVelocity.h">
       <Filter>Headers\Auto</Filter>
-    </ClInclude>
-    <ClInclude Include="AdaptivePurePursuitController.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Constraints.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="HeadingProfileFollower.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Kinematics.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Lookahead.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="MotionProfile.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="PathBuilder.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Path.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="PathContainer.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="PathFinderConstants.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="PathFollower.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="PathSegment.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Position.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionAngle.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="PositionCS.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="ProfileFollower.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="ProfileGenerator.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="ProfileGoal.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="RobotState.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="RobotStateEstimator.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Rotation.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Segment.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="SetpointGenerator.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="Waypoint.h">
-      <Filter>Headers\PathFinder</Filter>
-    </ClInclude>
-    <ClInclude Include="MathUtils.h">
-      <Filter>Headers\PathFinder</Filter>
     </ClInclude>
     <ClInclude Include="CountdownTimer.h">
       <Filter>Headers\Utils</Filter>
@@ -234,8 +102,14 @@
     <ClInclude Include="Speedometer.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="PathDebugData.h">
-      <Filter>Headers\PathFinder</Filter>
+    <ClInclude Include="Kinematics.h">
+      <Filter>Headers\Kinematics</Filter>
+    </ClInclude>
+    <ClInclude Include="RobotState.h">
+      <Filter>Headers\Kinematics</Filter>
+    </ClInclude>
+    <ClInclude Include="RobotStateEstimator.h">
+      <Filter>Headers\Kinematics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +136,12 @@
     </Filter>
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{3ed3db45-9cba-4965-847d-18ea9f59d406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Kinematics">
+      <UniqueIdentifier>{28135aab-43db-4cb0-a1a9-d063e9992fa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Kinematics">
+      <UniqueIdentifier>{515ef69a-84a3-47b4-a038-ed74da4a8b75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

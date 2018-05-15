@@ -6,8 +6,6 @@
 #include "XeroRobotBase.h"
 #include "Speedometer.h"
 #include "PIDCtrl.h"
-#include "Path.h"
-#include "PathFollower.h"
 #include "AHRS.h"
 #include "Rotation.h"
 #include <list>
@@ -75,9 +73,9 @@ namespace xerolib
 			return m_right_speed.getSpeed();
 		}
 
-		xero::math::Rotation getAngle()
+		xero::motion::Rotation getAngle()
 		{
-			return xero::math::Rotation::fromDegrees(m_yaw);
+			return xero::motion::Rotation::fromDegrees(m_yaw);
 		}
 
 		/// \brief returns true if the drivebase is idle
@@ -120,8 +118,6 @@ namespace xerolib
 		{
 			m_mode = Mode::Idle;
 			setOutputVoltage(0.0, 0.0);
-			m_path_p = nullptr;
-			m_follower_p = nullptr;
 			outputToMotors();
 		}
 
@@ -132,8 +128,6 @@ namespace xerolib
 		{
 			m_mode = Mode::Manual;
 			setOutputVoltage(left, right);
-			m_path_p = nullptr;
-			m_follower_p = nullptr;
 		}
 
 		void setVelocity(double left, double right)
@@ -142,20 +136,6 @@ namespace xerolib
 			m_left_target_velocity = left;
 			m_right_target_velocity = right;
 			m_mode = Mode::Velocity;
-		}
-
-		/// \brief set the drivebase to follow the provided path
-		/// \param path_p the path to follow
-		void followPath(std::shared_ptr<xero::pathfinder::Path> path_p, bool reversed);
-
-		/// \brief returns true if the drivebase has finished following a path
-		/// \returns true if the current path is finished, or we are not in path following mode
-		bool isPathFinished()
-		{
-			if (m_mode != Mode::Path)
-				return true;
-
-			return m_follower_p->isFinished();
 		}
 
     private:
@@ -235,7 +215,6 @@ namespace xerolib
 			resetNavX();
 		}
 
-		xero::math::PositionAngle updatePath(double t, xero::pathfinder::PathDebugData &debug);
 		void setVelocities(double left, double right);
 		void outputToMotors();
 
@@ -309,16 +288,6 @@ namespace xerolib
 		// The scrub factor for the drivebase
 		//
 		double m_scrub;
-
-		//
-		// The path we are following
-		//
-		std::shared_ptr<xero::pathfinder::Path> m_path_p;
-
-		//
-		// The path follower object following the above path
-		//
-		std::shared_ptr<xero::pathfinder::PathFollower> m_follower_p;
 
 		//
 		// The mutex for setting the path and the follower

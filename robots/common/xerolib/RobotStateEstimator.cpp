@@ -22,7 +22,7 @@ namespace xero
 			m_logfile.open(name);
 			if (m_logfile.is_open())
 			{
-				m_logfile << "time";
+				m_logfile << "t";
 				m_logfile << ",distx";
 				m_logfile << ",disty";
 				m_logfile << ",angle";

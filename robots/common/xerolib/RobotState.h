@@ -45,7 +45,7 @@ namespace xero
 			xero::math::PositionAngle getPredictedVelocity();
 
 			void addActualPosition(double t, const xero::math::PositionAngle &measured, const xero::math::PositionAngle &predicted);
-			xero::math::PositionAngle generateOdometryFromSensors(double left_dist, double right_dist, const xero::math::Rotation &rot);
+			xero::math::PositionAngle generateOdometryFromSensors(double left_dist, double right_dist, const xero::motion::Rotation &rot);
 
 			std::vector<std::pair<double, xero::math::PositionCS>> getPositions()
 			{

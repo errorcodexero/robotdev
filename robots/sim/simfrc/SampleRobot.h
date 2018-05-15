@@ -14,8 +14,15 @@
     }                                                                                \
     catch (const std::exception &ex)                                                 \
     {																		         \
-        std::cout << "exception caught from robot - " << ex.what() << std::endl ;    \
+        std::cerr << "exception caught from robot - " << ex.what() << std::endl ;    \
     }                                                                                \
+	try {																			 \
+		delete robot ;																 \
+	}                                                                                \
+    catch( const std::exception &ex)                                                 \
+	{                                                                                \
+		std::cerr << "exception caught deleting robot - " << ex.what() << std::endl; \
+	}                                                                                \
     return 0;                                                                        \
   }
 
@@ -25,7 +32,7 @@ namespace frc
 	{
 	public:
 		SampleRobot();
-		~SampleRobot();
+		virtual ~SampleRobot();
 
 		void addArg(const char *arg_p)
 		{

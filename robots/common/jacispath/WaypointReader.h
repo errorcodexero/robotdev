@@ -18,7 +18,6 @@ namespace xero
 			static bool readWaypoint(const std::string &filename, std::vector<Waypoint> &points);
 
 		private:
-			static std::vector<std::string> split(const std::string &line);
 		};
 	}
 }

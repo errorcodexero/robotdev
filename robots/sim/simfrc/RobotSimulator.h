@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <thread>
 #include <mutex>
+#include <fstream>
+#include <string>
 
 namespace frc
 {
@@ -15,6 +17,7 @@ namespace frc
 		~RobotSimulator();
 
 		static RobotSimulator &get();
+		static void stop();
 
 		double getYaw();
 		void zeroYaw();
@@ -22,10 +25,20 @@ namespace frc
 		int32_t getEncoder(int first, int second);
 		void setMotor(int index, double v);
 
+		void setLogFile(std::string &filename)
+		{
+			if (m_logfile.is_open())
+				m_logfile.close();
+
+			m_logfile.open(filename, std::ios::out);
+			writeHeaders();
+		}
+
 	private:
+		void writeHeaders();
 		void run();
 		void calcPosition();
-		void updateRobotPosition(double dleft, double dright);
+		void updateRobotPosition(double now, double dleft, double dright);
 
 	private:
 		static constexpr double PI = 3.141592;
@@ -49,6 +62,8 @@ namespace frc
 		bool m_running;
 		std::mutex m_lock;
 		std::thread m_run_thread;
+
+		std::ofstream m_logfile;
 	};
 }
 

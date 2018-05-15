@@ -5,7 +5,7 @@
 
 namespace xero
 {
-	namespace math
+	namespace motion
 	{
 		class Rotation;
 
@@ -175,5 +175,10 @@ namespace xero
 				return std::to_string(m_x) + ", " + std::to_string(m_y);
 			}
 		};
+
+		inline Position operator+(const Position &a, const Position &b)
+		{
+			return Position(a.getX() + b.getX(), a.getY() + b.getY());
+		}
 	}
 }

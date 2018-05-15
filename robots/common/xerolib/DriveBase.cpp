@@ -89,100 +89,10 @@ namespace xerolib
 
 	void DriveBase::controlThread()
 	{
-		static int n = 0;
-		xerolib::XeroRobotBase &robot = getRobot();
 		std::chrono::milliseconds delay(25);
-		double now;
-
-#ifdef LOGPATH
-		std::ofstream pathlog(robot.getBaseDir() + "\\path.csv");
-		pathlog << "num,t";
-		pathlog << ",";
-		pathlog << ",segidx,rem,closex,closey,startx,starty,endx,endy";
-		pathlog << ",";
-		pathlog << ",pose_x,pose_y,pose_theta";
-		pathlog << ",";
-		pathlog << ",left,right";
-		pathlog << ",";
-		pathlog << ",linear_disp,profile_disp,linear_vel,profile_vel";
-		pathlog << ",";
-		pathlog << ",vel_cmd_dx,vel_cmd_dy, vel_cmd_dtheta";
-		pathlog << ",";
-		pathlog << ",steering_cmd_dx,steering_cmd_dy,steering_cmd_dtheta";
-		pathlog << ",";
-		pathlog << ",cross_track_error,along_track_error";
-		pathlog << ",";
-		pathlog << ",la_pt_x,la_pt_y,la_pt_vel";
-		pathlog << ",";
-		pathlog << ",arc_x,arc_y,arc_radius,arg_length";
-		pathlog << ",";
-		pathlog << ",curve,dtheta";
-		pathlog << std::endl;
-#endif
 
 		while (m_running)
 		{
-			now = robot.getTime();
-
-			if (m_mode == Mode::Path)
-			{
-				PathDebugData debug;
-				xero::math::PositionAngle pa = updatePath(now, debug);
-
-#ifdef LOGPATH
-				if (m_follower_p != nullptr)
-				{
-					pathlog << n++;
-					pathlog << "," << debug.t;
-					pathlog << ",";
-					pathlog << "," << debug.m_segment_index;
-					pathlog << "," << debug.m_segment_remaining;
-					pathlog << "," << debug.m_closest_x;
-					pathlog << "," << debug.m_closest_y;
-					pathlog << "," << debug.m_seg_start_x;
-					pathlog << "," << debug.m_seg_start_y;
-					pathlog << "," << debug.m_seg_end_x;
-					pathlog << "," << debug.m_seg_end_y;
-					pathlog << ",";
-					pathlog << "," << debug.pose_x;
-					pathlog << "," << debug.pose_y;
-					pathlog << "," << debug.pose_theta;
-					pathlog << ",";
-					pathlog << "," << debug.left;
-					pathlog << "," << debug.right;
-					pathlog << ",";
-					pathlog << "," << debug.linear_displacement;
-					pathlog << "," << debug.profile_displacement;
-					pathlog << "," << debug.linear_velocity;
-					pathlog << "," << debug.profile_velocity;
-					pathlog << ",";
-					pathlog << "," << debug.velocity_command_dx;
-					pathlog << "," << debug.velocity_command_dy;
-					pathlog << "," << debug.velocity_command_dtheta;
-					pathlog << ",";
-					pathlog << "," << debug.steering_command_dx;
-					pathlog << "," << debug.steering_command_dy;
-					pathlog << "," << debug.steering_command_dtheta;
-					pathlog << ",";
-					pathlog << "," << debug.cross_track_error;
-					pathlog << "," << debug.along_track_error;
-					pathlog << ",";
-					pathlog << "," << debug.lookahead_point_x;
-					pathlog << "," << debug.lookahead_point_y;
-					pathlog << "," << debug.lookahead_point_velocity;
-					pathlog << ",";
-					pathlog << "," << debug.arc_center_x;
-					pathlog << "," << debug.arc_center_y;
-					pathlog << "," << debug.arc_radius;
-					pathlog << "," << debug.arc_length;
-					pathlog << ",";
-					pathlog << "," << debug.curvature;
-					pathlog << "," << debug.dtheta;
-					pathlog << std::endl;
-				}
-#endif
-			}
-
 			std::this_thread::sleep_for(delay);
 		}
 	}
@@ -278,49 +188,6 @@ namespace xerolib
 		m_right_target_velocity = right;
 	}
 
-	void DriveBase::followPath(std::shared_ptr<xero::pathfinder::Path> path_p, bool reversed)
-	{
-		ParamsParser &params = ParamsParser::get();
-
-		//
-		// TODO - fix so that is this is called while we are actively following a path we do
-		//        the right thing.  For now, we ignore the new path and finish the current
-		//        one.
-		//
-		if (m_mode == Mode::Path && !isPathFinished())
-			return;
-
-		double la_min = params.getValue("pathfollower:lookahead:distance:min");
-		double la_max = params.getValue("pathfollower:lookahead:distance:max");
-		double la_minspeed = params.getValue("pathfollower:lookahead:speed:min");
-		double la_maxspeed = params.getValue("pathfollower:lookahead:speed:max");
-		Lookahead la(la_min, la_max, la_minspeed, la_maxspeed);
-
-		double igain = params.getValue("pathfollower:inertia_gain");
-		double kp = params.getValue("pathfollower:kp");
-		double ki = params.getValue("pathfollower:ki");
-		double kv = params.getValue("pathfollower:kv");
-		double kffv = params.getValue("pathfollower:kffv");
-		double kffa = params.getValue("pathfollower:kffa");
-		double max_abs_vel = params.getValue("pathfollower:maxvelocity");
-		double max_abs_acc = params.getValue("pathfollower:maxacceleration");
-		double pos_tol = params.getValue("pathfollower:position:tolerance");
-		double vel_tol = params.getValue("pathfollower:velocity:tolerance");
-		double stopdist = params.getValue("pathfollower:stopping:distance");
-		
-		PathFollower::Parameters p(la, igain, kp, ki, kv, kffv, kffa, max_abs_vel, max_abs_acc, pos_tol, vel_tol, stopdist);
-
-		m_path_p = path_p;
-		m_follower_p = std::make_shared<PathFollower>(path_p, reversed, p);
-
-		setVelocities(0.0, 0.0);
-
-		auto &st = xero::pathfinder::RobotState::get();
-		st.resetDrivenDistance();
-
-		m_mode = Mode::Path;
-	}
-
 	double DriveBase::getDistance()
 	{
 		int32_t left = m_left_encoder_p->Get();
@@ -353,37 +220,6 @@ namespace xerolib
 	{
 		if (m_mode == Mode::Manual)
 			outputToMotors();
-	}
-
-	xero::math::PositionAngle DriveBase::updatePath(double t, xero::pathfinder::PathDebugData &debug)
-	{
-		xero::pathfinder::RobotState &state = xero::pathfinder::RobotState::get();
-		PositionCS pos = state.getLatestFieldToVehicle();
-		double disp = state.getDrivenDistance();
-		double vel = state.getPredictedVelocity().getX();
-
-		PositionAngle pa = m_follower_p->update(t, pos, disp, vel, debug);
-
-		if (!m_follower_p->isFinished())
-		{
-			double left, right;
-
-			Kinematics::inverseKinematics(pa, m_width, m_scrub, left, right);
-			setVelocities(left, right);
-			debug.left = left;
-			debug.right = right;
-		}
-		else
-		{
-			setVelocities(0.0, 0.0);
-			m_path_p = nullptr;
-			m_follower_p = nullptr;
-			m_mode = Mode::Idle;
-			debug.left = 0;
-			debug.right = 0;
-		}
-
-		return pa;
 	}
 
 	void DriveBase::outputToMotors()

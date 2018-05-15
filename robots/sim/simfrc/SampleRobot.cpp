@@ -1,4 +1,5 @@
 #include "SampleRobot.h"
+#include "RobotSimulator.h"
 #include <stdexcept>
 
 namespace frc
@@ -15,6 +16,7 @@ namespace frc
 
 	SampleRobot::~SampleRobot()
 	{
+		m_controller.join();
 	}
 
 	void SampleRobot::robotSetup(SampleRobot *robot_p) {
@@ -174,6 +176,7 @@ namespace frc
 				}
 			}
 
+			RobotSimulator::stop();
 			std::cout << "\r\n ************ Robot program ending ***********" << std::endl;
 		}
 	}

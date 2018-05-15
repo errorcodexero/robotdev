@@ -21,7 +21,7 @@ namespace xero
 		{
 		}
 
-		Coord Spline::coords(double per)
+		Position Spline::coords(double per)
 		{
 			per = clamp(per, 0.0, 1.0);
 			double x = per * m_knot_distance;
@@ -29,7 +29,7 @@ namespace xero
 			double cos_theta = cos(m_angle_offset);
 			double sin_theta = sin(m_angle_offset);
 
-			Coord c(x * cos_theta - y * sin_theta, x * sin_theta + y * cos_theta);
+			Position c(x * cos_theta - y * sin_theta, x * sin_theta + y * cos_theta);
 			return c + m_offset;
 		}
 

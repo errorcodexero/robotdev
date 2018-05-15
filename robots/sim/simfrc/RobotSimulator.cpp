@@ -22,6 +22,7 @@ namespace frc
 		m_right_rps_per_volt_per_time = 9.16;
 		m_left_rps_per_volt_per_time = 9.16;
 
+		m_running = true;
 		m_run_thread = std::thread(&RobotSimulator::run, this);
 	}
 
@@ -29,7 +30,7 @@ namespace frc
 	{
 		m_waiting = true;
 		m_running = false;
-		while (m_waiting);
+		m_run_thread.join();
 	}
 
 	RobotSimulator &RobotSimulator::get()
@@ -38,6 +39,12 @@ namespace frc
 			m_robotsim_p = new RobotSimulator();
 
 		return *m_robotsim_p;
+	}
+
+	void RobotSimulator::stop()
+	{
+		delete m_robotsim_p;
+		m_robotsim_p = nullptr;
 	}
 
 	void RobotSimulator::zeroYaw()
@@ -116,29 +123,37 @@ namespace frc
 		m_waiting = false;
 	}
 
-	void RobotSimulator::updateRobotPosition(double dleft, double dright)
+	void RobotSimulator::updateRobotPosition(double now, double dleft, double dright)
 	{
 		m_left += dleft;
 		m_right += dright;
 
 		double dv = (dright - dleft) / 2 * m_scrub;
 		m_angle += (dv * 2.0) / m_width;
+
+		m_logfile << now;
+		m_logfile << "," << m_left_volts;
+		m_logfile << "," << m_right_volts;
+		m_logfile << "," << m_left;
+		m_logfile << "," << m_right;
+		m_logfile << "," << m_angle;
+		m_logfile << std::endl;
+	}
+
+	void RobotSimulator::writeHeaders()
+	{
+		m_logfile << "t";
+		m_logfile << ",leftv";
+		m_logfile << ",rightv";
+		m_logfile << ",leftdist";
+		m_logfile << ",rightdist";
+		m_logfile << ",angle";
+		m_logfile << std::endl;
 	}
 
 	void RobotSimulator::calcPosition()
 	{
 		std::lock_guard<std::mutex> lock(m_lock);
-
-#ifdef PRINT_SIMULATOR
-		double t = frc::Timer::GetFPGATimestamp();
-		std::cout << "robotsim:";
-		std::cout << " time " << t;
-		std::cout << ", left volts " << m_left_volts;
-		std::cout << ", right volts " << m_right_volts;
-		std::cout << ", left disp " << m_left;
-		std::cout << ", right disp " << m_left;
-		std::cout << std::endl;
-#endif
 
 		//
 		// We know the left and right motors have been running at a 
@@ -149,7 +164,7 @@ namespace frc
 		double dleft = m_left_volts * m_left_rps_per_volt_per_time * elapsed * m_diameter * PI;
 		double dright = m_right_volts * m_right_rps_per_volt_per_time * elapsed * m_diameter * PI;
 
-		updateRobotPosition(dleft, dright);
+		updateRobotPosition(now, dleft, dright);
 		m_last_time = now;
 	}
 }

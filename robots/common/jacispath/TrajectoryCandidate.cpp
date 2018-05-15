@@ -87,7 +87,7 @@ namespace xero
 
 				segments[i].setVelocity(f2 / filter_2 * v);
 				segments[i].setPosition((last.getVelocity() + segments[i].getVelocity()) / 2 * dt + last.getPosition());
-				segments[i].setCoords(Coord(segments[i].getPosition(), 0));
+				segments[i].setCoords(Position(segments[i].getPosition(), 0));
 
 				segments[i].setAcceleration((segments[i].getVelocity() - last.getVelocity()) / dt);
 				segments[i].setJerk((segments[i].getAcceleration() - last.getAcceleration()) / dt);
@@ -135,7 +135,7 @@ namespace xero
 					{
 						auto spline_p = m_splines[spline_i];
 						double percentage = spline_p->progressForDistance(pos_relative, m_config.getCount());
-						Coord coords = spline_p->coords(percentage);
+						Position coords = spline_p->coords(percentage);
 						segments[i].setHeading(spline_p->angle(percentage));
 						segments[i].setCoords(coords);
 						found = true;

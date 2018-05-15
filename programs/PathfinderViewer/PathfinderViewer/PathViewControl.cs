@@ -124,7 +124,7 @@ namespace PathfinderViewer
             foreach (Path p in m_paths)
                 p.SetTimeWindow(mintime, maxtime);
 
-            Invalidate();
+            UpdateChart();
         }
         #endregion
 
@@ -134,7 +134,7 @@ namespace PathfinderViewer
             SelectPathVariablesDialog dialog = new SelectPathVariablesDialog(m_mgr);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                PathDescriptor desc = new PathDescriptor(dialog.File, dialog.Name, dialog.TimeVariable, dialog.XVariable, dialog.YVariable, dialog.ThetaVariable);
+                PathDescriptor desc = new PathDescriptor(dialog.File, dialog.NameValue, dialog.TimeVariable, dialog.XVariable, dialog.YVariable, dialog.ThetaVariable);
                 Path p = new Path(this, desc);
                 AddPath(p);
                 Invalidate();

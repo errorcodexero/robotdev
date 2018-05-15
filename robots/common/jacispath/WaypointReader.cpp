@@ -1,5 +1,7 @@
 #include "WaypointReader.h"
 #include "NumUtils.h"
+#include "String"
+#include <StringUtils.h>
 #include <iostream>
 #include <fstream>
 #include <cctype>
@@ -8,39 +10,6 @@ namespace xero
 {
 	namespace jacispath
 	{
-		std::vector<std::string> WaypointReader::split(const std::string &line)
-		{
-			std::vector<std::string> ret;
-			std::string word;
-
-			size_t i = 0;
-			while (i < line.length())
-			{
-				//
-				// Skip leading spaces
-				//
-				while (i < line.length() && std::isspace(line[i]))
-					i++;
-
-				if (i == line.length())
-					break;
-
-				//
-				// Capture the next wore
-				//
-				word.clear();
-				while (i < line.length() && !std::isspace(line[i]))
-					word += line[i++];
-
-				//
-				// Push the word onto the result
-				//
-				ret.push_back(word);
-			}
-
-			return ret;
-		}
-
 		bool WaypointReader::readWaypoint(const std::string &filename, std::vector<Waypoint> &points)
 		{
 			std::string line;
@@ -54,7 +23,7 @@ namespace xero
 
 			while (std::getline(in, line))
 			{
-				std::vector<std::string> words = split(line);
+				std::vector<std::string> words = xero::motion::StringUtils::split(line);
 				if (words.size() == 0)
 					continue;
 
@@ -66,21 +35,11 @@ namespace xero
 					return false;
 				}
 
-				std::vector<double> values;
-				for (size_t i = 0; i < words.size(); i++)
+				std::vector<double> values = xero::motion::StringUtils::parseDouble(words);
+				if (values.size() == 0)
 				{
-					size_t end;
-					double x = std::stod(words[i], &end);
-					if (end != words[i].length())
-					{
-						std::cerr << "line: '" << line << "'" << std::endl;
-						std::cerr << "      expected all floating point values" << std::endl;
-						std::cerr << "      word '" << words[i] << "' is not a valid floating point number" << std::endl;
-						points.clear();
-						return false;
-					}
-
-					values.push_back(x);
+					points.clear();
+					return false;
 				}
 
 				double a = values[2] / 180 * PI ;

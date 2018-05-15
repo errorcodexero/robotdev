@@ -5,7 +5,7 @@
 
 namespace xero
 {
-	namespace math
+	namespace motion
 	{
 		class Position;
 

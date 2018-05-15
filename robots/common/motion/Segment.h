@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coord.h"
+#include "Position.h"
 
 namespace xero
 {
@@ -43,7 +43,7 @@ namespace xero
 				m_heading = angle;
 			}
 
-			void setCoords(const Coord &pos)
+			void setCoords(const Position &pos)
 			{
 				m_x = pos.getX();
 				m_y = pos.getY();

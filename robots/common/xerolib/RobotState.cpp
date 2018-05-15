@@ -50,7 +50,7 @@ namespace xero
 			m_predicted_velocity = predicted;
 		}
 
-		PositionAngle RobotState::generateOdometryFromSensors(double left_dist, double right_dist, const xero::math::Rotation &rot)
+		PositionAngle RobotState::generateOdometryFromSensors(double left_dist, double right_dist, const xero::motion::Rotation &rot)
 		{
 			PositionCS last = getLatestFieldToVehicle();
 			PositionAngle delta = Kinematics::forwardKinematics(last.getRotation(), left_dist, right_dist, rot);

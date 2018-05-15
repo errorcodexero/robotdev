@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Coord.h"
+#include "Position.h"
 #include <vector>
 #include <cassert>
 
@@ -14,7 +14,7 @@ namespace xero
 			Spline();
 			~Spline();
 
-			void setStart(const xero::motion::Coord &c)
+			void setStart(const xero::motion::Position &c)
 			{
 				m_offset = c;
 			}
@@ -39,7 +39,7 @@ namespace xero
 				return m_angle_offset;
 			}
 
-			xero::motion::Coord coords(double per);
+			xero::motion::Position coords(double per);
 			double deriv(double per);
 			double deriv(const std::vector<double> &coeffs, double k, double p);
 			double angle(double per);
@@ -64,7 +64,7 @@ namespace xero
 			double m_knot_distance;
 			double m_angle_offset;
 			double m_arc_length;
-			xero::motion::Coord m_offset;
+			xero::motion::Position m_offset;
 		};
 	}
 }
