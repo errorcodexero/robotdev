@@ -12,8 +12,6 @@ namespace xero
 			Segment()
 			{
 				m_dt = 0.0;
-				m_x = 0.0;
-				m_y = 0.0;
 				m_position = 0.0;
 				m_velocity = 0.0;
 				m_acceleration = 0.0;
@@ -24,8 +22,7 @@ namespace xero
 			Segment(double dt, double x, double y, double pos, double vel, double accel, double jerk, double head)
 			{
 				m_dt = dt;
-				m_x = x;
-				m_y = y;
+				m_coords = Position(x, y);
 				m_position = pos;
 				m_velocity = vel;
 				m_acceleration = accel;
@@ -45,8 +42,12 @@ namespace xero
 
 			void setCoords(const Position &pos)
 			{
-				m_x = pos.getX();
-				m_y = pos.getY();
+				m_coords = pos;
+			}
+
+			void setCoords(double x, double y)
+			{
+				m_coords = Position(x, y);
 			}
 
 			void setPosition(double p)
@@ -74,14 +75,19 @@ namespace xero
 				return m_dt;
 			}
 
+			const Position &getCoords() const
+			{
+				return m_coords;
+			}
+
 			double getX() const
 			{
-				return m_x;
+				return m_coords.getX();
 			}
 
 			double getY() const
 			{
-				return m_y;
+				return m_coords.getY();
 			}
 
 			double getPosition() const
@@ -111,8 +117,7 @@ namespace xero
 
 		private:
 			double m_dt;
-			double m_x;
-			double m_y;
+			Position m_coords;
 			double m_position;
 			double m_velocity;
 			double m_acceleration;

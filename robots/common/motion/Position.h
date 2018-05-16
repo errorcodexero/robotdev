@@ -102,6 +102,15 @@ namespace xero
 				return Position(m_x * s, m_y * s);
 			}
 
+			/// \brief returns this distance between this point and another point
+			/// \param pos the other point
+			/// \returns the distance between this point and another
+			double distance(const Position &pos) const
+			{
+				double d = (m_x - pos.getX()) * (m_x - pos.getX()) + (m_y - pos.getY()) * (m_y - pos.getY());
+				return std::sqrt(d);
+			}
+
 			/// \brief interpolate between two points
 			/// The result will always between this point and the second given point
 			/// \param p the second position
