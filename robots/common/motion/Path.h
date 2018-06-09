@@ -29,9 +29,36 @@ namespace xero
 			Path();
 			~Path();
 
+			bool isValid() const
+			{
+				bool ret = false;
+
+				if (m_type == PathType::Simple && m_segments.size() == 1)
+					ret = true;
+				else if (m_type == PathType::Tank && m_segments.size() == 2)
+					ret = true;
+				else if (m_type == PathType::Swerve && m_segments.size() == 4)
+					ret = true;
+
+				return ret;
+			}
+
+			bool isEmpty() const
+			{
+				if (!isValid())
+					return true;
+
+				return m_segments.size() == 0;
+			}
+
 			PathType getType() const
 			{
 				return m_type;
+			}
+
+			const std::string &getErrorMessage() const
+			{
+				return m_error;
 			}
 
 			const std::string &getName() const
@@ -43,17 +70,22 @@ namespace xero
 			bool create(const std::string &name, const std::string &filename, double width);
 			bool create(const std::string &name, const std::string &filename, double width, double depth);
 
+			size_t numberWheels() const
+			{
+				return m_segments.size();
+			}
+
 			size_t size() const
 			{
 				return m_segments[0].size();
 			}
 
-			const Segment &getSegment(size_t index)
+			const Segment &getSegment(size_t index) const
 			{
 				return m_segments[0][index];
 			}
 
-			const Segment &getSegment(size_t which, size_t index)
+			const Segment &getSegment(size_t which, size_t index) const
 			{
 				return m_segments[which][index];
 			}
@@ -69,6 +101,7 @@ namespace xero
 			PathType m_type;
 			std::string m_name;
 			std::vector<std::vector<Segment>> m_segments;
+			std::string m_error;
 		};
 	}
 }

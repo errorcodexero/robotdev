@@ -3,26 +3,29 @@
 #include "AutonomousStepBase.h"
 #include <memory>
 
-namespace xerolib
+namespace xero
 {
-	class DriveBase;
-
-	class AutoSetMotorVoltage : public AutonomousStepBase
+	namespace base
 	{
-	public:
-		AutoSetMotorVoltage(AutonomousControllerBase &controller, std::shared_ptr<DriveBase> drive_p, double duration, double left, double right);
-		~AutoSetMotorVoltage();
+		class TankDrive;
 
-		virtual void start() ;
-		virtual bool run() ;
-		virtual void end() ;
-		virtual std::string toString() ;
+		class AutoSetMotorVoltage : public AutonomousStepBase
+		{
+		public:
+			AutoSetMotorVoltage(AutonomousControllerBase &controller, std::shared_ptr<TankDrive> drive_p, double duration, double left, double right);
+			~AutoSetMotorVoltage();
 
-	private:
-		std::shared_ptr<DriveBase> m_drivebase_p;
-		double m_duration;
-		double m_start;
-		double m_left_voltage;
-		double m_right_voltage;
-	};
+			virtual void start();
+			virtual bool run();
+			virtual void end();
+			virtual std::string toString();
+
+		private:
+			std::shared_ptr<TankDrive> m_TankDrive_p;
+			double m_duration;
+			double m_start;
+			double m_left_voltage;
+			double m_right_voltage;
+		};
+	}
 }

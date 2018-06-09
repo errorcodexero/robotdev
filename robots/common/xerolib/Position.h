@@ -5,7 +5,7 @@
 
 namespace xero
 {
-	namespace motion
+	namespace base
 	{
 		class Rotation;
 

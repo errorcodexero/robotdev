@@ -22,7 +22,7 @@ namespace xero
 			Segment(double dt, double x, double y, double pos, double vel, double accel, double jerk, double head)
 			{
 				m_dt = dt;
-				m_coords = Position(x, y);
+				m_coords = xero::base::Position(x, y);
 				m_position = pos;
 				m_velocity = vel;
 				m_acceleration = accel;
@@ -40,14 +40,14 @@ namespace xero
 				m_heading = angle;
 			}
 
-			void setCoords(const Position &pos)
+			void setCoords(const xero::base::Position &pos)
 			{
 				m_coords = pos;
 			}
 
 			void setCoords(double x, double y)
 			{
-				m_coords = Position(x, y);
+				m_coords = xero::base::Position(x, y);
 			}
 
 			void setPosition(double p)
@@ -75,7 +75,7 @@ namespace xero
 				return m_dt;
 			}
 
-			const Position &getCoords() const
+			const xero::base::Position &getCoords() const
 			{
 				return m_coords;
 			}
@@ -117,7 +117,7 @@ namespace xero
 
 		private:
 			double m_dt;
-			Position m_coords;
+			xero::base::Position m_coords;
 			double m_position;
 			double m_velocity;
 			double m_acceleration;

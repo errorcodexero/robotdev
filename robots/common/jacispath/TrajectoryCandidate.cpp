@@ -3,6 +3,7 @@
 #include <algorithm>
 
 using namespace xero::motion;
+using namespace xero::base;
 
 namespace xero
 {

@@ -14,6 +14,7 @@ namespace xero
 			~StringUtils() = delete;
 
 			static std::vector<std::string> split(const std::string &line);
+			static std::vector<std::string> split(const std::string &line, char ch);
 			static std::vector<double> parseDouble(const std::vector<std::string> &words);
 
 		};

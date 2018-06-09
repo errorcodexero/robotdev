@@ -20,7 +20,7 @@ namespace xero
 
 			m_segments.resize(1);
 
-			if (!SegmentIO::readSegments(filename, m_segments[0]))
+			if (!SegmentIO::readSegments(filename, m_segments[0], m_error))
 				return false;
 
 			return true;
@@ -33,7 +33,7 @@ namespace xero
 
 			std::vector<Segment> segments;
 
-			if (!SegmentIO::readSegments(filename, segments))
+			if (!SegmentIO::readSegments(filename, segments, m_error))
 				return false;
 
 			m_segments.resize(2);
@@ -49,7 +49,7 @@ namespace xero
 
 			std::vector<Segment> segments;
 
-			if (!SegmentIO::readSegments(filename, segments))
+			if (!SegmentIO::readSegments(filename, segments, m_error))
 				return false;
 
 			m_segments.resize(4);
@@ -63,7 +63,7 @@ namespace xero
 		{
 			double w = wheelbase / 2.0;
 
-			for (size_t i = 0; i < m_segments.size(); i++)
+			for (size_t i = 0; i < segments.size(); i++)
 			{
 				const Segment &seg = segments[i];
 				Segment leftseg = seg;

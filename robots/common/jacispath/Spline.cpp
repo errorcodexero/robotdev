@@ -1,7 +1,7 @@
 #include "Spline.h"
 #include "NumUtils.h"
 
-using namespace xero::motion;
+using namespace xero::base;
 
 namespace xero
 {

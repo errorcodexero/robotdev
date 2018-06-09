@@ -2,23 +2,26 @@
 #include "AutonomousControllerBase.h"
 #include "XeroRobotBase.h"
 
-namespace xerolib
+namespace xero
 {
-	AutonomousStepBase::AutonomousStepBase(AutonomousControllerBase &controller) : m_controller(controller)
+	namespace base
 	{
-	}
+		AutonomousStepBase::AutonomousStepBase(AutonomousControllerBase &controller) : m_controller(controller)
+		{
+		}
 
-	AutonomousStepBase::~AutonomousStepBase()
-	{
-	}
+		AutonomousStepBase::~AutonomousStepBase()
+		{
+		}
 
-	XeroRobotBase &AutonomousStepBase::getRobot()
-	{
-		return m_controller.getRobot();
-	}
+		XeroRobotBase &AutonomousStepBase::getRobot()
+		{
+			return m_controller.getRobot();
+		}
 
-	MessageLogger &AutonomousStepBase::getLogger()
-	{
-		return getRobot().getMessageLogger();
+		MessageLogger &AutonomousStepBase::getLogger()
+		{
+			return getRobot().getMessageLogger();
+		}
 	}
 }

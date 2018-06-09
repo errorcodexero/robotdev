@@ -19,17 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DistanceFollower.h" />
     <ClInclude Include="Path.h" />
-    <ClInclude Include="Position.h" />
-    <ClInclude Include="Rotation.h" />
+    <ClInclude Include="RobotPositionTracker.h" />
     <ClInclude Include="Segment.h" />
     <ClInclude Include="SegmentIO.h" />
     <ClInclude Include="StringUtils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DistanceFollower.cpp" />
     <ClCompile Include="Path.cpp" />
-    <ClCompile Include="Position.cpp" />
-    <ClCompile Include="Rotation.cpp" />
+    <ClCompile Include="RobotPositionTracker.cpp" />
     <ClCompile Include="SegmentIO.cpp" />
     <ClCompile Include="StringUtils.cpp" />
   </ItemGroup>
@@ -110,6 +110,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\common\xerolib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -141,6 +142,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\common\xerolib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

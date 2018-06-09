@@ -1,12 +1,15 @@
 #include "RobotControllerBase.h"
 
-namespace xerolib
+namespace xero
 {
-	RobotControllerBase::RobotControllerBase(XeroRobotBase &robot) : m_robot(robot)
+	namespace base
 	{
-	}
+		RobotControllerBase::RobotControllerBase(XeroRobotBase &robot) : m_robot(robot)
+		{
+		}
 
-	RobotControllerBase::~RobotControllerBase()
-	{
+		RobotControllerBase::~RobotControllerBase()
+		{
+		}
 	}
 }

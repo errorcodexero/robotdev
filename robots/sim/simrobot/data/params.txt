@@ -28,6 +28,14 @@ drivebase:velocity:vmin					-1.0
 drivebase:velocity:vmax					1.0
 
 #
+# Tuning for the path follower controller
+#
+drivebase:follower:p				1.0
+drivebase:follower:d				0.1
+drivebase:follower:v				1.0
+drivebase:follower:a				1.0
+
+#
 # Tuning for the path follower
 #
 pathfollower:lookahead:distance:min		12.0

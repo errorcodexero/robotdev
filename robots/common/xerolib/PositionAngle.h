@@ -4,13 +4,13 @@
 
 namespace xero
 {
-	namespace math
+	namespace base
 	{
 		class PositionAngle
 		{
 		private:
 			// Position on the field
-			xero::motion::Position m_position;
+			xero::base::Position m_position;
 
 			// Angle in radians
 			double m_angle;
@@ -34,7 +34,7 @@ namespace xero
 
 			/// \brief create an object with the given position and an angle of zero
 			/// \param pos the position of the object
-			PositionAngle(const xero::motion::Position &pos)
+			PositionAngle(const xero::base::Position &pos)
 			{
 				m_position = pos;
 				m_angle = 0.0;
@@ -43,7 +43,7 @@ namespace xero
 			/// \brief create an object with the given position and angle
 			/// \param pos the position of the object
 			/// \param angle the angle of the object
-			PositionAngle(const xero::motion::Position &pos, double angle)
+			PositionAngle(const xero::base::Position &pos, double angle)
 			{
 				m_position = pos;
 				m_angle = angle;
@@ -67,7 +67,7 @@ namespace xero
 
 			/// \brief get the position portion of the object
 			/// \returns the position object associated with this object
-			const xero::motion::Position &getPosition() const
+			const xero::base::Position &getPosition() const
 			{
 				return m_position;
 			}

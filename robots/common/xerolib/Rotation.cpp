@@ -3,7 +3,7 @@
 
 namespace xero
 {
-	namespace motion
+	namespace base
 	{
 		Rotation::Rotation(const Position &pos)
 		{

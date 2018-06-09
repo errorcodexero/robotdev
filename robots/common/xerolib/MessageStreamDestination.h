@@ -3,24 +3,26 @@
 #include "MessageDestination.h"
 #include <fstream>
 
-namespace xerolib
+namespace xero
 {
-	class MessageStreamDestination : public MessageDestination
+	namespace base
 	{
-	public:
-		MessageStreamDestination(const char *name_p);
-		MessageStreamDestination(std::ostream &strm);
-		virtual ~MessageStreamDestination();
-
-		virtual void SendMessage(MessageLogger::MessageType type, const std::string &msg)
+		class MessageStreamDestination : public MessageDestination
 		{
-			(*m_stream_p) << msg << std::endl << std::flush;
-		}
+		public:
+			MessageStreamDestination(const char *name_p);
+			MessageStreamDestination(std::ostream &strm);
+			virtual ~MessageStreamDestination();
 
-	private:
-		std::ostream *m_stream_p;
-		bool m_delete_object;;
-	};
+			virtual void SendMessage(MessageLogger::MessageType type, const std::string &msg)
+			{
+				(*m_stream_p) << msg << std::endl << std::flush;
+			}
+
+		private:
+			std::ostream *m_stream_p;
+			bool m_delete_object;;
+		};
+	}
 }
-
 

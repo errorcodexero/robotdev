@@ -4,60 +4,62 @@
 #include <memory>
 #include <vector>
 
-namespace xerolib
+namespace xero
 {
-	class XeroRobotBase;
-	class AutonomousStepBase;
-
-	class AutonomousControllerBase : public RobotControllerBase
+	namespace base
 	{
-	public:
-		AutonomousControllerBase(XeroRobotBase &robot);
-		~AutonomousControllerBase();
+		class XeroRobotBase;
+		class AutonomousStepBase;
 
-		virtual bool isRunning();
-		virtual void executeOneLoop();
-
-	protected:
-		void addStep(std::shared_ptr<AutonomousStepBase> step_p)
+		class AutonomousControllerBase : public RobotControllerBase
 		{
-			m_steps.push_back(step_p);
-		}
+		public:
+			AutonomousControllerBase(XeroRobotBase &robot);
+			~AutonomousControllerBase();
 
-		virtual void onStartAutonomousProgram()
-		{
-		}
+			virtual bool isRunning();
+			virtual void executeOneLoop();
 
-		virtual void onFinishAutonomousProgram()
-		{
-		}
+		protected:
+			void addStep(std::shared_ptr<AutonomousStepBase> step_p)
+			{
+				m_steps.push_back(step_p);
+			}
+
+			virtual void onStartAutonomousProgram()
+			{
+			}
+
+			virtual void onFinishAutonomousProgram()
+			{
+			}
 
 
-	private:
-		void nextStep(double now);
+		private:
+			void nextStep(double now);
 
-		enum class State
-		{
-			Beginning,
-			Running,
-			End
+			enum class State
+			{
+				Beginning,
+				Running,
+				End
+			};
+
+		private:
+			//
+			// The current state of the autonomous controller
+			//
+			State m_state;
+
+			//
+			// The list of steps to execute
+			//
+			std::vector<std::shared_ptr<AutonomousStepBase>> m_steps;
+
+			//
+			// The current step of autonomous we are on
+			//
+			size_t m_current_step;
 		};
-
-	private:
-		//
-		// The current state of the autonomous controller
-		//
-		State m_state;
-
-		//
-		// The list of steps to execute
-		//
-		std::vector<std::shared_ptr<AutonomousStepBase>> m_steps;
-
-		//
-		// The current step of autonomous we are on
-		//
-		size_t m_current_step;
-	};
+	}
 }
-

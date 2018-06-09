@@ -2,7 +2,7 @@
 #include "NumUtils.h"
 #include <cmath>
 
-using namespace xero::motion;
+using namespace xero::base;
 
 namespace xero
 {

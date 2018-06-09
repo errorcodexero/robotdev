@@ -28,11 +28,9 @@ namespace xero
 			out << ",path_jerk";
 			out << std::endl;
 
-			double current = 0.0;
 			for (const Segment &seg : segments)
 			{
-				out << current;
-				current += seg.getDT();
+				out << seg.getDT();
 				out << "," << seg.getX();
 				out << "," << seg.getY();
 				out << "," << seg.getHeading();
@@ -46,28 +44,28 @@ namespace xero
 			return true;
 		}
 
-		bool SegmentIO::readSegments(const std::string &filename, std::vector<Segment> &segments)
+		bool SegmentIO::readSegments(const std::string &filename, std::vector<Segment> &segments, std::string &error)
 		{
 			std::ifstream in(filename);
 			if (in.bad() || in.fail())
 			{
-				std::cerr << "readSegments: cannot open file '" << filename << "' for reading" << std::endl;
+				error = "cannot open file for reading";
 				return false;
 			}
 
 			std::string line;
 			bool first = true;
+			size_t lineno = 1;
 
 			while (std::getline(in, line))
 			{
-				std::vector<std::string> words = xero::motion::StringUtils::split(line);
+				std::vector<std::string> words = xero::motion::StringUtils::split(line, ',');
 				if (words.size() == 0)
 					continue;
 
 				if (words.size() != 8)
 				{
-					std::cerr << "readSegments: illegal line in file, expected eight common seperated values" << std::endl;
-					std::cerr << "line: '" << line << "'" << std::endl;
+					error = "line " + std::to_string(lineno) + ": illegal line in file, expected eight common seperated values";
 					segments.clear();
 					return false;
 				}
@@ -90,6 +88,8 @@ namespace xero
 
 				Segment seg(values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
 				segments.push_back(seg);
+
+				lineno++;
 			}
 
 			return true;

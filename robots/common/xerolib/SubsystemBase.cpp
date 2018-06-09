@@ -1,13 +1,16 @@
 #include "SubsystemBase.h"
 
-namespace xerolib
+namespace xero
 {
-	SubsystemBase::SubsystemBase(const char *name_p, XeroRobotBase &robot) : m_robot(robot)
+	namespace base
 	{
-		m_name = name_p;
-	}
+		SubsystemBase::SubsystemBase(const char *name_p, XeroRobotBase &robot) : m_robot(robot)
+		{
+			m_name = name_p;
+		}
 
-	SubsystemBase::~SubsystemBase()
-	{
+		SubsystemBase::~SubsystemBase()
+		{
+		}
 	}
 }

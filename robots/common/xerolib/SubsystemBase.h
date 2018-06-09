@@ -2,32 +2,35 @@
 
 #include<string>
 
-namespace xerolib
+namespace xero
 {
-	class XeroRobotBase;
-
-	class SubsystemBase
+	namespace base
 	{
-	public:
-		SubsystemBase(const char *name_p, XeroRobotBase &robot);
-		~SubsystemBase();
+		class XeroRobotBase;
 
-		const std::string &getName() const
+		class SubsystemBase
 		{
-			return m_name;
-		}
+		public:
+			SubsystemBase(const char *name_p, XeroRobotBase &robot);
+			~SubsystemBase();
 
-		virtual void getInputs() = 0;
-		virtual void setOutputs() = 0;
+			const std::string &getName() const
+			{
+				return m_name;
+			}
 
-	protected:
-		XeroRobotBase &getRobot() 
-		{
-			return m_robot;
-		}
+			virtual void getInputs() = 0;
+			virtual void setOutputs() = 0;
 
-	private:
-		XeroRobotBase &m_robot;
-		std::string m_name;
-	};
+		protected:
+			XeroRobotBase & getRobot()
+			{
+				return m_robot;
+			}
+
+		private:
+			XeroRobotBase & m_robot;
+			std::string m_name;
+		};
+	}
 }

@@ -18,12 +18,6 @@
     <ClInclude Include="Segment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Position.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Rotation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SegmentIO.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,14 +27,14 @@
     <ClInclude Include="Path.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RobotPositionTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DistanceFollower.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Position.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Rotation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SegmentIO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,6 +42,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Path.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RobotPositionTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DistanceFollower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

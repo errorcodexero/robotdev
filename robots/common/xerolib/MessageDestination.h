@@ -2,19 +2,22 @@
 
 #include "MessageLogger.h"
 
-namespace xerolib
+namespace xero
 {
-	class MessageDestination
+	namespace base
 	{
-	public:
-		MessageDestination()
+		class MessageDestination
 		{
-		}
+		public:
+			MessageDestination()
+			{
+			}
 
-		virtual ~MessageDestination()
-		{
-		}
+			virtual ~MessageDestination()
+			{
+			}
 
-		virtual void SendMessage(MessageLogger::MessageType type, const std::string &msg) = 0;
-	};
+			virtual void SendMessage(MessageLogger::MessageType type, const std::string &msg) = 0;
+		};
+	}
 }

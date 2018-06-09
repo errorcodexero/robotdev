@@ -2,36 +2,38 @@
 
 #include <string>
 
-namespace xerolib
+namespace xero
 {
-	class AutonomousControllerBase;
-	class XeroRobotBase;
-	class MessageLogger;
-
-	class AutonomousStepBase
+	namespace base
 	{
-	public:
-		AutonomousStepBase(AutonomousControllerBase &controller);
-		virtual ~AutonomousStepBase();
+		class AutonomousControllerBase;
+		class XeroRobotBase;
+		class MessageLogger;
 
-
-		virtual void start() = 0;
-		virtual bool run() = 0;
-		virtual void end() = 0;
-		virtual std::string toString() = 0;
-
-	protected:
-		AutonomousControllerBase &getController()
+		class AutonomousStepBase
 		{
-			return m_controller;
-		}
+		public:
+			AutonomousStepBase(AutonomousControllerBase &controller);
+			virtual ~AutonomousStepBase();
 
-		XeroRobotBase &getRobot();
 
-		MessageLogger &getLogger();
+			virtual void start() = 0;
+			virtual bool run() = 0;
+			virtual void end() = 0;
+			virtual std::string toString() = 0;
 
-	private:
-		AutonomousControllerBase &m_controller;
-	};
+		protected:
+			AutonomousControllerBase & getController()
+			{
+				return m_controller;
+			}
+
+			XeroRobotBase &getRobot();
+
+			MessageLogger &getLogger();
+
+		private:
+			AutonomousControllerBase & m_controller;
+		};
+	}
 }
-

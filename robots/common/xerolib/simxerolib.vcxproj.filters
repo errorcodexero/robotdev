@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="DriveBase.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="PIDCtrl.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -40,24 +37,36 @@
     <ClCompile Include="ParamsParser.cpp">
       <Filter>Source\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="RobotState.cpp">
-      <Filter>Source\Kinematics</Filter>
+    <ClCompile Include="TankDrive.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="RobotStateEstimator.cpp">
-      <Filter>Source\Kinematics</Filter>
+    <ClCompile Include="OdometrySystem.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="KalmanOdometry.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DriveBase.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="IntelligentDriveBase.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFollowerController.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Position.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Rotation.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DriveBase.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="ModuleDefintions.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="RobotControllerBase.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Subsystem.h">
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="SubsystemBase.h">
@@ -102,14 +111,32 @@
     <ClInclude Include="Speedometer.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Kinematics.h">
-      <Filter>Headers\Kinematics</Filter>
+    <ClInclude Include="TankDrive.h">
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="RobotState.h">
-      <Filter>Headers\Kinematics</Filter>
+    <ClInclude Include="OdometrySystem.h">
+      <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="RobotStateEstimator.h">
-      <Filter>Headers\Kinematics</Filter>
+    <ClInclude Include="DriveBase.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="IntelligentDriveBase.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="KalmanOdometry.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFollowerController.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Position.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionAngle.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Rotation.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -125,23 +152,11 @@
     <Filter Include="Headers\Auto">
       <UniqueIdentifier>{cde71a1d-799b-4e51-a35a-3fe752bab3fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\PathFinder">
-      <UniqueIdentifier>{22d65250-02e7-4782-b6ac-a157b6d5f8fd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\Utils">
       <UniqueIdentifier>{0fd877d8-335e-4645-b442-c108fd472612}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\PathFinder">
-      <UniqueIdentifier>{1cd61b95-7b9f-409b-87e7-2cfee60003d1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Utils">
       <UniqueIdentifier>{3ed3db45-9cba-4965-847d-18ea9f59d406}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Headers\Kinematics">
-      <UniqueIdentifier>{28135aab-43db-4cb0-a1a9-d063e9992fa3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Kinematics">
-      <UniqueIdentifier>{515ef69a-84a3-47b4-a038-ed74da4a8b75}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

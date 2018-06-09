@@ -1,28 +1,31 @@
 #pragma once
 
-namespace xerolib
+namespace xero
 {
-    class XeroRobotBase;
-
-    class RobotControllerBase
-    {
-    public:
-	RobotControllerBase(XeroRobotBase &robot);
-	virtual ~RobotControllerBase();
-
-	virtual bool isRunning()
+	namespace base
 	{
-		return true;
+		class XeroRobotBase;
+
+		class RobotControllerBase
+		{
+		public:
+			RobotControllerBase(XeroRobotBase &robot);
+			virtual ~RobotControllerBase();
+
+			virtual bool isRunning()
+			{
+				return true;
+			}
+
+			virtual void executeOneLoop() = 0;
+
+			XeroRobotBase &getRobot()
+			{
+				return m_robot;
+			}
+
+		private:
+			XeroRobotBase & m_robot;
+		};
 	}
-
-	virtual void executeOneLoop() = 0;
-
-	XeroRobotBase &getRobot()
-	{
-	    return m_robot;
-	}
-
-    private:
-	XeroRobotBase &m_robot;
-    };
 }

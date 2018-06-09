@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -25,13 +25,18 @@
     <ClCompile Include="AutoSetMotorVoltage.cpp" />
     <ClCompile Include="AutoSetVelocity.cpp" />
     <ClCompile Include="DriveBase.cpp" />
+    <ClCompile Include="IntelligentDriveBase.cpp" />
+    <ClCompile Include="KalmanOdometry.cpp" />
+    <ClCompile Include="OdometrySystem.cpp" />
+    <ClCompile Include="PathFollowerController.cpp" />
+    <ClCompile Include="Position.cpp" />
+    <ClCompile Include="Rotation.cpp" />
+    <ClCompile Include="TankDrive.cpp" />
     <ClCompile Include="MessageLogger.cpp" />
     <ClCompile Include="MessageStreamDestination.cpp" />
     <ClCompile Include="ParamsParser.cpp" />
     <ClCompile Include="PIDCtrl.cpp" />
     <ClCompile Include="RobotControllerBase.cpp" />
-    <ClCompile Include="RobotState.cpp" />
-    <ClCompile Include="RobotStateEstimator.cpp" />
     <ClCompile Include="SubsystemBase.cpp" />
     <ClCompile Include="XeroRobotBase.cpp" />
   </ItemGroup>
@@ -43,7 +48,14 @@
     <ClInclude Include="AutoSetVelocity.h" />
     <ClInclude Include="CountdownTimer.h" />
     <ClInclude Include="DriveBase.h" />
-    <ClInclude Include="Kinematics.h" />
+    <ClInclude Include="IntelligentDriveBase.h" />
+    <ClInclude Include="KalmanOdometry.h" />
+    <ClInclude Include="OdometrySystem.h" />
+    <ClInclude Include="PathFollowerController.h" />
+    <ClInclude Include="Position.h" />
+    <ClInclude Include="PositionAngle.h" />
+    <ClInclude Include="Rotation.h" />
+    <ClInclude Include="TankDrive.h" />
     <ClInclude Include="MessageDestination.h" />
     <ClInclude Include="MessageLogger.h" />
     <ClInclude Include="MessageStreamDestination.h" />
@@ -51,10 +63,7 @@
     <ClInclude Include="ParamsParser.h" />
     <ClInclude Include="PIDCtrl.h" />
     <ClInclude Include="RobotControllerBase.h" />
-    <ClInclude Include="RobotState.h" />
-    <ClInclude Include="RobotStateEstimator.h" />
     <ClInclude Include="Speedometer.h" />
-    <ClInclude Include="Subsystem.h" />
     <ClInclude Include="SubsystemBase.h" />
     <ClInclude Include="XeroRobotBase.h" />
   </ItemGroup>
@@ -134,7 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc;$(SolutionDir)..\common\motion</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -166,7 +175,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc;$(SolutionDir)..\common\motion</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\sim\simfrc</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

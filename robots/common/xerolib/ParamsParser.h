@@ -4,53 +4,55 @@
 #include <map>
 #include <cassert>
 
-namespace xerolib
+namespace xero
 {
-	
-	class ParamsParser {
+	namespace base
+	{
+		class ParamsParser {
 
-	private:
-		/// \brief create a new params parsing object
-		ParamsParser();
-	
-	public:
+		private:
+			/// \brief create a new params parsing object
+			ParamsParser();
 
-		/// \brief get the one single params object
-		static ParamsParser &get() { return mSingleObject; }
-    
-		/// \brief read the input file containing parameters
-		/// \param filename the name of the file to read
-		bool readFile(const std::string &filename);
+		public:
 
-		/// \brief returns true if the parameter parsing object has a parameter with the name given
-		/// \params paramName the name of the parameter we are searching for
-		/// \returns true if the parameter is found, otherwise false
-		bool hasParam(const std::string &paramName);
+			/// \brief get the one single params object
+			static ParamsParser &get() { return mSingleObject; }
 
-		/// \brief gets the value of a parameter
-		/// and returns a default value if the parameter does not exist
-		/// \param paramName the name of the parameter we are searching for
-		/// \param defaultValue the value to return if the parameter did not exist in the parameter file
-		/// \return the parameter value from the parameter file, or defaultValue if the parameter did not exist in the file
-		double getValue(const std::string &paramName, double defaultValue);
+			/// \brief read the input file containing parameters
+			/// \param filename the name of the file to read
+			bool readFile(const std::string &filename);
 
-		/// \brief gets the value of a parameter and asserts if it does not exist
-		/// \param paramName the name of the parameter
-		/// \returns the value of the parameter
-		double getValue(const std::string &paramName);
+			/// \brief returns true if the parameter parsing object has a parameter with the name given
+			/// \params paramName the name of the parameter we are searching for
+			/// \returns true if the parameter is found, otherwise false
+			bool hasParam(const std::string &paramName);
 
-		/// \brief print the parameter values to the output stream given
-		/// \param out the output stream to write the parameters to
-		bool printMap(std::ostream &out);
-    
-	private:
-		// the map that stores the parameter values
-		std::map<std::string, double> mParamsMap;
+			/// \brief gets the value of a parameter
+			/// and returns a default value if the parameter does not exist
+			/// \param paramName the name of the parameter we are searching for
+			/// \param defaultValue the value to return if the parameter did not exist in the parameter file
+			/// \return the parameter value from the parameter file, or defaultValue if the parameter did not exist in the file
+			double getValue(const std::string &paramName, double defaultValue);
 
-		// the name of the file read
-		std::string mFilename;
+			/// \brief gets the value of a parameter and asserts if it does not exist
+			/// \param paramName the name of the parameter
+			/// \returns the value of the parameter
+			double getValue(const std::string &paramName);
 
-		// The one and only params parser
-		static ParamsParser mSingleObject ;
-	};
+			/// \brief print the parameter values to the output stream given
+			/// \param out the output stream to write the parameters to
+			bool printMap(std::ostream &out);
+
+		private:
+			// the map that stores the parameter values
+			std::map<std::string, double> mParamsMap;
+
+			// the name of the file read
+			std::string mFilename;
+
+			// The one and only params parser
+			static ParamsParser mSingleObject;
+		};
+	}
 }

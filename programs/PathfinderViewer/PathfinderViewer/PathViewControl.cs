@@ -159,6 +159,11 @@ namespace PathfinderViewer
                 m_chart.Series.Add(s);
             }
 
+            m_chart.ChartAreas[0].AxisX.Minimum = 0;
+            m_chart.ChartAreas[0].AxisX.Maximum = 648;
+            m_chart.ChartAreas[0].AxisY.Minimum = 0;
+            m_chart.ChartAreas[0].AxisY.Maximum = 336;
+
             Invalidate();
         }
         #endregion

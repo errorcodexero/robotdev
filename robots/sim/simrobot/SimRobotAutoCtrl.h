@@ -2,9 +2,9 @@
 
 #include <AutonomousControllerBase.h>
 
-class SimRobotAutoCtrl : public xerolib::AutonomousControllerBase
+class SimRobotAutoCtrl : public xero::base::AutonomousControllerBase
 {
 public:
-	SimRobotAutoCtrl(xerolib::XeroRobotBase &robot);
+	SimRobotAutoCtrl(xero::base::XeroRobotBase &robot);
 	~SimRobotAutoCtrl();
 };

@@ -7,7 +7,7 @@
 //
 
 #define MODULE_AUTOMODE						(1ull << 63)
-#define MODULE_DRIVEBASE					(1ull << 62)
+#define MODULE_TankDrive					(1ull << 62)
 #define MODULE_PATHFINDER					(1ull << 61)
 #define MODULE_ROBOTBASE					(1ull << 60)
 
