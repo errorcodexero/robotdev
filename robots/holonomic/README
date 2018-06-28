@@ -1,0 +1,17 @@
+This repository is for the code that interfaces to the robot through data structures that list the possible inputs and outputs rather than through the normal WPIlib methods. It also code for a robot which is written to that interface.
+
+This is for our software development robot.
+
+Getting started:
+
+This is tested under Ubuntu linux.  Prerequisites:
+
+bazel (see the bazel website)
+valgrind (available in the Ubuntu repositories)
+g++ (both the normal version available in the Ubuntu repositories and the FRC cross compiler)
+WPIlib (see the FRC screensteps)
+CTRElib (See Cross the Road Electronic's page about the Talon SRX)
+
+To run the tests and then build the code, run "./runall".  
+
+To deploy the code to the robot, run "./deploy".

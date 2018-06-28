@@ -1,0 +1,63 @@
+Driver:
+ A          - 
+ B          - Nudge clockwise
+ X          - Nudge counterclockwise
+ Y          - 
+ Start      - 
+ Back       - 
+ RB         - 
+ LB         - 
+ RT         - 
+ LT         - 
+ L_Joy:
+  X Axis    - Left/right
+  Y Axis    - Forward/backward
+  Pushed in - 
+ R_Joy:
+  X Axis    - Rotation
+  Y Axis    - 
+  Pushed in - 
+POV:
+  Center     - 
+  Up         - Nudge forward
+  Up_left    - 
+  Left       - Nudge left
+  Down_left  - 
+  Down       - Nudge backward
+  Down_right - 
+  Right      - Nudge right
+  Up_right   - 
+
+Gunner:
+ A          - 
+ B          - 
+ X          - 
+ Y          - 
+ Start      - 
+ Back       -
+ RB         - 
+ LB         - 
+ RT         - 
+ LT         - 
+ L_Joy:
+  Up        - 
+  Down      - 
+  Left      - 
+  Right     - 
+  Pushed in - 
+ R_Joy:
+  Up        - 
+  Down      - 
+  Left      - 
+  Right     - 
+  Pushed in - 
+ POV:        
+  Center     - 
+  Up         -
+  Up_left    - 
+  Left       -
+  Down_left  - 
+  Down       - 
+  Down_right - 
+  Right      - 
+  Up_right   - 
