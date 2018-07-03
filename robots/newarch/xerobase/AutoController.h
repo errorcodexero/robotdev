@@ -1,10 +1,11 @@
 #pragma once
 
-#include "XeroController.h"
+#include "ControllerBase.h"
 
 namespace xero {
 	namespace base {
-		class AutoController : public XeroController {
+		/// \brief This is the base class for any autonomous mode controller
+		class AutoController : public ControllerBase {
 		} ;
 	}
 }
