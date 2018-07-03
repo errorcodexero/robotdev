@@ -26,7 +26,14 @@ namespace xero {
 
 		public:
 			/// \brief create a new subsystem
-			Subsystem(Robot &robot) ;
+			Subsystem(Robot &robot, const std::string &name) : robot_(robot) , m_name(name) {
+			}
+
+			/// \brief returns the name of the subsystem
+			/// \returns the name of the subsystem
+			const std::string &getName() const {
+				return m_name ;
+			}
 
 			/// \brief compute the current state of the robot.
 			/// The subsystem generally reads and associated input sensors and
@@ -37,15 +44,22 @@ namespace xero {
 			/// \brief set the current directive for the subsystem
 			/// \param directive the new directive for the subsystem
 			/// \return true if the directive is accepted, false if not
-			virtual bool setDirective(std::shared_ptr<Directive> directive);
+			virtual bool setDirective(std::shared_ptr<Directive> directive) {
+				directive_ = directive ;
+				return true ;
+			}
 
 			/// \brief return a constant pointer to the current directive
 			/// \returns  a constant pointer to the current directive
-			const std::shared_ptr<Directive> getDirective() const;
+			const std::shared_ptr<Directive> getDirective() const {
+				return directive_ ;
+			}
 
 			/// \brief returns a pointer to the current directive
 			/// \returns a pointer to the current directive
-			std::shared_ptr<Directive> getDirective() ;
+			std::shared_ptr<Directive> getDirective()  {
+				return directive_ ;
+			}
 
 			/// \brief set output actuators associated with the subsystem
 			/// The output actuators are set to achieve the currently active
@@ -54,13 +68,20 @@ namespace xero {
 
 			/// \brief returns true if the subsystem is done with the current directive
 			/// \returns true if the subsystem is done with the current directive
-			virtual bool isDone() const;
+			virtual bool isDone() const {
+				return directive_->isDone() ;
+			}
 
 		private:
 			//
 			// A reference to the robot object that contains this subsystem
 			//
 			Robot& robot_;
+
+			//
+			// The name of the subsystem (e.g. drivebase)
+			//
+			std::string m_name ;
 
 			//
 			// The currently active directive

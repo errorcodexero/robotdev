@@ -7,9 +7,12 @@ namespace xero {
 		
 		/// \brief the drivebase for the robot
 		class Drivebase : public Subsystem {
+			/// \brief This is a directive for the drivebase.  All directives for the drivebase should be derived form this class.
+			class DrivebaseDirective : public Subsystem:Directive {
+			}
 
 			/// \brief This is directive meant for the drivebase to drive straight a given distancex
-			class DriveStraightDirective : public Subsystem::Directive {
+			class DriveStraightDirective : public DrivebaseDirective {
 			public:
 				DriveStraightDirective(double target_distance);
 
@@ -35,6 +38,12 @@ namespace xero {
 			
 			double getAngle() const {
 				return angle_ ;
+			}
+
+			virtual void computeState() {
+			}
+
+			virtual void run() {
 			}
 
 			virtual bool setDirective(std::shared_ptr<Subsystem::Directive> directive) ;

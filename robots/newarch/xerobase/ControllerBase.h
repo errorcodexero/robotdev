@@ -4,10 +4,15 @@ namespace xero {
 	namespace base {
 		class Robot ;
 		
-		class XeroController {
+		class ControllerBase {
 		public:
-			XeroController(Robot &robot) ;
+			ControllerBase(Robot &robot) ;
 			virtual void run() = 0 ;
+
+		protected:
+			Robot &getRobot() {
+				return robot_ ;
+			}
 
 		private:
 			Robot &robot_ ;

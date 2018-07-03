@@ -5,11 +5,23 @@
 namespace xero {
 	namespace phoenix {
 
+		/// \brief the concrete class that represents the robot Phoenix
 		class Phoenix : public xero::base::Robot {
+
+			/// \brief called to initialize the robot, basically creating the subsystems
 			virtual void RobotInit() ;
-			virtual std::shared_ptr<xero::base::XeroController> createAutoController() ;
-			virtual std::shared_ptr<xero::base::XeroController> createTeleopController() ;
-			virtual std::shared_ptr<xero::base::XeroController> createTestController() ;
+
+			/// \brief called to create the autonomous controller
+			/// \returns a robot controller
+			virtual std::shared_ptr<xero::base::ControllerBase> createAutoController() ;
+			
+			/// \brief called to create the teleop controller
+			/// \returns a robot controller
+			virtual std::shared_ptr<xero::base::ControllerBase> createTeleopController() ;
+
+			/// \brief called to create the test controller
+			/// \returns a robot controller
+			virtual std::shared_ptr<xero::base::ControllerBase> createTestController() ;
 		} ;
 	}
 }

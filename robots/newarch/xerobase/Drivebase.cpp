@@ -32,7 +32,7 @@ namespace xero {
 		//
 		//////////////////////////////////////////////////////////////////
 
-		Drivebase::Drivebase(Robot &robot) : Subsystem(robot) {
+		Drivebase::Drivebase(Robot &robot) : Subsystem(robot, "drivebase") {
 		}
 
 		/// \brief set a new directive for the drivebase
