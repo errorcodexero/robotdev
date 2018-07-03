@@ -8,8 +8,8 @@ namespace xero {
 		/// \brief the drivebase for the robot
 		class Drivebase : public Subsystem {
 			/// \brief This is a directive for the drivebase.  All directives for the drivebase should be derived form this class.
-			class DrivebaseDirective : public Subsystem:Directive {
-			}
+			class DrivebaseDirective : public Subsystem::Directive {
+			} ;
 
 			/// \brief This is directive meant for the drivebase to drive straight a given distancex
 			class DriveStraightDirective : public DrivebaseDirective {

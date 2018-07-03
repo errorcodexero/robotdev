@@ -4,3 +4,6 @@ phoenix/Debug
 phoenix/Release
 html
 rtf
+build
+.gradle
+
