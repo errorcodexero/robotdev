@@ -2,6 +2,7 @@
 
 #include <WPILib.h>
 #include <memory>
+#include <list>
 
 namespace xero {
 	namespace base {

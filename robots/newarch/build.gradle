@@ -25,6 +25,11 @@ deploy {
 // Defining my C++ project. In this case, it is called 'frcUserProgram',
 // and is of the language C++.
 model {
+    platforms {
+        x86_64 {
+            architecture "x86_64"
+        }
+    }
     components {
 	    xerobase(NativeLibrarySpec) {
 		    targetPlatform 'roborio'
@@ -44,6 +49,7 @@ model {
 				lib library: "openrio.powerup.matchData"
 			}
 		}
+
 		
         frcUserProgram(NativeExecutableSpec) {
             // Target the RoboRIO (arm-frc-linux-gnueabihf)
@@ -65,6 +71,56 @@ model {
                 lib library: "ctre"
                 lib library: "navx"
                 lib library: "openrio.powerup.matchData"
+            }
+        }
+
+	    xerobasesim(NativeLibrarySpec) {
+            targetPlatform 'x86_64'
+			sources.cpp {
+			    source {
+				    srcDirs = ['xerobase']
+					include '*.cpp'
+				}
+				exportedHeaders {
+				    srcDirs = ['xerobase']
+					include '*.h'
+				}
+				lib library: "xerobasesim"
+                lib library: "wpilibsim"
+			}
+		}
+
+		wpilibsim(NativeLibrarySpec) {
+            targetPlatform 'x86_64'            
+			sources.cpp {
+			    source {
+				    srcDirs = ['wpilibsim']
+					include '*.cpp'
+				}
+				exportedHeaders {
+				    srcDirs = ['wpilibsim']
+					include '*.h'
+				}
+			}
+		}
+
+        frcUserProgramSim(NativeExecutableSpec) {
+            targetPlatform 'x86_64'            
+            // Target the RoboRIO (arm-frc-linux-gnueabihf)
+            sources.cpp {
+                // This is where our source files are located (src/cpp for C++ files, src/include for headers)
+                source {
+                    srcDirs = ['phoenix']
+                    include '*.cpp'
+                }
+                exportedHeaders{
+                    srcDirs = ['phoenix']
+                    include '*.h'
+                }
+
+                // Define my dependencies. In this case, WPILib (+ friends), CTRE Phoenix (Talon SRX) and NavX.
+				lib library: "xerobasesim", linkage: "static"
+                lib library: "wpilibsim", linkage: "static"
             }
         }
     }
