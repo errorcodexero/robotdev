@@ -85,8 +85,8 @@ model {
 				    srcDirs = ['xerobase']
 					include '*.h'
 				}
-				lib library: "xerobasesim"
-                lib library: "wpilibsim"
+				lib library: "xerobasesim", linkage: "static"
+                lib library: "wpilibsim", linkage: "static"
 			}
 		}
 
