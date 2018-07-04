@@ -18,9 +18,9 @@
         {
             "label": "Clean",
             "type": "shell",
-            "command": "CMD /c gradlew.bat clean",
+            "command": "CMD /c \"gradlew.bat clean\"",
             "group": {
-                "kind": "build",
+                "kind": "clean",
                 "isDefault": true
             },
             "problemMatcher": []
@@ -28,9 +28,9 @@
         {
             "label": "Deploy",
             "type": "shell",
-            "command": "CMD /c gradlew.bat deploy",
+            "command": "CMD /c \"gradlew.bat deploy\"",
             "group": {
-                "kind": "build",
+                "kind": "deploy",
                 "isDefault": true
             },
             "problemMatcher": []
