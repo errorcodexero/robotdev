@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build",
+            "label": "Build RobotCode",
             "type": "shell",
-            "command": "CMD /c \"gradlew.bat build\"",
+            "command": "./gradlew frcUserProgramExecutable",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -16,24 +16,16 @@
             ]
         },
         {
-            "label": "Clean",
+            "label": "Build Simulator",
             "type": "shell",
-            "command": "CMD /c \"gradlew.bat clean\"",
+            "command": "./gradlew frcUserProgramSimExecutable",
             "group": {
-                "kind": "clean",
+                "kind": "build",
                 "isDefault": true
             },
-            "problemMatcher": []
-        },
-        {
-            "label": "Deploy",
-            "type": "shell",
-            "command": "CMD /c \"gradlew.bat deploy\"",
-            "group": {
-                "kind": "deploy",
-                "isDefault": true
-            },
-            "problemMatcher": []
+            "problemMatcher": [
+                "$gcc"
+            ]
         }
     ]
 }

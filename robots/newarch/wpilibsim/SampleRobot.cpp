@@ -74,7 +74,7 @@ namespace frc
 				index++;
 				if (index == m_args.size())
 				{
-					std::cout << "SampleRobot: argument '--start' requires an argument" << std::endl;
+					std::cout << "SampleRobot: argument '" << m_args[index - 1] << "' requires an argument" << std::endl;
 					ret = false;
 					break;
 				}
@@ -109,6 +109,44 @@ namespace frc
 				}
 
 				index++;
+			}
+			else if (m_args[index] == "--simtime")
+			{
+				index++ ;
+
+				if (index == m_args.size())
+				{
+					std::cout << "SampleRobot: argument '--simtime' requires an argument" << std::endl;
+					ret = false;
+					break;
+				}
+
+				double value;
+				size_t end;
+
+				try
+				{
+					value = std::stod(m_args[index], &end);
+					if (end != m_args[index].length())
+					{
+						std::cout << "SampleRobot: invalid value '" << m_args[index];
+						std::cout << "' for argument '" << m_args[index - 1] << "'" << std::endl;
+						ret = false;
+						break;
+					}
+
+					RobotSimulator &sim = RobotSimulator::get() ;
+					sim.setTimeInterval(value) ;
+				}
+				catch (const std::exception &)
+				{
+					std::cout << "SampleRobot: invalid value '" << m_args[index];
+					std::cout << "' for argument '" << m_args[index - 1] << "'" << std::endl;
+					ret = false;
+					break;
+				}
+
+				index++;				
 			}
 			else
 			{
@@ -211,6 +249,4 @@ namespace frc
 	{
 		return m_mode == RobotMode::Operator;
 	}
-
-
 }

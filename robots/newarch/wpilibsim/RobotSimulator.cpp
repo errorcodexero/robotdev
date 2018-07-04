@@ -22,6 +22,9 @@ namespace frc
 		m_right_rps_per_volt_per_time = 9.16;
 		m_left_rps_per_volt_per_time = 9.16;
 
+		m_time_interval = 100000.0 ;
+		m_last_output = 0.0 ;
+
 		m_running = true;
 		m_run_thread = std::thread(&RobotSimulator::run, this);
 	}
@@ -166,5 +169,13 @@ namespace frc
 
 		updateRobotPosition(now, dleft, dright);
 		m_last_time = now;
+
+		if (now > m_last_output + m_time_interval) {
+			std::cout << "Robot Status: time " << now ;
+			std::cout << ", leftpos " << m_left ;
+			std::cout << ", rightpos " << m_right ;
+			std::cout << ", angle " << m_angle ;
+			m_last_output = now ;
+		}
 	}
 }

@@ -34,6 +34,11 @@ namespace frc
 			writeHeaders();
 		}
 
+		void setTimeInterval(double t) 
+		{
+			m_time_interval = t ;
+		}
+
 	private:
 		void writeHeaders();
 		void run();
@@ -64,6 +69,9 @@ namespace frc
 		std::thread m_run_thread;
 
 		std::ofstream m_logfile;
+
+		double m_last_output ;
+		double m_time_interval ;
 	};
 }
 
