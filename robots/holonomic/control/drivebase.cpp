@@ -444,7 +444,11 @@ Drivebase::Output new_conversion(Drivebase::Goal goal) {
 }
 
 Drivebase::Output control(Drivebase::Status status,Drivebase::Goal goal){
-	return old_conversion(goal);
+	//return Drivebase::Output{goal.x, goal.y, goal.theta};
+	if(goal.use_new)
+		return new_conversion(goal);
+	else
+		return old_conversion(goal);
 }
 
 Drivebase::Status status(Drivebase::Status a){ return a; }

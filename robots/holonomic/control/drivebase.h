@@ -100,6 +100,7 @@ struct Drivebase{
 
     struct Goal{
 		double x, y, theta;
+		bool use_new;
     };
 };
 

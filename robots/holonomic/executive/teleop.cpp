@@ -77,16 +77,24 @@ Toplevel::Goal Teleop::run(Run_info info) {
 			if (!nudges[Nudges::RIGHT].timer.done()) return -NUDGE_POWER;
 			return set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTX],boost,slow);
 		}());
-		goals.drive.y = clip([&]{
+		goals.drive.y = -clip([&]{
 			if (!nudges[Nudges::FORWARD].timer.done()) return NUDGE_POWER;
 			if (!nudges[Nudges::BACKWARD].timer.done()) return -NUDGE_POWER;
 			return set_drive_speed(info.driver_joystick.axis[Gamepad_axis::LEFTY],boost,slow);
 		}());
-		goals.drive.theta = clip([&]{ // - = cw, + = ccw
+		goals.drive.theta = -clip([&]{ // - = cw, + = ccw
 			if (!nudges[Nudges::CLOCKWISE].timer.done()) return -ROTATE_NUDGE_POWER;
 			if (!nudges[Nudges::COUNTERCLOCKWISE].timer.done()) return ROTATE_NUDGE_POWER;
 			return set_drive_speed(-info.driver_joystick.axis[Gamepad_axis::RIGHTX],boost,slow);
 		}());
+		/*
+		goals.drive.x = info.driver_joystick.axis[Gamepad_axis::LEFTY];
+		goals.drive.y = info.driver_joystick.axis[Gamepad_axis::RIGHTY];
+		goals.drive.theta = info.driver_joystick.axis[Gamepad_axis::LEFTX];
+		*/
+
+		use_new_toggle.update(info.driver_joystick.button[Gamepad_button::RB]);
+		goals.drive.use_new = use_new_toggle.get();
 	}
 
 	#ifdef PRINT_OUTS
