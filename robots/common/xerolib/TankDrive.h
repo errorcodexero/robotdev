@@ -67,6 +67,13 @@ namespace xero
 			/// \brief return the distance traveled by the right encoder
 			double getRightDistance();
 
+			/// \brief return the distances for each of the wheels
+			virtual std::vector<double> &getDistances()
+			{
+				m_distances = { getLeftDistance(), getRightDistance()};
+				return m_distances;
+			}
+
 			/// \brief return the speed of the left side of the robot
 			/// \returns the speed of the left side of the robot
 			double getLeftSpeed()
@@ -329,6 +336,8 @@ namespace xero
 			//
 			Speedometer m_left_speed;
 			Speedometer m_right_speed;
+
+			std::vector<double> m_distances;
 
 
 			////////////////////////////////////////////////////////////////////////////////////////////////////

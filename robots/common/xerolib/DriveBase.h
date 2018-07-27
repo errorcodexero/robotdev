@@ -2,6 +2,7 @@
 
 #include "SubsystemBase.h"
 #include "Rotation.h"
+#include <vector>
 
 namespace xero
 {

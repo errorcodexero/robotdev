@@ -27,7 +27,7 @@ namespace xero
 			double t = getRobot().getTime();
 			m_db_p->getInputs();
 
-			m_odometry_p->update(t, m_db_p->getAngle(), m_db_p->getDistances());
+			m_odometry_p->update(t, m_db_p->getAngle().getRadians(), m_db_p->getDistances());
 		}
 
 		void IntelligentDriveBase::setOutputs()
