@@ -47,10 +47,10 @@ robotdev
     - gopigo3frc		frc compatilbe robot lib for the gopigo3 robot
     - gopigo3navx		navx code for the gopigo3 robot
   - theremin			code specific to the software robot
-  - claymore			code for the 2018 power up
+  - claymore			code for the 2018 power up robot (Pheonix)
   - play			code playing with a new robot sw
     				architecture
-  - sabre			code for the 2016 stronghold robot
+  - sabre			code for the 2016 stronghold robot (Grond)
 
 ---------------------------------------------------------------
 At the top level of a robot (e.g. robots/theremin)
