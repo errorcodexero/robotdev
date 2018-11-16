@@ -2,6 +2,7 @@
 bazel-*
 t.mk
 FRCUserProgram
+frcUserProgram
 *.swp
 backups/
 log/

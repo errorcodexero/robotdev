@@ -195,15 +195,15 @@ def cross_makefile(out,printouts,use_global_source):
 	print>>out,"LD_FLAGS=-L"+source_dir+"/ctre/cpp/lib/ -lCTRE_Phoenix -lCTRE_PhoenixCCI "+source_dir+"/navx/lib/libnavx_frc_cpp.a -L"+source_dir+"/wpilib/common/current/lib/linux/athena/shared -L"+source_dir+"/wpilib/cpp/current/reflib/linux/athena/shared -Wl,-rpath,/opt/GenICam_v2_3/bin/Linux_armv7-a -lwpi -lpthread"
 	print>>out,".PHONY: clean\n"
 
-	print>>out,"all: FRCUserProgram"
+	print>>out,"all: frcUserProgram"
 
-	print>>out,"FRCUserProgram:",
+	print>>out,"frcUserProgram:",
 	for elem in object_files():
 		print>>out,'obj/%s'%elem,
 	print>>out,""
 	print>>out,"\t$(CXX)",
 	for elem in object_files(): print>>out,'obj/%s'%elem,
-	print>>out," $(LD_FLAGS) -o FRCUserProgram -lwpi",
+	print>>out," $(LD_FLAGS) -o frcUserProgram -lwpi",
 	print>>out,"\n"
 
 
@@ -211,7 +211,7 @@ def cross_makefile(out,printouts,use_global_source):
 	print>>out,"\t$(CXX) $(CXXFLAGS) -c -o $@ $<\n"
 
 	print>>out,"clean:"
-	print>>out,"\trm -f FRCUserProgram"
+	print>>out,"\trm -f frcUserProgram"
 	print>>out,"\tfind -name \*.o | xargs rm -f"
 
 def bazel_available():

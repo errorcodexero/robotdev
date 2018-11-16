@@ -90,7 +90,7 @@ if $backup_params || $backup_log; then
 	exit 0
 fi
 
-backup_n=$(find backups -type f -name FRCUserProgram_\* | wc -l)
+backup_n=$(find backups -type f -name frcUserProgram_\* | wc -l)
 if [ $restore -lt 0 ]; then
 	echo "Backup number must be greater than 0." >&2
 	exit 1
@@ -98,12 +98,12 @@ elif [ $restore -gt $backup_n ]; then
 	echo "Backup ${restore} chosen, but only ${backup_n} backups present." >&2
 	exit 1
 elif [ $restore -eq 0 ]; then
-	scp lvuser@$address:FRCUserProgram ./backups/FRCUserProgram_$(($backup_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
+	scp lvuser@$address:frcUserProgram ./backups/frcUserProgram_$(($backup_n+1))_$(date +%Y-%m-%d_%H-%M-%S)
 	if [ $? -eq 0 ]; then
 		echo "Saved as backup $(($backup_n+1))."
 	fi
 else
-	backup=$(find backups -type f -name FRCUserProgram_$restore\_\*)
+	backup=$(find backups -type f -name frcUserProgram_$restore\_\*)
 	backup_n2=$(wc -w <<<$backup)
 	if [ $backup_n2 -eq 0 ]; then
 		echo "No backup with the number ${restore} found." >&2

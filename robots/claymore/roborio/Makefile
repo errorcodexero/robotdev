@@ -5,7 +5,7 @@
 #
 # define the target executable
 #
-TARGET=FRCUserProgram
+TARGET=frcUserProgram
 
 #
 # Tell the make system we want the shared code (COMMON)
